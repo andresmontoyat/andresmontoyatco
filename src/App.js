@@ -3,13 +3,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPaperPlane, faDatabase } from '@fortawesome/free-solid-svg-icons'
 import { faGithub, faDocker, faLinkedin, faYoutube, faJava, faJenkins, faJs, faAws, faLinux } from '@fortawesome/free-brands-svg-icons'
 
-const navigation = [
-  { name: 'Changelog', href: '#' },
-  { name: 'About', href: '#' },
-  { name: 'Partners', href: '#' },
-  { name: 'News', href: '#' },
-]
-
 const features = [
   {
     name: 'Java',
@@ -232,7 +225,6 @@ export default function App() {
                   className="block w-full shadow-sm py-3 px-4 placeholder-gray-500 focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md"
                   placeholder="Message"
                   autoComplete="off"
-                  defaultValue={''}
                 />
               </div>
               <div>
@@ -262,7 +254,7 @@ export default function App() {
               </p>
               <div className="flex space-x-6">
                 {footerNavigation.social.map((item) => (
-                  <a key={item.name} target="_blank" href={item.href} className="text-blue-gray-400 hover:text-blue-gray-500">
+                  <a key={item.name} href={item.href} className="text-blue-gray-400 hover:text-blue-gray-500">
                     <span className="sr-only">{item.name}</span>
                     <item.icon className="h-6 w-6" aria-hidden="true" />
                   </a>
@@ -273,7 +265,7 @@ export default function App() {
               <div className="md:grid md:grid-cols-2 md:gap-8">
                 <div>
                   <h3 className="text-sm font-semibold text-blue-gray-400 tracking-wider uppercase">Links</h3>
-                  <ul role="list" className="mt-4 space-y-4">
+                  <ul className="mt-4 space-y-4">
                     {footerNavigation.links.map((item) => (
                       <li key={item.name}>
                         <a href={item.href} title={item.name} className="text-base text-blue-gray-500 hover:text-blue-gray-900">

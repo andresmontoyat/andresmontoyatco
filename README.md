@@ -1,3 +1,4 @@
+[![Netlify Status](https://api.netlify.com/api/v1/badges/0e21e297-8e24-4ff5-bddc-98d6585bbaa5/deploy-status)](https://app.netlify.com/sites/compassionate-booth-cefe43/deploys)
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
