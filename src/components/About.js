@@ -7,7 +7,7 @@ export default function About() {
   return (
     <div className="relative bg-white py-16 sm:py-24">
       <div className="lg:mx-auto lg:max-w-7xl lg:px-8 lg:grid lg:grid-cols-2 lg:gap-24 lg:items-start">
-        <div className="relative sm:py-16 lg:py-0 md:hidden sm:hidden">
+        <div className="relative sm:py-16 lg:py-0">
           <div aria-hidden="true" className="hidden sm:block lg:absolute lg:inset-y-0 lg:right-0 lg:w-screen">
             <div className="absolute inset-y-0 right-1/2 w-full bg-gray-50 rounded-r-3xl lg:right-72" />
             <svg className="absolute top-8 left-1/2 -ml-3 lg:-right-8 lg:left-auto lg:top-12" width="404" height="392" fill="none" viewBox="0 0 404 392">
@@ -21,7 +21,7 @@ export default function About() {
           </div>
           <div className="relative mx-auto max-w-md px-4 sm:max-w-3xl sm:px-6 lg:px-0 lg:max-w-none lg:py-20">
             <div className="relative pt-64 pb-40 rounded-2xl shadow-xl overflow-hidden">
-              <img className="absolute inset-0 h-full w-full" src="images/me.jpg" alt="" height="400" />
+              <img className="absolute inset-0 h-full w-full" src="images/me.webp" alt="" height="400" />
             </div>
           </div>
         </div>

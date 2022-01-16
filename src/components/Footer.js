@@ -48,7 +48,7 @@ export default function Footer() {
       <div className="max-w-md mx-auto py-12 px-4 sm:max-w-7xl sm:px-6 lg:py-16 lg:px-8 border-t border-blue-gray-200">
         <div className="grid grid-cols-3 grid-flow-col">
           <div className="space-y-8 col-span-1">
-            <img className="inline-block h-14 w-14 rounded-full" src="images/me.jpg" alt="" />
+            <img className="inline-block h-14 w-14 rounded-full" src="images/me.webp" alt="" />
             <p className="text-blue-gray-500 text-base">
               I &hearts; write code.<br />
               Let&apos;s build something amazing together.
