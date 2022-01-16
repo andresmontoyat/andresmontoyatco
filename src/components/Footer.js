@@ -48,14 +48,10 @@ export default function Footer() {
       <div className="max-w-md mx-auto py-12 px-4 sm:max-w-7xl sm:px-6 lg:py-16 lg:px-8 border-t border-blue-gray-200">
         <div className="grid grid-cols-3 grid-flow-col">
           <div className="space-y-8 col-span-1">
-            <img
-              className="h-10"
-              src="https://tailwindui.com/img/logos/workflow-mark.svg?color=blueGray&shade=300"
-              alt="Company name"
-            />
+            <img className="inline-block h-14 w-14 rounded-full" src="images/me.jpg" alt="" />
             <p className="text-blue-gray-500 text-base">
-              Making the world a better place through constructing elegant
-              hierarchies.
+              I &hearts; write code.<br />
+              Let&apos;s build something amazing together.
             </p>
             <div className="flex space-x-6">
               {footerNavigation.social.map((item) => (

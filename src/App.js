@@ -3,8 +3,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faDatabase } from '@fortawesome/free-solid-svg-icons'
 import { faJava, faJenkins, faJs, faAws, faLinux } from '@fortawesome/free-brands-svg-icons'
 
-import Footer from './components/Footer'
+import About from './components/About'
 import Contact from './components/Contact'
+import Footer from './components/Footer'
 
 const features = [
   {
@@ -109,6 +110,7 @@ export default function App() {
           </div>
         </div>
       </section>
+      <About />
       <Contact />
       <Footer />
     </div>
