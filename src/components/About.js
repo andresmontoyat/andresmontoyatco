@@ -1,6 +1,8 @@
 import React from 'react'
+import { Transition } from '@headlessui/react'
 
 export default function About() {
+  const isShowing = true
   const experiencieStart = 2007
   const experiencieYears = new Date().getFullYear() - experiencieStart
   const coffess = 366 * experiencieYears
@@ -21,7 +23,17 @@ export default function About() {
           </div>
           <div className="relative mx-auto max-w-md px-4 sm:max-w-3xl sm:px-6 lg:px-0 lg:max-w-none lg:py-20">
             <div className="relative pt-64 pb-40 rounded-2xl shadow-xl overflow-hidden">
-              <img className="absolute inset-0 h-full w-full" src="images/me.webp" alt="" height="400" />
+              <Transition
+                show={isShowing}
+                enter="transition-opacity duration-75"
+                enterFrom="opacity-0"
+                enterTo="opacity-100"
+                leave="transition-opacity duration-150"
+                leaveFrom="opacity-100"
+                leaveTo="opacity-0"
+              >
+                <img className="absolute inset-0 h-full w-full" src="images/me.webp" alt="" height="400" />
+              </Transition>
             </div>
           </div>
         </div>
