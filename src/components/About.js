@@ -31,7 +31,7 @@ export default function About() {
               </svg>
             </div>
             <div className="relative mx-auto max-w-md px-4 sm:max-w-3xl sm:px-6 lg:px-0 lg:max-w-none lg:py-20">
-              <div className="relative pt-64 pb-40 rounded-2xl shadow-xl overflow-hidden">
+              <div className="relative pt-64 pb-40 sm:pt-40 sm:pb-30 rounded-2xl shadow-xl overflow-hidden">
                 <img className="absolute inset-0 h-full w-full" src="images/me.webp" alt="" height="400" />
               </div>
             </div>
