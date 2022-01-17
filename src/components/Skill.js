@@ -1,12 +1,12 @@
 import React from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faDatabase } from '@fortawesome/free-solid-svg-icons'
-import { faJava, faJenkins, faJs, faAws, faLinux } from '@fortawesome/free-brands-svg-icons'
+import { faDatabase, faCloud } from '@fortawesome/free-solid-svg-icons'
+import { faJava, faJenkins, faJs, faLinux } from '@fortawesome/free-brands-svg-icons'
 
 const features = [
   {
     name: 'Java',
-    description: 'Consequuntur omnis dicta cumque, inventore atque ab dolores aspernatur tempora ab doloremque.',
+    description: 'with more than 15 years developing java applications or platforms. Additional experience in other frameworks such as Spring Framework, Struts, JSF, Play Framework, etc.',
     icon: () => (
       <FontAwesomeIcon icon={faJava} size="2x" />
     )
@@ -14,7 +14,7 @@ const features = [
   {
     name: 'Javascript',
     description:
-    'Omnis, illo delectus? Libero, possimus nulla nemo tenetur adipisci repellat dolore eligendi velit doloribus mollitia.',
+    'with more than 15 years using javascript for different applications or platforms. Some libraries and frameworks used like jQuery, Dojo, NodeJS, ExpressJS, VueJS & ReactJS.',
     icon: () => (
       <FontAwesomeIcon icon={faJs} size="2x" />
     )
@@ -22,7 +22,7 @@ const features = [
   {
     name: 'Linux',
     description:
-    'Corporis quisquam nostrum nulla veniam recusandae temporibus aperiam officia incidunt at distinctio ratione.',
+    'Linux fanboy. I have been using Linux for more than 15 years. I have been using it for development, administration, and hosting of websites.',
     icon: () => (
       <FontAwesomeIcon icon={faLinux} size="2x" />
     )
@@ -30,23 +30,23 @@ const features = [
   {
     name: 'DevOps',
     description:
-    'Corporis quisquam nostrum nulla veniam recusandae temporibus aperiam officia incidunt at distinctio ratione.',
+    'Appasionate about the DevOps Culture. I have experience in the DevOps world and I am always looking for new challenges. . I have experience in Docker, Kubernetes, Jenkins, Gitlab CI, Github Actions, etc.',
     icon: () => (
       <FontAwesomeIcon icon={faJenkins} size="2x" />
     )
   },
   {
-    name: 'AWS',
+    name: 'Cloud',
     description:
-    'Veniam necessitatibus reiciendis fugit explicabo dolorem nihil et omnis assumenda odit? Quisquam unde accusantium.',
+    'Appasionate about the Cloud. I have experience in AWS, Azure, Google Cloud, Digital Ocean, etc.',
     icon: () => (
-      <FontAwesomeIcon icon={faAws} size="2x" />
+      <FontAwesomeIcon icon={faCloud} size="2x" />
     )
   },
   {
     name: 'Databases',
     description:
-    'Veniam necessitatibus reiciendis fugit explicabo dolorem nihil et omnis assumenda odit? Quisquam unde accusantium.',
+    'with more than 15 years using the most popular relational databases such as MySQL, PostgreSQL, Oracle and SQLServer. The NoSQL databases I have used MondoDB, Redis, DynamoDB and Cassandra.',
     icon: () => (
       <FontAwesomeIcon icon={faDatabase} size="2x" />
     )
@@ -90,7 +90,7 @@ export default function Skill() {
             {features.map((feature) => (
               <div key={feature.name}>
                 <dt>
-                  <div className="flex items-center justify-center h-12 w-12 rounded-md bg-blue-500 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 text-white">
+                  <div className="flex items-center justify-center h-12 w-12 rounded-md bg-blue-600 hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600 text-white">
                     <feature.icon className="h-6 w-6" aria-hidden="true" />
                   </div>
                   <p className="mt-5 text-lg leading-6 font-medium text-gray-900">{feature.name}</p>
