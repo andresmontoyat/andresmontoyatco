@@ -12,7 +12,7 @@ export default function App() {
       <Skill />
       <Contact />
       <Footer />
-  <iframe src="https://flypass-mapbox.netlify.app" allow="geolocation 'self' https://andresmontoyat.co"  width="100%" height="400" />
+  <iframe src="http://mapas-andresmontoyat.netlify.app" allow="geolocation"  width="100%" height="400" />
     </div>
   )
 }
