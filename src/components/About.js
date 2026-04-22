@@ -1,92 +1,51 @@
 import React from 'react'
-import { Transition } from '@headlessui/react'
+import { useLanguage } from '../i18n/LanguageContext'
+
+function SectionLabel({ children }) {
+  return (
+    <div className="font-mono text-xs text-brand uppercase tracking-[3px] font-semibold flex items-center gap-3 mb-4">
+      <span className="w-10 h-0.5 bg-brand block"></span>
+      {children}
+    </div>
+  )
+}
 
 export default function About() {
-  const isShowingTransition = true
-  const experiencieStart = 2007
-  const experiencieYears = new Date().getFullYear() - experiencieStart
-  const coffess = 366 * experiencieYears
+  const { t } = useLanguage()
   return (
-    <Transition
-      show={isShowingTransition}
-      enter="transition-opacity duration-75"
-      enterFrom="opacity-0"
-      enterTo="opacity-100"
-      leave="transition-opacity duration-150"
-      leaveFrom="opacity-100"
-      leaveTo="opacity-0"
-    >
-      <div className="relative bg-white py-16 sm:py-24">
-        <div className="lg:mx-auto lg:max-w-7xl lg:px-8 lg:grid lg:grid-cols-2 lg:gap-24 lg:items-start">
-          <div className="relative sm:py-16 lg:py-0">
-            <div aria-hidden="true" className="hidden sm:block lg:absolute lg:inset-y-0 lg:right-0 lg:w-screen">
-              <div className="absolute inset-y-0 right-1/2 w-full bg-gray-50 rounded-r-3xl lg:right-72" />
-              <svg className="absolute top-8 left-1/2 -ml-3 lg:-right-8 lg:left-auto lg:top-12" width="404" height="392" fill="none" viewBox="0 0 404 392">
-                <defs>
-                  <pattern id="02f20b47-fd69-4224-a62a-4c9de5c763f7" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
-                    <rect x="0" y="0" width="4" height="4" className="text-gray-200" fill="currentColor" />
-                  </pattern>
-                </defs>
-                <rect width="404" height="392" fill="url(#02f20b47-fd69-4224-a62a-4c9de5c763f7)" />
-              </svg>
-            </div>
-            <div className="relative mx-auto max-w-md px-4 sm:max-w-3xl sm:px-6 lg:px-0 lg:max-w-none lg:py-20">
-              <div className="relative pt-60 pb-40 rounded-2xl shadow-xl overflow-hidden">
-                <img className="absolute inset-0 h-full w-full" src="images/me.webp" alt="" width="640" height="400" />
-              </div>
-            </div>
+    <section id="about" className="py-20">
+      <div className="max-w-6xl mx-auto px-6">
+        <SectionLabel>{t.about.label}</SectionLabel>
+        <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight mb-4 text-text-primary">{t.about.h2}</h2>
+        <div className="grid lg:grid-cols-5 gap-10 mt-10">
+          <div className="lg:col-span-3 space-y-4 text-text-secondary text-base leading-relaxed">
+            <p dangerouslySetInnerHTML={{ __html: t.about.p1 }} />
+            <p dangerouslySetInnerHTML={{ __html: t.about.p2 }} />
+            <p dangerouslySetInnerHTML={{ __html: t.about.p3 }} />
           </div>
-          <div className="relative mx-auto max-w-md px-4 sm:max-w-3xl sm:px-6 lg:px-0">
-            <div className="pt-12 sm:pt-16 lg:pt-20">
-              <h2 className="text-3xl text-gray-900 font-extrabold tracking-tight sm:text-4xl">
-                Carlos Andr&eacute;s Montoya Tob&oacute;n
-              </h2>
-              <h4 className="text-1xl text-gray-900 font-extrabold tracking-tight sm:text-1xl">
-                Java solution architect and full stack developer and devops advocate
-              </h4>
-              <div className="mt-6 text-gray-500 space-y-6">
-                <p className="text-lg">
-                  Passionate about software development and everything related to technology. I love learning and sharing the knowledge that I have acquired in the last {experiencieYears} years.
-                </p>
-                <p className="text-base leading-7">
-                  I &hearts; to build ideas and enjoy my free time with my best friends while we talk about new technologies.
-                </p>
-                <p className="text-base leading-7">
-                  My specialty is the architecture and development of web applications with Spring Framework.
-                </p>
-              </div>
-            </div>
-            <div className="mt-8 overflow-hidden">
-              <dl className="-mx-8 -mt-8 flex flex-wrap">
-                <div className="flex flex-col px-8 pt-8">
-                  <dt className="order-2 text-base font-medium text-gray-500">
-                    Start
-                  </dt>
-                  <dd className="order-1 text-2xl font-extrabold text-blue-600 sm:text-3xl">
-                    {experiencieStart}
-                  </dd>
-                </div>
-                <div className="flex flex-col px-8 pt-8">
-                  <dt className="order-2 text-base font-medium text-gray-500">
-                    Coffees
-                  </dt>
-                  <dd className="order-1 text-2xl font-extrabold text-blue-600 sm:text-3xl">
-                    {coffess}
-                  </dd>
-                </div>
-                <div className="flex flex-col px-8 pt-8">
-                  <dt className="order-2 text-base font-medium text-gray-500">
-                    Projects
-                  </dt>
-                  <dd className="order-1 text-2xl font-extrabold text-blue-600 sm:text-3xl">
-                    20+
-                  </dd>
-                </div>
-              </dl>
-            </div>
-          </div>
+          <aside className="lg:col-span-2 bg-ink-500 border border-ink-400 rounded-xl p-7">
+            <h3 className="text-sm font-bold mb-4 flex items-center gap-2.5 text-text-primary">
+              <span className="text-brand">◆</span> {t.about.quick}
+            </h3>
+            <ul className="text-sm">
+              <Row k={t.about.loc}  v="Medellín, CO" />
+              <Row k={t.about.role} v={t.about.roleV} />
+              <Row k={t.about.exp}  v={t.about.expV} />
+              <Row k={t.about.lang} v={t.about.langV} />
+              <Row k={t.about.work} v={t.about.workV} last />
+            </ul>
+          </aside>
         </div>
       </div>
-    </Transition>
+    </section>
+  )
+}
+
+function Row({ k, v, last }) {
+  return (
+    <li className={`flex justify-between gap-4 py-2.5 ${last ? '' : 'border-b border-ink-400'}`}>
+      <span className="text-text-secondary">{k}</span>
+      <span className="text-text-primary font-medium text-right">{v}</span>
+    </li>
   )
 }
