@@ -64,6 +64,8 @@ module.exports = {
           from: { opacity: '0', transform: 'translateY(16px)' },
           to:   { opacity: '1', transform: 'translateY(0)' },
         },
+        // NOTE: pulse2 runs infinite — MUST be applied with motion-safe: prefix
+        // in all components: use 'motion-safe:animate-pulse2' never 'animate-pulse2'
         pulse2: {
           '0%,100%': { opacity: '1' },
           '50%':     { opacity: '0.4' },

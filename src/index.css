@@ -47,3 +47,19 @@
     background-size: 32px 32px;
   }
 }
+
+/* ── Accessibility: respect OS Reduce Motion preference ── */
+/* DSGN-03: This rule is the global baseline suppression layer.
+   Component-level animations additionally use the Tailwind
+   motion-safe: variant prefix (e.g., motion-safe:animate-slide-up)
+   so they are suppressed at the utility level too. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
