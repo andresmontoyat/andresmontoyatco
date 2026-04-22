@@ -1,3 +1,19 @@
+---
+gsd_state_version: 1.0
+milestone: v3.4
+milestone_name: milestone
+status: executing
+stopped_at: Completed 01-foundation plan 01 — Vite 6 + React 18 migration
+last_updated: "2026-04-22T17:55:13.339Z"
+last_activity: 2026-04-22
+progress:
+  total_phases: 4
+  completed_phases: 0
+  total_plans: 4
+  completed_plans: 1
+  percent: 0
+---
+
 # Project State
 
 ## Project Reference
@@ -5,20 +21,21 @@
 See: .planning/PROJECT.md (updated 2026-04-21)
 
 **Core value:** The hero section and overall first impression must stop recruiters mid-scroll and make them want to learn more about Carlos.
-**Current focus:** Phase 1 — Foundation
+**Current focus:** Phase 01 — foundation
 
 ## Current Position
 
-Phase: 1 of 4 (Foundation)
-Plan: 0 of TBD in current phase
-Status: Ready to plan
-Last activity: 2026-04-22 — Roadmap created, phases derived from 40 v1 requirements
+Phase: 01 (foundation) — EXECUTING
+Plan: 2 of 4
+Status: Ready to execute
+Last activity: 2026-04-22
 
 Progress: [░░░░░░░░░░] 0%
 
 ## Performance Metrics
 
 **Velocity:**
+
 - Total plans completed: 0
 - Average duration: —
 - Total execution time: 0 hours
@@ -30,10 +47,12 @@ Progress: [░░░░░░░░░░] 0%
 | - | - | - | - |
 
 **Recent Trend:**
+
 - Last 5 plans: —
 - Trend: —
 
 *Updated after each plan completion*
+| Phase 01-foundation P01 | 3 | 3 tasks | 8 files |
 
 ## Accumulated Context
 
@@ -46,6 +65,8 @@ Recent decisions affecting current work:
 - Init: CSS-first animations via IntersectionObserver — no Framer Motion, no Three.js
 - Init: Tailwind v3.4 (not v4 — plugin ecosystem still catching up)
 - Init: Vite 6 replaces CRA/CRACO as build system
+- [Phase 01-foundation]: Configured esbuild.loader=jsx for .js files — avoids mass rename of all components to .jsx
+- [Phase 01-foundation]: Removed FontAwesome with text placeholders in Contact/Footer — Phase 02 redesign replaces these components entirely
 
 ### Pending Todos
 
@@ -58,6 +79,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-22
-Stopped at: Roadmap written — all 40 v1 requirements mapped to 4 phases
+Last session: 2026-04-22T17:55:13.336Z
+Stopped at: Completed 01-foundation plan 01 — Vite 6 + React 18 migration
 Resume file: None

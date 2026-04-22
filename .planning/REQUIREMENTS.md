@@ -9,10 +9,10 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Infrastructure
 
-- [ ] **INFRA-01**: Build system migrated from CRA/CRACO to Vite 6 with working dev server and production build
-- [ ] **INFRA-02**: React upgraded from v17 to v18 with concurrent features available
+- [x] **INFRA-01**: Build system migrated from CRA/CRACO to Vite 6 with working dev server and production build
+- [x] **INFRA-02**: React upgraded from v17 to v18 with concurrent features available
 - [ ] **INFRA-03**: Tailwind CSS upgraded from v2 (postcss7-compat) to v3.4 with JIT mode
-- [ ] **INFRA-04**: Dead dependencies removed (react-router-dom, react-hook-form, axios, all FontAwesome packages, web-vitals)
+- [x] **INFRA-04**: Dead dependencies removed (react-router-dom, react-hook-form, axios, all FontAwesome packages, web-vitals)
 - [ ] **INFRA-05**: Self-hosted fonts via @fontsource replacing Google Fonts CDN
 - [ ] **INFRA-06**: ESLint config fixed with correct plugins and working lint command
 
@@ -115,10 +115,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| INFRA-01 | Phase 1 | Pending |
-| INFRA-02 | Phase 1 | Pending |
+| INFRA-01 | Phase 1 | Complete |
+| INFRA-02 | Phase 1 | Complete |
 | INFRA-03 | Phase 1 | Pending |
-| INFRA-04 | Phase 1 | Pending |
+| INFRA-04 | Phase 1 | Complete |
 | INFRA-05 | Phase 1 | Pending |
 | INFRA-06 | Phase 1 | Pending |
 | DSGN-01 | Phase 1 | Pending |
