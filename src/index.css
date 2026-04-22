@@ -1,3 +1,49 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  :root {
+    /* Surface scale */
+    --color-surface-deepest: theme(colors.ink.950);
+    --color-surface-deep:    theme(colors.ink.900);
+    --color-surface-mid:     theme(colors.ink.800);
+    --color-surface-raised:  theme(colors.ink.700);
+
+    /* Brand */
+    --color-brand:       theme(colors.brand.DEFAULT);
+    --color-brand-light: theme(colors.brand.light);
+    --color-brand-dark:  theme(colors.brand.dark);
+    --color-brand-muted: theme(colors.brand.muted);
+
+    /* Accent */
+    --color-accent:      theme(colors.accent.DEFAULT);
+    --color-accent-light: theme(colors.accent.light);
+
+    /* Text */
+    --color-text-primary:   theme(colors.text.primary);
+    --color-text-secondary: theme(colors.text.secondary);
+    --color-text-muted:     theme(colors.text.muted);
+  }
+
+  html {
+    scroll-behavior: smooth;
+    color-scheme: dark;
+  }
+
+  body {
+    background-color: var(--color-surface-deepest);
+    color: var(--color-text-primary);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+@layer utilities {
+  /* Subtle dot-grid overlay — replaces old neon grid lines */
+  .bg-grid-subtle {
+    background-image:
+      radial-gradient(circle, rgba(108, 99, 255, 0.06) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+}
