@@ -33,7 +33,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 Plans:
 - [x] 01-01-PLAN.md — Vite 6 migration + React 18 upgrade + dead dep removal (INFRA-01, INFRA-02, INFRA-04)
-- [ ] 01-02-PLAN.md — Tailwind v3.4 upgrade + new bold color palette + CSS custom properties (INFRA-03, DSGN-01, DSGN-02, DSGN-04)
+- [x] 01-02-PLAN.md — Tailwind v3.4 upgrade + new bold color palette + CSS custom properties (INFRA-03, DSGN-01, DSGN-02, DSGN-04)
 - [x] 01-03-PLAN.md — ESLint config fix for Vite + react-hooks plugin (INFRA-06) [parallel with 01-02]
 - [ ] 01-04-PLAN.md — Self-hosted @fontsource + prefers-reduced-motion CSS rule (INFRA-05, DSGN-03)
 

@@ -11,17 +11,17 @@ Requirements for initial release. Each maps to roadmap phases.
 
 - [x] **INFRA-01**: Build system migrated from CRA/CRACO to Vite 6 with working dev server and production build
 - [x] **INFRA-02**: React upgraded from v17 to v18 with concurrent features available
-- [ ] **INFRA-03**: Tailwind CSS upgraded from v2 (postcss7-compat) to v3.4 with JIT mode
+- [x] **INFRA-03**: Tailwind CSS upgraded from v2 (postcss7-compat) to v3.4 with JIT mode
 - [x] **INFRA-04**: Dead dependencies removed (react-router-dom, react-hook-form, axios, all FontAwesome packages, web-vitals)
 - [ ] **INFRA-05**: Self-hosted fonts via @fontsource replacing Google Fonts CDN
 - [x] **INFRA-06**: ESLint config fixed with correct plugins and working lint command
 
 ### Design System
 
-- [ ] **DSGN-01**: New bold color palette defined as Tailwind design tokens replacing dated neon theme
-- [ ] **DSGN-02**: Typography scale established with self-hosted font pairing (display + mono)
+- [x] **DSGN-01**: New bold color palette defined as Tailwind design tokens replacing dated neon theme
+- [x] **DSGN-02**: Typography scale established with self-hosted font pairing (display + mono)
 - [ ] **DSGN-03**: Global `prefers-reduced-motion` CSS rules disabling all animations when OS setting is on
-- [ ] **DSGN-04**: CSS custom properties bridging Tailwind tokens for runtime flexibility
+- [x] **DSGN-04**: CSS custom properties bridging Tailwind tokens for runtime flexibility
 
 ### Navigation
 
@@ -117,14 +117,14 @@ Which phases cover which requirements. Updated during roadmap creation.
 |-------------|-------|--------|
 | INFRA-01 | Phase 1 | Complete |
 | INFRA-02 | Phase 1 | Complete |
-| INFRA-03 | Phase 1 | Pending |
+| INFRA-03 | Phase 1 | Complete |
 | INFRA-04 | Phase 1 | Complete |
 | INFRA-05 | Phase 1 | Pending |
 | INFRA-06 | Phase 1 | Complete |
-| DSGN-01 | Phase 1 | Pending |
-| DSGN-02 | Phase 1 | Pending |
+| DSGN-01 | Phase 1 | Complete |
+| DSGN-02 | Phase 1 | Complete |
 | DSGN-03 | Phase 1 | Pending |
-| DSGN-04 | Phase 1 | Pending |
+| DSGN-04 | Phase 1 | Complete |
 | NAV-01 | Phase 2 | Pending |
 | NAV-02 | Phase 2 | Pending |
 | NAV-03 | Phase 2 | Pending |
