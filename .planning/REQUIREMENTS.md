@@ -14,7 +14,7 @@ Requirements for initial release. Each maps to roadmap phases.
 - [ ] **INFRA-03**: Tailwind CSS upgraded from v2 (postcss7-compat) to v3.4 with JIT mode
 - [x] **INFRA-04**: Dead dependencies removed (react-router-dom, react-hook-form, axios, all FontAwesome packages, web-vitals)
 - [ ] **INFRA-05**: Self-hosted fonts via @fontsource replacing Google Fonts CDN
-- [ ] **INFRA-06**: ESLint config fixed with correct plugins and working lint command
+- [x] **INFRA-06**: ESLint config fixed with correct plugins and working lint command
 
 ### Design System
 
@@ -120,7 +120,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | INFRA-03 | Phase 1 | Pending |
 | INFRA-04 | Phase 1 | Complete |
 | INFRA-05 | Phase 1 | Pending |
-| INFRA-06 | Phase 1 | Pending |
+| INFRA-06 | Phase 1 | Complete |
 | DSGN-01 | Phase 1 | Pending |
 | DSGN-02 | Phase 1 | Pending |
 | DSGN-03 | Phase 1 | Pending |
