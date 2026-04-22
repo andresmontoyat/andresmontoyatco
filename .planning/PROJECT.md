@@ -16,6 +16,11 @@ The hero section and overall first impression must stop recruiters mid-scroll an
 - [x] Experience data for 12 job entries with detailed descriptions
 - [x] CV download functionality (EN/ES Word documents)
 - [x] Google Analytics integration (G-4TZJGR3MXR)
+- [x] Modern build toolchain (Vite 6 + React 18 + Tailwind v3.4) — Phase 1
+- [x] Bold design token system (indigo/coral palette, CSS custom properties) — Phase 1
+- [x] Self-hosted fonts (Inter + JetBrains Mono via @fontsource) — Phase 1
+- [x] Accessibility: prefers-reduced-motion support — Phase 1
+- [x] Clean ESLint config with react-hooks enforcement — Phase 1
 
 ### Active
 
@@ -85,4 +90,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-04-21 after initialization*
+*Last updated: 2026-04-22 after Phase 1 completion*
