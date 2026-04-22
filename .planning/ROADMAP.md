@@ -12,7 +12,7 @@ A brownfield redesign of an existing React + Tailwind portfolio site. The work m
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Foundation** - Toolchain migration (CRA → Vite), React 18, Tailwind v3.4, design tokens, and self-hosted fonts
+- [x] **Phase 1: Foundation** - Toolchain migration (CRA → Vite), React 18, Tailwind v3.4, design tokens, and self-hosted fonts (completed 2026-04-22)
 - [ ] **Phase 2: Shell & Hero** - Navigation, scroll behavior, bilingual support, and the bold hero section that validates design direction
 - [ ] **Phase 3: Content & Animations** - About, Skills, Experience timeline, Contact, Footer, and all scroll-triggered animations
 - [ ] **Phase 4: Polish & Performance** - Lighthouse 90+ on mobile, responsive QA, touch targets, and animation smoothness audit
@@ -35,7 +35,7 @@ Plans:
 - [x] 01-01-PLAN.md — Vite 6 migration + React 18 upgrade + dead dep removal (INFRA-01, INFRA-02, INFRA-04)
 - [x] 01-02-PLAN.md — Tailwind v3.4 upgrade + new bold color palette + CSS custom properties (INFRA-03, DSGN-01, DSGN-02, DSGN-04)
 - [x] 01-03-PLAN.md — ESLint config fix for Vite + react-hooks plugin (INFRA-06) [parallel with 01-02]
-- [ ] 01-04-PLAN.md — Self-hosted @fontsource + prefers-reduced-motion CSS rule (INFRA-05, DSGN-03)
+- [x] 01-04-PLAN.md — Self-hosted @fontsource + prefers-reduced-motion CSS rule (INFRA-05, DSGN-03)
 
 ### Phase 2: Shell & Hero
 **Goal**: A recruiter landing on the site sees a bold, animated hero and a functional bilingual navigation — the design direction is locked
@@ -81,7 +81,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 2/4 | In Progress|  |
+| 1. Foundation | 4/4 | Complete   | 2026-04-22 |
 | 2. Shell & Hero | 0/TBD | Not started | - |
 | 3. Content & Animations | 0/TBD | Not started | - |
 | 4. Polish & Performance | 0/TBD | Not started | - |
