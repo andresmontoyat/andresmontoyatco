@@ -53,7 +53,7 @@ Plans:
 Plans:
 - [x] 02-01-PLAN.md — Add nav.menuOpen/menuClose + meta.title/description bilingual translation keys (I18N-01, SEO-04)
 - [x] 02-02-PLAN.md — Synchronous LanguageContext init + html lang/title/meta sync (I18N-02, SEO-04) [parallel with 02-01]
-- [ ] 02-03-PLAN.md — Nav shell: sticky header, logomark, desktop links, language pill, scroll progress bar (NAV-02, NAV-04, I18N-01, I18N-02)
+- [x] 02-03-PLAN.md — Nav shell: sticky header, logomark, desktop links, language pill, scroll progress bar (NAV-02, NAV-04, I18N-01, I18N-02)
 - [ ] 02-04-PLAN.md — Mobile menu portal + useActiveSection hook + scroll-spy active link styling (NAV-01, NAV-03, I18N-01)
 - [ ] 02-05-PLAN.md — Hero rebuild: status badge, char-reveal headline, dual EN/ES CV CTAs, stats grid, 7-step entrance stagger (HERO-01..05, I18N-03) [parallel with 02-03]
 
@@ -89,6 +89,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation | 4/4 | Complete   | 2026-04-22 |
-| 2. Shell & Hero | 2/5 | In Progress|  |
+| 2. Shell & Hero | 3/5 | In Progress|  |
 | 3. Content & Animations | 0/TBD | Not started | - |
 | 4. Polish & Performance | 0/TBD | Not started | - |

@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v3.4
 milestone_name: milestone
 status: executing
-stopped_at: Completed 02-02-PLAN.md
-last_updated: "2026-05-05T22:41:23.825Z"
+stopped_at: Completed 02-03-PLAN.md
+last_updated: "2026-05-05T22:45:11.429Z"
 last_activity: 2026-05-05
 progress:
   total_phases: 4
   completed_phases: 1
   total_plans: 9
-  completed_plans: 6
+  completed_plans: 7
   percent: 0
 ---
 
@@ -26,7 +26,7 @@ See: .planning/PROJECT.md (updated 2026-04-21)
 ## Current Position
 
 Phase: 02 (shell-hero) — EXECUTING
-Plan: 3 of 5
+Plan: 4 of 5
 Status: Ready to execute
 Last activity: 2026-05-05
 
@@ -58,6 +58,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 01-foundation P04 | 63 | 2 tasks | 4 files |
 | Phase 02-shell-hero P01 | 91 | 2 tasks | 1 files |
 | Phase 02-shell-hero P02 | 77 | 1 tasks | 1 files |
+| Phase 02-shell-hero P03 | 91 | 1 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -81,6 +82,8 @@ Recent decisions affecting current work:
 - [Phase 02-shell-hero]: D-04: react-scroll and react-router-dom confirmed absent — already removed in Phase 1 Vite migration
 - [Phase 02-shell-hero]: Sync init via useState(readInitialLang) eliminates first-paint English flash (SEO-04)
 - [Phase 02-shell-hero]: DOM head sync (html lang + title + meta description) via single useEffect([lang]) in LanguageProvider
+- [Phase 02-shell-hero]: ProgressBar uses ref.style.width mutation instead of setState to avoid re-renders on every scroll frame
+- [Phase 02-shell-hero]: NAV-02 smooth scroll wired via existing html{scroll-behavior:smooth} — no JS scroll lib needed
 
 ### Pending Todos
 
@@ -93,6 +96,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-05-05T22:41:23.823Z
-Stopped at: Completed 02-02-PLAN.md
+Last session: 2026-05-05T22:45:11.427Z
+Stopped at: Completed 02-03-PLAN.md
 Resume file: None

@@ -26,9 +26,9 @@ Requirements for initial release. Each maps to roadmap phases.
 ### Navigation
 
 - [ ] **NAV-01**: Mobile hamburger menu with full-screen overlay, body scroll lock, and keyboard accessibility
-- [ ] **NAV-02**: Smooth scroll to anchor sections on nav link click
+- [x] **NAV-02**: Smooth scroll to anchor sections on nav link click
 - [ ] **NAV-03**: Scroll spy highlighting active section in navigation
-- [ ] **NAV-04**: Scroll progress bar at top of page showing scroll position
+- [x] **NAV-04**: Scroll progress bar at top of page showing scroll position
 
 ### Hero
 
@@ -126,9 +126,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | DSGN-03 | Phase 1 | Complete |
 | DSGN-04 | Phase 1 | Complete |
 | NAV-01 | Phase 2 | Pending |
-| NAV-02 | Phase 2 | Pending |
+| NAV-02 | Phase 2 | Complete |
 | NAV-03 | Phase 2 | Pending |
-| NAV-04 | Phase 2 | Pending |
+| NAV-04 | Phase 2 | Complete |
 | HERO-01 | Phase 2 | Pending |
 | HERO-02 | Phase 2 | Pending |
 | HERO-03 | Phase 2 | Pending |
