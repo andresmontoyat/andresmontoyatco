@@ -13,7 +13,7 @@ A brownfield redesign of an existing React + Tailwind portfolio site. The work m
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundation** - Toolchain migration (CRA → Vite), React 18, Tailwind v3.4, design tokens, and self-hosted fonts (completed 2026-04-22)
-- [ ] **Phase 2: Shell & Hero** - Navigation, scroll behavior, bilingual support, and the bold hero section that validates design direction
+- [x] **Phase 2: Shell & Hero** - Navigation, scroll behavior, bilingual support, and the bold hero section that validates design direction (completed 2026-05-05)
 - [ ] **Phase 3: Content & Animations** - About, Skills, Experience timeline, Contact, Footer, and all scroll-triggered animations
 - [ ] **Phase 4: Polish & Performance** - Lighthouse 90+ on mobile, responsive QA, touch targets, and animation smoothness audit
 
@@ -54,7 +54,7 @@ Plans:
 - [x] 02-01-PLAN.md — Add nav.menuOpen/menuClose + meta.title/description bilingual translation keys (I18N-01, SEO-04)
 - [x] 02-02-PLAN.md — Synchronous LanguageContext init + html lang/title/meta sync (I18N-02, SEO-04) [parallel with 02-01]
 - [x] 02-03-PLAN.md — Nav shell: sticky header, logomark, desktop links, language pill, scroll progress bar (NAV-02, NAV-04, I18N-01, I18N-02)
-- [ ] 02-04-PLAN.md — Mobile menu portal + useActiveSection hook + scroll-spy active link styling (NAV-01, NAV-03, I18N-01)
+- [x] 02-04-PLAN.md — Mobile menu portal + useActiveSection hook + scroll-spy active link styling (NAV-01, NAV-03, I18N-01)
 - [x] 02-05-PLAN.md — Hero rebuild: status badge, char-reveal headline, dual EN/ES CV CTAs, stats grid, 7-step entrance stagger (HERO-01..05, I18N-03) [parallel with 02-03]
 
 ### Phase 3: Content & Animations
@@ -89,6 +89,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation | 4/4 | Complete   | 2026-04-22 |
-| 2. Shell & Hero | 4/5 | In Progress|  |
+| 2. Shell & Hero | 5/5 | Complete   | 2026-05-05 |
 | 3. Content & Animations | 0/TBD | Not started | - |
 | 4. Polish & Performance | 0/TBD | Not started | - |

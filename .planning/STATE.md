@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v3.4
 milestone_name: milestone
-status: executing
-stopped_at: Completed 02-05-PLAN.md
-last_updated: "2026-05-05T22:46:27.907Z"
+status: verifying
+stopped_at: Completed 02-04-PLAN.md
+last_updated: "2026-05-05T22:50:59.273Z"
 last_activity: 2026-05-05
 progress:
   total_phases: 4
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 9
-  completed_plans: 8
+  completed_plans: 9
   percent: 0
 ---
 
@@ -27,7 +27,7 @@ See: .planning/PROJECT.md (updated 2026-04-21)
 
 Phase: 02 (shell-hero) — EXECUTING
 Plan: 5 of 5
-Status: Ready to execute
+Status: Phase complete — ready for verification
 Last activity: 2026-05-05
 
 Progress: [░░░░░░░░░░] 0%
@@ -60,6 +60,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 02-shell-hero P02 | 77 | 1 tasks | 1 files |
 | Phase 02-shell-hero P03 | 91 | 1 tasks | 1 files |
 | Phase 02-shell-hero P05 | 18 | 2 tasks | 1 files |
+| Phase 02-shell-hero P04 | 2 | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -88,6 +89,8 @@ Recent decisions affecting current work:
 - [Phase 02-shell-hero]: useCharReveal defined before Hero to satisfy no-use-before-define ESLint rule
 - [Phase 02-shell-hero]: Unicode arrow used in Hero CTAs instead of HTML entity &rarr; to avoid semicolons in JSX text
 - [Phase 02-shell-hero]: Tailwind animate-fade-in and animate-slide-up verified present from Phase 1 — Task 1 no-op
+- [Phase 02-shell-hero]: Portal target = document.body per D-05; avoids z-index stacking conflicts with sticky header
+- [Phase 02-shell-hero]: useActiveSection shared between DesktopNav and MobileMenu — single IntersectionObserver instance, no duplication
 
 ### Pending Todos
 
@@ -100,6 +103,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-05-05T22:46:27.904Z
-Stopped at: Completed 02-05-PLAN.md
+Last session: 2026-05-05T22:50:59.270Z
+Stopped at: Completed 02-04-PLAN.md
 Resume file: None
