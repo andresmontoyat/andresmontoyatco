@@ -36,8 +36,8 @@ Tailwind's default 4px-base scale is the source of truth. The values below are t
 |-----------------|-------|------------------|
 | gap-1 / p-1 | 4px | Icon-to-label gap inside status badge, language pill gap |
 | gap-2 / p-2 | 8px | Button icon gap, nav link hover padding |
-| gap-3 / p-3 | 12px | CTA button row gap |
-| p-3.5 / px-3.5 | 14px | Status badge horizontal padding (existing) |
+| gap-3 / p-3 | 12px | CTA button row gap; CTA button vertical padding (paired with min-h-[44px]) |
+| px-4 | 16px | Status badge horizontal padding |
 | gap-4 / p-4 | 16px | Stats grid column gap, mobile menu item padding |
 | px-6 | 24px | Nav horizontal padding, hero content horizontal padding |
 | py-4 | 16px | Nav vertical padding |
@@ -49,8 +49,8 @@ Tailwind's default 4px-base scale is the source of truth. The values below are t
 
 Exceptions:
 - Nav height results in ~56px (py-4 top+bottom + text line-height). No explicit height token — derived from padding.
-- Touch targets on mobile CTA buttons: minimum 44px height enforced via py-3.5 (14px * 2 + line-height ~16px = 44px). Verify in Phase 4 audit.
-- Scroll progress bar: 3px fixed height — deliberate sub-scale value for visual subtlety (not a spacing token).
+- Touch targets on mobile CTA buttons: minimum 44px height enforced via `min-h-[44px]` explicit utility. Vertical padding is `py-3` (12px); `min-h-[44px]` sets the floor. No reliance on 14px arithmetic.
+- Scroll progress bar: 3px fixed height — deliberate sub-scale value for visual subtlety (not a spacing token; classified as a fixed dimension).
 
 ---
 
@@ -58,23 +58,26 @@ Exceptions:
 
 All sizes follow the Phase 1 scale. Source: tailwind.config.js font families + Tailwind default size scale.
 
-| Role | Size (px) | Tailwind Class | Font | Weight | Line Height | Usage |
-|------|-----------|----------------|------|--------|-------------|-------|
-| Display — h1 mobile | 36px | text-4xl | Inter | 800 (extrabold) | 1 (leading-none) | Hero h1 on screens < 640px |
-| Display — h1 tablet | 48px | sm:text-5xl | Inter | 800 (extrabold) | 1 (leading-none) | Hero h1 on 640px–1024px |
-| Display — h1 desktop | 60px | lg:text-6xl | Inter | 800 (extrabold) | 1 (leading-none) | Hero h1 on 1024px+ |
-| Heading | 30px | text-3xl | Inter | 800 (extrabold) | 1 | Stats numbers (num value in Stat) |
-| Body — large | 18px | sm:text-lg | Inter | 400 (regular) | 1.625 (leading-relaxed) | Hero lead paragraph on 640px+ |
-| Body — base | 16px | text-base | Inter | 400 (regular) | 1.625 (leading-relaxed) | Hero lead paragraph mobile |
-| Label | 14px | text-sm | Inter | 600 (semibold) | 1.25 | Nav links, CTA button text |
-| Label — small | 12px | text-xs | JetBrains Mono | 600 (semibold) | 1.25 | Status badge text, stats label, language pill |
+Phase 1 loads Inter weights 400/500/600/700/800 and JetBrains Mono weights 400/500/600 via @fontsource (locked). Phase 2 actively uses **2 weights only: 400 (regular) and 800 (extrabold)**. No component in Phase 2 renders weight 500, 600, or 700.
 
-Tracking exceptions:
-- Hero h1: `tracking-tighter` (-0.05em) — locked in existing component, retained.
-- Stats label: `tracking-widest` (0.1em) uppercase — retained for visual separation.
-- Nav logomark: `tracking-tight` (-0.025em), JetBrains Mono weight 600.
+| Role | Size | Tailwind Class | Font | Weight | Line Height | Usage |
+|------|------|----------------|------|--------|-------------|-------|
+| Display — h1 | 36px / 48px / 60px | `text-4xl sm:text-5xl lg:text-6xl` | Inter | 800 (extrabold) | 1 (leading-none) | Hero h1 — responsive variants are one role |
+| Heading | 30px | `text-3xl` | Inter | 800 (extrabold) | 1 | Stats numbers (Stat num value), section headings |
+| Body | 16px / 18px | `text-base sm:text-lg` | Inter | 400 (regular) | 1.625 (leading-relaxed) | Hero lead paragraph — `sm:text-lg` is a responsive variant of the same role |
+| Label / Mono | 12px | `text-xs` | JetBrains Mono | 400 (regular) | 1.25 | Status badge text, stats label, language pill, nav logomark |
 
-Declared weight set (Phase 1 locked): 400, 500, 600, 700, 800. Phase 2 actively uses 400, 600, 800.
+Tracking exceptions (retained from existing component, not changed):
+- Hero h1: `tracking-tighter` (-0.05em)
+- Stats label: `tracking-widest` (0.1em) uppercase
+- Nav logomark: `tracking-tight` (-0.025em)
+
+Weight reassignments from previous draft:
+- Nav links: weight 400 (was 600)
+- CTA buttons: weight 800 (was 600)
+- h1 lines: weight 800 (unchanged)
+- Body / lead: weight 400 (unchanged)
+- Label/mono: weight 400 (was 600)
 
 ---
 
@@ -82,20 +85,25 @@ Declared weight set (Phase 1 locked): 400, 500, 600, 700, 800. Phase 2 actively 
 
 Source: tailwind.config.js tokens. All Phase 1 locked.
 
+**Primary visual anchor:** The gradient char-reveal of h1b ("backend systems" / "backend escalables") is the focal element of the hero. All other entrance animations are timed to direct attention toward this element.
+
 | Role | Token | Hex | Usage |
 |------|-------|-----|-------|
 | Dominant (60%) | ink-950 | #0D0D1A | Page background, body background |
-| Secondary — deep (30%) | ink-900 | #12121F | Nav backdrop (bg-ink-900 / bg-opacity-70) |
-| Secondary — mid | ink-800 | #1A1A2E | Card surfaces, stats grid background layer |
-| Secondary — raised | ink-700 | #1F1F3A | Stats grid gradient end, elevated surfaces |
-| Secondary — elevated | ink-500 | #2D2D5A | Status badge background, language pill background, stats grid start |
+| Secondary (30%) | ink-900 / ink-800 / ink-700 / ink-500 | see below | Surface layer breakdown below |
 | Brand accent (10%) | brand / #6C63FF | #6C63FF | Reserved — see list below |
-| Coral accent | accent / #FF6B6B | #FF6B6B | Reserved — see list below (combined with brand in gradient) |
+| Coral accent | accent / #FF6B6B | #FF6B6B | Reserved — see list below (gradient endpoint only) |
 | Text — primary | text-primary | #F0F0FF | Hero h1a/h1c, nav logomark, mobile menu links |
 | Text — secondary | text-secondary | #A0A0C0 | Hero lead, nav links (default state), stats labels, badge text |
 | Text — muted | text-muted | #606080 | Supplementary labels, dividers |
 | Text — inverse | text-inverse | #0D0D1A | CTA primary button text (on gradient background) |
 | Destructive | accent.dark | #E64444 | Not used in Phase 2 |
+
+**Secondary (30%) sub-allocation:**
+- `ink-900` — nav backdrop surface (`bg-ink-900/70`) and mobile overlay base
+- `ink-800` — card surfaces, stats grid background layer
+- `ink-700` — stats grid gradient endpoint, elevated surfaces
+- `ink-500` — badge/pill surfaces (status badge bg, language pill bg)
 
 **Brand accent (#6C63FF) reserved for these specific elements only:**
 1. Nav active link text color (scroll-spy active state)
@@ -118,27 +126,27 @@ Source: tailwind.config.js tokens. All Phase 1 locked.
 
 All copy pulled directly from src/i18n/translations.js.
 
-| Element | EN Copy | ES Copy |
-|---------|---------|---------|
-| Status badge | "Available for new opportunities" | "Disponible para nuevas oportunidades" |
-| Hero h1a (plain) | "Building scalable" | "Construyendo sistemas" |
-| Hero h1b (gradient, char-reveal) | "backend systems" | "backend escalables" |
-| Hero h1c (plain) | "that matter." | "que importan." |
-| Hero lead | "Solutions Architect and Senior Backend Engineer with 18+ years designing Java and Spring-based platforms across fintech, retail, telecom and transportation." | "Arquitecto de Soluciones e Ingeniero Backend Senior con +18 años diseñando plataformas en Java y Spring para fintech, retail, telecomunicaciones y transporte." |
-| Primary CTA (contact) | "Get in touch →" | "Contáctame →" |
-| Secondary CTA — EN CV | "Download CV (EN)" | "Descargar CV (EN)" |
-| Secondary CTA — ES CV | "Download CV (ES)" | "Descargar CV (ES)" |
-| Nav: About | "About" | "Sobre mí" |
-| Nav: Skills | "Skills" | "Skills" |
-| Nav: Experience | "Experience" | "Experiencia" |
-| Nav: Contact | "Contact" | "Contacto" |
-| Nav logomark | "</cam>" | "</cam>" (same both languages) |
-| Language switcher labels | "EN" / "ES" | "EN" / "ES" (same both languages) |
-| Mobile menu close button | "Close" (aria-label only; visually an X icon) | "Cerrar" (aria-label only) |
-| Stats: years label | "Years" | "Años" |
-| Stats: team label | "Team led" | "Equipo liderado" |
-| Stats: companies label | "Companies" | "Empresas" |
-| Stats: industries label | "Industries" | "Industrias" |
+| Element | EN Copy | ES Copy | Notes |
+|---------|---------|---------|-------|
+| Status badge | "Available for new opportunities" | "Disponible para nuevas oportunidades" | |
+| Hero h1a (plain) | "Building scalable" | "Construyendo sistemas" | |
+| Hero h1b (gradient, char-reveal) | "backend systems" | "backend escalables" | |
+| Hero h1c (plain) | "that matter." | "que importan." | |
+| Hero lead | "Solutions Architect and Senior Backend Engineer with 18+ years designing Java and Spring-based platforms across fintech, retail, telecom and transportation." | "Arquitecto de Soluciones e Ingeniero Backend Senior con +18 años diseñando plataformas en Java y Spring para fintech, retail, telecomunicaciones y transporte." | |
+| Primary CTA (contact) | "Get in touch →" | "Contáctame →" | `translations.js` key `cta1` contains "Get in touch" (no arrow). The `→` is hardcoded in JSX as `{t.hero.cta1} →` — do NOT add the arrow to the translation string. |
+| Secondary CTA — EN CV | "Download CV (EN)" | "Download CV (EN)" | Hardcoded — not translated. Label identifies document language. |
+| Secondary CTA — ES CV | "Descargar CV (ES)" | "Descargar CV (ES)" | Hardcoded — not translated. Always in Spanish regardless of active lang. |
+| Nav: About | "About" | "Sobre mí" | |
+| Nav: Skills | "Skills" | "Skills" | |
+| Nav: Experience | "Experience" | "Experiencia" | |
+| Nav: Contact | "Contact" | "Contacto" | |
+| Nav logomark | "</cam>" | "</cam>" | Same both languages |
+| Language switcher labels | "EN" / "ES" | "EN" / "ES" | Same both languages |
+| Mobile menu close button | "Close" (aria-label only; visually an X icon) | "Cerrar" (aria-label only) | |
+| Stats: years label | "Years" | "Años" | |
+| Stats: team label | "Team led" | "Equipo liderado" | |
+| Stats: companies label | "Companies" | "Empresas" | |
+| Stats: industries label | "Industries" | "Industrias" | |
 
 Empty state: Not applicable in Phase 2 (hero and nav have no empty state).
 Error state: Not applicable in Phase 2 (no async operations).
@@ -146,7 +154,7 @@ Destructive actions: None in Phase 2.
 
 **CV download button design decision:** Two separate buttons side-by-side, not a single button with a dropdown menu.
 - Button 1: "Download CV (EN)" — downloads CV_Carlos_Montoya_EN.docx
-- Button 2: "Download CV (ES)" — downloads CV_Carlos_Montoya_ES.docx
+- Button 2: "Descargar CV (ES)" — downloads CV_Carlos_Montoya_ES.docx
 - Both buttons always visible in both language modes (not language-conditional).
 - Replace the existing single `t.hero.cta2` button with this two-button pattern.
 
@@ -260,7 +268,7 @@ style={{ animationFillMode: 'forwards', animationDelay: 'Xms' }}
 
 **Overlay content layout:**
 - Full-screen flex column, centered vertically and horizontally
-- Nav links: stacked vertically, `text-2xl font-semibold text-text-primary`, gap-8 between items
+- Nav links: stacked vertically, `text-2xl font-extrabold text-text-primary`, gap-8 between items
 - Language switcher: same pill component as desktop, placed above nav links, `mb-10`
 - No secondary content (no social links, no CV download in mobile menu)
 
@@ -288,8 +296,8 @@ style={{ animationFillMode: 'forwards', animationDelay: 'Xms' }}
 **State:** `const [activeSection, setActiveSection] = useState('')` in Nav component.
 
 **Active link style:**
-- Default: `text-text-secondary`
-- Active: `text-brand border-b-2 border-brand pb-0.5` (2px border, 2px bottom padding to offset border from text baseline)
+- Default: `text-text-secondary font-normal` (weight 400)
+- Active: `text-brand font-normal border-b-2 border-brand pb-0.5` (weight 400, 2px border, 2px bottom padding to offset border from text baseline)
 - Transition: `transition-colors duration-200` on the `<a>` element
 
 **Edge case — page top (above #about):** When `activeSection === ''`, no nav link is highlighted. This is the correct state when the hero is in view.
@@ -334,7 +342,7 @@ const [lang, setLangState] = useState(
 ```
 This eliminates the flash of English content before the stored language loads.
 
-**Active state styling:** Active pill button: `bg-brand-gradient text-ink-900`. Inactive: `text-text-secondary`. Transition: `transition-colors duration-150`.
+**Active state styling:** Active pill button: `bg-brand-gradient text-ink-900 font-extrabold`. Inactive: `text-text-secondary font-normal`. Transition: `transition-colors duration-150`.
 
 ---
 
@@ -354,11 +362,17 @@ This eliminates the flash of English content before the stored language loads.
 - `href="/CV_Carlos_Montoya_EN.docx"` `download`
 - Label: "Download CV (EN)"
 - Style: `border border-ink-400 hover:border-brand hover:text-brand` (ghost style — same as existing secondary CTA)
+- Touch target: `min-h-[44px] py-3 px-4`
 
 **ES CV button:**
 - `href="/CV_Carlos_Montoya_ES.docx"` `download`
 - Label: "Descargar CV (ES)" — always in Spanish regardless of active language (identifies the language of the document)
 - Style: same ghost style as EN button
+- Touch target: `min-h-[44px] py-3 px-4`
+
+**Primary CTA button:**
+- Touch target: `min-h-[44px] py-3 px-6`
+- Weight: 800 (extrabold)
 
 **Both buttons are always visible** regardless of active language. This gives recruiters who speak either language immediate access.
 
