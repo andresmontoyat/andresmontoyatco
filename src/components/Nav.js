@@ -1,19 +1,47 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { useLanguage } from '../i18n/LanguageContext'
+import useActiveSection from '../hooks/useActiveSection'
+
+const SECTION_IDS = ['about', 'skills', 'experience', 'contact']
 
 export default function Nav() {
   const { lang, setLang, t } = useLanguage()
+  const [menuOpen, setMenuOpen] = useState(false)
+  const activeSection = useActiveSection(SECTION_IDS)
 
   return (
     <header className="sticky top-0 z-50 backdrop-blur-md bg-ink-900/70 border-b border-ink-600">
       <ProgressBar />
       <div className="max-w-6xl mx-auto flex items-center justify-between px-6 py-4">
         <Logomark />
-        <DesktopNav t={t} />
+        <DesktopNav t={t} activeSection={activeSection} />
         <div className="hidden md:flex">
           <LangPill lang={lang} setLang={setLang} />
         </div>
+        <button
+          type="button"
+          onClick={() => setMenuOpen(true)}
+          className="md:hidden inline-flex items-center justify-center w-11 h-11 text-text-primary"
+          aria-label={t.nav.menuOpen}
+          aria-expanded={menuOpen}
+          aria-controls="mobile-menu"
+        >
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+            <line x1="4" y1="7" x2="20" y2="7" />
+            <line x1="4" y1="12" x2="20" y2="12" />
+            <line x1="4" y1="17" x2="20" y2="17" />
+          </svg>
+        </button>
       </div>
+      <MobileMenu
+        open={menuOpen}
+        onClose={() => setMenuOpen(false)}
+        t={t}
+        lang={lang}
+        setLang={setLang}
+        activeSection={activeSection}
+      />
     </header>
   )
 }
@@ -29,24 +57,26 @@ function Logomark() {
   )
 }
 
-function DesktopNav({ t }) {
+function DesktopNav({ t, activeSection }) {
   const links = [
-    { href: '#about', label: t.nav.about },
-    { href: '#skills', label: t.nav.skills },
-    { href: '#experience', label: t.nav.experience },
-    { href: '#contact', label: t.nav.contact },
+    { id: 'about', label: t.nav.about },
+    { id: 'skills', label: t.nav.skills },
+    { id: 'experience', label: t.nav.experience },
+    { id: 'contact', label: t.nav.contact },
   ]
   return (
     <nav className="hidden md:flex gap-7 text-xs font-mono">
-      {links.map((l) => (
-        <a
-          key={l.href}
-          href={l.href}
-          className="text-text-secondary font-normal hover:text-brand transition-colors duration-200"
-        >
-          {l.label}
-        </a>
-      ))}
+      {links.map((l) => {
+        const isActive = activeSection === l.id
+        const cls = isActive
+          ? 'text-brand font-normal border-b-2 border-brand pb-0.5 transition-colors duration-200'
+          : 'text-text-secondary font-normal hover:text-brand transition-colors duration-200'
+        return (
+          <a key={l.id} href={`#${l.id}`} className={cls}>
+            {l.label}
+          </a>
+        )
+      })}
     </nav>
   )
 }
@@ -118,4 +148,73 @@ function ProgressBar() {
       />
     </div>
   )
+}
+
+function MobileMenu({ open, onClose, t, lang, setLang, activeSection }) {
+  useEffect(() => {
+    if (typeof document === 'undefined') return undefined
+    document.body.style.overflow = open ? 'hidden' : ''
+    function onKey(e) {
+      if (e.key === 'Escape') onClose()
+    }
+    if (open) document.addEventListener('keydown', onKey)
+    return () => {
+      document.removeEventListener('keydown', onKey)
+      document.body.style.overflow = ''
+    }
+  }, [open, onClose])
+
+  if (typeof document === 'undefined') return null
+
+  const links = [
+    { id: 'about', label: t.nav.about },
+    { id: 'skills', label: t.nav.skills },
+    { id: 'experience', label: t.nav.experience },
+    { id: 'contact', label: t.nav.contact },
+  ]
+
+  const overlay = (
+    <div
+      id="mobile-menu"
+      role="dialog"
+      aria-modal="true"
+      aria-hidden={!open}
+      className={`fixed inset-0 z-[100] bg-ink-950/95 transition-opacity duration-200 md:hidden ${open ? 'opacity-100' : 'opacity-0 pointer-events-none invisible'}`}
+    >
+      <button
+        type="button"
+        onClick={onClose}
+        className="absolute top-5 right-6 inline-flex items-center justify-center w-11 h-11 text-text-secondary hover:text-text-primary transition-colors"
+        aria-label={t.nav.menuClose}
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+          <line x1="6" y1="6" x2="18" y2="18" />
+          <line x1="18" y1="6" x2="6" y2="18" />
+        </svg>
+      </button>
+      <div className="h-full flex flex-col items-center justify-center gap-8 px-6">
+        <div className="mb-10">
+          <LangPill lang={lang} setLang={setLang} />
+        </div>
+        {links.map((l) => {
+          const isActive = activeSection === l.id
+          const cls = isActive
+            ? 'text-2xl font-extrabold text-brand border-b-2 border-brand pb-0.5'
+            : 'text-2xl font-extrabold text-text-primary'
+          return (
+            <a
+              key={l.id}
+              href={`#${l.id}`}
+              onClick={onClose}
+              className={cls}
+            >
+              {l.label}
+            </a>
+          )
+        })}
+      </div>
+    </div>
+  )
+
+  return createPortal(overlay, document.body)
 }
