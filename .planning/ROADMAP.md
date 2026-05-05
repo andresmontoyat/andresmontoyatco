@@ -47,8 +47,15 @@ Plans:
   3. Clicking a nav link smooth-scrolls to the target section and the nav highlights the active section as the user scrolls
   4. Switching from EN to ES (or back) via the language switcher updates all visible text instantly and the choice persists after page reload
   5. CV download buttons offer both the EN and ES Word documents for download
-**Plans**: TBD
+**Plans**: 5 plans
 **UI hint**: yes
+
+Plans:
+- [ ] 02-01-PLAN.md — Add nav.menuOpen/menuClose + meta.title/description bilingual translation keys (I18N-01, SEO-04)
+- [ ] 02-02-PLAN.md — Synchronous LanguageContext init + html lang/title/meta sync (I18N-02, SEO-04) [parallel with 02-01]
+- [ ] 02-03-PLAN.md — Nav shell: sticky header, logomark, desktop links, language pill, scroll progress bar (NAV-02, NAV-04, I18N-01, I18N-02)
+- [ ] 02-04-PLAN.md — Mobile menu portal + useActiveSection hook + scroll-spy active link styling (NAV-01, NAV-03, I18N-01)
+- [ ] 02-05-PLAN.md — Hero rebuild: status badge, char-reveal headline, dual EN/ES CV CTAs, stats grid, 7-step entrance stagger (HERO-01..05, I18N-03) [parallel with 02-03]
 
 ### Phase 3: Content & Animations
 **Goal**: The full portfolio story is told — About, Skills, Experience, Contact, and Footer are complete and animated
@@ -82,6 +89,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation | 4/4 | Complete   | 2026-04-22 |
-| 2. Shell & Hero | 0/TBD | Not started | - |
+| 2. Shell & Hero | 0/5 | Planned | - |
 | 3. Content & Animations | 0/TBD | Not started | - |
 | 4. Polish & Performance | 0/TBD | Not started | - |
