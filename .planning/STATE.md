@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v3.4
 milestone_name: milestone
-status: verifying
-stopped_at: Phase 2 context gathered
-last_updated: "2026-05-05T19:31:40.930Z"
-last_activity: 2026-04-22
+status: executing
+stopped_at: Completed 02-02-PLAN.md
+last_updated: "2026-05-05T22:41:23.825Z"
+last_activity: 2026-05-05
 progress:
   total_phases: 4
   completed_phases: 1
-  total_plans: 4
-  completed_plans: 4
+  total_plans: 9
+  completed_plans: 6
   percent: 0
 ---
 
@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-04-21)
 
 **Core value:** The hero section and overall first impression must stop recruiters mid-scroll and make them want to learn more about Carlos.
-**Current focus:** Phase 01 — foundation
+**Current focus:** Phase 02 — shell-hero
 
 ## Current Position
 
-Phase: 2
-Plan: Not started
-Status: Phase complete — ready for verification
-Last activity: 2026-04-22
+Phase: 02 (shell-hero) — EXECUTING
+Plan: 3 of 5
+Status: Ready to execute
+Last activity: 2026-05-05
 
 Progress: [░░░░░░░░░░] 0%
 
@@ -56,6 +56,8 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 01-foundation P03 | 8 | 1 tasks | 3 files |
 | Phase 01-foundation P02 | 106 | 2 tasks | 5 files |
 | Phase 01-foundation P04 | 63 | 2 tasks | 4 files |
+| Phase 02-shell-hero P01 | 91 | 2 tasks | 1 files |
+| Phase 02-shell-hero P02 | 77 | 1 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -75,6 +77,10 @@ Recent decisions affecting current work:
 - [Phase 01-foundation]: Bold indigo/coral palette (#6C63FF brand, #FF6B6B accent) replaces dated neon cyan — CSS custom properties bridge Tailwind tokens for runtime flexibility
 - [Phase 01-foundation]: @fontsource weight selection: Inter 400/500/600/700/800 and JetBrains Mono 400/500/600 — only weights used by design system
 - [Phase 01-foundation]: pulse2 motion-safe note added in tailwind.config.js to enforce motion-safe: prefix for infinite animations in Phase 2
+- [Phase 02-shell-hero]: EN meta.title/description strings mirror index.html exactly — no first-paint churn for English users
+- [Phase 02-shell-hero]: D-04: react-scroll and react-router-dom confirmed absent — already removed in Phase 1 Vite migration
+- [Phase 02-shell-hero]: Sync init via useState(readInitialLang) eliminates first-paint English flash (SEO-04)
+- [Phase 02-shell-hero]: DOM head sync (html lang + title + meta description) via single useEffect([lang]) in LanguageProvider
 
 ### Pending Todos
 
@@ -87,6 +93,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-05-05T19:31:40.927Z
-Stopped at: Phase 2 context gathered
-Resume file: .planning/phases/02-shell-hero/02-CONTEXT.md
+Last session: 2026-05-05T22:41:23.823Z
+Stopped at: Completed 02-02-PLAN.md
+Resume file: None

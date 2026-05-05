@@ -60,12 +60,12 @@ Requirements for initial release. Each maps to roadmap phases.
 - [ ] **SEO-01**: Open Graph meta tags for rich link previews on social media and messaging apps
 - [ ] **SEO-02**: Correct GA measurement ID (G-4TZJGR3MXR) replacing wrong current ID
 - [ ] **SEO-03**: Lighthouse Performance score 90+ on mobile with throttling
-- [ ] **SEO-04**: i18n language flash fixed via synchronous localStorage read (lazy useState init)
+- [x] **SEO-04**: i18n language flash fixed via synchronous localStorage read (lazy useState init)
 
 ### Bilingual
 
-- [ ] **I18N-01**: Full bilingual EN/ES support maintained across all redesigned sections
-- [ ] **I18N-02**: Language switcher in navigation with localStorage persistence
+- [x] **I18N-01**: Full bilingual EN/ES support maintained across all redesigned sections
+- [x] **I18N-02**: Language switcher in navigation with localStorage persistence
 - [ ] **I18N-03**: CV download available in both languages (existing .docx files)
 
 ### Responsive
@@ -134,10 +134,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | HERO-03 | Phase 2 | Pending |
 | HERO-04 | Phase 2 | Pending |
 | HERO-05 | Phase 2 | Pending |
-| I18N-01 | Phase 2 | Pending |
-| I18N-02 | Phase 2 | Pending |
+| I18N-01 | Phase 2 | Complete |
+| I18N-02 | Phase 2 | Complete |
 | I18N-03 | Phase 2 | Pending |
-| SEO-04 | Phase 2 | Pending |
+| SEO-04 | Phase 2 | Complete |
 | CONT-01 | Phase 3 | Pending |
 | CONT-02 | Phase 3 | Pending |
 | CONT-03 | Phase 3 | Pending |
