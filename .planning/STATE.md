@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v3.4
 milestone_name: milestone
 status: executing
-stopped_at: Completed 02-03-PLAN.md
-last_updated: "2026-05-05T22:45:11.429Z"
+stopped_at: Completed 02-05-PLAN.md
+last_updated: "2026-05-05T22:46:27.907Z"
 last_activity: 2026-05-05
 progress:
   total_phases: 4
   completed_phases: 1
   total_plans: 9
-  completed_plans: 7
+  completed_plans: 8
   percent: 0
 ---
 
@@ -26,7 +26,7 @@ See: .planning/PROJECT.md (updated 2026-04-21)
 ## Current Position
 
 Phase: 02 (shell-hero) — EXECUTING
-Plan: 4 of 5
+Plan: 5 of 5
 Status: Ready to execute
 Last activity: 2026-05-05
 
@@ -59,6 +59,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 02-shell-hero P01 | 91 | 2 tasks | 1 files |
 | Phase 02-shell-hero P02 | 77 | 1 tasks | 1 files |
 | Phase 02-shell-hero P03 | 91 | 1 tasks | 1 files |
+| Phase 02-shell-hero P05 | 18 | 2 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -84,6 +85,9 @@ Recent decisions affecting current work:
 - [Phase 02-shell-hero]: DOM head sync (html lang + title + meta description) via single useEffect([lang]) in LanguageProvider
 - [Phase 02-shell-hero]: ProgressBar uses ref.style.width mutation instead of setState to avoid re-renders on every scroll frame
 - [Phase 02-shell-hero]: NAV-02 smooth scroll wired via existing html{scroll-behavior:smooth} — no JS scroll lib needed
+- [Phase 02-shell-hero]: useCharReveal defined before Hero to satisfy no-use-before-define ESLint rule
+- [Phase 02-shell-hero]: Unicode arrow used in Hero CTAs instead of HTML entity &rarr; to avoid semicolons in JSX text
+- [Phase 02-shell-hero]: Tailwind animate-fade-in and animate-slide-up verified present from Phase 1 — Task 1 no-op
 
 ### Pending Todos
 
@@ -96,6 +100,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-05-05T22:45:11.427Z
-Stopped at: Completed 02-03-PLAN.md
+Last session: 2026-05-05T22:46:27.904Z
+Stopped at: Completed 02-05-PLAN.md
 Resume file: None

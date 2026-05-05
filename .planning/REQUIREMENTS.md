@@ -32,11 +32,11 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Hero
 
-- [ ] **HERO-01**: Bold hero section with name, role, and professional tagline in both languages
-- [ ] **HERO-02**: Staggered CSS entrance animation sequence (badge, headline, lead text, CTAs, stats)
-- [ ] **HERO-03**: Ambient animated background effect (gradient, particles, or geometric shapes)
-- [ ] **HERO-04**: Character-by-character text reveal animation for name or title
-- [ ] **HERO-05**: Call-to-action buttons (CV download, contact) prominently placed
+- [x] **HERO-01**: Bold hero section with name, role, and professional tagline in both languages
+- [x] **HERO-02**: Staggered CSS entrance animation sequence (badge, headline, lead text, CTAs, stats)
+- [x] **HERO-03**: Ambient animated background effect (gradient, particles, or geometric shapes)
+- [x] **HERO-04**: Character-by-character text reveal animation for name or title
+- [x] **HERO-05**: Call-to-action buttons (CV download, contact) prominently placed
 
 ### Content Sections
 
@@ -66,7 +66,7 @@ Requirements for initial release. Each maps to roadmap phases.
 
 - [x] **I18N-01**: Full bilingual EN/ES support maintained across all redesigned sections
 - [x] **I18N-02**: Language switcher in navigation with localStorage persistence
-- [ ] **I18N-03**: CV download available in both languages (existing .docx files)
+- [x] **I18N-03**: CV download available in both languages (existing .docx files)
 
 ### Responsive
 
@@ -129,14 +129,14 @@ Which phases cover which requirements. Updated during roadmap creation.
 | NAV-02 | Phase 2 | Complete |
 | NAV-03 | Phase 2 | Pending |
 | NAV-04 | Phase 2 | Complete |
-| HERO-01 | Phase 2 | Pending |
-| HERO-02 | Phase 2 | Pending |
-| HERO-03 | Phase 2 | Pending |
-| HERO-04 | Phase 2 | Pending |
-| HERO-05 | Phase 2 | Pending |
+| HERO-01 | Phase 2 | Complete |
+| HERO-02 | Phase 2 | Complete |
+| HERO-03 | Phase 2 | Complete |
+| HERO-04 | Phase 2 | Complete |
+| HERO-05 | Phase 2 | Complete |
 | I18N-01 | Phase 2 | Complete |
 | I18N-02 | Phase 2 | Complete |
-| I18N-03 | Phase 2 | Pending |
+| I18N-03 | Phase 2 | Complete |
 | SEO-04 | Phase 2 | Complete |
 | CONT-01 | Phase 3 | Pending |
 | CONT-02 | Phase 3 | Pending |
