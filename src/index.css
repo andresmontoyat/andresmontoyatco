@@ -46,6 +46,28 @@
       radial-gradient(circle, rgba(108, 99, 255, 0.06) 1px, transparent 1px);
     background-size: 32px 32px;
   }
+
+  /* Phase 3: scroll-triggered entrance — used by useInView hook */
+  .animate-on-scroll {
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 700ms ease-out, transform 700ms ease-out;
+  }
+
+  .animate-on-scroll.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Phase 3: reduced-motion override for animate-on-scroll
+   Component-level guard. Additive to the global rule below. */
+@media (prefers-reduced-motion: reduce) {
+  .animate-on-scroll {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
 }
 
 /* ── Accessibility: respect OS Reduce Motion preference ── */
