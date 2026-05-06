@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v3.4
 milestone_name: milestone
 status: executing
-stopped_at: Completed 03-06-PLAN.md
-last_updated: "2026-05-06T04:07:49.806Z"
+stopped_at: Completed 03-content-animations-02-PLAN.md
+last_updated: "2026-05-06T04:07:58.774Z"
 last_activity: 2026-05-06
 progress:
   total_phases: 4
@@ -100,6 +100,8 @@ Recent decisions affecting current work:
 - [Phase 03]: Static OG fallbacks in index.html default to EN copy so non-JS crawlers see correct content before JS hydration
 - [Phase 03]: setMeta helper scoped inside useEffect (not module-level) — keeps API surface clean, no unnecessary exports
 - [Phase 03]: GA G-4TZJGR3MXR verified intact in index.html (D-18) — no code change required
+- [Phase 03-content-animations]: useInView unobserves after first fire — animation plays once per session (ANIM-02)
+- [Phase 03-content-animations]: SectionLabel uses font-extrabold (800) per Phase 3 type contract: only 400 and 800 weights active
 
 ### Pending Todos
 
@@ -112,6 +114,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-05-06T04:07:42.504Z
-Stopped at: Completed 03-06-PLAN.md
+Last session: 2026-05-06T04:07:58.770Z
+Stopped at: Completed 03-content-animations-02-PLAN.md
 Resume file: None
