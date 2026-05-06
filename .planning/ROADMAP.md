@@ -71,12 +71,12 @@ Plans:
 **UI hint**: yes
 
 Plans:
-- [ ] 03-01-PLAN.md — Translation keys (t.skills.categories, t.exp.expand/collapse) + tech:[] field on 12 EXPERIENCE entries (CONT-02, CONT-04, CONT-05)
+- [x] 03-01-PLAN.md — Translation keys (t.skills.categories, t.exp.expand/collapse) + tech:[] field on 12 EXPERIENCE entries (CONT-02, CONT-04, CONT-05)
 - [ ] 03-02-PLAN.md — Animation primitives: useInView hook + .animate-on-scroll CSS + shared SectionLabel (ANIM-01, ANIM-02, ANIM-03) [parallel with 03-01]
 - [ ] 03-03-PLAN.md — About + Skills sections: useInView entrance animation, 4 categories with chip cloud + year badges (CONT-01, CONT-02)
 - [ ] 03-04-PLAN.md — Experience vertical timeline + tech chips + per-card expand/collapse, all 12 visible (CONT-03, CONT-04, CONT-05) [parallel with 03-03]
 - [ ] 03-05-PLAN.md — Contact email-hero card with copy-to-clipboard + 3 secondary cards; Footer trim (CONT-06, CONT-07, CONT-08) [parallel with 03-03/03-04]
-- [ ] 03-06-PLAN.md — Open Graph + Twitter card meta tags + LanguageContext og:* sync; verify GA G-4TZJGR3MXR intact (SEO-01, SEO-02) [parallel with 03-01/03-02/03-07]
+- [x] 03-06-PLAN.md — Open Graph + Twitter card meta tags + LanguageContext og:* sync; verify GA G-4TZJGR3MXR intact (SEO-01, SEO-02) [parallel with 03-01/03-02/03-07]
 - [ ] 03-07-PLAN.md — OG image generation toolchain (Playwright template + script) + public/og-image.png (SEO-01) [parallel with 03-01/03-02/03-06]
 
 ### Phase 4: Polish & Performance
@@ -99,5 +99,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 |-------|----------------|--------|-----------|
 | 1. Foundation | 4/4 | Complete   | 2026-04-22 |
 | 2. Shell & Hero | 5/5 | Complete   | 2026-05-05 |
-| 3. Content & Animations | 0/TBD | Not started | - |
+| 3. Content & Animations | 2/7 | In Progress|  |
 | 4. Polish & Performance | 0/TBD | Not started | - |

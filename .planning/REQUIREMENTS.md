@@ -41,10 +41,10 @@ Requirements for initial release. Each maps to roadmap phases.
 ### Content Sections
 
 - [ ] **CONT-01**: About section with professional summary and key highlights
-- [ ] **CONT-02**: Skills section with technology grouping by category and visual icons
+- [x] **CONT-02**: Skills section with technology grouping by category and visual icons
 - [ ] **CONT-03**: Experience section as visual timeline with scroll-triggered staggered entries
-- [ ] **CONT-04**: Tech chips displayed per experience entry showing technologies used
-- [ ] **CONT-05**: Expand/collapse functionality for experience entry details
+- [x] **CONT-04**: Tech chips displayed per experience entry showing technologies used
+- [x] **CONT-05**: Expand/collapse functionality for experience entry details
 - [ ] **CONT-06**: Contact section with dominant email CTA and copy-to-clipboard
 - [ ] **CONT-07**: Social links (GitHub, LinkedIn) in contact section
 - [ ] **CONT-08**: Footer with bilingual copyright and minimal branding
@@ -139,10 +139,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | I18N-03 | Phase 2 | Complete |
 | SEO-04 | Phase 2 | Complete |
 | CONT-01 | Phase 3 | Pending |
-| CONT-02 | Phase 3 | Pending |
+| CONT-02 | Phase 3 | Complete |
 | CONT-03 | Phase 3 | Pending |
-| CONT-04 | Phase 3 | Pending |
-| CONT-05 | Phase 3 | Pending |
+| CONT-04 | Phase 3 | Complete |
+| CONT-05 | Phase 3 | Complete |
 | CONT-06 | Phase 3 | Pending |
 | CONT-07 | Phase 3 | Pending |
 | CONT-08 | Phase 3 | Pending |
