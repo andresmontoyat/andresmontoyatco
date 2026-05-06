@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>OG Image</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;800&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      width: 1200px;
+      height: 630px;
+      background: #0D0D1A;
+      font-family: 'Inter', system-ui, sans-serif;
+      color: #F0F0FF;
+      overflow: hidden;
+    }
+    .canvas {
+      position: relative;
+      width: 1200px;
+      height: 630px;
+      background:
+        radial-gradient(circle, rgba(108,99,255,0.06) 1px, transparent 1px) 0 0 / 32px 32px,
+        #0D0D1A;
+    }
+    .left {
+      position: absolute;
+      left: 80px;
+      top: 80px;
+      width: 560px;
+    }
+    .logomark {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 18px;
+      color: #A0A0C0;
+    }
+    .logomark .slash { color: #6C63FF; }
+    .name {
+      margin-top: 60px;
+      font-weight: 800;
+      font-size: 52px;
+      line-height: 1.05;
+      color: #F0F0FF;
+      letter-spacing: -0.02em;
+    }
+    .role {
+      margin-top: 18px;
+      font-size: 28px;
+      line-height: 1.2;
+    }
+    .role .line1 { font-weight: 400; color: #A0A0C0; display: block; }
+    .role .line2 { font-weight: 800; color: #6C63FF; display: block; }
+    .divider {
+      margin-top: 30px;
+      width: 80px;
+      height: 3px;
+      background: #6C63FF;
+    }
+    .stats {
+      margin-top: 24px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 16px;
+      color: #606080;
+    }
+    .url {
+      position: absolute;
+      left: 80px;
+      bottom: 80px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+      color: #6C63FF;
+    }
+    .photo {
+      position: absolute;
+      right: 80px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 320px;
+      height: 320px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 3px solid rgba(108,99,255,0.4);
+      box-shadow: 0 0 60px rgba(108,99,255,0.2);
+    }
+    .photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="canvas">
+    <div class="left">
+      <div class="logomark">&lt;<span class="slash">/</span>cam&gt;</div>
+      <div class="name">Carlos Andrés<br>Montoya Tobón</div>
+      <div class="role">
+        <span class="line1">Solutions Architect &amp;</span>
+        <span class="line2">Senior Backend Engineer</span>
+      </div>
+      <div class="divider"></div>
+      <div class="stats">18+ years &nbsp;·&nbsp; Java &amp; Spring &nbsp;·&nbsp; Medellín, CO</div>
+    </div>
+    <div class="url">andresmontoyatco.com</div>
+    <div class="photo">
+      <img src="../public/images/me.webp" alt="Carlos Andrés Montoya Tobón">
+    </div>
+  </div>
+</body>
+</html>
