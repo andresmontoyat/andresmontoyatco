@@ -32,16 +32,13 @@ created: 2026-05-05
 
 ## Spacing Scale
 
-Unchanged from Phase 2. Tailwind default 4px-base scale is the source of truth.
+Unchanged from Phase 2. Tailwind default 4px-base scale is the source of truth. All declared values are strict multiples of 4px.
 
 | Token (Tailwind) | Value | Usage |
 |-----------------|-------|-------|
 | gap-1 / p-1 | 4px | Icon-to-label gap, chip internal gap |
-| gap-1.5 | 6px | Chip gap within chip group (flex-wrap gap-1.5) |
-| gap-2 / p-2 | 8px | Year badge internal padding, secondary card icon gap |
-| gap-2.5 | 10px | Row key-value gap in quick-facts sidebar |
+| gap-2 / p-2 | 8px | Chip group gaps (flex-wrap gap-2), year badge internal padding, secondary card icon gap, skill chip horizontal padding (px-2), row key-value gap in quick-facts sidebar |
 | p-3 / gap-3 | 12px | Chip group label gap, SectionLabel accent-line gap |
-| px-2.5 py-1 | 10px / 4px | Skill chip padding |
 | p-4 / gap-4 | 16px | Timeline card header row gap, secondary contact card gap |
 | px-4 py-3 | 16px / 12px | Copy button padding |
 | p-6 | 24px | Timeline card padding, secondary contact card padding |
@@ -57,29 +54,27 @@ Unchanged from Phase 2. Tailwind default 4px-base scale is the source of truth.
 | py-10 | 40px | Footer vertical padding |
 
 Exceptions:
-- Timeline rail dot: 10px diameter (w-2.5 h-2.5 = 10px) — sub-scale fixed dimension for visual precision
-- Timeline rail width: 2px (w-0.5) — sub-scale, matches existing implementation
-- Timeline dot ring: box-shadow ring `0 0 0 4px #0D0D1A` + glow `0 0 12px #6C63FF` — visual effect, not a spacing token
-- Year badge on skill chip: text-[10px] — sub-scale for extreme subtlety; standard text-xs (12px) would dominate
-- Contact hero email card: full-width (`col-span-full`) on all breakpoints for maximum visual dominance
+- Timeline rail dot: 10px diameter (w-2.5 h-2.5 = 10px) — fixed dimension token, not a spacing token. Sub-scale value required for visual precision; not subject to 4px grid.
+- Timeline rail width: 2px (w-0.5) — fixed dimension token, not a spacing token. Matches existing implementation.
+- Timeline dot ring: box-shadow ring `0 0 0 4px #0D0D1A` + glow `0 0 12px #6C63FF` — visual effect, not a spacing token.
+- Contact hero email card: full-width (`col-span-full`) on all breakpoints for maximum visual dominance.
+
+Note: The former `gap-1.5` (6px), `gap-2.5` (10px), and `px-2.5` (10px) values are removed — they break the 4px grid. All replaced with `gap-2` (8px) or `px-2` (8px) as specified in the feature contracts below.
 
 ---
 
 ## Typography
 
-All roles inherited from Phase 2. Phase 3 introduces no new size roles.
+All roles inherited from Phase 2. Phase 3 uses exactly **4 type roles** — identical count to Phase 2.
+
+Active weights in Phase 3: **400 (regular)** and **800 (extrabold)** only — identical to Phase 2. Weight 600 (semibold) is eliminated. Existing source files (About/Skill/Experience/Contact) use `font-semibold` on SectionLabel — executor must change these to `font-extrabold` as part of the SectionLabel extraction task.
 
 | Role | Size | Tailwind Class | Font | Weight | Line Height | Usage in Phase 3 |
 |------|------|----------------|------|--------|-------------|-----------------|
 | Display — h1 | 36px / 48px / 60px | `text-4xl sm:text-5xl lg:text-6xl` | Inter | 800 (extrabold) | 1 (leading-none) | Hero only (Phase 2) — not used in Phase 3 sections |
-| Heading — h2 | 30px / 36px | `text-3xl sm:text-4xl` | Inter | 800 (extrabold) | 1.25 (leading-tight) | About h2, Skills h2, Experience h2, Contact h2 |
-| Heading — h3 | 16px | `text-base` | Inter | 800 (extrabold) | 1.25 (leading-tight) | Experience card job title |
-| Body | 16px / 18px | `text-base sm:text-lg` | Inter | 400 (regular) | 1.625 (leading-relaxed) | About paragraphs, section intro paragraphs |
-| Body — small | 14px | `text-sm` | Inter | 400 (regular) | 1.625 (leading-relaxed) | Experience bullets, contact card value text, skills category desc |
-| Label / Mono | 12px | `text-xs` | JetBrains Mono | 400 (regular) | 1.25 | SectionLabel, skill chips, experience date, tech chips, year badge |
-| Label — micro | 10px | `text-[10px]` | JetBrains Mono | 400 (regular) | 1 | Year proficiency badge inside skill chip ("18y", "5y") |
-
-Active weights in Phase 3: **400 (regular)** and **800 (extrabold)** — identical to Phase 2. No 600 (semibold) weight in rendered output (SectionLabel uses `font-semibold` in existing source; this is acceptable as a Tailwind utility mapped to 600, pre-existing pattern — do not change).
+| Heading — h2 | 30px / 36px | `text-3xl sm:text-4xl` | Inter | 800 (extrabold) | 1.25 (leading-tight) | About h2, Skills h2, Experience h2, Contact h2. h3 (job title) = `text-base font-extrabold` — weight variation of Body, not a separate size role |
+| Body | 16px / 18px | `text-base sm:text-lg` | Inter | 400 (regular) | 1.625 (leading-relaxed) | About paragraphs, section intro paragraphs, experience bullets (`text-base text-text-secondary`), contact card value text (`text-base text-text-primary`), skills category description (`text-base text-text-secondary`), experience card location (`text-base text-text-secondary`) |
+| Label / Mono | 12px | `text-xs` | JetBrains Mono | 400 (regular) | 1.25 | SectionLabel, skill chips, experience date, tech chips, year proficiency badge inside skill chip ("18y", "5y") — badge uses `text-xs text-text-muted` for subtlety |
 
 Tracking notes (carried from existing components):
 - h2 headings: `tracking-tight` (-0.025em)
@@ -101,7 +96,7 @@ All tokens from Phase 2. Phase 3 extends the brand accent reserved-for list.
 | Coral accent | accent / #FF6B6B | #FF6B6B | Gradient endpoint only (brand-gradient); never solid |
 | Text — primary | text-primary | #F0F0FF | Headings, card titles, quick-facts values, job titles |
 | Text — secondary | text-secondary | #A0A0C0 | Body text, bullets, card labels, chip text |
-| Text — muted | text-muted | #606080 | Year badge text inside skill chips |
+| Text — muted | text-muted | #606080 | Year badge text inside skill chips, supplementary labels |
 | Text — inverse | text-inverse | #0D0D1A | Not used in Phase 3 |
 | Destructive | accent.dark | #E64444 | Not used in Phase 3 |
 
@@ -111,7 +106,7 @@ All tokens from Phase 2. Phase 3 extends the brand accent reserved-for list.
 - `ink-700` — skill chip background (`bg-ink-700`), year badge background
 - `ink-500` — all card surfaces (About quick-facts sidebar, skill category container, experience cards, contact cards)
 
-**Brand accent (#6C63FF) reserved for — Phase 2 items 1–10 unchanged, Phase 3 adds items 11–17:**
+**Brand accent (#6C63FF) reserved for — Phase 2 items 1–10 unchanged, Phase 3 adds items 11–19:**
 
 Phase 2 (locked):
 1. Nav active link text color (scroll-spy active state)
@@ -181,7 +176,7 @@ Inherited. See 02-UI-SPEC.md copywriting table.
 
 | Element | Value | Location | Status |
 |---------|-------|----------|--------|
-| Copy button label — idle | "Copy" | Contact.js — hardcoded (language-neutral tech term acceptable) | New hardcode |
+| Copy button label — idle | "Copy email" | Contact.js — hardcoded (language-neutral tech term acceptable) | New hardcode |
 | Copy button label — success | "Copied!" | Contact.js — hardcoded | New hardcode |
 | Copy button aria-label | "Copy email to clipboard" | Contact.js | New hardcode |
 | Expand chevron aria-label — collapsed | "Expand" / "Expandir" | Experience.js — must add to translations.js as `t.exp.expand` | **ADD TO translations.js** |
@@ -220,7 +215,7 @@ No empty states in Phase 3. All content is static — sections always have data.
 
 | Element | Error condition | Copy |
 |---------|----------------|------|
-| Copy-to-clipboard | `navigator.clipboard.writeText` throws (legacy browser / permissions denied) | Silent fallback: button remains in "Copy" state. No user-visible error message. Implementation uses try/catch; on catch, do nothing (not worth surfacing for a portfolio). |
+| Copy-to-clipboard | `navigator.clipboard.writeText` throws (legacy browser / permissions denied) | Silent fallback: button remains in "Copy email" state. No user-visible error message. Implementation uses try/catch; on catch, do nothing (not worth surfacing for a portfolio). |
 
 ### Destructive actions
 
@@ -253,7 +248,7 @@ Unchanged from Phase 2. No third-party registries introduced.
 // src/components/_shared/SectionLabel.js
 export default function SectionLabel({ children }) {
   return (
-    <div className="font-mono text-xs text-brand uppercase tracking-[3px] font-semibold flex items-center gap-3 mb-4">
+    <div className="font-mono text-xs text-brand uppercase tracking-[3px] font-extrabold flex items-center gap-3 mb-4">
       <span className="w-10 h-0.5 bg-brand block"></span>
       {children}
     </div>
@@ -261,7 +256,7 @@ export default function SectionLabel({ children }) {
 }
 ```
 
-Replace the 4 inline definitions with `import SectionLabel from './_shared/SectionLabel'`.
+Replace the 4 inline definitions with `import SectionLabel from './_shared/SectionLabel'`. Note: existing source files use `font-semibold` on the inline SectionLabel definition — change to `font-extrabold` on extraction to align with the 2-weight contract (400 + 800 only).
 
 ---
 
@@ -455,7 +450,7 @@ Note: Category titles are language-neutral (tech industry terms used in both EN/
         [div — flex items-center gap-3 mb-4]    ← category heading row
           span symbol — text-brand font-mono text-xl
           h3 — text-base font-extrabold text-text-primary tracking-tight
-        [div — flex flex-wrap gap-1.5]          ← chip cloud
+        [div — flex flex-wrap gap-2]            ← chip cloud (8px gap, 4px-grid compliant)
           [each chip — animate-on-scroll with stagger delay]
             ChipBadge
 ```
@@ -463,21 +458,22 @@ Note: Category titles are language-neutral (tech industry terms used in both EN/
 **ChipBadge visual spec:**
 ```
 <span className="inline-flex items-baseline gap-1 font-mono text-xs
-                 py-1 px-2.5
+                 py-1 px-2
                  bg-ink-700 border border-ink-400 rounded-full
                  text-text-secondary
                  hover:border-brand hover:text-text-primary
                  transition-colors duration-200
                  cursor-default">
   {chip.label}
-  <span className="text-[10px] text-text-muted ml-0.5">{chip.years}y</span>
+  <span className="text-xs text-text-muted ml-0.5">{chip.years}y</span>
 </span>
 ```
 
 - Background: `bg-ink-700` (same as current chip bg)
 - Border: `border-ink-400` default, `hover:border-brand` on hover
 - Text: `text-text-secondary` default, `hover:text-text-primary`
-- Year badge: `text-[10px] text-text-muted` — visually subordinate to label
+- Padding: `py-1 px-2` (4px vertical / 8px horizontal — 4px-grid compliant)
+- Year badge: `text-xs text-text-muted` — visually subordinate to label via color, not size
 - Year badge gap: `ml-0.5` (2px inline gap from label)
 - Border radius: `rounded-full`
 - No pointer cursor needed — chips are not interactive. Use `cursor-default`.
@@ -554,13 +550,13 @@ tech: ['Java', 'SQL Server', 'MySQL'],
 ```
 
 **Rail specification:**
-- Width: `w-0.5` (2px)
+- Width: `w-0.5` (2px — fixed dimension, not a spacing token)
 - Color: `bg-brand` at `opacity-30` for the static rail line, creating a subtle brand-colored column
 - Position: `absolute left-[7px]` (centers behind the 10px dot at left-0 with -left-[30px] offset)
 - Height: `top-2 bottom-2` (small inset from first and last dot)
 
 **Timeline dot specification (per entry):**
-- Size: `w-2.5 h-2.5` (10px × 10px)
+- Size: `w-2.5 h-2.5` (10px × 10px — fixed dimension, not a spacing token)
 - Shape: `rounded-full`
 - Fill: `bg-brand`
 - Ring: `box-shadow: 0 0 0 3px #0D0D1A, 0 0 8px rgba(108,99,255,0.4)` — ink-950 separator ring + subtle brand glow
@@ -590,10 +586,10 @@ tech: ['Java', 'SQL Server', 'MySQL'],
 
     {/* title + location */}
     <h3 className="text-base font-extrabold text-text-primary mb-0.5">{job.title[lang]}</h3>
-    <div className="text-sm text-text-secondary mb-3">{job.location[lang]}</div>
+    <div className="text-base text-text-secondary mb-3">{job.location[lang]}</div>
 
     {/* tech chips — always visible */}
-    <div className="flex flex-wrap gap-1.5 mb-3">
+    <div className="flex flex-wrap gap-2 mb-3">
       {job.tech.map((t) => (
         <span key={t} className="font-mono text-xs py-0.5 px-2 bg-ink-700 border border-ink-400
                                   rounded-full text-text-secondary hover:border-brand transition-colors duration-150">
@@ -607,7 +603,7 @@ tech: ['Java', 'SQL Server', 'MySQL'],
       onClick={() => toggle(index)}
       aria-expanded={isOpen}
       aria-label={isOpen ? t.exp.collapse : t.exp.expand}
-      className="flex items-center gap-1.5 text-xs font-mono text-brand
+      className="flex items-center gap-2 text-xs font-mono text-brand
                  hover:text-brand-light transition-colors duration-150 mt-1">
       <ChevronIcon open={isOpen} />
       {isOpen ? t.exp.collapse : t.exp.expand}
@@ -615,7 +611,7 @@ tech: ['Java', 'SQL Server', 'MySQL'],
 
     {/* bullets — visible only when expanded */}
     {isOpen && (
-      <ul className="mt-4 text-sm text-text-secondary leading-relaxed space-y-1
+      <ul className="mt-4 text-base text-text-secondary leading-relaxed space-y-1
                      border-t border-ink-400 pt-4">
         {job.bullets[lang].map((b, j) => (
           <li key={j} className="relative pl-5">
@@ -718,10 +714,10 @@ function EmailHeroCard({ className }) {
           className="flex-shrink-0 font-mono text-xs text-brand
                      border border-brand/30 hover:border-brand
                      rounded-full px-3 py-1.5 transition-colors duration-150
-                     min-h-[32px] min-w-[64px] text-center"
+                     min-h-[32px] min-w-[80px] text-center"
         >
           <span aria-live="polite">
-            {copied ? 'Copied!' : 'Copy'}
+            {copied ? 'Copied!' : 'Copy email'}
           </span>
         </button>
       </div>
@@ -752,9 +748,9 @@ function SecondaryCard({ href, symbol, label, value, external }) {
       className="block bg-ink-500 border border-ink-400 rounded-xl p-6 text-center
                  hover:border-brand hover:-translate-y-1 transition-all duration-200"
     >
-      <div className="font-mono text-2xl text-brand mb-3 font-bold">{symbol}</div>
-      <div className="text-xs uppercase tracking-wider text-text-secondary mb-1.5">{label}</div>
-      <div className="text-sm font-semibold text-text-primary break-all">{value}</div>
+      <div className="font-mono text-2xl text-brand mb-3 font-extrabold">{symbol}</div>
+      <div className="text-xs uppercase tracking-wider text-text-secondary mb-2">{label}</div>
+      <div className="text-base font-extrabold text-text-primary break-all">{value}</div>
     </a>
   )
 }
@@ -785,15 +781,15 @@ const social = [
 ]
 ```
 
-**Retained structure (no change):**
+**Retained structure (no change except weight normalization):**
 ```jsx
 <footer className="border-t border-ink-400 py-10 mt-10">
   <div className="max-w-6xl mx-auto px-6 text-center">
     {/* </cam> logomark */}
-    <div className="font-mono font-semibold text-sm text-text-primary mb-3">
+    <div className="font-mono font-extrabold text-xs text-text-primary mb-3">
       &lt;<span className="text-brand">/</span>cam&gt;
     </div>
-    <p className="text-text-secondary text-sm mb-5">{t.footer.tagline}</p>
+    <p className="text-text-secondary text-base mb-5">{t.footer.tagline}</p>
     <div className="flex justify-center gap-5 mb-5">
       {social.map((s) => (
         <a key={s.name} href={s.href} target="_blank" rel="noreferrer" title={s.name}
@@ -802,12 +798,14 @@ const social = [
         </a>
       ))}
     </div>
-    <div className="text-text-secondary text-xs">
+    <div className="text-text-muted text-xs">
       © {year} Carlos Andrés Montoya Tobón · {t.footer.rights}
     </div>
   </div>
 </footer>
 ```
+
+Weight normalization applied: Footer logomark uses `font-extrabold` (was `font-semibold`) to conform to 2-weight contract. Footer tagline uses `text-base` (was `text-sm`) — body copy role. Footer copyright uses `text-xs text-text-muted` — label/mono role, `text-text-muted` provides visual hierarchy without a separate size.
 
 Footer receives no scroll animation (it is always visible below the fold; animating it adds no recruiter value).
 
