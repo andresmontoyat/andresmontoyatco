@@ -22,11 +22,20 @@ export function LanguageProvider({ children }) {
     if (typeof document === 'undefined') return
     document.documentElement.lang = lang
     const meta = translations[lang] && translations[lang].meta
-    if (meta) {
-      if (meta.title) document.title = meta.title
-      const tag = document.querySelector('meta[name="description"]')
-      if (tag && meta.description) tag.setAttribute('content', meta.description)
+    if (!meta) return
+
+    if (meta.title) document.title = meta.title
+    const descTag = document.querySelector('meta[name="description"]')
+    if (descTag && meta.description) descTag.setAttribute('content', meta.description)
+
+    const setMeta = (selector, content) => {
+      const el = document.querySelector(selector)
+      if (el && content) el.setAttribute('content', content)
     }
+    setMeta('meta[property="og:title"]', meta.title)
+    setMeta('meta[property="og:description"]', meta.description)
+    setMeta('meta[name="twitter:title"]', meta.title)
+    setMeta('meta[name="twitter:description"]', meta.description)
   }, [lang])
 
   const setLang = useCallback((next) => {
