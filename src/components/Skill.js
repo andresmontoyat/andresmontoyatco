@@ -1,39 +1,36 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import { useLanguage } from '../i18n/LanguageContext'
-
-function SectionLabel({ children }) {
-  return (
-    <div className="font-mono text-xs text-brand uppercase tracking-[3px] font-semibold flex items-center gap-3 mb-4">
-      <span className="w-10 h-0.5 bg-brand block"></span>
-      {children}
-    </div>
-  )
-}
+import useInView from '../hooks/useInView'
+import SectionLabel from './_shared/SectionLabel'
 
 export default function Skill() {
   const { t } = useLanguage()
+  const sectionRef = useRef(null)
+  const inView = useInView(sectionRef, { threshold: 0.25 })
+
   return (
     <section id="skills" className="py-20">
-      <div className="max-w-6xl mx-auto px-6">
-        <SectionLabel>{t.skills.label}</SectionLabel>
-        <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-text-primary mb-3">{t.skills.h2}</h2>
-        <p className="text-text-secondary max-w-2xl mb-12">{t.skills.intro}</p>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {t.skills.cards.map((card, idx) => (
+      <div ref={sectionRef} className="max-w-6xl mx-auto px-6">
+        <div className={`animate-on-scroll${inView ? ' is-visible' : ''}`}>
+          <SectionLabel>{t.skills.label}</SectionLabel>
+          <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-text-primary mb-3">{t.skills.h2}</h2>
+          <p className="text-text-secondary max-w-2xl mb-12">{t.skills.intro}</p>
+        </div>
+
+        <div className="space-y-8">
+          {t.skills.categories.map((cat, ci) => (
             <div
-              key={idx}
-              className="bg-ink-500 border border-ink-400 rounded-xl p-6 transition-all duration-300 hover:border-brand hover:-translate-y-1 hover:shadow-brand"
+              key={cat.title}
+              className={`animate-on-scroll${inView ? ' is-visible' : ''}`}
+              style={{ transitionDelay: `${ci * 100}ms` }}
             >
-              <div className="w-11 h-11 rounded-lg bg-brand bg-opacity-10 text-brand grid place-items-center text-xl mb-3.5">
-                {card.icon}
+              <div className="flex items-center gap-3 mb-4">
+                <span className="text-brand font-mono text-base font-extrabold">{cat.symbol}</span>
+                <h3 className="text-base font-extrabold text-text-primary tracking-tight">{cat.title}</h3>
               </div>
-              <h4 className="text-base font-bold text-text-primary mb-1.5">{card.title}</h4>
-              <p className="text-sm text-text-secondary leading-relaxed">{card.desc}</p>
-              <div className="flex flex-wrap gap-1.5 mt-3">
-                {card.chips.map((chip) => (
-                  <span key={chip} className="font-mono text-xs py-1 px-2.5 bg-ink-700 border border-ink-400 rounded-full text-text-secondary">
-                    {chip}
-                  </span>
+              <div className="flex flex-wrap gap-2">
+                {cat.chips.map((chip, i) => (
+                  <ChipBadge key={chip.label} chip={chip} index={i} />
                 ))}
               </div>
             </div>
@@ -41,5 +38,17 @@ export default function Skill() {
         </div>
       </div>
     </section>
+  )
+}
+
+function ChipBadge({ chip, index }) {
+  return (
+    <span
+      className="inline-flex items-baseline gap-1 font-mono text-xs py-1 px-2 bg-ink-700 border border-ink-400 rounded-full text-text-secondary hover:border-brand hover:text-text-primary transition-colors duration-200 cursor-default animate-on-scroll is-visible"
+      style={{ transitionDelay: `${index * 100}ms` }}
+    >
+      {chip.label}
+      <span className="text-xs text-text-muted">{chip.years}y</span>
+    </span>
   )
 }
