@@ -57,8 +57,8 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### SEO & Performance
 
-- [ ] **SEO-01**: Open Graph meta tags for rich link previews on social media and messaging apps
-- [ ] **SEO-02**: Correct GA measurement ID (G-4TZJGR3MXR) replacing wrong current ID
+- [x] **SEO-01**: Open Graph meta tags for rich link previews on social media and messaging apps
+- [x] **SEO-02**: Correct GA measurement ID (G-4TZJGR3MXR) replacing wrong current ID
 - [ ] **SEO-03**: Lighthouse Performance score 90+ on mobile with throttling
 - [x] **SEO-04**: i18n language flash fixed via synchronous localStorage read (lazy useState init)
 
@@ -149,8 +149,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | ANIM-01 | Phase 3 | Pending |
 | ANIM-02 | Phase 3 | Pending |
 | ANIM-03 | Phase 3 | Pending |
-| SEO-01 | Phase 3 | Pending |
-| SEO-02 | Phase 3 | Pending |
+| SEO-01 | Phase 3 | Complete |
+| SEO-02 | Phase 3 | Complete |
 | SEO-03 | Phase 4 | Pending |
 | RESP-01 | Phase 4 | Pending |
 | RESP-02 | Phase 4 | Pending |

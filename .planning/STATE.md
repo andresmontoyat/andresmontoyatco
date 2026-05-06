@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v3.4
 milestone_name: milestone
 status: executing
-stopped_at: Completed 03-content-animations 03-01-PLAN.md
-last_updated: "2026-05-06T04:07:03.342Z"
+stopped_at: Completed 03-06-PLAN.md
+last_updated: "2026-05-06T04:07:49.806Z"
 last_activity: 2026-05-06
 progress:
   total_phases: 4
   completed_phases: 2
   total_plans: 16
-  completed_plans: 11
-  percent: 69
+  completed_plans: 12
+  percent: 75
 ---
 
 # Project State
@@ -26,7 +26,7 @@ See: .planning/PROJECT.md (updated 2026-04-21)
 ## Current Position
 
 Phase: 03 (content-animations) — EXECUTING
-Plan: 2 of 7
+Plan: 4 of 7
 Status: Ready to execute
 Last activity: 2026-05-06
 
@@ -62,6 +62,8 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 02-shell-hero P05 | 18 | 2 tasks | 1 files |
 | Phase 02-shell-hero P04 | 2 | 2 tasks | 2 files |
 | Phase 03-content-animations P01 | 2 | 2 tasks | 2 files |
+| Phase 03 P06 | 5 | 2 tasks | 2 files |
+| Phase 03-content-animations P02 | 5 | 3 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -95,6 +97,9 @@ Recent decisions affecting current work:
 - [Phase 03-content-animations]: t.skills.categories is identical in EN/ES — tech industry terms are language-neutral per D-02
 - [Phase 03-content-animations]: t.exp.expand/collapse replaces t.exp.more/less — per-card aria-label semantics for chevron toggle per D-05
 - [Phase 03-content-animations]: tech:[] placed after bullets: block in EXPERIENCE entries — consistent ordering for all 12 entries per D-06
+- [Phase 03]: Static OG fallbacks in index.html default to EN copy so non-JS crawlers see correct content before JS hydration
+- [Phase 03]: setMeta helper scoped inside useEffect (not module-level) — keeps API surface clean, no unnecessary exports
+- [Phase 03]: GA G-4TZJGR3MXR verified intact in index.html (D-18) — no code change required
 
 ### Pending Todos
 
@@ -107,6 +112,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-05-06T04:07:03.339Z
-Stopped at: Completed 03-content-animations 03-01-PLAN.md
+Last session: 2026-05-06T04:07:42.504Z
+Stopped at: Completed 03-06-PLAN.md
 Resume file: None
