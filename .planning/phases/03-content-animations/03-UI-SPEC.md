@@ -72,8 +72,8 @@ Active weights in Phase 3: **400 (regular)** and **800 (extrabold)** only — id
 | Role | Size | Tailwind Class | Font | Weight | Line Height | Usage in Phase 3 |
 |------|------|----------------|------|--------|-------------|-----------------|
 | Display — h1 | 36px / 48px / 60px | `text-4xl sm:text-5xl lg:text-6xl` | Inter | 800 (extrabold) | 1 (leading-none) | Hero only (Phase 2) — not used in Phase 3 sections |
-| Heading — h2 | 30px / 36px | `text-3xl sm:text-4xl` | Inter | 800 (extrabold) | 1.25 (leading-tight) | About h2, Skills h2, Experience h2, Contact h2. h3 (job title) = `text-base font-extrabold` — weight variation of Body, not a separate size role |
-| Body | 16px / 18px | `text-base sm:text-lg` | Inter | 400 (regular) | 1.625 (leading-relaxed) | About paragraphs, section intro paragraphs, experience bullets (`text-base text-text-secondary`), contact card value text (`text-base text-text-primary`), skills category description (`text-base text-text-secondary`), experience card location (`text-base text-text-secondary`) |
+| Heading — h2 | 30px / 36px | `text-3xl sm:text-4xl` | Inter | 800 (extrabold) | 1.25 (leading-tight) | About h2, Skills h2, Experience h2, Contact h2. h3 (job title) = `text-base font-extrabold` — weight variation of Body, not a separate size role. EmailHeroCard email address = `text-3xl sm:text-4xl font-extrabold` — Heading h2 role (email is the hero contact element). SecondaryCard symbol = `font-mono text-3xl font-extrabold` — Heading h2 role (brand color provides additional emphasis). |
+| Body | 16px / 18px | `text-base sm:text-lg` | Inter | 400 (regular) | 1.625 (leading-relaxed) | About paragraphs, section intro paragraphs, experience bullets (`text-base text-text-secondary`), contact card value text (`text-base text-text-primary`), skills category description (`text-base text-text-secondary`), experience card location (`text-base text-text-secondary`). Skills category symbol = `text-base font-extrabold text-brand` — weight variation of Body; brand color carries the visual emphasis (not a separate size role). |
 | Label / Mono | 12px | `text-xs` | JetBrains Mono | 400 (regular) | 1.25 | SectionLabel, skill chips, experience date, tech chips, year proficiency badge inside skill chip ("18y", "5y") — badge uses `text-xs text-text-muted` for subtlety |
 
 Tracking notes (carried from existing components):
@@ -179,8 +179,8 @@ Inherited. See 02-UI-SPEC.md copywriting table.
 | Copy button label — idle | "Copy email" | Contact.js — hardcoded (language-neutral tech term acceptable) | New hardcode |
 | Copy button label — success | "Copied!" | Contact.js — hardcoded | New hardcode |
 | Copy button aria-label | "Copy email to clipboard" | Contact.js | New hardcode |
-| Expand chevron aria-label — collapsed | "Expand" / "Expandir" | Experience.js — must add to translations.js as `t.exp.expand` | **ADD TO translations.js** |
-| Expand chevron aria-label — expanded | "Collapse" / "Contraer" | Experience.js — must add to translations.js as `t.exp.collapse` | **ADD TO translations.js** |
+| Expand chevron aria-label — collapsed | "Expand entry" / "Expandir entrada" | Experience.js — must add to translations.js as `t.exp.expand` | **ADD TO translations.js** |
+| Expand chevron aria-label — expanded | "Collapse entry" / "Contraer entrada" | Experience.js — must add to translations.js as `t.exp.collapse` | **ADD TO translations.js** |
 | Skills category headings (D-02) | "Backend" / "Cloud & Infrastructure" / "DevOps & Tools" / "AI & Productivity" | Derived from `t.skills.cards[].title` restructure — see Skills Layout below | Requires cards data restructure |
 
 ### Required translations.js additions for Phase 3
@@ -188,8 +188,8 @@ Inherited. See 02-UI-SPEC.md copywriting table.
 The following keys MUST be added to both `en` and `es` blocks before executor begins:
 
 ```
-t.exp.expand   → EN: "Expand"     ES: "Expandir"
-t.exp.collapse → EN: "Collapse"   ES: "Contraer"
+t.exp.expand   → EN: "Expand entry"     ES: "Expandir entrada"
+t.exp.collapse → EN: "Collapse entry"   ES: "Contraer entrada"
 ```
 
 The `t.exp.more` and `t.exp.less` keys ("Show more experience" / "Ver más experiencia") become OBSOLETE — the new per-card expand/collapse replaces the global toggle. Remove from translations.js.
@@ -448,12 +448,14 @@ Note: Category titles are language-neutral (tech industry terms used in both EN/
     [div — space-y-8]                     ← 4 category groups, gap-8 between
       [each category — animate-on-scroll]
         [div — flex items-center gap-3 mb-4]    ← category heading row
-          span symbol — text-brand font-mono text-xl
+          span symbol — text-brand font-mono text-base font-extrabold
           h3 — text-base font-extrabold text-text-primary tracking-tight
         [div — flex flex-wrap gap-2]            ← chip cloud (8px gap, 4px-grid compliant)
           [each chip — animate-on-scroll with stagger delay]
             ChipBadge
 ```
+
+Note: Category symbol uses `text-base font-extrabold` — weight variation of Body role; brand color (`text-brand`) carries the visual emphasis. This is not a separate size role.
 
 **ChipBadge visual spec:**
 ```
@@ -465,7 +467,7 @@ Note: Category titles are language-neutral (tech industry terms used in both EN/
                  transition-colors duration-200
                  cursor-default">
   {chip.label}
-  <span className="text-xs text-text-muted ml-0.5">{chip.years}y</span>
+  <span className="text-xs text-text-muted">{chip.years}y</span>
 </span>
 ```
 
@@ -474,7 +476,7 @@ Note: Category titles are language-neutral (tech industry terms used in both EN/
 - Text: `text-text-secondary` default, `hover:text-text-primary`
 - Padding: `py-1 px-2` (4px vertical / 8px horizontal — 4px-grid compliant)
 - Year badge: `text-xs text-text-muted` — visually subordinate to label via color, not size
-- Year badge gap: `ml-0.5` (2px inline gap from label)
+- Year badge gap: parent `gap-1` (4px) provides separation — no additional margin on badge span
 - Border radius: `rounded-full`
 - No pointer cursor needed — chips are not interactive. Use `cursor-default`.
 
@@ -581,17 +583,17 @@ tech: ['Java', 'SQL Server', 'MySQL'],
     <div className="flex justify-between items-baseline gap-4 flex-wrap mb-1">
       <span className="font-mono text-xs text-brand">{job.date[lang]}</span>
       <span className="font-mono text-xs text-text-muted bg-ink-700 border border-ink-400
-                       rounded-full px-2 py-0.5">{job.company}</span>
+                       rounded-full px-2 py-1">{job.company}</span>
     </div>
 
     {/* title + location */}
-    <h3 className="text-base font-extrabold text-text-primary mb-0.5">{job.title[lang]}</h3>
+    <h3 className="text-base font-extrabold text-text-primary mb-1">{job.title[lang]}</h3>
     <div className="text-base text-text-secondary mb-3">{job.location[lang]}</div>
 
     {/* tech chips — always visible */}
     <div className="flex flex-wrap gap-2 mb-3">
       {job.tech.map((t) => (
-        <span key={t} className="font-mono text-xs py-0.5 px-2 bg-ink-700 border border-ink-400
+        <span key={t} className="font-mono text-xs py-1 px-2 bg-ink-700 border border-ink-400
                                   rounded-full text-text-secondary hover:border-brand transition-colors duration-150">
           {t}
         </span>
@@ -614,7 +616,7 @@ tech: ['Java', 'SQL Server', 'MySQL'],
       <ul className="mt-4 text-base text-text-secondary leading-relaxed space-y-1
                      border-t border-ink-400 pt-4">
         {job.bullets[lang].map((b, j) => (
-          <li key={j} className="relative pl-5">
+          <li key={j} className="relative pl-6">
             <span className="absolute left-0 text-brand">▸</span>{b}
           </li>
         ))}
@@ -623,6 +625,12 @@ tech: ['Java', 'SQL Server', 'MySQL'],
   </div>
 </div>
 ```
+
+**Spacing changes from previous draft:**
+- Company badge: `py-0.5` → `py-1` (4px — 4px-grid compliant)
+- h3 bottom margin: `mb-0.5` → `mb-1` (4px — 4px-grid compliant)
+- Tech chip vertical padding: `py-0.5` → `py-1` (4px — 4px-grid compliant)
+- Bullet indent: `pl-5` → `pl-6` (24px — 4px-grid compliant)
 
 **Expand/collapse state:**
 - State: `const [openCards, setOpenCards] = useState({})` — object keyed by card index, value boolean
@@ -705,7 +713,7 @@ function EmailHeroCard({ className }) {
 
       {/* Email + copy button row */}
       <div className="flex items-center justify-between gap-4 flex-wrap">
-        <div className="text-xl sm:text-2xl font-extrabold text-text-primary break-all">
+        <div className="text-3xl sm:text-4xl font-extrabold text-text-primary break-all">
           {email}
         </div>
         <button
@@ -713,7 +721,7 @@ function EmailHeroCard({ className }) {
           aria-label="Copy email to clipboard"
           className="flex-shrink-0 font-mono text-xs text-brand
                      border border-brand/30 hover:border-brand
-                     rounded-full px-3 py-1.5 transition-colors duration-150
+                     rounded-full px-3 py-2 transition-colors duration-150
                      min-h-[32px] min-w-[80px] text-center"
         >
           <span aria-live="polite">
@@ -735,6 +743,8 @@ Key interaction points:
 - `aria-live="polite"` on the label span — screen readers announce "Copied!" on state change without interrupting
 - Copy button has `min-h-[32px]` (not 44px) — it is a secondary action inside a card; the primary tap target is the full card `<a>`. If Phase 4 audits require 44px, pad externally.
 - `href="mailto:..."` on the card anchor — clicking anywhere on the card (except the copy button) opens the mail client
+- Email address uses `text-3xl sm:text-4xl font-extrabold` — Heading h2 role; email is the hero contact element and deserves heading-size dominance
+- Copy button uses `py-2` (8px) with `min-h-[32px]` floor — 4px-grid compliant
 
 **SecondaryCard spec:**
 
@@ -748,13 +758,15 @@ function SecondaryCard({ href, symbol, label, value, external }) {
       className="block bg-ink-500 border border-ink-400 rounded-xl p-6 text-center
                  hover:border-brand hover:-translate-y-1 transition-all duration-200"
     >
-      <div className="font-mono text-2xl text-brand mb-3 font-extrabold">{symbol}</div>
+      <div className="font-mono text-3xl text-brand mb-3 font-extrabold">{symbol}</div>
       <div className="text-xs uppercase tracking-wider text-text-secondary mb-2">{label}</div>
       <div className="text-base font-extrabold text-text-primary break-all">{value}</div>
     </a>
   )
 }
 ```
+
+Note: SecondaryCard symbol uses `font-mono text-3xl font-extrabold` — Heading h2 role; brand color provides additional visual emphasis.
 
 **Secondary card data (hardcoded, not from translations — values are language-neutral):**
 - Phone: `href="tel:+573244422196"`, symbol="#", label=`{t.contact.phone}`, value="+57 324 442 2196"
@@ -781,7 +793,7 @@ const social = [
 ]
 ```
 
-**Retained structure (no change except weight normalization):**
+**Retained structure (no change except weight normalization and spacing alignment):**
 ```jsx
 <footer className="border-t border-ink-400 py-10 mt-10">
   <div className="max-w-6xl mx-auto px-6 text-center">
@@ -789,8 +801,8 @@ const social = [
     <div className="font-mono font-extrabold text-xs text-text-primary mb-3">
       &lt;<span className="text-brand">/</span>cam&gt;
     </div>
-    <p className="text-text-secondary text-base mb-5">{t.footer.tagline}</p>
-    <div className="flex justify-center gap-5 mb-5">
+    <p className="text-text-secondary text-base mb-6">{t.footer.tagline}</p>
+    <div className="flex justify-center gap-6 mb-6">
       {social.map((s) => (
         <a key={s.name} href={s.href} target="_blank" rel="noreferrer" title={s.name}
            className="text-text-secondary hover:text-brand transition-colors text-lg font-mono uppercase">
@@ -804,6 +816,11 @@ const social = [
   </div>
 </footer>
 ```
+
+Spacing changes from previous draft:
+- `mb-5` (20px) tagline margin → `mb-6` (24px — 4px-grid compliant)
+- `gap-5` (20px) social row → `gap-6` (24px — 4px-grid compliant)
+- `mb-5` (20px) social row bottom margin → `mb-6` (24px — 4px-grid compliant)
 
 Weight normalization applied: Footer logomark uses `font-extrabold` (was `font-semibold`) to conform to 2-weight contract. Footer tagline uses `text-base` (was `text-sm`) — body copy role. Footer copyright uses `text-xs text-text-muted` — label/mono role, `text-text-muted` provides visual hierarchy without a separate size.
 
