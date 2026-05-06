@@ -1,8 +1,9 @@
 ---
 phase: 02-shell-hero
 verified: 2026-05-05T00:00:00Z
-status: human_needed
-score: 5/5 must-haves verified
+status: passed
+human_verified: 2026-05-05T17:00:00Z
+score: 5/5 must-haves verified (5/5 human-tested in browser)
 human_verification:
   - test: "On phone/narrow viewport, tap the hamburger icon — verify full-screen overlay appears and body does not scroll beneath it"
     expected: "Overlay covers viewport; attempting to scroll the page background fails; MobileMenu rendered via createPortal with opacity-100"
