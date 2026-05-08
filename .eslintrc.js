@@ -49,11 +49,11 @@ module.exports = {
     'react/no-array-index-key': 'warn',
     'react/button-has-type': 'warn',
 
-    // ── Accessibility — keep these as warnings not errors for now ────────
-    'jsx-a11y/anchor-is-valid': 'warn',
-    'jsx-a11y/label-has-associated-control': 'warn',
-    'jsx-a11y/control-has-associated-label': 'warn',
-    'jsx-a11y/heading-has-content': 'warn',
+    // ── Accessibility — promoted to error in Phase 4 (D-07) ──────────────
+    'jsx-a11y/anchor-is-valid': 'error',
+    'jsx-a11y/label-has-associated-control': 'error',
+    'jsx-a11y/control-has-associated-label': 'error',
+    'jsx-a11y/heading-has-content': 'error',
 
     // ── Security ─────────────────────────────────────────────────────────
     // react/no-danger: kept OFF intentionally (About.js uses dangerouslySetInnerHTML
