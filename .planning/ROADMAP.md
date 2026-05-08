@@ -49,7 +49,7 @@
   4. Screenshots load from `public/projects/` without layout shift; missing screenshots degrade gracefully (no broken-image icon visible)
   5. Cards animate in on scroll using the existing `useInView` / `.animate-on-scroll` pattern — no new animation library introduced
 **Plans**: 2 plans
-  - [ ] 06-01-PLAN.md — Projects data + section component + translations: `src/data/projects.js`, `src/components/Projects.js`, EN/ES `projects` block + `nav.projects`
+  - [x] 06-01-PLAN.md — Projects data + section component + translations: `src/data/projects.js`, `src/components/Projects.js`, EN/ES `projects` block + `nav.projects`
   - [ ] 06-02-PLAN.md — Nav integration + App.js lazy-load: SECTION_IDS update, DesktopNav/MobileMenu Projects link, lazy-loaded Suspense between Experience and Contact
 **UI hint**: yes
 

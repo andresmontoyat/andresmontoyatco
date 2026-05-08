@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v3.5
 milestone_name: — Themes, Projects & Production
-status: verifying
-stopped_at: Completed 05-theme-tech-debt 05-04-PLAN.md
-last_updated: "2026-05-08T16:21:09.310Z"
+status: executing
+stopped_at: Completed 06-01-PLAN.md
+last_updated: "2026-05-08T17:26:30.306Z"
 last_activity: 2026-05-08
 progress:
   total_phases: 3
   completed_phases: 1
-  total_plans: 4
-  completed_plans: 4
-  percent: 100
+  total_plans: 6
+  completed_plans: 5
+  percent: 83
 ---
 
 # Project State
@@ -21,13 +21,13 @@ progress:
 See: .planning/PROJECT.md (updated 2026-05-07)
 
 **Core value:** The hero section and overall first impression must stop recruiters mid-scroll and make them want to learn more about Carlos.
-**Current focus:** Phase 05 — theme-tech-debt
+**Current focus:** Phase 06 — projects-showcase
 
 ## Current Position
 
-Phase: 6
-Plan: Not started
-Status: Phase complete — ready for verification
+Phase: 06 (projects-showcase) — EXECUTING
+Plan: 2 of 2
+Status: Ready to execute
 Last activity: 2026-05-08
 
 Progress: [░░░░░░░░░░] 0%
@@ -53,6 +53,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 05-theme-tech-debt P02 | 3min | 3 tasks | 3 files |
 | Phase 05 P03 | 5min | 3 tasks | 3 files |
 | Phase 05-theme-tech-debt P04 | 4min | 3 tasks | 2 files |
+| Phase 06-projects-showcase P01 | 2 | 3 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -87,6 +88,6 @@ None at roadmap creation. Phase 7 has one expected manual pause for DNS propagat
 
 ## Session Continuity
 
-Last session: 2026-05-08T14:24:42.392Z
-Stopped at: Completed 05-theme-tech-debt 05-04-PLAN.md
+Last session: 2026-05-08T17:26:30.301Z
+Stopped at: Completed 06-01-PLAN.md
 Resume file: None
