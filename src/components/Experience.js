@@ -9,6 +9,8 @@ export default function Experience() {
   const [openCards, setOpenCards] = useState({})
   const sectionRef = useRef(null)
   const inView = useInView(sectionRef, { threshold: 0.25 })
+  const headerRef = useRef(null)
+  const headerInView = useInView(headerRef, { threshold: 0.25 })
 
   function toggle(i) {
     setOpenCards((prev) => ({ ...prev, [i]: !prev[i] }))
@@ -17,9 +19,11 @@ export default function Experience() {
   return (
     <section id="experience" className="py-20">
       <div className="max-w-6xl mx-auto px-6">
-        <SectionLabel>{t.exp.label}</SectionLabel>
-        <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-text-primary mb-3">{t.exp.h2}</h2>
-        <p className="text-text-secondary max-w-2xl mb-12">{t.exp.intro}</p>
+        <div ref={headerRef} className={`animate-on-scroll${headerInView ? ' is-visible' : ''}`}>
+          <SectionLabel>{t.exp.label}</SectionLabel>
+          <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-text-primary mb-3">{t.exp.h2}</h2>
+          <p className="text-text-secondary max-w-2xl mb-12">{t.exp.intro}</p>
+        </div>
 
         <div ref={sectionRef} className="relative pl-8 mt-10">
           <span className="absolute left-[7px] top-2 bottom-2 w-0.5 bg-brand opacity-30" aria-hidden="true"></span>
