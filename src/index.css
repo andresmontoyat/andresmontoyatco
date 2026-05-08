@@ -39,14 +39,15 @@
     --color-brand-dark:  #4A42E8;
     --color-brand-muted: rgba(108, 99, 255, 0.12);
 
-    /* Accent — slightly darkened for AA contrast on white */
-    --color-accent:       #E05555;
+    /* Accent — darkened to #BB3A3A for WCAG AA 4.5:1 on all light surfaces */
+    --color-accent:       #BB3A3A;
     --color-accent-light: #FF6B6B;
 
     /* Text — inverted from light-on-dark to dark-on-light */
     --color-text-primary:   #0D0D1A;
     --color-text-secondary: #525269;
-    --color-text-muted:     #7A7A92;
+    /* text-muted darkened to #646478: 5.78:1 on white, 4.74:1 on surface-raised — WCAG AA */
+    --color-text-muted:     #646478;
   }
 
   html {
