@@ -1,6 +1,7 @@
 import React, { Suspense } from 'react'
 
 import { LanguageProvider, useLanguage } from './i18n/LanguageContext'
+import { ThemeProvider } from './i18n/ThemeContext'
 import Nav from './components/Nav'
 import Hero from './components/Hero'
 import About from './components/About'
@@ -25,25 +26,27 @@ function SkipLink() {
 
 export default function App() {
   return (
-    <LanguageProvider>
-      <div className="min-h-screen bg-ink-900 text-text-primary font-sans antialiased bg-hero-gradient bg-grid-subtle">
-        <SkipLink />
-        <Nav />
-        <main id="main">
-          <Hero />
-          <About />
-          <Skill />
+    <ThemeProvider>
+      <LanguageProvider>
+        <div className="min-h-screen bg-ink-900 text-text-primary font-sans antialiased bg-hero-gradient bg-grid-subtle">
+          <SkipLink />
+          <Nav />
+          <main id="main">
+            <Hero />
+            <About />
+            <Skill />
+            <Suspense fallback={SectionFallback}>
+              <Experience />
+            </Suspense>
+            <Suspense fallback={SectionFallback}>
+              <Contact />
+            </Suspense>
+          </main>
           <Suspense fallback={SectionFallback}>
-            <Experience />
+            <Footer />
           </Suspense>
-          <Suspense fallback={SectionFallback}>
-            <Contact />
-          </Suspense>
-        </main>
-        <Suspense fallback={SectionFallback}>
-          <Footer />
-        </Suspense>
-      </div>
-    </LanguageProvider>
+        </div>
+      </LanguageProvider>
+    </ThemeProvider>
   )
 }
