@@ -87,7 +87,7 @@ function EmailHeroCard({ t, inView, className = '', style }) {
           type="button"
           onClick={handleCopy}
           aria-label="Copy email to clipboard"
-          className="flex-shrink-0 font-mono text-xs text-brand border border-brand/30 hover:border-brand rounded-full px-3 py-2 transition-colors duration-150 min-h-[32px] min-w-[80px] text-center"
+          className="flex-shrink-0 font-mono text-xs text-brand border border-brand/30 hover:border-brand rounded-full px-3 py-2 transition-colors duration-150 min-h-[44px] min-w-[80px] text-center"
         >
           <span aria-live="polite">
             {copied ? 'Copied!' : 'Copy email'}
