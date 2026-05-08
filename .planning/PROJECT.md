@@ -1,5 +1,16 @@
 # Carlos Montoya Portfolio — Redesign
 
+## Current State
+
+**Shipped:** v3.4 (2026-05-07) — Full brownfield redesign delivered. Site is production-ready: Vite 6 + React 18 + Tailwind v3.4 toolchain, sticky bilingual navigation, bold animated Hero with char-reveal headline, redesigned About / Skills (4 categories) / Experience (vertical timeline, 12 entries, tech chips, expand/collapse) / Contact (email-hero with copy-to-clipboard) / Footer, useInView entrance animations, branded Open Graph rich link preview, Lighthouse Performance **98** / Accessibility **100** / Best Practices **100** / SEO **100** on mobile. See [`milestones/v3.4-ROADMAP.md`](milestones/v3.4-ROADMAP.md) for full archive and [`v3.4-MILESTONE-AUDIT.md`](v3.4-MILESTONE-AUDIT.md) for audit report.
+
+## Next Milestone Goals (v3.5 candidates)
+
+- **Deploy** — pick hosting target (Vercel / Netlify / GitHub Pages) and domain (carlosmontoyatco.dev or similar)
+- **Tech debt cleanup** — orphaned i18n keys (t.hero.cta2, t.contact.loc), self-host fonts in og-template.html, fix GA `<script>` placement
+- **Optional polish** — JSON-LD Person schema (ASEO-01), sitemap (ASEO-03), test infrastructure decision (deferred 4 phases)
+- **Possible features** — dark/light theme toggle (VIS-01), company logo SVGs in timeline (VIS-02), projects showcase (VIS-03)
+
 ## What This Is
 
 A bold, creative personal portfolio website for Carlos Andres Montoya, a senior backend engineer. The site targets recruiters and employers, designed to make a powerful first impression with rich animations, dynamic layouts, and a distinctive visual identity. Fully bilingual (English/Spanish) with flawless mobile experience.
@@ -109,4 +120,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-05-07 after Phase 4 completion (milestone v3.4 ready for audit)*
+*Last updated: 2026-05-07 — milestone v3.4 SHIPPED (archived to milestones/v3.4-ROADMAP.md, tagged v3.4)*
