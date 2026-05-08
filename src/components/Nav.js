@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { useLanguage } from '../i18n/LanguageContext'
 import useActiveSection from '../hooks/useActiveSection'
+import ThemeToggle from './_shared/ThemeToggle'
 
 const SECTION_IDS = ['about', 'skills', 'experience', 'contact']
 
@@ -16,7 +17,8 @@ export default function Nav() {
       <div className="max-w-6xl mx-auto flex items-center justify-between px-6 py-4">
         <Logomark />
         <DesktopNav t={t} activeSection={activeSection} />
-        <div className="hidden md:flex">
+        <div className="hidden md:flex items-center gap-2">
+          <ThemeToggle />
           <LangPill lang={lang} setLang={setLang} />
         </div>
         <button
@@ -193,7 +195,8 @@ function MobileMenu({ open, onClose, t, lang, setLang, activeSection }) {
         </svg>
       </button>
       <div className="h-full flex flex-col items-center justify-center gap-8 px-6">
-        <div className="mb-10">
+        <div className="mb-10 flex items-center gap-2">
+          <ThemeToggle />
           <LangPill lang={lang} setLang={setLang} />
         </div>
         {links.map((l) => {
