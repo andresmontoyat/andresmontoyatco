@@ -30,7 +30,7 @@ export default function Skill() {
               </div>
               <div className="flex flex-wrap gap-2">
                 {cat.chips.map((chip, i) => (
-                  <ChipBadge key={chip.label} chip={chip} index={i} />
+                  <ChipBadge key={chip.label} chip={chip} index={i} inView={inView} />
                 ))}
               </div>
             </div>
@@ -41,10 +41,10 @@ export default function Skill() {
   )
 }
 
-function ChipBadge({ chip, index }) {
+function ChipBadge({ chip, index, inView }) {
   return (
     <span
-      className="inline-flex items-baseline gap-1 font-mono text-xs py-1 px-2 bg-ink-700 border border-ink-400 rounded-full text-text-secondary hover:border-brand hover:text-text-primary transition-colors duration-200 cursor-default animate-on-scroll is-visible"
+      className={`inline-flex items-baseline gap-1 font-mono text-xs py-1 px-2 bg-ink-700 border border-ink-400 rounded-full text-text-secondary hover:border-brand hover:text-text-primary transition-colors duration-200 cursor-default animate-on-scroll${inView ? ' is-visible' : ''}`}
       style={{ transitionDelay: `${index * 100}ms` }}
     >
       {chip.label}
