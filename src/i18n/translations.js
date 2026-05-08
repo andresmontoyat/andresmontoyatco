@@ -4,6 +4,7 @@ const translations = {
       about: 'About',
       skills: 'Skills',
       experience: 'Experience',
+      projects: 'Projects',
       contact: 'Contact',
       menuOpen: 'Open menu',
       menuClose: 'Close',
@@ -113,6 +114,13 @@ const translations = {
       expand: 'Expand entry',
       collapse: 'Collapse entry',
     },
+    projects: {
+      label: 'PROJECTS',
+      h2: 'Selected work',
+      intro: 'A focused look at the systems I have shipped recently.',
+      live: 'View Live',
+      github: 'GitHub',
+    },
     contact: {
       label: 'Contact',
       h2: "Let's build something",
@@ -130,6 +138,7 @@ const translations = {
       about: 'Sobre mí',
       skills: 'Skills',
       experience: 'Experiencia',
+      projects: 'Proyectos',
       contact: 'Contacto',
       menuOpen: 'Abrir menú',
       menuClose: 'Cerrar',
@@ -238,6 +247,13 @@ const translations = {
       intro: 'Highlights de +18 años construyendo, liderando y entregando software.',
       expand: 'Expandir entrada',
       collapse: 'Contraer entrada',
+    },
+    projects: {
+      label: 'PROYECTOS',
+      h2: 'Trabajo destacado',
+      intro: 'Una mirada enfocada a los sistemas que he entregado recientemente.',
+      live: 'Ver Live',
+      github: 'GitHub',
     },
     contact: {
       label: 'Contacto',
