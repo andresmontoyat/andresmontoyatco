@@ -26,6 +26,29 @@
     --color-text-muted:     theme(colors.text.muted);
   }
 
+  [data-theme="light"] {
+    /* Surfaces — inverted from dark ink scale to light grays */
+    --color-surface-deepest: #FFFFFF;
+    --color-surface-deep:    #FAFAFA;
+    --color-surface-mid:     #F0F0F5;
+    --color-surface-raised:  #E8E8F0;
+
+    /* Brand — stays vibrant on light surfaces */
+    --color-brand:       #6C63FF;
+    --color-brand-light: #8B85FF;
+    --color-brand-dark:  #4A42E8;
+    --color-brand-muted: rgba(108, 99, 255, 0.12);
+
+    /* Accent — slightly darkened for AA contrast on white */
+    --color-accent:       #E05555;
+    --color-accent-light: #FF6B6B;
+
+    /* Text — inverted from light-on-dark to dark-on-light */
+    --color-text-primary:   #0D0D1A;
+    --color-text-secondary: #525269;
+    --color-text-muted:     #7A7A92;
+  }
+
   html {
     scroll-behavior: smooth;
     color-scheme: dark;
@@ -36,6 +59,13 @@
     color: var(--color-text-primary);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+/* Theme transition — smooth color flip when data-theme attribute changes */
+@media (prefers-reduced-motion: no-preference) {
+  :root, [data-theme="light"] {
+    transition: background-color 200ms ease, color 200ms ease, border-color 200ms ease;
   }
 }
 
