@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v3.4
 milestone_name: milestone
 status: executing
-stopped_at: Completed 04-polish-performance-01-PLAN.md
-last_updated: "2026-05-08T02:34:35.223Z"
+stopped_at: Completed 04-polish-performance/04-03-PLAN.md
+last_updated: "2026-05-08T02:35:43.466Z"
 last_activity: 2026-05-08
 progress:
   total_phases: 4
   completed_phases: 3
   total_plans: 23
-  completed_plans: 17
-  percent: 74
+  completed_plans: 19
+  percent: 83
 ---
 
 # Project State
@@ -26,7 +26,7 @@ See: .planning/PROJECT.md (updated 2026-04-21)
 ## Current Position
 
 Phase: 04 (polish-performance) — EXECUTING
-Plan: 2 of 7
+Plan: 4 of 7
 Status: Ready to execute
 Last activity: 2026-05-08
 
@@ -69,6 +69,8 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 03-content-animations P05 | 102 | 2 tasks | 2 files |
 | Phase 03-content-animations P04 | 8 | 1 tasks | 1 files |
 | Phase 04-polish-performance P01 | 2 | 3 tasks | 3 files |
+| Phase 04-polish-performance P02 | 2 | 3 tasks | 4 files |
+| Phase 04-polish-performance P03 | 12 | 3 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -118,6 +120,12 @@ Recent decisions affecting current work:
 - [Phase 03-content-animations]: Single useInView observer on timeline container drives per-card 100ms stagger via transitionDelay (D-13, D-15)
 - [Phase 04-polish-performance]: py-2 not changed when bumping min-h: min-h floor enforces height without reducing intentional interior padding
 - [Phase 04-polish-performance]: Two independent IntersectionObserver refs in Experience.js: headerRef fires for heading, sectionRef fires for timeline — animate independently at threshold 0.25 each
+- [Phase 04-polish-performance]: D-02 font strip: Inter 400+800 only, JBM 400 only — 5 imports stripped, saves ~78KB pre-gzip (SEO-03)
+- [Phase 04-polish-performance]: D-03 visualizer: rollup-plugin-visualizer@5.14.0, treemap template, produces dist/stats.html on every build
+- [Phase 04-polish-performance]: D-02 dep audit: all 4 production deps actively imported, none removable
+- [Phase 04-polish-performance]: me.webp NOT deleted: scripts/og-template.html references it for OG image generation pipeline — not a true orphan despite pre-planning grep missing this file
+- [Phase 04-polish-performance]: font-display: swap confirmed in all 3 @fontsource CSS files (inter 400/800: 7 occurrences each, jetbrains-mono 400: 6) — no CSS override needed
+- [Phase 04-polish-performance]: Font preload via Vite ?url imports in src/index.js — preloadWoff2() injects link tags before React mounts; Vite hash ensures preload URL == @fontsource CSS fetch URL
 
 ### Pending Todos
 
@@ -130,6 +138,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-05-08T02:34:35.219Z
-Stopped at: Completed 04-polish-performance-01-PLAN.md
+Last session: 2026-05-08T02:35:43.462Z
+Stopped at: Completed 04-polish-performance/04-03-PLAN.md
 Resume file: None

@@ -92,8 +92,8 @@ Plans:
 
 Plans:
 - [x] 04-01-PLAN.md — Phase 3 polish carryover: Skill ChipBadge inView gate (W-01), Experience heading animate-on-scroll wrap (I-01), Contact Copy email button 44px floor (D-06) (RESP-03)
-- [ ] 04-02-PLAN.md — Bundle visualizer (rollup-plugin-visualizer) + Inter 500/600/700 + JBM 500/600 font weight strip + production dep audit (SEO-03) [parallel with 04-01, 04-03]
-- [ ] 04-03-PLAN.md — Font preload (Inter 400/800 + JBM 400 latin woff2 via Vite ?url) + font-display swap verification + orphan me.webp removal + img CLS audit (SEO-03) [parallel with 04-01, 04-02]
+- [x] 04-02-PLAN.md — Bundle visualizer (rollup-plugin-visualizer) + Inter 500/600/700 + JBM 500/600 font weight strip + production dep audit (SEO-03) [parallel with 04-01, 04-03]
+- [x] 04-03-PLAN.md — Font preload (Inter 400/800 + JBM 400 latin woff2 via Vite ?url) + font-display swap verification + orphan me.webp removal + img CLS audit (SEO-03) [parallel with 04-01, 04-02]
 - [ ] 04-04-PLAN.md — A11y sweep: jsx-a11y warn→error promotion + skip-to-content link (EN/ES) + main landmark id (RESP-03) [depends on 04-01]
 - [ ] 04-05-PLAN.md — Code splitting via React.lazy + Suspense for Experience, Contact, Footer (SEO-03) [depends on 04-02]
 - [ ] 04-06-PLAN.md — Lighthouse CLI install + lighthouse:local/mobile/check scripts + iterate to Performance ≥ 0.90, A11y ≥ 0.90, tap-targets pass (SEO-03, RESP-03, RESP-01) [depends on 04-01..04-05]
@@ -109,4 +109,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 | 1. Foundation | 4/4 | Complete   | 2026-04-22 |
 | 2. Shell & Hero | 5/5 | Complete   | 2026-05-05 |
 | 3. Content & Animations | 6/7 | In Progress|  |
-| 4. Polish & Performance | 1/7 | In Progress|  |
+| 4. Polish & Performance | 3/7 | In Progress|  |
