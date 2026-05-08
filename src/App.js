@@ -8,6 +8,7 @@ import About from './components/About'
 import Skill from './components/Skill'
 
 const Experience = React.lazy(() => import('./components/Experience'))
+const Projects = React.lazy(() => import('./components/Projects'))
 const Contact = React.lazy(() => import('./components/Contact'))
 const Footer = React.lazy(() => import('./components/Footer'))
 
@@ -37,6 +38,9 @@ export default function App() {
             <Skill />
             <Suspense fallback={SectionFallback}>
               <Experience />
+            </Suspense>
+            <Suspense fallback={SectionFallback}>
+              <Projects />
             </Suspense>
             <Suspense fallback={SectionFallback}>
               <Contact />
