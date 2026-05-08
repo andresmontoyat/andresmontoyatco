@@ -8,6 +8,8 @@ const translations = {
       menuOpen: 'Open menu',
       menuClose: 'Close',
       skipToContent: 'Skip to content',
+      themeLight: 'Switch to light mode',
+      themeDark: 'Switch to dark mode',
     },
     meta: {
       title: 'Carlos Andrés Montoya Tobón · Solutions Architect & Senior Backend Engineer',
@@ -132,6 +134,8 @@ const translations = {
       menuOpen: 'Abrir menú',
       menuClose: 'Cerrar',
       skipToContent: 'Saltar al contenido',
+      themeLight: 'Cambiar a modo claro',
+      themeDark: 'Cambiar a modo oscuro',
     },
     meta: {
       title: 'Carlos Andrés Montoya Tobón · Arquitecto de Soluciones e Ingeniero Backend Senior',
