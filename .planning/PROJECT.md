@@ -4,12 +4,26 @@
 
 **Shipped:** v3.4 (2026-05-07) — Full brownfield redesign delivered. Site is production-ready: Vite 6 + React 18 + Tailwind v3.4 toolchain, sticky bilingual navigation, bold animated Hero with char-reveal headline, redesigned About / Skills (4 categories) / Experience (vertical timeline, 12 entries, tech chips, expand/collapse) / Contact (email-hero with copy-to-clipboard) / Footer, useInView entrance animations, branded Open Graph rich link preview, Lighthouse Performance **98** / Accessibility **100** / Best Practices **100** / SEO **100** on mobile. See [`milestones/v3.4-ROADMAP.md`](milestones/v3.4-ROADMAP.md) for full archive and [`v3.4-MILESTONE-AUDIT.md`](v3.4-MILESTONE-AUDIT.md) for audit report.
 
-## Next Milestone Goals (v3.5 candidates)
+## Current Milestone: v3.5 Themes, Projects & Production
 
-- **Deploy** — pick hosting target (Vercel / Netlify / GitHub Pages) and domain (carlosmontoyatco.dev or similar)
-- **Tech debt cleanup** — orphaned i18n keys (t.hero.cta2, t.contact.loc), self-host fonts in og-template.html, fix GA `<script>` placement
-- **Optional polish** — JSON-LD Person schema (ASEO-01), sitemap (ASEO-03), test infrastructure decision (deferred 4 phases)
-- **Possible features** — dark/light theme toggle (VIS-01), company logo SVGs in timeline (VIS-02), projects showcase (VIS-03)
+**Goal:** Ship the redesigned portfolio to production at andresmontoyat.co with a dark/light theme toggle, a curated projects showcase section, and v3.4 tech debt cleared.
+
+**Target features:**
+- Dark + Light theme toggle (VIS-01) — icon button in nav next to LangPill, persisted in localStorage
+- Projects showcase section (VIS-03) — 3-5 hand-picked projects with screenshots, mirroring experience.js bilingual data pattern
+- Vercel production deploy with custom domain andresmontoyat.co + DNS configuration
+- v3.4 tech debt cleanup: remove orphaned i18n keys (t.hero.cta2, t.contact.loc), self-host fonts in og-template.html, move GA `<script>` to `<head>`
+
+**Locked decisions (from /gsd-discuss-milestone equivalent inline):**
+- Theme: Dark (default) + Light only — no system mode
+- Theme UI: icon button in nav (next to LangPill) — sun/moon toggle
+- Projects data: src/data/projects.js (mirror experience.js bilingual pattern), screenshots in public/projects/
+- Deploy: Vercel — auto-preview deploys per branch + production from main
+- Domain: andresmontoyat.co (already owned)
+- Tech debt: folded into v3.5 (not deferred to v3.6)
+- Test infrastructure: still deferred (5 consecutive phases now — revisit v3.6+)
+
+**Phase numbering:** Continues from v3.4. v3.5 starts at Phase 5.
 
 ## What This Is
 
