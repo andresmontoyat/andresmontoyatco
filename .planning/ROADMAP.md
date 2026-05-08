@@ -31,7 +31,11 @@
   3. Light mode provides sufficient contrast on all text, surface, and chip elements so no WCAG AA failures are introduced
   4. `t.hero.cta2` and `t.contact.loc` keys are absent from translations.js EN and ES branches; no runtime errors result
   5. `npm run og:gen` completes successfully producing an identical og-image.png with no Google Fonts CDN request; GA `<script>` block is inside `<head>` with no HTML spec violations
-**Plans**: TBD
+**Plans**: 4 plans
+  - [ ] 05-01-PLAN.md — Tech debt cleanup (DEBT-01/02/03): prune orphaned translation keys, replace Google Fonts CDN with self-hosted Inter in og-template, move GA script into `<head>`
+  - [ ] 05-02-PLAN.md — Theme tokens + ThemeContext (VIS-01 foundation): `:root` + `[data-theme="light"]` CSS variables, ThemeContext mirroring LanguageContext, App.js provider wiring
+  - [ ] 05-03-PLAN.md — ThemeToggle + Nav integration (VIS-01 UI): bilingual aria-labels, accessible sun/moon button, render in DesktopNav and MobileMenu next to LangPill
+  - [ ] 05-04-PLAN.md — Light mode contrast verification (VIS-01 a11y gate): Lighthouse audit, token tweaks if needed, visual sweep at iPhone 14 / iPad / 1440px
 **UI hint**: yes
 
 ### Phase 6: Projects Showcase
@@ -63,6 +67,6 @@
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 5. Theme & Tech Debt | 0/TBD | Not started | - |
+| 5. Theme & Tech Debt | 0/4 | Not started | - |
 | 6. Projects Showcase | 0/TBD | Not started | - |
 | 7. Production Deploy | 0/TBD | Not started | - |
