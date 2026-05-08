@@ -16,7 +16,7 @@
 ## Phases
 
 - [ ] **Phase 5: Theme & Tech Debt** — Theme toggle infrastructure + v3.4 cleanup wave
-- [ ] **Phase 6: Projects Showcase** — Projects data module + section component + nav integration
+- [x] **Phase 6: Projects Showcase** — Projects data module + section component + nav integration (completed 2026-05-08)
 - [ ] **Phase 7: Production Deploy** — Vercel configuration + custom domain + preview deploys verified
 
 ## Phase Details
@@ -50,7 +50,7 @@
   5. Cards animate in on scroll using the existing `useInView` / `.animate-on-scroll` pattern — no new animation library introduced
 **Plans**: 2 plans
   - [x] 06-01-PLAN.md — Projects data + section component + translations: `src/data/projects.js`, `src/components/Projects.js`, EN/ES `projects` block + `nav.projects`
-  - [ ] 06-02-PLAN.md — Nav integration + App.js lazy-load: SECTION_IDS update, DesktopNav/MobileMenu Projects link, lazy-loaded Suspense between Experience and Contact
+  - [x] 06-02-PLAN.md — Nav integration + App.js lazy-load: SECTION_IDS update, DesktopNav/MobileMenu Projects link, lazy-loaded Suspense between Experience and Contact
 **UI hint**: yes
 
 ### Phase 7: Production Deploy
@@ -70,5 +70,5 @@
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 5. Theme & Tech Debt | 3/4 | In Progress|  |
-| 6. Projects Showcase | 0/2 | Not started | - |
+| 6. Projects Showcase | 2/2 | Complete   | 2026-05-08 |
 | 7. Production Deploy | 0/TBD | Not started | - |
