@@ -12,6 +12,11 @@ import inter400Url from '@fontsource/inter/files/inter-latin-400-normal.woff2?ur
 import inter800Url from '@fontsource/inter/files/inter-latin-800-normal.woff2?url'
 import jbmRegularUrl from '@fontsource/jetbrains-mono/files/jetbrains-mono-latin-400-normal.woff2?url'
 
+import React from 'react'
+import { createRoot } from 'react-dom/client'
+import './index.css'
+import App from './App'
+
 function preloadWoff2(href) {
   const link = document.createElement('link')
   link.rel = 'preload'
@@ -22,12 +27,7 @@ function preloadWoff2(href) {
   document.head.appendChild(link)
 }
 
-;[inter400Url, inter800Url, jbmRegularUrl].forEach(preloadWoff2)
-
-import React from 'react'
-import { createRoot } from 'react-dom/client'
-import './index.css'
-import App from './App'
+[inter400Url, inter800Url, jbmRegularUrl].forEach(preloadWoff2)
 
 const root = createRoot(document.getElementById('root'))
 root.render(
