@@ -21,9 +21,9 @@ Requirements for the v3.5 release. Each maps to roadmap phases (continuing from 
 
 ### v3.4 Tech Debt Cleanup
 
-- [ ] **DEBT-01**: Remove orphaned i18n keys — `t.hero.cta2` (Hero CV buttons hardcode bilingual strings) + `t.contact.loc` (no Location card by design) — clean removal from translations.js EN+ES
-- [ ] **DEBT-02**: Self-host fonts in `scripts/og-template.html` — replace fonts.googleapis.com link with @fontsource Inter woff2; verify `npm run og:gen` still produces identical og-image.png
-- [ ] **DEBT-03**: Move GA `<script>` from between `</body>`/`</html>` to `<head>` in index.html — preserves SEO-02 firing, fixes HTML spec violation
+- [x] **DEBT-01**: Remove orphaned i18n keys — `t.hero.cta2` (Hero CV buttons hardcode bilingual strings) + `t.contact.loc` (no Location card by design) — clean removal from translations.js EN+ES
+- [x] **DEBT-02**: Self-host fonts in `scripts/og-template.html` — replace fonts.googleapis.com link with @fontsource Inter woff2; verify `npm run og:gen` still produces identical og-image.png
+- [x] **DEBT-03**: Move GA `<script>` from between `</body>`/`</html>` to `<head>` in index.html — preserves SEO-02 firing, fixes HTML spec violation
 
 ## Out of Scope (for v3.5)
 
@@ -63,9 +63,9 @@ Tracked but not in current roadmap:
 | REQ-ID | Phase | Status |
 |--------|-------|--------|
 | VIS-01 | Phase 5 | Pending |
-| DEBT-01 | Phase 5 | Pending |
-| DEBT-02 | Phase 5 | Pending |
-| DEBT-03 | Phase 5 | Pending |
+| DEBT-01 | Phase 5 | Complete |
+| DEBT-02 | Phase 5 | Complete |
+| DEBT-03 | Phase 5 | Complete |
 | VIS-03 | Phase 6 | Pending |
 | DEPLOY-01 | Phase 7 | Pending |
 | DEPLOY-02 | Phase 7 | Pending |
