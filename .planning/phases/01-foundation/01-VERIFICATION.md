@@ -1,8 +1,12 @@
 ---
 phase: 01-foundation
 verified: 2026-04-21T00:00:00Z
-status: gaps_found
-score: 3/5 must-haves verified
+status: passed
+gap_closure_applied: 2026-04-22T00:00:00Z
+gap_closure_commit: 999ae56
+score: 5/5 must-haves verified (3/5 initially; gaps resolved post-verification via bulk sed token replacement across 7 components — commit 999ae56)
+historical_gaps_resolved: |
+  Initial verification found neon/slate2 token usage in 7 components after token system was renamed to brand/accent/text. Resolution applied immediately post-verification: bulk sed replacement (text-neon→text-brand, bg-neon→bg-brand, text-slate2-100→text-text-primary, text-slate2-400→text-text-secondary, bg-grad-neon→bg-brand-gradient, shadow-neon→shadow-brand) across 7 files. Manual fixes for hardcoded #00E5A8 hex (Experience.js, Hero.js), from-neon → from-brand, animate-pulse2 → motion-safe:animate-pulse2. Build verified post-fix (685ms, CSS 61.12 kB). All 5 must-haves passed by Phase 1 completion.
 gaps:
   - truth: "App renders with new bold color palette — neon cyan/purple is gone"
     status: failed
