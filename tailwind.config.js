@@ -13,6 +13,7 @@ module.exports = {
           700: '#1F1F3A',
           600: '#252545',
           500: '#2D2D5A',
+          400: '#3A3A6A',
         },
         // Brand accent — bold indigo/violet replaces dated neon cyan
         brand: {
