@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v3.4
 milestone_name: milestone
-status: verifying
-stopped_at: Phase 4 context gathered
-last_updated: "2026-05-08T02:11:18.768Z"
+status: executing
+stopped_at: Completed 04-polish-performance-01-PLAN.md
+last_updated: "2026-05-08T02:34:35.223Z"
 last_activity: 2026-05-08
 progress:
   total_phases: 4
   completed_phases: 3
-  total_plans: 16
-  completed_plans: 16
-  percent: 100
+  total_plans: 23
+  completed_plans: 17
+  percent: 74
 ---
 
 # Project State
@@ -21,13 +21,13 @@ progress:
 See: .planning/PROJECT.md (updated 2026-04-21)
 
 **Core value:** The hero section and overall first impression must stop recruiters mid-scroll and make them want to learn more about Carlos.
-**Current focus:** Phase 03 — content-animations
+**Current focus:** Phase 04 — polish-performance
 
 ## Current Position
 
-Phase: 4
-Plan: Not started
-Status: Phase complete — ready for verification
+Phase: 04 (polish-performance) — EXECUTING
+Plan: 2 of 7
+Status: Ready to execute
 Last activity: 2026-05-08
 
 Progress: [░░░░░░░░░░] 0%
@@ -68,6 +68,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 03-content-animations P03 | 8 | 2 tasks | 2 files |
 | Phase 03-content-animations P05 | 102 | 2 tasks | 2 files |
 | Phase 03-content-animations P04 | 8 | 1 tasks | 1 files |
+| Phase 04-polish-performance P01 | 2 | 3 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -115,6 +116,8 @@ Recent decisions affecting current work:
 - [Phase 03-content-animations]: openCards object state (useState({})) replaces single expanded boolean for independent per-card expand/collapse (D-07)
 - [Phase 03-content-animations]: All 12 EXPERIENCE entries rendered unconditionally; featured field preserved in data but unused for rendering (D-08)
 - [Phase 03-content-animations]: Single useInView observer on timeline container drives per-card 100ms stagger via transitionDelay (D-13, D-15)
+- [Phase 04-polish-performance]: py-2 not changed when bumping min-h: min-h floor enforces height without reducing intentional interior padding
+- [Phase 04-polish-performance]: Two independent IntersectionObserver refs in Experience.js: headerRef fires for heading, sectionRef fires for timeline — animate independently at threshold 0.25 each
 
 ### Pending Todos
 
@@ -127,6 +130,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-05-08T02:11:18.759Z
-Stopped at: Phase 4 context gathered
-Resume file: .planning/phases/04-polish-performance/04-CONTEXT.md
+Last session: 2026-05-08T02:34:35.219Z
+Stopped at: Completed 04-polish-performance-01-PLAN.md
+Resume file: None
