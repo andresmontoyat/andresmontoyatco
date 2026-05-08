@@ -31,11 +31,19 @@ The hero section and overall first impression must stop recruiters mid-scroll an
 - [x] Professional presentation of work history (12 entries timeline) — Phase 3
 - [x] Working contact method (mailto: + email copy-to-clipboard, 3 secondary cards) — Phase 3
 
+- [x] Lighthouse Performance 98 / Accessibility 100 / Best Practices 100 / SEO 100 on mobile preset — Phase 4 (SEO-03)
+- [x] All interactive elements meet 44px tap target minimum (target-size audit 1.0) — Phase 4 (RESP-03)
+- [x] Responsive sweep verified at 4 breakpoints (iPhone 14, Pixel 7, iPad, 4K) — Phase 4 (RESP-01)
+- [x] Scroll perf verified jank-free via Chrome DevTools Performance profile — Phase 4 (RESP-02)
+- [x] A11y baseline: skip-to-content link, jsx-a11y promoted to error, ARIA landmarks, single h1 hierarchy — Phase 4
+- [x] Bundle: 168 KB main + 11/3/1 KB lazy chunks (Experience/Contact/Footer); CSS gzip 12.6 KB — Phase 4
+- [x] Test infrastructure decision: locked as manual UAT only for v3.4 (revisit v3.5+) — Phase 4 D-04
+
 ### Active
 
-- [ ] Fast performance despite rich animations (target Lighthouse 90+) — Phase 4
-- [ ] Final responsive polish across breakpoints — Phase 4
-- [ ] Test infrastructure decision (deferred from Phase 2/3) — Phase 4 candidate
+- [ ] Deploy target choice (Vercel / Netlify / GitHub Pages) — milestone-level
+- [ ] Domain registration (carlosmontoya.dev or similar) — milestone-level
+- [ ] REQUIREMENTS.md traceability sync (10 unmapped REQ-IDs: VIS-01..04, ASEO-01..03, INTX-01..03) — milestone audit task
 
 ### Out of Scope
 
@@ -101,4 +109,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-05-07 after Phase 3 completion*
+*Last updated: 2026-05-07 after Phase 4 completion (milestone v3.4 ready for audit)*
