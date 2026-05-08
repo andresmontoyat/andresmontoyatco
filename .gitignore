@@ -25,3 +25,5 @@ yarn-error.log*
 # Lighthouse generated reports
 lighthouse-report*.json
 lighthouse-report*.html
+lighthouse-light-a11y
+dist/
