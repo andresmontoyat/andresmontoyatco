@@ -92,5 +92,14 @@ None — no external service configuration required.
 - ChipBadge chip stagger animation fires on scroll instead of at mount — visual polish consistent with design intent
 
 ---
+## Self-Check: PASSED
+
+- Skill.js: FOUND (43e7ba7 — hardcoded is-visible removed, ChipBadge signature updated, call site wired)
+- Experience.js: FOUND (aa71b71 — headerRef + headerInView added, heading wrapped in animate-on-scroll)
+- Contact.js: FOUND (ccaeb8d — min-h-[44px] present, min-h-[32px] absent)
+- 04-01-SUMMARY.md: FOUND
+- All 3 task commits verified in git log
+
+---
 *Phase: 04-polish-performance*
 *Completed: 2026-05-08*
