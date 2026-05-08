@@ -58,7 +58,7 @@ Lighthouse 12 mobile audit (Plan 04-06, 2026-05-08):
 
 ### Findings (fill in after recording)
 
-- Average FPS during scroll: ___
+- FPS: (average during scroll) ___
 - Number of long tasks > 50ms: ___
 - Location of long tasks (section / event): ___
 - Layout thrash detected: yes / no
