@@ -1,8 +1,8 @@
 ---
 phase: 06-projects-showcase
 verified: 2026-05-05T00:00:00Z
-status: human_needed
-score: 5/5 must-haves verified (3 require browser confirmation)
+status: passed
+score: 5/5 must-haves verified (5/5 human-tested)
 re_verification: false
 human_verification:
   - test: "Nav scroll-spy highlights Projects link"
