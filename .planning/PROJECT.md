@@ -24,16 +24,18 @@ The hero section and overall first impression must stop recruiters mid-scroll an
 - [x] Hero section with bold first impression (status badge, char-reveal h1b, 7-step entrance stagger, dual CV CTAs, 4-stat grid) — Phase 2
 - [x] Functional bilingual navigation (sticky shell, hamburger overlay via createPortal, scroll-spy active link, scroll progress bar, EN/ES LangPill) — Phase 2
 - [x] SEO-04: synchronous lazy lang init eliminates first-paint flash; html lang + per-language title/meta description sync — Phase 2
+- [x] About / Skills / Experience / Contact / Footer redesigned (4-category skills chip cloud, vertical experience timeline with 12 entries + tech chips + per-card expand, email-hero with copy-to-clipboard, minimal footer) — Phase 3
+- [x] Scroll-triggered entrance animations via useInView IntersectionObserver hook + CSS classes (no JS animation library); 100ms stagger; prefers-reduced-motion suppression — Phase 3
+- [x] Open Graph + Twitter card meta tags with branded 1200x630 og-image.png; per-language og:title/og:description sync — Phase 3 (SEO-01)
+- [x] GA G-4TZJGR3MXR page-view events firing — Phase 3 (SEO-02)
+- [x] Professional presentation of work history (12 entries timeline) — Phase 3
+- [x] Working contact method (mailto: + email copy-to-clipboard, 3 secondary cards) — Phase 3
 
 ### Active
 
-- [ ] Rethought section structure for About / Skills / Experience / Contact / Footer — Phase 3
-- [ ] Rich scroll animations, parallax effects, hover states, and transitions across content sections — Phase 3
-- [ ] Professional presentation of work history that tells a compelling story — Phase 3
-- [ ] Working contact method (form or direct links) — Phase 3
-- [ ] Fully responsive mobile-first design across remaining sections — Phase 3
 - [ ] Fast performance despite rich animations (target Lighthouse 90+) — Phase 4
-- [ ] SEO and Open Graph meta tags for link sharing (beyond html lang/title/description) — Phase 4
+- [ ] Final responsive polish across breakpoints — Phase 4
+- [ ] Test infrastructure decision (deferred from Phase 2/3) — Phase 4 candidate
 
 ### Out of Scope
 
@@ -70,11 +72,16 @@ The hero section and overall first impression must stop recruiters mid-scroll an
 | Bold & creative direction | User wants personality, not corporate minimal | Validated — Phase 2 hero delivers bold first impression |
 | Rich animations | Site should feel alive and impressive | Validated — Phase 2 (CSS-first stagger + char-reveal); extends in Phase 3 |
 | Mobile-critical | Recruiters browse on phones | Validated — Phase 2 hamburger portal + responsive nav |
-| Fresh content structure | Current sections feel generic — rethink from scratch | -- Pending Phase 3 |
-| In-place component modify (D-01) | Lower diff, retain git history per file | Phase 2 |
-| Native CSS scroll-behavior + custom IntersectionObserver (D-02/D-03) | Drop unused react-scroll dep; lighter bundle than lib | Phase 2 |
+| Fresh content structure | Current sections feel generic — rethink from scratch | Validated — Phase 3 (4-category skills, vertical timeline, email-hero) |
+| In-place component modify (D-01) | Lower diff, retain git history per file | Phase 2, Phase 3 |
+| Native CSS scroll-behavior + custom IntersectionObserver (D-02/D-03) | Drop unused react-scroll dep; lighter bundle than lib | Phase 2, Phase 3 (useInView hook reused pattern) |
 | React portal mobile menu (D-05) | Avoids z-index conflicts with sticky nav, body scroll-lock cleaner | Phase 2 |
-| Manual browser-only testing (D-06) | Defer test infra to Phase 4 if quality gates require | Phase 2 |
+| Manual browser-only testing (D-06) | Defer test infra to Phase 4 if quality gates require | Phase 2, Phase 3 |
+| Tech chips from explicit `tech:[]` field per entry | Easier to maintain, grep-friendly | Phase 3 |
+| Independent expand/collapse per experience card | More flexible than accordion | Phase 3 |
+| All 12 experience entries visible from first load | Recruiters scan full career arc at-a-glance | Phase 3 |
+| 1200x630 branded OG image generated via Playwright | Reproducible toolchain (`npm run og:gen`) for future regen | Phase 3 (SEO-01) |
+| Animation threshold 25% / stagger 100ms | Standard cadence — neither rushed nor laggy | Phase 3 (ANIM-01/03) |
 
 ## Evolution
 
@@ -94,4 +101,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-05-05 after Phase 2 completion*
+*Last updated: 2026-05-07 after Phase 3 completion*
