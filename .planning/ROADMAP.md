@@ -96,7 +96,7 @@ Plans:
 - [x] 04-03-PLAN.md — Font preload (Inter 400/800 + JBM 400 latin woff2 via Vite ?url) + font-display swap verification + orphan me.webp removal + img CLS audit (SEO-03) [parallel with 04-01, 04-02]
 - [x] 04-04-PLAN.md — A11y sweep: jsx-a11y warn→error promotion + skip-to-content link (EN/ES) + main landmark id (RESP-03) [depends on 04-01]
 - [x] 04-05-PLAN.md — Code splitting via React.lazy + Suspense for Experience, Contact, Footer (SEO-03) [depends on 04-02]
-- [ ] 04-06-PLAN.md — Lighthouse CLI install + lighthouse:local/mobile/check scripts + iterate to Performance ≥ 0.90, A11y ≥ 0.90, tap-targets pass (SEO-03, RESP-03, RESP-01) [depends on 04-01..04-05]
+- [x] 04-06-PLAN.md — Lighthouse CLI install + lighthouse:local/mobile/check scripts + iterate to Performance ≥ 0.90, A11y ≥ 0.90, tap-targets pass (SEO-03, RESP-03, RESP-01) [depends on 04-01..04-05]
 - [ ] 04-07-PLAN.md — Chrome DevTools Performance profile + 4-breakpoint responsive sweep + cross-cutting regressions (skip-link, EN/ES, GA, reduce-motion) (RESP-01, RESP-02) [depends on 04-01..04-05; parallel with 04-06]
 
 ## Progress
@@ -109,4 +109,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 | 1. Foundation | 4/4 | Complete   | 2026-04-22 |
 | 2. Shell & Hero | 5/5 | Complete   | 2026-05-05 |
 | 3. Content & Animations | 6/7 | In Progress|  |
-| 4. Polish & Performance | 5/7 | In Progress|  |
+| 4. Polish & Performance | 6/7 | In Progress|  |
