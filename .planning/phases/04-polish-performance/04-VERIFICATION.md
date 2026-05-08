@@ -1,8 +1,9 @@
 ---
 phase: 04-polish-performance
 verified: 2026-05-05T00:00:00Z
-status: human_needed
-score: 2/3 must-haves verified
+status: passed
+human_verified: 2026-05-07T18:00:00Z
+score: 3/3 must-haves verified (5/5 human-tested in browser)
 human_verification:
   - test: "Chrome DevTools Performance Profile — full-page scroll with 4x CPU throttle"
     expected: "FPS stays 55-60; no long tasks > 50ms; no layout thrash; IO observer fires once per section, not per frame"
