@@ -48,7 +48,9 @@
   3. Cards are legible and correctly laid out in both dark and light modes at iPhone 14, iPad, and 1440px breakpoints
   4. Screenshots load from `public/projects/` without layout shift; missing screenshots degrade gracefully (no broken-image icon visible)
   5. Cards animate in on scroll using the existing `useInView` / `.animate-on-scroll` pattern — no new animation library introduced
-**Plans**: TBD
+**Plans**: 2 plans
+  - [ ] 06-01-PLAN.md — Projects data + section component + translations: `src/data/projects.js`, `src/components/Projects.js`, EN/ES `projects` block + `nav.projects`
+  - [ ] 06-02-PLAN.md — Nav integration + App.js lazy-load: SECTION_IDS update, DesktopNav/MobileMenu Projects link, lazy-loaded Suspense between Experience and Contact
 **UI hint**: yes
 
 ### Phase 7: Production Deploy
@@ -68,5 +70,5 @@
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 5. Theme & Tech Debt | 3/4 | In Progress|  |
-| 6. Projects Showcase | 0/TBD | Not started | - |
+| 6. Projects Showcase | 0/2 | Not started | - |
 | 7. Production Deploy | 0/TBD | Not started | - |
