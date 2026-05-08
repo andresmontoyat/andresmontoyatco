@@ -1,0 +1,52 @@
+const PROJECTS = [
+  {
+    slug: 'person-api',
+    title: { en: 'Person API', es: 'Person API' },
+    desc: {
+      en: 'High-performance user-profile domain service at Coderio. Led a 40% latency reduction through query optimization, caching and hexagonal architecture refactoring.',
+      es: 'Servicio de dominio de perfil de usuario de alto rendimiento en Coderio. Lideré una reducción de latencia del 40% mediante optimización de consultas, caché y refactorización con arquitectura hexagonal.',
+    },
+    tech: ['Java 21', 'Spring Boot', 'PostgreSQL', 'Hexagonal Architecture', 'Testcontainers'],
+    liveUrl: null,
+    githubUrl: null,
+    screenshot: null,
+  },
+  {
+    slug: 'gudd-api',
+    title: { en: 'GUDD API', es: 'GUDD API' },
+    desc: {
+      en: 'Event-driven audit and compliance service at Coderio. Enhanced event auditing pipelines for stronger observability and regulatory compliance across the user-profile squad.',
+      es: 'Servicio de auditoría y cumplimiento orientado a eventos en Coderio. Mejoré los pipelines de auditoría para mayor observabilidad y cumplimiento regulatorio en el squad de perfil de usuario.',
+    },
+    tech: ['Java', 'Spring Boot', 'Kafka', 'Redis', 'AWS'],
+    liveUrl: null,
+    githubUrl: null,
+    screenshot: null,
+  },
+  {
+    slug: 'blockchain-credentials',
+    title: { en: 'Blockchain Credentials Platform', es: 'Plataforma de Credenciales Blockchain' },
+    desc: {
+      en: 'Digital credentials verification platform at Blerify. Issued and validated verifiable credentials on Ethereum, secured with Keycloak and routed through KrakenD on Kubernetes.',
+      es: 'Plataforma de verificación de credenciales digitales en Blerify. Emití y validé credenciales verificables en Ethereum, aseguradas con Keycloak y enrutadas por KrakenD sobre Kubernetes.',
+    },
+    tech: ['Kotlin', 'Spring Boot', 'Ethereum', 'Keycloak', 'KrakenD', 'Kubernetes', 'GKE'],
+    liveUrl: null,
+    githubUrl: null,
+    screenshot: null,
+  },
+  {
+    slug: 'ai-coding-workflows',
+    title: { en: 'AI-Driven Coding Workflows', es: 'Flujos de Desarrollo con IA' },
+    desc: {
+      en: 'GSD methodology and structured AI coding workflows integrating Claude Code, GitHub Copilot and JetBrains Junie with TDD and hexagonal architecture to accelerate backend delivery.',
+      es: 'Metodología GSD y flujos de codificación estructurados con IA integrando Claude Code, GitHub Copilot y JetBrains Junie con TDD y arquitectura hexagonal para acelerar la entrega backend.',
+    },
+    tech: ['Claude Code', 'GitHub Copilot', 'TDD', 'Hexagonal Architecture', 'Spring Boot'],
+    liveUrl: null,
+    githubUrl: null,
+    screenshot: null,
+  },
+]
+
+export default PROJECTS
