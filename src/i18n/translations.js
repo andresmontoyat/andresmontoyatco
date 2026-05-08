@@ -7,6 +7,7 @@ const translations = {
       contact: 'Contact',
       menuOpen: 'Open menu',
       menuClose: 'Close',
+      skipToContent: 'Skip to content',
     },
     meta: {
       title: 'Carlos Andrés Montoya Tobón · Solutions Architect & Senior Backend Engineer',
@@ -132,6 +133,7 @@ const translations = {
       contact: 'Contacto',
       menuOpen: 'Abrir menú',
       menuClose: 'Cerrar',
+      skipToContent: 'Saltar al contenido',
     },
     meta: {
       title: 'Carlos Andrés Montoya Tobón · Arquitecto de Soluciones e Ingeniero Backend Senior',

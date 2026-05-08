@@ -47,6 +47,30 @@
     background-size: 32px 32px;
   }
 
+  /* Phase 4 D-07: Skip-to-content — visible only on keyboard focus
+     Standard a11y pattern. Hidden off-screen until focused. */
+  .skip-link {
+    position: absolute;
+    top: -100px;
+    left: 0;
+    z-index: 1000;
+    padding: 0.75rem 1rem;
+    background-color: var(--color-brand);
+    color: var(--color-text-inverse, #fff);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    font-weight: 800;
+    border-radius: 0 0 0.5rem 0;
+    transition: top 150ms ease-out;
+    text-decoration: none;
+  }
+
+  .skip-link:focus {
+    top: 0;
+    outline: 2px solid var(--color-brand-light);
+    outline-offset: 2px;
+  }
+
   /* Phase 3: scroll-triggered entrance — used by useInView hook */
   .animate-on-scroll {
     opacity: 0;
