@@ -20,7 +20,6 @@ const translations = {
       h1c: 'that matter.',
       lead: 'Solutions Architect and Senior Backend Engineer with 18+ years designing Java and Spring-based platforms across fintech, retail, telecom and transportation.',
       cta1: 'Get in touch',
-      cta2: 'Download CV',
     },
     stats: {
       years: 'Years',
@@ -117,7 +116,6 @@ const translations = {
       h2: "Let's build something",
       intro: 'Open to senior backend, architecture and technical leadership roles. Feel free to reach out.',
       phone: 'Phone',
-      loc: 'Location',
       email: 'Email',
     },
     footer: {
@@ -146,7 +144,6 @@ const translations = {
       h1c: 'que importan.',
       lead: 'Arquitecto de Soluciones e Ingeniero Backend Senior con +18 años diseñando plataformas en Java y Spring para fintech, retail, telecomunicaciones y transporte.',
       cta1: 'Contáctame',
-      cta2: 'Descargar CV',
     },
     stats: {
       years: 'Años',
@@ -243,7 +240,6 @@ const translations = {
       h2: 'Construyamos algo juntos',
       intro: 'Abierto a roles senior de backend, arquitectura y liderazgo técnico. Escríbeme sin pena.',
       phone: 'Teléfono',
-      loc: 'Ubicación',
       email: 'Correo',
     },
     footer: {
