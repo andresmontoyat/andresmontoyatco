@@ -1,8 +1,9 @@
 ---
 phase: 05-theme-tech-debt
 verified: 2026-05-05T00:00:00Z
-status: human_needed
-score: 4/5 must-haves verified (1 requires browser)
+status: passed
+human_verified: 2026-05-08T18:00:00Z
+score: 5/5 must-haves verified (5/5 human-tested in browser)
 re_verification: false
 human_verification:
   - test: "Click sun/moon button in nav and confirm dark↔light flip at mobile, tablet, and desktop viewports"
