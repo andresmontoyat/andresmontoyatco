@@ -4,7 +4,7 @@ import { useLanguage } from '../i18n/LanguageContext'
 import useActiveSection from '../hooks/useActiveSection'
 import ThemeToggle from './_shared/ThemeToggle'
 
-const SECTION_IDS = ['about', 'skills', 'experience', 'contact']
+const SECTION_IDS = ['about', 'skills', 'experience', 'projects', 'contact']
 
 export default function Nav() {
   const { lang, setLang, t } = useLanguage()
@@ -64,6 +64,7 @@ function DesktopNav({ t, activeSection }) {
     { id: 'about', label: t.nav.about },
     { id: 'skills', label: t.nav.skills },
     { id: 'experience', label: t.nav.experience },
+    { id: 'projects', label: t.nav.projects },
     { id: 'contact', label: t.nav.contact },
   ]
   return (
@@ -172,6 +173,7 @@ function MobileMenu({ open, onClose, t, lang, setLang, activeSection }) {
     { id: 'about', label: t.nav.about },
     { id: 'skills', label: t.nav.skills },
     { id: 'experience', label: t.nav.experience },
+    { id: 'projects', label: t.nav.projects },
     { id: 'contact', label: t.nav.contact },
   ]
 
