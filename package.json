@@ -12,6 +12,9 @@
     "dev": "vite",
     "build": "vite build",
     "build:analyze": "vite build && open dist/stats.html || true",
+    "lighthouse:local": "npm run build && (npx vite preview --port=4173 &) && sleep 3 && npx lighthouse http://localhost:4173 --output=json --output=html --output-path=./lighthouse-report --quiet --chrome-flags=\"--headless --no-sandbox --disable-gpu\" && pkill -f 'vite preview' || true",
+    "lighthouse:mobile": "npm run build && (npx vite preview --port=4173 &) && sleep 3 && npx lighthouse http://localhost:4173 --preset=mobile --output=json --output=html --output-path=./lighthouse-report-mobile --quiet --chrome-flags=\"--headless --no-sandbox --disable-gpu\" && pkill -f 'vite preview' || true",
+    "lighthouse:check": "node -e \"const r = require('./lighthouse-report-mobile.report.json'); const p = r.categories.performance.score; const a = r.categories.accessibility.score; const t = r.audits['tap-targets'].score; console.log('Performance:', p, 'A11y:', a, 'Tap-targets:', t); if (p < 0.9 || a < 0.9 || t !== 1) process.exit(1);\"",
     "preview": "vite preview",
     "lint": "eslint src --ext .js,.jsx",
     "og:gen": "node scripts/generate-og-image.js"
@@ -25,6 +28,7 @@
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^4.6.2",
+    "lighthouse": "^12.8.2",
     "playwright": "^1.59.1",
     "postcss": "^8.5.10",
     "rollup-plugin-visualizer": "^5.14.0",
