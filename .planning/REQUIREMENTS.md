@@ -10,7 +10,7 @@ Requirements for the v3.5 release. Each maps to roadmap phases (continuing from 
 
 ### Visual Enhancements (now in scope)
 
-- [ ] **VIS-01**: Dark/light theme toggle — Dark (default, current ink palette) + Light variant; icon button (sun/moon) in nav next to LangPill; persisted in localStorage; tailwind.config.js extended with light token variants
+- [x] **VIS-01**: Dark/light theme toggle — Dark (default, current ink palette) + Light variant; icon button (sun/moon) in nav next to LangPill; persisted in localStorage; tailwind.config.js extended with light token variants
 - [ ] **VIS-03**: Projects showcase section — 3-5 hand-picked projects in `src/data/projects.js` (mirror experience.js bilingual pattern); card grid with title/desc/tech chips/screenshot/live URL/GitHub URL; screenshots in `public/projects/`; new section ID added to Nav scroll-spy
 
 ### Deployment
@@ -62,7 +62,7 @@ Tracked but not in current roadmap:
 
 | REQ-ID | Phase | Status |
 |--------|-------|--------|
-| VIS-01 | Phase 5 | Pending |
+| VIS-01 | Phase 5 | Complete |
 | DEBT-01 | Phase 5 | Complete |
 | DEBT-02 | Phase 5 | Complete |
 | DEBT-03 | Phase 5 | Complete |
