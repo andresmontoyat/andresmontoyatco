@@ -1,3 +1,4 @@
+import React from 'react'
 import { useTheme } from '../../i18n/ThemeContext'
 import { useLanguage } from '../../i18n/LanguageContext'
 
