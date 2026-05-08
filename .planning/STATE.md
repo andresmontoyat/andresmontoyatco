@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v3.4
 milestone_name: milestone
 status: executing
-stopped_at: Completed 04-polish-performance/04-03-PLAN.md
-last_updated: "2026-05-08T02:35:43.466Z"
+stopped_at: Completed 04-polish-performance/04-04-PLAN.md
+last_updated: "2026-05-08T02:40:14.140Z"
 last_activity: 2026-05-08
 progress:
   total_phases: 4
   completed_phases: 3
   total_plans: 23
-  completed_plans: 19
-  percent: 83
+  completed_plans: 20
+  percent: 87
 ---
 
 # Project State
@@ -26,7 +26,7 @@ See: .planning/PROJECT.md (updated 2026-04-21)
 ## Current Position
 
 Phase: 04 (polish-performance) — EXECUTING
-Plan: 4 of 7
+Plan: 5 of 7
 Status: Ready to execute
 Last activity: 2026-05-08
 
@@ -71,6 +71,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 04-polish-performance P01 | 2 | 3 tasks | 3 files |
 | Phase 04-polish-performance P02 | 2 | 3 tasks | 4 files |
 | Phase 04-polish-performance P03 | 12 | 3 tasks | 1 files |
+| Phase 04-polish-performance P04 | 2 | 3 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -126,6 +127,8 @@ Recent decisions affecting current work:
 - [Phase 04-polish-performance]: me.webp NOT deleted: scripts/og-template.html references it for OG image generation pipeline — not a true orphan despite pre-planning grep missing this file
 - [Phase 04-polish-performance]: font-display: swap confirmed in all 3 @fontsource CSS files (inter 400/800: 7 occurrences each, jetbrains-mono 400: 6) — no CSS override needed
 - [Phase 04-polish-performance]: Font preload via Vite ?url imports in src/index.js — preloadWoff2() injects link tags before React mounts; Vite hash ensures preload URL == @fontsource CSS fetch URL
+- [Phase 04-polish-performance]: jsx-a11y promotion is a no-op pass (0 warnings existed before) — locks CI ratchet at error severity so future regressions break the build
+- [Phase 04-polish-performance]: SkipLink defined as private component in App.js (not extracted to shared file) — one-off component with no reuse need
 
 ### Pending Todos
 
@@ -138,6 +141,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-05-08T02:35:43.462Z
-Stopped at: Completed 04-polish-performance/04-03-PLAN.md
+Last session: 2026-05-08T02:40:14.136Z
+Stopped at: Completed 04-polish-performance/04-04-PLAN.md
 Resume file: None
