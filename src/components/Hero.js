@@ -57,7 +57,24 @@ export default function Hero() {
       id="hero"
       className="relative min-h-screen flex items-center bg-hero-gradient pt-16 pb-16 overflow-hidden"
     >
-      <div aria-hidden="true" className="absolute inset-0 bg-grid-subtle pointer-events-none z-0" />
+      <picture className="absolute inset-0 z-0">
+        <source media="(max-width: 640px)" srcSet="/me-800.webp" type="image/webp" />
+        <source srcSet="/me-1600.webp" type="image/webp" />
+        <img
+          src="/me-1600.webp"
+          alt="Carlos Andres Montoya"
+          fetchPriority="high"
+          loading="eager"
+          decoding="async"
+          className="absolute inset-0 w-full h-full object-cover"
+          style={{ objectPosition: 'center 30%', filter: 'var(--hero-photo-filter)' }}
+        />
+      </picture>
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 z-0 pointer-events-none"
+        style={{ background: 'var(--hero-overlay)' }}
+      />
 
       <div className="relative z-10 max-w-6xl mx-auto px-6 py-20 w-full">
         <span
