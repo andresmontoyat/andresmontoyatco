@@ -88,6 +88,7 @@ export default function Hero() {
         <h1
           className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tighter leading-none mb-5"
           aria-label={`${t.hero.h1a} ${t.hero.h1b} ${t.hero.h1c}`}
+          style={{ filter: 'drop-shadow(var(--hero-h1-shadow))' }}
         >
           <span
             className="block text-text-primary motion-safe:opacity-0 motion-safe:animate-slide-up"
@@ -149,7 +150,7 @@ export default function Hero() {
         </div>
 
         <div
-          className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-14 p-7 bg-gradient-to-b from-ink-500 to-ink-700 border border-ink-400 rounded-xl motion-safe:opacity-0 motion-safe:animate-fade-in"
+          className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-14 p-7 bg-gradient-to-b from-ink-500 to-ink-700 border border-ink-400 rounded-xl motion-safe:opacity-0 motion-safe:animate-fade-in backdrop-blur-sm"
           style={{ animationDelay: '950ms', animationFillMode: 'forwards', animationDuration: '500ms' }}
         >
           <Stat num="18+" label={t.stats.years} />
