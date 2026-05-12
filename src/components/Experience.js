@@ -53,7 +53,7 @@ function TimelineCard({ job, index, lang, t, inView, isOpen, onToggle }) {
     >
       <span
         aria-hidden="true"
-        className="absolute -left-[30px] top-[6px] w-2.5 h-2.5 rounded-full bg-brand shadow-[0_0_0_3px_#0D0D1A,0_0_8px_rgba(108,99,255,0.4)]"
+        className="absolute -left-[30px] top-[6px] w-2.5 h-2.5 rounded-full bg-brand shadow-[0_0_0_3px_var(--color-ink-950),0_0_8px_var(--color-brand-muted)]"
       />
       <div className="bg-ink-500 border border-ink-400 rounded-xl p-6 hover:border-brand/50 transition-colors duration-200">
         <div className="flex justify-between items-baseline gap-4 flex-wrap mb-1">
