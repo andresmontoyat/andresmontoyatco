@@ -64,7 +64,7 @@ export default function Hero() {
           className="inline-flex items-center gap-2 px-4 py-1.5 border border-ink-400 rounded-full font-mono text-xs text-text-secondary bg-ink-500 mb-6 motion-safe:opacity-0 motion-safe:animate-fade-in"
           style={{ animationDelay: '0ms', animationFillMode: 'forwards', animationDuration: '500ms' }}
         >
-          <span className="w-2 h-2 rounded-full bg-brand motion-safe:animate-pulse2 shadow-[0_0_12px_#6C63FF]" />
+          <span className="w-2 h-2 rounded-full bg-brand motion-safe:animate-pulse2 shadow-[0_0_12px_var(--color-brand)]" />
           {t.hero.status}
         </span>
 
