@@ -19,18 +19,17 @@
     --color-surface-mid:     var(--color-ink-800);
     --color-surface-raised:  var(--color-ink-700);
 
-    /* Brand — current indigo (no palette change in this plan; Plan 07-02 swaps to blue) */
-    --color-brand:        #6C63FF;
-    --color-brand-light:  #8B85FF;
-    --color-brand-dark:   #4A42E8;
-    --color-brand-muted:  rgba(108,99,255,0.15);
+    /* Brand — blue-500 (COLOR-01, Plan 07-02) */
+    --color-brand:        #3B82F6;  /* blue-500 */
+    --color-brand-light:  #60A5FA;  /* blue-400 */
+    --color-brand-dark:   #2563EB;  /* blue-600 */
+    --color-brand-muted:  rgba(59, 130, 246, 0.12);
 
-    /* Accent — current coral (no palette change; Plan 07-02 swaps to emerald).
-       NOTE: accent-dark and accent-muted are NEW (symmetric with brand). */
-    --color-accent:        #FF6B6B;
-    --color-accent-light:  #FF8E8E;
-    --color-accent-dark:   #E64444;
-    --color-accent-muted:  rgba(255,107,107,0.15);
+    /* Accent — emerald-500 (COLOR-01, Plan 07-02) */
+    --color-accent:        #10B981;  /* emerald-500 */
+    --color-accent-light:  #34D399;  /* emerald-400 */
+    --color-accent-dark:   #059669;  /* emerald-600 */
+    --color-accent-muted:  rgba(16, 185, 129, 0.12);
 
     /* Text */
     --color-text-primary:   #F0F0FF;
@@ -99,7 +98,7 @@
   /* Subtle dot-grid overlay — replaces old neon grid lines */
   .bg-grid-subtle {
     background-image:
-      radial-gradient(circle, rgba(108, 99, 255, 0.06) 1px, transparent 1px);
+      radial-gradient(circle, rgba(59, 130, 246, 0.06) 1px, transparent 1px);
     background-size: 32px 32px;
   }
 
