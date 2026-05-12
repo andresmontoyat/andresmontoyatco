@@ -54,17 +54,17 @@
     --color-surface-mid:     var(--color-ink-800);
     --color-surface-raised:  var(--color-ink-700);
 
-    /* Brand — Phase 5 kept indigo same in both modes; palette swap is Plan 07-02 */
-    --color-brand:        #6C63FF;
-    --color-brand-light:  #8B85FF;
-    --color-brand-dark:   #4A42E8;
-    --color-brand-muted:  rgba(108,99,255,0.12);
+    /* Brand — blue-600 darkened for WCAG AA on light surfaces (COLOR-01, Plan 07-02) */
+    --color-brand:        #2563EB;  /* blue-600 — 4.97:1 on #FFFFFF, AA text */
+    --color-brand-light:  #3B82F6;  /* blue-500 */
+    --color-brand-dark:   #1D4ED8;  /* blue-700 */
+    --color-brand-muted:  rgba(37, 99, 235, 0.12);
 
-    /* Accent — darkened to #BB3A3A for WCAG AA 4.5:1 on all light surfaces */
-    --color-accent:        #BB3A3A;
-    --color-accent-light:  #FF6B6B;
-    --color-accent-dark:   #8E2C2C;
-    --color-accent-muted:  rgba(187,58,58,0.12);
+    /* Accent — emerald-700 darkened for WCAG AA on light surfaces (COLOR-01, Plan 07-02) */
+    --color-accent:        #047857;  /* emerald-700 — 5.05:1 on #FFFFFF, AA text */
+    --color-accent-light:  #10B981;  /* emerald-500 */
+    --color-accent-dark:   #065F46;  /* emerald-800 */
+    --color-accent-muted:  rgba(4, 120, 87, 0.12);
 
     /* Text — inverted from light-on-dark to dark-on-light */
     --color-text-primary:   #0D0D1A;
