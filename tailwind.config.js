@@ -44,9 +44,9 @@ module.exports = {
         display: ['Inter', 'SF Pro Display', 'system-ui', 'sans-serif'],
       },
       backgroundImage: {
-        'hero-gradient': 'radial-gradient(ellipse 80% 50% at 50% -20%, rgba(108,99,255,0.15), transparent), linear-gradient(180deg, #12121F 0%, #0D0D1A 100%)',
-        'brand-gradient': 'linear-gradient(135deg, #6C63FF 0%, #FF6B6B 100%)',
-        'card-gradient': 'linear-gradient(145deg, rgba(108,99,255,0.08), rgba(255,107,107,0.04))',
+        'hero-gradient': 'radial-gradient(ellipse 80% 50% at 50% -20%, rgba(59,130,246,0.15), transparent), linear-gradient(180deg, #12121F 0%, #0D0D1A 100%)',
+        'brand-gradient': 'linear-gradient(135deg, #3B82F6 0%, #10B981 100%)',
+        'card-gradient': 'linear-gradient(145deg, rgba(59,130,246,0.08), rgba(16,185,129,0.04))',
       },
       boxShadow: {
         brand:    '0 20px 40px -20px rgba(108,99,255,0.35)',
