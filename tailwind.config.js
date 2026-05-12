@@ -49,8 +49,8 @@ module.exports = {
         'card-gradient': 'linear-gradient(145deg, rgba(59,130,246,0.08), rgba(16,185,129,0.04))',
       },
       boxShadow: {
-        brand:    '0 20px 40px -20px rgba(108,99,255,0.35)',
-        'brand-lg': '0 25px 50px -20px rgba(108,99,255,0.55)',
+        brand:    '0 20px 40px -20px rgba(59,130,246,0.35)',
+        'brand-lg': '0 25px 50px -20px rgba(59,130,246,0.55)',
         card:     '0 4px 24px rgba(13,13,26,0.6)',
       },
       animation: {
