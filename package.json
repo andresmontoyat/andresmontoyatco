@@ -17,7 +17,8 @@
     "lighthouse:check": "node -e \"const r = require('./lighthouse-report-mobile.report.json'); const p = r.categories.performance.score; const a = r.categories.accessibility.score; const t = r.audits['target-size'].score; console.log('Performance:', p, 'A11y:', a, 'Target-size:', t); if (p < 0.9 || a < 0.9 || t !== 1) process.exit(1);\"",
     "preview": "vite preview",
     "lint": "eslint src --ext .js,.jsx",
-    "og:gen": "node scripts/generate-og-image.js"
+    "og:gen": "node scripts/generate-og-image.js",
+    "hero:process": "node scripts/process-hero-photo.js"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.7.0",
