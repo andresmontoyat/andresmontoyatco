@@ -40,27 +40,39 @@
   }
 
   [data-theme="light"] {
-    /* Surfaces — inverted from dark ink scale to light grays */
-    --color-surface-deepest: #FFFFFF;
-    --color-surface-deep:    #FAFAFA;
-    --color-surface-mid:     #F0F0F5;
-    --color-surface-raised:  #E8E8F0;
+    /* Surface scale (ink) — inverted from dark ink scale to light grays */
+    --color-ink-950: #FFFFFF;
+    --color-ink-900: #FAFAFA;
+    --color-ink-800: #F0F0F5;
+    --color-ink-700: #E8E8F0;
+    --color-ink-600: #DEDEEA;
+    --color-ink-500: #C8C8D6;
+    --color-ink-400: #A8A8BC;
 
-    /* Brand — stays vibrant on light surfaces */
-    --color-brand:       #6C63FF;
-    --color-brand-light: #8B85FF;
-    --color-brand-dark:  #4A42E8;
-    --color-brand-muted: rgba(108, 99, 255, 0.12);
+    /* Surface aliases — Phase 5 backward compat (raw CSS that references these still resolves) */
+    --color-surface-deepest: var(--color-ink-950);
+    --color-surface-deep:    var(--color-ink-900);
+    --color-surface-mid:     var(--color-ink-800);
+    --color-surface-raised:  var(--color-ink-700);
+
+    /* Brand — Phase 5 kept indigo same in both modes; palette swap is Plan 07-02 */
+    --color-brand:        #6C63FF;
+    --color-brand-light:  #8B85FF;
+    --color-brand-dark:   #4A42E8;
+    --color-brand-muted:  rgba(108,99,255,0.12);
 
     /* Accent — darkened to #BB3A3A for WCAG AA 4.5:1 on all light surfaces */
-    --color-accent:       #BB3A3A;
-    --color-accent-light: #FF6B6B;
+    --color-accent:        #BB3A3A;
+    --color-accent-light:  #FF6B6B;
+    --color-accent-dark:   #8E2C2C;
+    --color-accent-muted:  rgba(187,58,58,0.12);
 
     /* Text — inverted from light-on-dark to dark-on-light */
     --color-text-primary:   #0D0D1A;
     --color-text-secondary: #525269;
     /* text-muted darkened to #646478: 5.78:1 on white, 4.74:1 on surface-raised — WCAG AA */
     --color-text-muted:     #646478;
+    --color-text-inverse:   #F0F0FF;
   }
 
   html {
