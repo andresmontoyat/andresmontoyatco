@@ -22,7 +22,26 @@ Requirements for the v3.6 release. Phase numbering continues from v3.5 (which le
 
 ### AI / Claude Code Section
 
-- [ ] **AI-01**: New AI section positioned between Projects and Contact in `App.js`. Variant 7 (engineer-for-hire sales pitch): centered pitch headline + sub-lead + dual CTAs (`#contact` primary, `#projects` ghost), 4 value-prop cards (Velocity, Discipline, Quality, Transfer), proof block (5 counters: 37 agents, 81 skills, 86 workflows, 15 guidelines, 4 apps), 4 services cards (Greenfield builds, AI workflow setup, MCP server development, Legacy refactor), stack-strip credentials (14 tech chips). Fully bilingual EN+ES via `translations.js`. `#claude-code` scroll-spy entry in `SECTION_IDS` + DesktopNav + MobileMenu. Lazy-loaded Suspense boundary, emits separate chunk. Mirrors Projects integration pattern from Phase 6.
+- [ ] **AI-01**: New AI section positioned between Projects and Contact in `App.js`. Variant 7 (engineer-for-hire sales pitch): centered pitch headline + sub-lead + dual CTAs (`#contact` primary, `#projects` ghost), 4 value-prop cards (Velocity, Discipline, Quality, Transfer), proof block (7 counters: 37 agents, 81 skills, 86 workflows, 15 guidelines, 47 CI workflows, 15 starter templates, 5 apps shipped), 5 services cards (Greenfield builds, AI workflow setup, MCP server development, Legacy refactor, DevOps automation), 5 featured-app cards (GSD framework, spring-ai-qdrant-mcp, claude-kanban, caveman, ci-templates), stack-strip credentials (14+ tech chips including GitHub Actions, Jenkins). Fully bilingual EN+ES via `translations.js`. `#claude-code` scroll-spy entry in `SECTION_IDS` + DesktopNav + MobileMenu. Lazy-loaded Suspense boundary, emits separate chunk. Mirrors Projects integration pattern from Phase 6.
+
+- [ ] **AI-01-CICD** (sub-feature of AI-01): Surface `soldife/ci-templates` as evidence of CI/CD discipline in the AI section. Content additions:
+  - **App card** with badge `OPEN SOURCE / DEVOPS`: short description ("47 reusable GitHub Actions workflows + 15 starter templates for Java, Krakend, React. GitFlow strategy, EC2 / EC2-VPN-WireGuard / EKS deploy targets, ECR + GitHub Packages registries, quality gates: SonarQube + OWASP + ArchUnit + Qodana, commit-lint + semver automation"), tech chips (github-actions, gitflow, sonarqube, owasp, eks, ec2, wireguard, ecr, helm, jenkins)
+  - **Service card** "DevOps automation": "GitHub Actions templates + GitFlow + multi-cloud deploys (EC2, VPN-tunneled, EKS) listos para producción"
+  - **Proof counters update**: +2 counters in proof block (47 CI workflows / 15 starter templates)
+  - Bilingual EN+ES copy
+
+### Architecture Diagrams (cross-repo)
+
+- [ ] **DIAGRAMS-01** (Phase 11): Generate architecture diagrams for each featured AI project and surface them in the portfolio AI section. Hybrid generation approach:
+  - **JVM repo** (`spring-ai-qdrant-mcp`): Apply the vitxo-ms-payment gradle pattern — `io.gitlab.plunts.plantuml v2.3.0` plugin (class + packages auto-gen) + Structurizr C4 DSL (`architecture/structurizr/workspace.dsl`) with `structurizrExport` task producing PlantUML + Mermaid outputs into `architecture/diagrams/` and `architecture/structurizr/export/{mermaid,plantuml}/`.
+  - **Non-JVM repos** (GSD framework, claude-kanban, ci-templates, caveman): Manual Mermaid `.mmd` sources in each repo's `docs/architecture/` directory. Per-repo coverage:
+    - GSD: C4 context (user → CC → GSD orchestrator → subagents/skills) + flow (discuss → plan → execute → verify) — 2 diagrams
+    - claude-kanban: component diagram + sequence (drag-drop flow) — 2 diagrams
+    - ci-templates: GitFlow strategy (extend existing README mermaid) + pipeline matrix — 2 diagrams
+    - caveman: mode-state diagram (lite / full / ultra / wenyan variants) — 1 diagram
+  - **Centralization in portfolio**: `scripts/sync-diagrams.sh` reads from each repo (path-configurable) and copies outputs to `public/claude-code/diagrams/<repo-slug>/`. Re-runnable; idempotent.
+  - **AI section render**: AI app cards become clickable; click opens a modal with the diagram rendered inline (Mermaid via `mermaid.js` for `.mmd` sources; inline `<img src=".svg">` for PlantUML exports). Modal closes on Escape or backdrop click. WCAG keyboard accessible (focus trap, Esc to dismiss).
+  - **Out of scope**: auto-generated docs sites, deployment to external docs hosts — diagrams live in each repo's git tree and the portfolio bundle only.
 
 ## Out of Scope (for v3.6)
 
@@ -76,4 +95,6 @@ Tracked but not in current roadmap:
 | COLOR-01 | Phase 7 | Pending |
 | HERO-01 | Phase 8 | Pending |
 | AI-01 | Phase 9 | Pending |
+| AI-01-CICD | Phase 9 (sub of AI-01) | Pending |
+| DIAGRAMS-01 | Phase 11 | Pending |
 | (UAT verification of all REQs) | Phase 10 | Pending |

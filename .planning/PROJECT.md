@@ -14,7 +14,7 @@
 - THEME-01 — Refactor Tailwind config so colors reference CSS variables (fix Phase 5 theme-toggle false-positive — currently only `<body>` bg flips because Tailwind tokens are hardcoded hex, not var references)
 - COLOR-01 — Brand palette swap: `#6C63FF` (indigo) → blue-500 `#3B82F6`; `#FF6B6B` (coral) → emerald-500 `#10B981`
 - HERO-01 — Integrate `me.jpg` in Hero as overlay full-bleed (Variant C from sketch): desaturated bg photo + gradient overlay + text-shadow on headline
-- AI-01 — New AI / Claude Code section between Projects and Contact: sales pitch (engineer-for-hire) with 4 value props + proof counters + services + stack strip; bilingual EN+ES; lazy-loaded chunk; nav scroll-spy entry
+- AI-01 — New AI / Claude Code section between Projects and Contact: sales pitch (engineer-for-hire) with 4 value props + proof counters (incl. ci-templates 47 workflows / 15 templates) + 5 services (incl. DevOps automation) + 3 featured-app cards (incl. `soldife/ci-templates`) + stack strip (incl. GitHub Actions, Jenkins, SonarQube); bilingual EN+ES; lazy-loaded chunk; nav scroll-spy entry
 
 **Locked decisions:**
 - v3.6 = site improvements only — **deploy stays deferred to v3.7** (DEPLOY-01/02/03)

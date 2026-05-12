@@ -11,8 +11,8 @@
 
 **Goal:** Refresh brand palette (blue + emerald), fix theme toggle root bug, integrate hero photo, and ship a sales-focused AI/Claude Code section positioning Carlos as engineer-for-hire.
 
-**Requirements:** 4 capabilities (THEME-01, COLOR-01, HERO-01, AI-01)
-**Phases:** 7–10 (continuing numbering from v3.5; Phase 7 slot reused since v3.5 deploy work deferred to v3.7)
+**Requirements:** 5 capabilities (THEME-01, COLOR-01, HERO-01, AI-01 + AI-01-CICD sub-feature, DIAGRAMS-01)
+**Phases:** 7–11 (continuing numbering from v3.5; Phase 7 slot reused since v3.5 deploy work deferred to v3.7)
 **Git tag:** No tag at close (consistent with v3.5; site still not live until v3.7 deploy)
 
 ## Phases
@@ -21,6 +21,7 @@
 - [ ] **Phase 8: Hero photo integration** — me.jpg as overlay full-bleed in Hero
 - [ ] **Phase 9: AI / Claude Code section** — sales pitch (engineer-for-hire) between Projects and Contact, bilingual
 - [ ] **Phase 10: Real-browser UAT + a11y sweep** — verify themes ACTUALLY flip (Phase 5 false-positive correction), Lighthouse re-audit
+- [ ] **Phase 11: Architecture diagrams (cross-repo)** — generate diagrams in each AI repo (gradle plantuml + structurizr for JVM; Mermaid manual for non-JVM), sync to portfolio, render in AI section modal
 
 ## Phase Details
 
@@ -66,13 +67,26 @@
 ### Phase 10: Real-browser UAT + a11y sweep
 **Goal**: Every v3.6 capability is verified in a live browser by a human (Phase 5 had a false-positive UAT — this phase pays that debt) and Lighthouse mobile scores hold the v3.4 baseline.
 **Depends on**: Phase 9
-**Requirements**: (UAT/verification of THEME-01, COLOR-01, HERO-01, AI-01)
+**Requirements**: (UAT/verification of THEME-01, COLOR-01, HERO-01, AI-01, AI-01-CICD)
 **Success Criteria** (what must be TRUE):
   1. Theme toggle is exercised in `npm run dev` AND in production `dist/` build — both modes visually flip ALL sections at iPhone 14, iPad, and 1440px viewports
   2. Light mode passes WCAG AA contrast on every text element introduced in v3.6 (Hero overlay, AI section values, services, proof counters)
   3. The Hero photo overlay renders correctly with text legibility at all 4 breakpoints; reduced-motion users still see a static Hero (no animation regressions)
   4. The AI section is reachable via nav on Desktop and Mobile (scroll-spy + click); CTAs to `#contact` and `#projects` scroll smoothly
   5. Lighthouse mobile audit: Performance ≥ 95, Accessibility 100, Best Practices 100, SEO 100 — no regression vs v3.4 baseline (Performance 98 / 100 / 100 / 100)
+**Plans**: TBD
+**UI hint**: yes
+
+### Phase 11: Architecture diagrams (cross-repo)
+**Goal**: Each featured AI project carries its own architecture diagrams in its repo, and the portfolio AI section surfaces them via a modal on each app card.
+**Depends on**: Phase 9
+**Requirements**: DIAGRAMS-01
+**Success Criteria** (what must be TRUE):
+  1. `spring-ai-qdrant-mcp` adopts the vitxo-ms-payment gradle pattern (`io.gitlab.plunts.plantuml v2.3.0` + Structurizr DSL + `structurizrExport` task); `./gradlew build` produces `architecture/diagrams/*.{puml,svg}` and `architecture/structurizr/export/{mermaid,plantuml}/*` without errors
+  2. Each non-JVM repo (GSD, claude-kanban, ci-templates, caveman) has Mermaid `.mmd` source(s) under `docs/architecture/` matching the per-repo coverage spec (1–2 diagrams per repo)
+  3. `scripts/sync-diagrams.sh` in the portfolio repo reads each AI repo (path-configurable env vars or config block) and copies outputs to `public/claude-code/diagrams/<repo-slug>/`; re-runnable, idempotent (same outputs on second run)
+  4. AI section app cards become clickable; clicking opens a modal that renders the diagram (Mermaid live via `mermaid.js` for `.mmd`; `<img>` for SVG/PNG exports); modal closes on Escape, backdrop click, and explicit close button; keyboard focus trap during open
+  5. AI section continues to lazy-load — modal/Mermaid library do not inflate the main bundle (only loaded on demand when a card is clicked)
 **Plans**: TBD
 **UI hint**: yes
 
@@ -84,6 +98,7 @@
 | 8. Hero photo integration | 0/TBD | Not started | - |
 | 9. AI / Claude Code section | 0/TBD | Not started | - |
 | 10. Real-browser UAT + a11y sweep | 0/TBD | Not started | - |
+| 11. Architecture diagrams (cross-repo) | 0/TBD | Not started | - |
 
 ---
 
