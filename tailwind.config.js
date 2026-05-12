@@ -5,35 +5,37 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // Surface / background scale (dark first — portfolio is dark-mode-first)
+        // Surface / background scale — values owned by CSS vars in src/index.css
+        // (:root for dark, [data-theme="light"] for light). See Plan 07-01.
         ink: {
-          950: '#0D0D1A',
-          900: '#12121F',
-          800: '#1A1A2E',
-          700: '#1F1F3A',
-          600: '#252545',
-          500: '#2D2D5A',
-          400: '#3A3A6A',
+          950: 'var(--color-ink-950)',
+          900: 'var(--color-ink-900)',
+          800: 'var(--color-ink-800)',
+          700: 'var(--color-ink-700)',
+          600: 'var(--color-ink-600)',
+          500: 'var(--color-ink-500)',
+          400: 'var(--color-ink-400)',
         },
-        // Brand accent — bold indigo/violet replaces dated neon cyan
+        // Brand — identity governed by CSS vars (theme-aware)
         brand: {
-          DEFAULT: '#6C63FF',
-          light:   '#8B85FF',
-          dark:    '#4A42E8',
-          muted:   'rgba(108,99,255,0.15)',
+          DEFAULT: 'var(--color-brand)',
+          light:   'var(--color-brand-light)',
+          dark:    'var(--color-brand-dark)',
+          muted:   'var(--color-brand-muted)',
         },
-        // Secondary accent — warm coral for CTAs and highlights
+        // Secondary accent — identity governed by CSS vars (theme-aware)
         accent: {
-          DEFAULT: '#FF6B6B',
-          light:   '#FF8E8E',
-          dark:    '#E64444',
+          DEFAULT: 'var(--color-accent)',
+          light:   'var(--color-accent-light)',
+          dark:    'var(--color-accent-dark)',
+          muted:   'var(--color-accent-muted)',
         },
-        // Text scale
+        // Text scale — theme-aware via CSS vars
         text: {
-          primary:   '#F0F0FF',
-          secondary: '#A0A0C0',
-          muted:     '#606080',
-          inverse:   '#0D0D1A',
+          primary:   'var(--color-text-primary)',
+          secondary: 'var(--color-text-secondary)',
+          muted:     'var(--color-text-muted)',
+          inverse:   'var(--color-text-inverse)',
         },
       },
       fontFamily: {
