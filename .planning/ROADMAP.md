@@ -82,7 +82,7 @@
 **Depends on**: Phase 9
 **Requirements**: DIAGRAMS-01
 **Success Criteria** (what must be TRUE):
-  1. `spring-ai-qdrant-mcp` adopts the vitxo-ms-payment gradle pattern (`io.gitlab.plunts.plantuml v2.3.0` + Structurizr DSL + `structurizrExport` task); `./gradlew build` produces `architecture/diagrams/*.{puml,svg}` and `architecture/structurizr/export/{mermaid,plantuml}/*` without errors
+  1. `spring-ai-qdrant-mcp` adopts a gradle PlantUML + Structurizr pattern (`io.gitlab.plunts.plantuml v2.3.0` + Structurizr DSL + a `structurizrExport` task); `./gradlew build` produces `architecture/diagrams/*.{puml,svg}` and `architecture/structurizr/export/{mermaid,plantuml}/*` without errors
   2. Each non-JVM repo (GSD, claude-kanban, ci-templates, caveman) has Mermaid `.mmd` source(s) under `docs/architecture/` matching the per-repo coverage spec (1–2 diagrams per repo)
   3. `scripts/sync-diagrams.sh` in the portfolio repo reads each AI repo (path-configurable env vars or config block) and copies outputs to `public/claude-code/diagrams/<repo-slug>/`; re-runnable, idempotent (same outputs on second run)
   4. AI section app cards become clickable; clicking opens a modal that renders the diagram (Mermaid live via `mermaid.js` for `.mmd`; `<img>` for SVG/PNG exports); modal closes on Escape, backdrop click, and explicit close button; keyboard focus trap during open

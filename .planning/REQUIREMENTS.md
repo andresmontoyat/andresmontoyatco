@@ -33,7 +33,7 @@ Requirements for the v3.6 release. Phase numbering continues from v3.5 (which le
 ### Architecture Diagrams (cross-repo)
 
 - [ ] **DIAGRAMS-01** (Phase 11): Generate architecture diagrams for each featured AI project and surface them in the portfolio AI section. Hybrid generation approach:
-  - **JVM repo** (`spring-ai-qdrant-mcp`): Apply the vitxo-ms-payment gradle pattern — `io.gitlab.plunts.plantuml v2.3.0` plugin (class + packages auto-gen) + Structurizr C4 DSL (`architecture/structurizr/workspace.dsl`) with `structurizrExport` task producing PlantUML + Mermaid outputs into `architecture/diagrams/` and `architecture/structurizr/export/{mermaid,plantuml}/`.
+  - **JVM repo** (`spring-ai-qdrant-mcp`): Apply a gradle PlantUML + Structurizr pattern — `io.gitlab.plunts.plantuml v2.3.0` plugin (class + packages auto-gen) + Structurizr C4 DSL (`architecture/structurizr/workspace.dsl`) with a `structurizrExport` task producing PlantUML + Mermaid outputs into `architecture/diagrams/` and `architecture/structurizr/export/{mermaid,plantuml}/`.
   - **Non-JVM repos** (GSD framework, claude-kanban, ci-templates, caveman): Manual Mermaid `.mmd` sources in each repo's `docs/architecture/` directory. Per-repo coverage:
     - GSD: C4 context (user → CC → GSD orchestrator → subagents/skills) + flow (discuss → plan → execute → verify) — 2 diagrams
     - claude-kanban: component diagram + sequence (drag-drop flow) — 2 diagrams
