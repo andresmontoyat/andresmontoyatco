@@ -6,8 +6,7 @@ import { VALUES, SERVICES, APPS, COUNTERS, STACK_CHIPS } from '../data/claude'
 export default function Claude() {
   const { lang, t } = useLanguage()
   const sectionRef = useRef(null)
-  // Scaffold: B2 wires useInView -> is-visible toggle for the grid wrappers.
-  useInView(sectionRef, { threshold: 0.15 })
+  const inView = useInView(sectionRef, { threshold: 0.15 })
 
   return (
     <section
@@ -18,7 +17,7 @@ export default function Claude() {
       <div className="max-w-6xl mx-auto px-6">
         <PitchHero t={t} />
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-16 animate-on-scroll">
+        <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-16 animate-on-scroll${inView ? ' is-visible' : ''}`}>
           {VALUES.map((v, i) => (
             <ValueCard
               key={v.key}
@@ -35,7 +34,7 @@ export default function Claude() {
         <p className="text-brand font-mono text-xs uppercase tracking-widest mt-12">
           {t.claude.servicesLabel}
         </p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-8 animate-on-scroll">
+        <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-8 animate-on-scroll${inView ? ' is-visible' : ''}`}>
           {SERVICES.map((s, i) => (
             <ServiceCard
               key={s.key}
@@ -46,7 +45,7 @@ export default function Claude() {
           ))}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8 animate-on-scroll">
+        <div className={`grid grid-cols-1 md:grid-cols-3 gap-6 mt-8 animate-on-scroll${inView ? ' is-visible' : ''}`}>
           {APPS.map((a, i) => (
             <FeaturedAppCard
               key={a.slug}
