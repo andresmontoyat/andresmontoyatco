@@ -1,16 +1,17 @@
 ---
 gsd_state_version: 1.0
 milestone: v3.6
-milestone_name: AI Practice & Brand Refresh
-status: planning
-last_updated: "2026-05-12T16:35:34.661Z"
-last_activity: 2026-05-12
+milestone_name: — AI Practice & Brand Refresh
+status: Defining requirements
+stopped_at: null (clean close — between milestones)
+last_updated: "2026-05-12T18:33:52.965Z"
+last_activity: 2026-05-12 — Milestone v3.6 started
 progress:
-  total_phases: 0
+  total_phases: 5
   completed_phases: 0
-  total_plans: 0
-  completed_plans: 0
-  percent: 0
+  total_plans: 2
+  completed_plans: 1
+  percent: 50
 ---
 
 # Project State
