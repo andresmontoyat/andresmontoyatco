@@ -2,28 +2,22 @@
 
 ## Current State
 
-**Shipped:** v3.4 (2026-05-07) — Full brownfield redesign delivered. Site is production-ready: Vite 6 + React 18 + Tailwind v3.4 toolchain, sticky bilingual navigation, bold animated Hero with char-reveal headline, redesigned About / Skills (4 categories) / Experience (vertical timeline, 12 entries, tech chips, expand/collapse) / Contact (email-hero with copy-to-clipboard) / Footer, useInView entrance animations, branded Open Graph rich link preview, Lighthouse Performance **98** / Accessibility **100** / Best Practices **100** / SEO **100** on mobile. See [`milestones/v3.4-ROADMAP.md`](milestones/v3.4-ROADMAP.md) for full archive and [`v3.4-MILESTONE-AUDIT.md`](v3.4-MILESTONE-AUDIT.md) for audit report.
+**Shipped:** v3.5 (closed 2026-05-12 — **partial**) — Themes and projects showcase delivered on top of v3.4 baseline. Dark/light theme toggle (`[data-theme="light"]` CSS variable swap, `cam-theme` localStorage persistence, sun/moon nav button in Desktop + Mobile, Lighthouse a11y 100), bilingual Projects section between Experience and Contact (4-entry `PROJECTS` data module, responsive `Projects.js` card grid with brand-gradient fallback, lazy-loaded `Projects-DucOh_hO.js` chunk, scroll-spy wired), and v3.4 tech debt cleared (orphaned i18n keys removed, og-template self-hosts Inter, GA `<script>` in `<head>`). **Deploy phase (Phase 7) deferred to v3.6** — site is NOT yet live at andresmontoyat.co; `dist/` build artifacts are production-ready but never pushed to Vercel. Closed without git tag — see [`milestones/v3.5-ROADMAP.md`](milestones/v3.5-ROADMAP.md), [`milestones/v3.5-MILESTONE-AUDIT.md`](milestones/v3.5-MILESTONE-AUDIT.md).
 
-## Current Milestone: v3.5 Themes, Projects & Production
+**Previously shipped:** v3.4 (2026-05-07) — Full brownfield redesign baseline: Vite 6 + React 18 + Tailwind v3.4, bilingual nav, char-reveal Hero, vertical Experience timeline, email-hero Contact, branded Open Graph, Lighthouse 98/100/100/100 mobile. See [`milestones/v3.4-ROADMAP.md`](milestones/v3.4-ROADMAP.md).
 
-**Goal:** Ship the redesigned portfolio to production at andresmontoyat.co with a dark/light theme toggle, a curated projects showcase section, and v3.4 tech debt cleared.
+## Next Milestone Goals (v3.6 candidate)
 
-**Target features:**
-- Dark + Light theme toggle (VIS-01) — icon button in nav next to LangPill, persisted in localStorage
-- Projects showcase section (VIS-03) — 3-5 hand-picked projects with screenshots, mirroring experience.js bilingual data pattern
-- Vercel production deploy with custom domain andresmontoyat.co + DNS configuration
-- v3.4 tech debt cleanup: remove orphaned i18n keys (t.hero.cta2, t.contact.loc), self-host fonts in og-template.html, move GA `<script>` to `<head>`
+**Carried from v3.5 (unfinished):**
+- DEPLOY-01 — Vercel production deploy from main (auto-deploy, vite-react preset, build `npm run build`, output `dist/`)
+- DEPLOY-02 — andresmontoyat.co custom domain + HTTPS via Vercel auto-cert
+- DEPLOY-03 — PR preview deploys with OG card validation
 
-**Locked decisions (from /gsd-discuss-milestone equivalent inline):**
-- Theme: Dark (default) + Light only — no system mode
-- Theme UI: icon button in nav (next to LangPill) — sun/moon toggle
-- Projects data: src/data/projects.js (mirror experience.js bilingual pattern), screenshots in public/projects/
-- Deploy: Vercel — auto-preview deploys per branch + production from main
-- Domain: andresmontoyat.co (already owned)
-- Tech debt: folded into v3.5 (not deferred to v3.6)
-- Test infrastructure: still deferred (5 consecutive phases now — revisit v3.6+)
+**Likely additions (long-term backlog candidates):**
+- VIS-02 (company logo SVGs), VIS-04 (testimonials), ASEO-01..03 (JSON-LD / WebP / sitemap)
+- Test infrastructure decision — revisit after 6 consecutive deferrals
 
-**Phase numbering:** Continues from v3.4. v3.5 starts at Phase 5.
+Run `/gsd-new-milestone` to formally scope v3.6.
 
 ## What This Is
 
@@ -64,11 +58,18 @@ The hero section and overall first impression must stop recruiters mid-scroll an
 - [x] Bundle: 168 KB main + 11/3/1 KB lazy chunks (Experience/Contact/Footer); CSS gzip 12.6 KB — Phase 4
 - [x] Test infrastructure decision: locked as manual UAT only for v3.4 (revisit v3.5+) — Phase 4 D-04
 
+- [x] **VIS-01** Dark/light theme toggle — ThemeContext + ThemeToggle + CSS variable swap + `cam-theme` localStorage; sun/moon button in Desktop + Mobile nav; Lighthouse a11y 100 — v3.5 Phase 5
+- [x] **VIS-03** Projects showcase section — 4 bilingual entries in `src/data/projects.js`; responsive `Projects.js` card grid with brand-gradient fallback; lazy-loaded `Projects-DucOh_hO.js` chunk between Experience and Contact; scroll-spy wired — v3.5 Phase 6
+- [x] **DEBT-01** Orphaned i18n keys removed (`t.hero.cta2`, `t.contact.loc` cleaned from EN+ES) — v3.5 Phase 5
+- [x] **DEBT-02** `scripts/og-template.html` self-hosts Inter via `@fontsource/inter` (5 `@font-face` blocks, 0 Google Fonts CDN refs); `npm run og:gen` reproducible — v3.5 Phase 5
+- [x] **DEBT-03** GA `<script>` moved into `<head>` (HTML spec compliant; SEO-02 firing preserved) — v3.5 Phase 5
+
 ### Active
 
-- [ ] Deploy target choice (Vercel / Netlify / GitHub Pages) — milestone-level
-- [ ] Domain registration (carlosmontoya.dev or similar) — milestone-level
-- [ ] REQUIREMENTS.md traceability sync (10 unmapped REQ-IDs: VIS-01..04, ASEO-01..03, INTX-01..03) — milestone audit task
+- [ ] **DEPLOY-01** *(deferred from v3.5)* Vercel production deploy — auto-deploy from main, vite-react preset, build `npm run build`, output `dist/`
+- [ ] **DEPLOY-02** *(deferred from v3.5)* Custom domain andresmontoyat.co + DNS records → Vercel; HTTPS via auto-cert
+- [ ] **DEPLOY-03** *(deferred from v3.5)* Auto-preview deploys per PR with OG card validation
+- [ ] REQUIREMENTS.md traceability sync (remaining unmapped: VIS-02, VIS-04, ASEO-01..03, INTX-01..03) — milestone audit task
 
 ### Out of Scope
 
@@ -115,6 +116,16 @@ The hero section and overall first impression must stop recruiters mid-scroll an
 | All 12 experience entries visible from first load | Recruiters scan full career arc at-a-glance | Phase 3 |
 | 1200x630 branded OG image generated via Playwright | Reproducible toolchain (`npm run og:gen`) for future regen | Phase 3 (SEO-01) |
 | Animation threshold 25% / stagger 100ms | Standard cadence — neither rushed nor laggy | Phase 3 (ANIM-01/03) |
+| Theme: Dark (default) + Light only — no system mode | Bold dark identity is brand; light mode is accessibility/preference, not auto-switching | Validated — v3.5 Phase 5 |
+| Theme UI: icon button in nav next to LangPill | Mirrors LangPill pattern; predictable location across viewports | Validated — v3.5 Phase 5 |
+| ThemeContext mirrors LanguageContext pattern | Consistent React Context shape (provider + hook + localStorage key); no new state lib | Validated — v3.5 Phase 5 |
+| `[data-theme="light"]` CSS variable overrides on `:root` | Theme swap without re-rendering components; CSS transitions handled in media query (reduced-motion safe) | Validated — v3.5 Phase 5 |
+| Projects data: `src/data/projects.js` mirroring `experience.js` bilingual pattern | Consistent shape for bilingual content; trivial to extend with new entries | Validated — v3.5 Phase 6 |
+| Projects screenshots in `public/projects/`; brand-gradient fallback when null | Zero CLS via `aspect-video` reservation; missing assets degrade gracefully | Validated — v3.5 Phase 6 |
+| Projects chunk lazy-loaded between Experience and Contact | Keeps main bundle lean; separate `Projects-DucOh_hO.js` chunk | Validated — v3.5 Phase 6 |
+| og-template fonts self-hosted via `@fontsource/inter` | Reproducible builds, no CDN dependency, identical og-image.png output | Validated — v3.5 Phase 5 (DEBT-02) |
+| Deploy infrastructure (Vercel + andresmontoyat.co) | Auto-preview + custom domain per locked decision | ⚠ Deferred to v3.6 — Phase 7 never executed |
+| Test infrastructure deferred again (6 consecutive milestones) | Manual UAT continues to catch regressions at acceptable cost | — Pending — revisit if v3.6 reveals regression debt |
 
 ## Evolution
 
@@ -134,4 +145,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-05-07 — milestone v3.4 SHIPPED (archived to milestones/v3.4-ROADMAP.md, tagged v3.4)*
+*Last updated: 2026-05-12 — milestone v3.5 CLOSED PARTIAL (themes + projects shipped; deploy deferred to v3.6; no git tag pending live site)*

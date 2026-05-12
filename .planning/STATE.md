@@ -1,34 +1,34 @@
 ---
 gsd_state_version: 1.0
-milestone: v3.5
-milestone_name: — Themes, Projects & Production
-status: verifying
-stopped_at: context exhaustion at 75% (2026-05-08)
-last_updated: "2026-05-08T20:46:10.871Z"
-last_activity: 2026-05-08
+milestone: between-milestones
+milestone_name: v3.5 closed (partial); v3.6 not yet scoped
+status: idle
+stopped_at: null
+last_updated: "2026-05-12T14:40:00.000Z"
+last_activity: 2026-05-12
 progress:
-  total_phases: 3
-  completed_phases: 2
-  total_plans: 6
-  completed_plans: 6
-  percent: 100
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 # Project State
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-05-07)
+See: .planning/PROJECT.md (updated 2026-05-12)
 
 **Core value:** The hero section and overall first impression must stop recruiters mid-scroll and make them want to learn more about Carlos.
-**Current focus:** Phase 06 — projects-showcase
+**Current focus:** Planning next milestone (v3.6) — carry deferred DEPLOY-01/02/03 from v3.5
 
 ## Current Position
 
-Phase: 7
-Plan: Not started
-Status: Phase complete — ready for verification
-Last activity: 2026-05-08
+Phase: — (between milestones)
+Plan: —
+Status: v3.5 closed partial — run `/gsd-new-milestone` to scope v3.6
+Last activity: 2026-05-12 — milestone v3.5 closed (themes + projects shipped; deploy deferred)
 
 Progress: [░░░░░░░░░░] 0%
 
@@ -40,21 +40,12 @@ Progress: [░░░░░░░░░░] 0%
 - Timeline: 16 days (2026-04-21 → 2026-05-07)
 - Files modified: 111
 
-**v3.5 By Phase:**
+**v3.5 actual:**
 
-| Phase | Plans | Total | Avg/Plan |
-|-------|-------|-------|----------|
-| 05 | 4 | - | - |
-| 06 | 2 | - | - |
-| 07 | TBD | - | - |
-
-*Updated after each plan completion*
-| Phase 05-theme-tech-debt P01 | 8 | 3 tasks | 4 files |
-| Phase 05-theme-tech-debt P02 | 3min | 3 tasks | 3 files |
-| Phase 05 P03 | 5min | 3 tasks | 3 files |
-| Phase 05-theme-tech-debt P04 | 4min | 3 tasks | 2 files |
-| Phase 06-projects-showcase P01 | 2 | 3 tasks | 3 files |
-| Phase 06 P02 | 5 | 2 tasks | 2 files |
+- Phases delivered: 2 of 3 (Phase 5, Phase 6)
+- Plans completed: 6 (Phase 7 never planned)
+- Timeline: 5 days (2026-05-07 → 2026-05-12)
+- Phase 7 (Production Deploy) deferred to v3.6
 
 ## Accumulated Context
 
@@ -63,32 +54,37 @@ Progress: [░░░░░░░░░░] 0%
 - **D-01**: In-place component modification — no V2 files, retain git history per file
 - **D-02/03**: Native CSS scroll-behavior + custom IntersectionObserver hooks (useActiveSection, useInView) — no react-scroll, no JS animation library
 - **D-05**: Mobile menu via createPortal(document.body) — avoids z-index conflicts with sticky nav
-- **D-06**: Manual browser-only testing — no test infrastructure (5 consecutive phases deferred, locked to v3.6+)
+- **D-06**: Manual browser-only testing — no test infrastructure (6 consecutive milestones deferred, locked to v3.6+)
 - **D-13/14/15**: IntersectionObserver useInView(threshold: 0.25) + .animate-on-scroll/.is-visible CSS classes; 100ms stagger via transitionDelay; all motion-safe: prefixed
 
-### v3.5 Locked Decisions
+### Decisions Validated in v3.5
 
-- Theme: Dark (default, current ink palette) + Light only — no system/prefers-color-scheme mode
-- Theme persistence: localStorage key `cam-theme`
-- Theme toggle UI: icon button (sun/moon) in Nav next to LangPill; ThemeContext mirrors LanguageContext pattern
-- Projects data: src/data/projects.js — bilingual {en, es} object per field, mirrors experience.js shape
-- Projects screenshots: public/projects/*.webp or .png — user provides; graceful degradation if absent
-- Projects position in App.js: between Experience and Contact
-- Deploy: Vercel — vite-react preset, build cmd `npm run build`, output `dist/`
-- Domain: andresmontoyat.co (already owned) — DNS to Vercel
-- Tech debt: folded into Phase 5 (not deferred to v3.6)
+- Theme: Dark (default) + Light only — no system mode ✓
+- Theme persistence: localStorage key `cam-theme` ✓
+- ThemeContext mirrors LanguageContext pattern ✓
+- `[data-theme="light"]` CSS variable overrides on `:root` ✓
+- Projects data: `src/data/projects.js` mirroring experience.js bilingual pattern ✓
+- Projects screenshots: public/projects/ with brand-gradient fallback ✓
+- Projects position in App.js: between Experience and Contact ✓
+- Projects chunk lazy-loaded — separate `Projects-DucOh_hO.js` chunk ✓
+
+### Decisions Pending (deferred to v3.6)
+
+- Deploy: Vercel — vite-react preset, build cmd `npm run build`, output `dist/` (locked but not executed)
+- Domain: andresmontoyat.co — DNS to Vercel (locked but not configured)
+- Manual DNS checkpoint required during DEPLOY-02 execution — autonomous: false
 
 ### Pending Todos
 
-- User to provide project screenshots (public/projects/*.webp) before or during Phase 6 execution
-- Manual DNS checkpoint required during Phase 7 (DEPLOY-02) — autonomous: false
+None. v3.5 left no in-flight work.
 
 ### Blockers/Concerns
 
-None at roadmap creation. Phase 7 has one expected manual pause for DNS propagation verification.
+- Site not yet live at andresmontoyat.co — DEPLOY-01/02/03 deferred to v3.6
+- Vercel account access + DNS provider credentials must be coordinated before v3.6 Phase 7 (renumbered) can execute
 
 ## Session Continuity
 
-Last session: 2026-05-08T20:45:41.412Z
-Stopped at: context exhaustion at 75% (2026-05-08)
+Last session: 2026-05-12T14:40:00.000Z — milestone v3.5 closed (partial)
+Stopped at: null (clean close — between milestones)
 Resume file: None
