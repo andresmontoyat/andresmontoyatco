@@ -6,18 +6,26 @@
 
 **Previously shipped:** v3.4 (2026-05-07) — Full brownfield redesign baseline: Vite 6 + React 18 + Tailwind v3.4, bilingual nav, char-reveal Hero, vertical Experience timeline, email-hero Contact, branded Open Graph, Lighthouse 98/100/100/100 mobile. See [`milestones/v3.4-ROADMAP.md`](milestones/v3.4-ROADMAP.md).
 
-## Next Milestone Goals (v3.6 candidate)
+## Current Milestone: v3.6 AI Practice & Brand Refresh
 
-**Carried from v3.5 (unfinished):**
-- DEPLOY-01 — Vercel production deploy from main (auto-deploy, vite-react preset, build `npm run build`, output `dist/`)
-- DEPLOY-02 — andresmontoyat.co custom domain + HTTPS via Vercel auto-cert
-- DEPLOY-03 — PR preview deploys with OG card validation
+**Goal:** Refresh brand palette (blue + emerald), fix theme toggle root bug, integrate hero photo, and ship a sales-focused AI/Claude Code section positioning Carlos as engineer-for-hire.
 
-**Likely additions (long-term backlog candidates):**
-- VIS-02 (company logo SVGs), VIS-04 (testimonials), ASEO-01..03 (JSON-LD / WebP / sitemap)
-- Test infrastructure decision — revisit after 6 consecutive deferrals
+**Target features:**
+- THEME-01 — Refactor Tailwind config so colors reference CSS variables (fix Phase 5 theme-toggle false-positive — currently only `<body>` bg flips because Tailwind tokens are hardcoded hex, not var references)
+- COLOR-01 — Brand palette swap: `#6C63FF` (indigo) → blue-500 `#3B82F6`; `#FF6B6B` (coral) → emerald-500 `#10B981`
+- HERO-01 — Integrate `me.jpg` in Hero as overlay full-bleed (Variant C from sketch): desaturated bg photo + gradient overlay + text-shadow on headline
+- AI-01 — New AI / Claude Code section between Projects and Contact: sales pitch (engineer-for-hire) with 4 value props + proof counters + services + stack strip; bilingual EN+ES; lazy-loaded chunk; nav scroll-spy entry
 
-Run `/gsd-new-milestone` to formally scope v3.6.
+**Locked decisions:**
+- v3.6 = site improvements only — **deploy stays deferred to v3.7** (DEPLOY-01/02/03)
+- Phase numbering continues 7–10 (Phase 7 slot reused since v3.5 deploy work moved to v3.7)
+- Sketch file: `.planning/sketches/v3.6-variants.html` — Hero C + AI V7 locked
+- Brand palette swap touches `tailwind.config.js` + `index.css` only; component changes scoped to Hero (Phase 8) and new AI section (Phase 9)
+- No git tag at v3.6 close — consistent with v3.5; tag deferred until production site is live (v3.7)
+- Test infrastructure: still deferred (7 consecutive milestones now — explicit decision, not drift)
+- AI section copy is final per V7 sketch — no pricing tier copy, no client logos (deferred)
+
+**Phase numbering:** v3.6 starts at Phase 7 (continues from v3.5).
 
 ## What This Is
 
@@ -64,11 +72,21 @@ The hero section and overall first impression must stop recruiters mid-scroll an
 - [x] **DEBT-02** `scripts/og-template.html` self-hosts Inter via `@fontsource/inter` (5 `@font-face` blocks, 0 Google Fonts CDN refs); `npm run og:gen` reproducible — v3.5 Phase 5
 - [x] **DEBT-03** GA `<script>` moved into `<head>` (HTML spec compliant; SEO-02 firing preserved) — v3.5 Phase 5
 
-### Active
+### Active (v3.6)
+
+- [ ] **THEME-01** *(v3.6 Phase 7)* Refactor Tailwind config to CSS-var color references — fix theme toggle root cause (Phase 5 false-positive: vars exist but Tailwind utilities use hardcoded hex)
+- [ ] **COLOR-01** *(v3.6 Phase 7)* Brand palette swap — `brand` `#6C63FF` → blue-500 `#3B82F6`; `accent` `#FF6B6B` → emerald-500 `#10B981`
+- [ ] **HERO-01** *(v3.6 Phase 8)* Integrate `me.jpg` in Hero as overlay full-bleed (Variant C sketch) — bg photo + gradient overlay + text-shadow
+- [ ] **AI-01** *(v3.6 Phase 9)* AI / Claude Code section between Projects and Contact — sales pitch (Variant 7 sketch); bilingual; lazy-loaded chunk; nav scroll-spy entry
+
+### Deferred to v3.7
 
 - [ ] **DEPLOY-01** *(deferred from v3.5)* Vercel production deploy — auto-deploy from main, vite-react preset, build `npm run build`, output `dist/`
 - [ ] **DEPLOY-02** *(deferred from v3.5)* Custom domain andresmontoyat.co + DNS records → Vercel; HTTPS via auto-cert
 - [ ] **DEPLOY-03** *(deferred from v3.5)* Auto-preview deploys per PR with OG card validation
+
+### Backlog
+
 - [ ] REQUIREMENTS.md traceability sync (remaining unmapped: VIS-02, VIS-04, ASEO-01..03, INTX-01..03) — milestone audit task
 
 ### Out of Scope
@@ -145,4 +163,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-05-12 — milestone v3.5 CLOSED PARTIAL (themes + projects shipped; deploy deferred to v3.6; no git tag pending live site)*
+*Last updated: 2026-05-12 — milestone v3.6 STARTED (AI Practice & Brand Refresh: 4 REQs, Phases 7–10; deploy stays deferred to v3.7)*

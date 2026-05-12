@@ -1,0 +1,962 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>v3.6 Sketch — Hero + AI Section Variants</title>
+<style>
+  :root {
+    --ink-950: #0D0D1A;
+    --ink-900: #12121F;
+    --ink-800: #1A1A2E;
+    --ink-700: #1F1F3A;
+    --ink-600: #252545;
+    --brand: #3B82F6;            /* blue-500 */
+    --brand-light: #60A5FA;      /* blue-400 */
+    --brand-dark:  #2563EB;      /* blue-600 */
+    --brand-muted: rgba(59,130,246,0.12);
+    --accent: #10B981;           /* emerald-500 */
+    --accent-light: #34D399;
+    --accent-dark:  #059669;
+    --accent-muted: rgba(16,185,129,0.12);
+    --text-primary:   #F0F0FF;
+    --text-secondary: #A0A0C0;
+    --text-muted:     #606080;
+    --grad-brand: linear-gradient(135deg, #3B82F6 0%, #10B981 100%);
+    --grad-hero:  radial-gradient(ellipse 80% 50% at 50% -20%, rgba(59,130,246,0.15), transparent), linear-gradient(180deg, #12121F 0%, #0D0D1A 100%);
+  }
+  * { box-sizing: border-box; }
+  html, body { background: var(--ink-950); color: var(--text-primary); margin: 0; padding: 0; font-family: 'Inter', system-ui, -apple-system, sans-serif; line-height: 1.5; }
+  .doc-nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(13,13,26,0.92); backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--ink-700);
+    padding: 12px 24px; display: flex; gap: 16px; flex-wrap: wrap; align-items: center;
+  }
+  .doc-nav a { color: var(--text-secondary); text-decoration: none; font-size: 13px; font-weight: 500; padding: 6px 10px; border-radius: 6px; }
+  .doc-nav a:hover { color: var(--text-primary); background: var(--ink-800); }
+  .doc-nav strong { color: var(--text-primary); font-size: 14px; margin-right: 8px; }
+
+  .doc-header { padding: 48px 24px 24px; max-width: 1280px; margin: 0 auto; }
+  .doc-header h1 { font-size: 32px; margin: 0 0 8px; letter-spacing: -0.02em; }
+  .doc-header p { color: var(--text-secondary); margin: 0; }
+  .palette-row { display: flex; gap: 12px; margin-top: 20px; flex-wrap: wrap; }
+  .swatch { display: flex; align-items: center; gap: 8px; padding: 6px 12px 6px 6px; border: 1px solid var(--ink-700); border-radius: 999px; font-size: 12px; }
+  .swatch .dot { width: 18px; height: 18px; border-radius: 50%; }
+
+  .variant-section { padding: 56px 24px; max-width: 1280px; margin: 0 auto; border-top: 1px solid var(--ink-800); }
+  .variant-section > h2 { font-size: 24px; margin: 0 0 4px; letter-spacing: -0.01em; }
+  .variant-section > .sub { color: var(--text-secondary); margin: 0 0 32px; }
+
+  .variant-card {
+    background: var(--ink-900);
+    border: 1px solid var(--ink-700);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 32px;
+    overflow: hidden;
+  }
+  .variant-card .label {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 16px;
+    font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent);
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+  }
+  .variant-card .label .num { background: var(--accent-muted); color: var(--accent); padding: 2px 8px; border-radius: 4px; font-weight: 700; }
+  .variant-card .title { font-size: 18px; margin: 0 0 4px; }
+  .variant-card .desc { color: var(--text-secondary); font-size: 13px; margin: 0 0 20px; }
+  .variant-card .stage { background: var(--ink-950); border: 1px dashed var(--ink-700); border-radius: 12px; padding: 32px; min-height: 360px; }
+
+  /* ---------- HERO mockups ---------- */
+  .hero-base { background: var(--grad-hero); border-radius: 8px; padding: 36px 32px; overflow: hidden; }
+  .hero-base .badge { display: inline-flex; align-items: center; gap: 6px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--accent); background: var(--accent-muted); padding: 4px 10px; border-radius: 999px; margin-bottom: 16px; }
+  .hero-base .badge .dot { width: 6px; height: 6px; background: var(--accent); border-radius: 50%; animation: pulse 1.8s ease-in-out infinite; }
+  @keyframes pulse { 0%,100% { opacity: 1 } 50% { opacity: .4 } }
+  .hero-base h1 { font-size: 36px; line-height: 1.1; margin: 0 0 8px; letter-spacing: -0.02em; font-weight: 800; }
+  .hero-base h1 .grad { background: var(--grad-brand); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .hero-base .role { color: var(--text-secondary); font-size: 14px; margin: 0 0 20px; }
+  .hero-base .ctas { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 24px; }
+  .hero-base .btn { padding: 8px 14px; border-radius: 8px; font-size: 12px; font-weight: 600; text-decoration: none; }
+  .hero-base .btn-primary { background: var(--brand); color: white; }
+  .hero-base .btn-ghost { border: 1px solid var(--ink-600); color: var(--text-primary); }
+  .hero-base .stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; font-size: 11px; }
+  .hero-base .stats .stat { padding: 8px; background: rgba(255,255,255,0.03); border: 1px solid var(--ink-700); border-radius: 6px; }
+  .hero-base .stats .stat .v { font-size: 18px; font-weight: 700; color: var(--brand-light); display: block; }
+  .hero-base .stats .stat .l { color: var(--text-muted); }
+
+  /* Variant 1: avatar inline */
+  .hero-v1 .row { display: flex; align-items: center; gap: 18px; margin-bottom: 10px; }
+  .hero-v1 .avatar { width: 72px; height: 72px; border-radius: 50%; object-fit: cover; border: 2px solid var(--brand); box-shadow: 0 0 0 4px rgba(59,130,246,0.15); flex-shrink: 0; }
+  .hero-v1 .row .name { font-size: 13px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; }
+  .hero-v1 h1 { font-size: 32px; }
+
+  /* Variant 2: split */
+  .hero-v2 .grid { display: grid; grid-template-columns: 1fr 1.4fr; gap: 32px; align-items: center; }
+  .hero-v2 .photo-wrap { position: relative; }
+  .hero-v2 .photo { width: 100%; aspect-ratio: 4/5; object-fit: cover; border-radius: 12px; display: block; }
+  .hero-v2 .photo-wrap::after { content: ''; position: absolute; inset: -1px; border-radius: 13px; background: var(--grad-brand); z-index: -1; }
+  .hero-v2 .photo-wrap { padding: 1px; background: var(--grad-brand); border-radius: 13px; }
+  .hero-v2 .photo { border-radius: 12px; }
+  .hero-v2 h1 { font-size: 30px; }
+  @media (max-width: 760px) { .hero-v2 .grid { grid-template-columns: 1fr; } }
+
+  /* Variant 3: overlay */
+  .hero-v3 { position: relative; padding: 0; min-height: 380px; overflow: hidden; border-radius: 12px; }
+  .hero-v3 .bg-photo { position: absolute; inset: 0; object-fit: cover; object-position: center 30%; width: 100%; height: 100%; filter: grayscale(0.2) brightness(0.35); }
+  .hero-v3 .overlay { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(13,13,26,0.4) 0%, rgba(13,13,26,0.95) 75%); }
+  .hero-v3 .content { position: relative; z-index: 2; padding: 36px 32px; }
+  .hero-v3 h1 { font-size: 38px; text-shadow: 0 2px 16px rgba(0,0,0,0.6); }
+
+  /* ---------- AI SECTION mockups ---------- */
+  .ai-base { background: var(--grad-hero); border-radius: 8px; padding: 36px 32px; }
+  .ai-base .eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--accent); text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+  .ai-base .eyebrow::before { content: ''; width: 32px; height: 1px; background: var(--accent); }
+  .ai-base h2 { font-size: 28px; margin: 0 0 12px; letter-spacing: -0.02em; }
+  .ai-base h2 .grad { background: var(--grad-brand); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .ai-base .intro { color: var(--text-secondary); margin: 0 0 24px; font-size: 14px; max-width: 600px; }
+
+  /* AI Variant 1: compact list */
+  .ai-v1 .list { display: flex; flex-direction: column; gap: 8px; }
+  .ai-v1 .item { display: grid; grid-template-columns: auto 1fr auto; gap: 12px; align-items: center; padding: 12px 14px; border-radius: 8px; border: 1px solid var(--ink-700); background: rgba(255,255,255,0.02); }
+  .ai-v1 .item:hover { border-color: var(--brand); }
+  .ai-v1 .item .tag { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--brand-light); background: var(--brand-muted); padding: 2px 7px; border-radius: 4px; }
+  .ai-v1 .item .name { font-size: 14px; font-weight: 600; }
+  .ai-v1 .item .desc { color: var(--text-muted); font-size: 12px; }
+  .ai-v1 .item a { color: var(--accent); font-size: 12px; text-decoration: none; }
+  .ai-v1 .item a:hover { text-decoration: underline; }
+
+  /* AI Variant 2: cards */
+  .ai-v2 .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+  .ai-v2 .card { background: var(--ink-800); border: 1px solid var(--ink-700); border-radius: 12px; padding: 18px; transition: transform .2s, border-color .2s; }
+  .ai-v2 .card:hover { transform: translateY(-2px); border-color: var(--brand); }
+  .ai-v2 .card .icon { width: 36px; height: 36px; border-radius: 8px; background: var(--brand-muted); display: flex; align-items: center; justify-content: center; color: var(--brand-light); font-size: 18px; margin-bottom: 12px; font-family: 'JetBrains Mono', monospace; font-weight: 700; }
+  .ai-v2 .card h3 { margin: 0 0 6px; font-size: 16px; }
+  .ai-v2 .card p { margin: 0 0 12px; color: var(--text-secondary); font-size: 13px; }
+  .ai-v2 .card .chips { display: flex; gap: 6px; flex-wrap: wrap; }
+  .ai-v2 .card .chip { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-muted); padding: 2px 6px; border: 1px solid var(--ink-600); border-radius: 4px; }
+
+  /* AI Variant 3: mix (manifesto + cards) */
+  .ai-v3 .layout { display: grid; grid-template-columns: 1.1fr 1fr; gap: 32px; align-items: start; }
+  .ai-v3 .manifesto p { color: var(--text-secondary); font-size: 14px; line-height: 1.7; margin: 0 0 12px; }
+  .ai-v3 .manifesto p:first-of-type::first-letter { font-size: 36px; font-weight: 800; color: var(--brand); float: left; margin-right: 8px; line-height: 1; }
+  .ai-v3 .manifesto .quote { border-left: 2px solid var(--accent); padding: 8px 12px; margin: 16px 0; color: var(--text-primary); font-style: italic; font-size: 13px; }
+  .ai-v3 .featured { display: flex; flex-direction: column; gap: 12px; }
+  .ai-v3 .featured .mini { background: var(--ink-800); border: 1px solid var(--ink-700); border-radius: 10px; padding: 14px; }
+  .ai-v3 .featured .mini .top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+  .ai-v3 .featured .mini .top .name { font-size: 14px; font-weight: 600; }
+  .ai-v3 .featured .mini .top .tag { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--accent); }
+  .ai-v3 .featured .mini p { color: var(--text-muted); font-size: 12px; margin: 0; }
+  @media (max-width: 760px) { .ai-v3 .layout { grid-template-columns: 1fr; } }
+
+  /* AI Variant 4: narrative summary */
+  .ai-v4 .narrative { max-width: 720px; }
+  .ai-v4 .narrative p { color: var(--text-secondary); font-size: 15px; line-height: 1.8; margin: 0 0 16px; }
+  .ai-v4 .narrative p strong { color: var(--text-primary); }
+  .ai-v4 .narrative ul { color: var(--text-secondary); font-size: 14px; padding-left: 20px; line-height: 1.8; }
+  .ai-v4 .narrative ul li::marker { color: var(--accent); }
+  .ai-v4 .footer-links { display: flex; gap: 12px; margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--ink-700); flex-wrap: wrap; }
+  .ai-v4 .link { color: var(--brand-light); font-size: 13px; text-decoration: none; padding: 8px 14px; border: 1px solid var(--ink-700); border-radius: 999px; display: inline-flex; align-items: center; gap: 6px; }
+  .ai-v4 .link:hover { border-color: var(--brand); color: var(--brand); }
+
+  /* AI Variant 5: numbered showcase + categorized */
+  .ai-v5 .counters { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px,1fr)); gap: 12px; margin: 20px 0 28px; }
+  .ai-v5 .counter { background: var(--ink-800); border: 1px solid var(--ink-700); border-radius: 10px; padding: 16px; position: relative; overflow: hidden; }
+  .ai-v5 .counter::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--grad-brand); }
+  .ai-v5 .counter .n { font-family: 'JetBrains Mono', monospace; font-size: 32px; font-weight: 800; line-height: 1; background: var(--grad-brand); -webkit-background-clip: text; background-clip: text; color: transparent; display: block; }
+  .ai-v5 .counter .l { color: var(--text-muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; margin-top: 6px; display: block; }
+  .ai-v5 .columns { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px,1fr)); gap: 20px; margin-top: 12px; }
+  .ai-v5 .col h4 { margin: 0 0 10px; font-size: 13px; color: var(--accent-light); text-transform: uppercase; letter-spacing: 0.1em; font-family: 'JetBrains Mono', monospace; display: flex; align-items: center; gap: 8px; }
+  .ai-v5 .col h4 .count { background: var(--brand-muted); color: var(--brand-light); padding: 1px 7px; border-radius: 4px; font-size: 11px; }
+  .ai-v5 .col ul { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+  .ai-v5 .col li { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-secondary); background: var(--ink-800); border: 1px solid var(--ink-700); padding: 3px 8px; border-radius: 4px; }
+  .ai-v5 .col li.featured { color: var(--brand-light); border-color: var(--brand-dark); background: var(--brand-muted); }
+  .ai-v5 .apps { margin-top: 28px; padding-top: 24px; border-top: 1px solid var(--ink-700); }
+  .ai-v5 .apps h4 { margin: 0 0 12px; font-size: 13px; color: var(--accent-light); text-transform: uppercase; letter-spacing: 0.1em; font-family: 'JetBrains Mono', monospace; }
+  .ai-v5 .apps .row { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px,1fr)); gap: 12px; }
+  .ai-v5 .apps .app { background: var(--ink-800); border: 1px solid var(--ink-700); border-radius: 10px; padding: 14px; }
+  .ai-v5 .apps .app .name { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .ai-v5 .apps .app .desc { font-size: 12px; color: var(--text-muted); margin: 0; }
+
+  /* AI Variant 6: bento showcase — premium cards */
+  .ai-v6 .bento { display: grid; grid-template-columns: repeat(6, 1fr); grid-auto-rows: minmax(140px, auto); gap: 14px; margin-top: 8px; }
+  .ai-v6 .b { background: var(--ink-900); border: 1px solid var(--ink-700); border-radius: 16px; padding: 22px; position: relative; overflow: hidden; transition: transform .25s ease, border-color .25s ease; }
+  .ai-v6 .b:hover { transform: translateY(-2px); border-color: var(--brand); }
+  .ai-v6 .b::before { content: ''; position: absolute; inset: 0; padding: 1px; border-radius: 16px; background: var(--grad-brand); -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; opacity: 0; transition: opacity .25s; pointer-events: none; }
+  .ai-v6 .b:hover::before { opacity: 1; }
+
+  /* Bento sizes */
+  .ai-v6 .b-tall  { grid-column: span 3; grid-row: span 2; }
+  .ai-v6 .b-wide  { grid-column: span 3; }
+  .ai-v6 .b-sq    { grid-column: span 2; }
+  .ai-v6 .b-half  { grid-column: span 3; }
+  @media (max-width: 760px) {
+    .ai-v6 .bento { grid-template-columns: 1fr; }
+    .ai-v6 .b-tall, .ai-v6 .b-wide, .ai-v6 .b-sq, .ai-v6 .b-half { grid-column: span 1; grid-row: span 1; }
+  }
+
+  .ai-v6 .b .cat { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--accent); text-transform: uppercase; letter-spacing: 0.14em; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+  .ai-v6 .b .cat::before { content: ''; width: 5px; height: 5px; background: var(--accent); border-radius: 50%; }
+  .ai-v6 .b .big-n { font-family: 'JetBrains Mono', monospace; font-size: 56px; font-weight: 800; line-height: 0.9; background: var(--grad-brand); -webkit-background-clip: text; background-clip: text; color: transparent; letter-spacing: -0.04em; }
+  .ai-v6 .b .big-n.small { font-size: 40px; }
+  .ai-v6 .b .title { font-size: 18px; font-weight: 700; margin: 12px 0 6px; letter-spacing: -0.01em; }
+  .ai-v6 .b .lead { color: var(--text-secondary); font-size: 13px; margin: 0 0 14px; line-height: 1.55; }
+  .ai-v6 .b .pills { display: flex; flex-wrap: wrap; gap: 5px; }
+  .ai-v6 .b .pills span { font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 3px 8px; border-radius: 999px; background: var(--ink-800); color: var(--text-secondary); border: 1px solid var(--ink-700); }
+  .ai-v6 .b .pills span.hot { background: var(--brand-muted); color: var(--brand-light); border-color: rgba(59,130,246,0.4); }
+  .ai-v6 .b .see-all { display: inline-flex; align-items: center; gap: 4px; margin-top: 14px; color: var(--accent); font-size: 12px; font-weight: 600; text-decoration: none; }
+  .ai-v6 .b .see-all:hover { color: var(--accent-light); }
+
+  /* Hero card (b-tall = manifesto) */
+  .ai-v6 .hero-card { background: linear-gradient(135deg, rgba(59,130,246,0.12) 0%, rgba(16,185,129,0.08) 100%); border-color: rgba(59,130,246,0.3); }
+  .ai-v6 .hero-card .quote { font-size: 17px; color: var(--text-primary); font-weight: 500; line-height: 1.5; margin: 14px 0 16px; }
+  .ai-v6 .hero-card .quote .grad { background: var(--grad-brand); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .ai-v6 .hero-card .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: auto; }
+  .ai-v6 .hero-card .stat-mini { text-align: left; }
+  .ai-v6 .hero-card .stat-mini .nv { font-family: 'JetBrains Mono', monospace; font-size: 24px; font-weight: 800; color: var(--brand-light); display: block; line-height: 1; }
+  .ai-v6 .hero-card .stat-mini .nl { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-top: 4px; display: block; }
+
+  /* App showcase row (b-wide) */
+  .ai-v6 .app-card { display: flex; flex-direction: column; gap: 10px; }
+  .ai-v6 .app-card .app-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+  .ai-v6 .app-card .app-head .name { font-size: 17px; font-weight: 700; }
+  .ai-v6 .app-card .app-head .badge-tag { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--accent); background: var(--accent-muted); padding: 3px 8px; border-radius: 4px; font-weight: 700; flex-shrink: 0; }
+  .ai-v6 .app-card .stack { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
+  .ai-v6 .app-card .stack span { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-muted); border: 1px solid var(--ink-600); padding: 2px 7px; border-radius: 4px; }
+  .ai-v6 .app-card .links { display: flex; gap: 12px; margin-top: auto; padding-top: 8px; }
+  .ai-v6 .app-card .links a { font-size: 12px; color: var(--brand-light); text-decoration: none; }
+  .ai-v6 .app-card .links a:hover { color: var(--brand); text-decoration: underline; }
+
+  /* AI Variant 7: SALES PITCH — engineer-for-hire */
+  .ai-v7 .pitch-hero { text-align: center; padding: 8px 0 32px; }
+  .ai-v7 .pitch-hero h2 { font-size: 38px; line-height: 1.1; margin: 8px 0 16px; letter-spacing: -0.025em; font-weight: 800; }
+  .ai-v7 .pitch-hero h2 .grad { background: var(--grad-brand); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .ai-v7 .pitch-hero .sub-lead { color: var(--text-secondary); font-size: 16px; max-width: 640px; margin: 0 auto 24px; line-height: 1.6; }
+  .ai-v7 .pitch-hero .cta-row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .ai-v7 .pitch-hero .cta-primary { background: var(--grad-brand); color: white; padding: 14px 28px; border-radius: 999px; font-weight: 700; font-size: 14px; text-decoration: none; box-shadow: 0 10px 30px -10px rgba(59,130,246,0.5); }
+  .ai-v7 .pitch-hero .cta-primary:hover { transform: translateY(-1px); }
+  .ai-v7 .pitch-hero .cta-ghost { border: 1px solid var(--ink-600); color: var(--text-primary); padding: 14px 24px; border-radius: 999px; font-size: 14px; text-decoration: none; }
+  .ai-v7 .pitch-hero .cta-ghost:hover { border-color: var(--brand); color: var(--brand); }
+
+  .ai-v7 .value-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px,1fr)); gap: 16px; margin: 32px 0; }
+  .ai-v7 .value { background: var(--ink-900); border: 1px solid var(--ink-700); border-radius: 14px; padding: 22px; position: relative; }
+  .ai-v7 .value .vnum { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--accent); font-weight: 700; letter-spacing: 0.1em; }
+  .ai-v7 .value h3 { margin: 8px 0 8px; font-size: 17px; font-weight: 700; line-height: 1.3; }
+  .ai-v7 .value p { color: var(--text-secondary); font-size: 13px; margin: 0; line-height: 1.6; }
+
+  .ai-v7 .proof { background: linear-gradient(135deg, rgba(59,130,246,0.08), rgba(16,185,129,0.06)); border: 1px solid rgba(59,130,246,0.25); border-radius: 16px; padding: 28px; margin: 32px 0; }
+  .ai-v7 .proof .ptitle { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--accent); text-transform: uppercase; letter-spacing: 0.14em; margin-bottom: 4px; }
+  .ai-v7 .proof .pheading { font-size: 18px; margin: 0 0 18px; font-weight: 700; }
+  .ai-v7 .proof .pstats { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px,1fr)); gap: 16px; }
+  .ai-v7 .proof .pstat .pn { font-family: 'JetBrains Mono', monospace; font-size: 32px; font-weight: 800; background: var(--grad-brand); -webkit-background-clip: text; background-clip: text; color: transparent; line-height: 1; }
+  .ai-v7 .proof .pstat .pl { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 6px; }
+
+  .ai-v7 .services { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px,1fr)); gap: 12px; margin-top: 8px; }
+  .ai-v7 .svc { background: var(--ink-900); border-left: 3px solid var(--brand); padding: 14px 18px; border-radius: 0 10px 10px 0; }
+  .ai-v7 .svc h4 { margin: 0 0 4px; font-size: 14px; font-weight: 700; }
+  .ai-v7 .svc p { margin: 0; font-size: 12px; color: var(--text-secondary); }
+
+  .ai-v7 .stack-strip { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-top: 28px; padding-top: 24px; border-top: 1px solid var(--ink-700); }
+  .ai-v7 .stack-strip span { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted); padding: 4px 10px; border: 1px solid var(--ink-700); border-radius: 999px; }
+
+  /* Decision pad */
+  .decide { background: var(--ink-900); border: 1px solid var(--ink-700); border-radius: 12px; padding: 24px; margin: 56px 24px; max-width: 1280px; margin-left: auto; margin-right: auto; }
+  .decide h2 { margin: 0 0 8px; font-size: 20px; }
+  .decide p { color: var(--text-secondary); margin: 0 0 16px; font-size: 14px; }
+  .decide pre { background: var(--ink-950); color: var(--accent-light); padding: 12px 16px; border-radius: 8px; font-size: 12px; overflow-x: auto; }
+</style>
+</head>
+<body>
+
+<nav class="doc-nav">
+  <strong>v3.6 Sketch</strong>
+  <a href="#hero">Hero variants</a>
+  <a href="#ai">AI section variants</a>
+  <a href="#decide">Decide</a>
+  <span style="margin-left:auto;color:var(--text-muted);font-family:'JetBrains Mono',monospace;font-size:11px;">paleta: blue-500 + emerald-500 sobre ink-950</span>
+</nav>
+
+<header class="doc-header">
+  <h1>v3.6 — Hero + AI Section Sketches</h1>
+  <p>Mockups con la nueva paleta (blue-500 brand + emerald-500 accent sobre ink dark). Escoge 1 Hero + 1 AI section, luego se locked en REQUIREMENTS.md.</p>
+  <div class="palette-row">
+    <span class="swatch"><span class="dot" style="background:#3B82F6"></span>brand · #3B82F6</span>
+    <span class="swatch"><span class="dot" style="background:#10B981"></span>accent · #10B981</span>
+    <span class="swatch"><span class="dot" style="background:#0D0D1A"></span>ink-950</span>
+    <span class="swatch"><span class="dot" style="background:#12121F"></span>ink-900</span>
+    <span class="swatch"><span class="dot" style="background:#F0F0FF"></span>text-primary</span>
+  </div>
+</header>
+
+<!-- =================== HERO VARIANTS =================== -->
+<section class="variant-section" id="hero">
+  <h2>1. Hero — integrar me.jpg</h2>
+  <p class="sub">3 layouts. Foto real cargada desde <code>../../me.jpg</code> (root del repo).</p>
+
+  <!-- Hero v1: avatar inline -->
+  <div class="variant-card">
+    <div class="label"><span class="num">A</span> Avatar inline junto al nombre</div>
+    <p class="title">Pequeño avatar circular sobre el título</p>
+    <p class="desc">Foto compacta de 72px junto a "Carlos Andres Montoya". Minimal footprint, mantiene foco en el copy. Recomendado para mobile-first.</p>
+    <div class="stage">
+      <div class="hero-base hero-v1">
+        <span class="badge"><span class="dot"></span>Disponible para proyectos</span>
+        <div class="row">
+          <img class="avatar" src="../../me.jpg" alt="Carlos Montoya" onerror="this.style.background='linear-gradient(135deg,#3B82F6,#10B981)';this.alt='photo'" />
+          <div>
+            <div class="name">Carlos Andres Montoya</div>
+            <h1>Senior <span class="grad">backend engineer</span></h1>
+          </div>
+        </div>
+        <p class="role">Java · Kotlin · Spring Boot · Hexagonal Architecture · AWS</p>
+        <div class="ctas">
+          <a class="btn btn-primary" href="#">↓ CV English</a>
+          <a class="btn btn-primary" href="#">↓ CV Español</a>
+          <a class="btn btn-ghost" href="#">Get in touch</a>
+        </div>
+        <div class="stats">
+          <div class="stat"><span class="v">12+</span><span class="l">años exp</span></div>
+          <div class="stat"><span class="v">8</span><span class="l">stacks</span></div>
+          <div class="stat"><span class="v">∞</span><span class="l">deploys</span></div>
+          <div class="stat"><span class="v">2</span><span class="l">idiomas</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hero v2: split -->
+  <div class="variant-card">
+    <div class="label"><span class="num">B</span> Split foto-texto (50/50)</div>
+    <p class="title">Foto vertical a la izquierda, texto a la derecha</p>
+    <p class="desc">Foto grande con marco gradient brand→accent. Mayor protagonismo de la imagen. En mobile colapsa a stack vertical (foto encima).</p>
+    <div class="stage">
+      <div class="hero-base hero-v2">
+        <div class="grid">
+          <div class="photo-wrap">
+            <img class="photo" src="../../me.jpg" alt="Carlos Montoya" onerror="this.style.background='linear-gradient(135deg,#3B82F6,#10B981)'" />
+          </div>
+          <div>
+            <span class="badge"><span class="dot"></span>Disponible para proyectos</span>
+            <h1>Senior <span class="grad">backend engineer</span><br />que diseña sistemas que importan</h1>
+            <p class="role">Java · Kotlin · Spring Boot · Hexagonal Architecture · AWS</p>
+            <div class="ctas">
+              <a class="btn btn-primary" href="#">↓ CV English</a>
+              <a class="btn btn-primary" href="#">↓ CV Español</a>
+              <a class="btn btn-ghost" href="#">Get in touch</a>
+            </div>
+            <div class="stats">
+              <div class="stat"><span class="v">12+</span><span class="l">años exp</span></div>
+              <div class="stat"><span class="v">8</span><span class="l">stacks</span></div>
+              <div class="stat"><span class="v">∞</span><span class="l">deploys</span></div>
+              <div class="stat"><span class="v">2</span><span class="l">idiomas</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hero v3: overlay -->
+  <div class="variant-card" style="border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-muted);">
+    <div class="label" style="color: var(--accent-light)"><span class="num" style="background: var(--accent); color: var(--ink-950);">C ✓ PICKED</span> Foto overlay full-bleed</div>
+    <p class="title">Foto de fondo desaturada, texto encima</p>
+    <p class="desc">Foto a pantalla completa con filtro grayscale + brightness reducido y gradient overlay; texto encima con text-shadow. Más cinemático pero requiere foto que funcione bien recortada.</p>
+    <div class="stage">
+      <div class="hero-base hero-v3">
+        <img class="bg-photo" src="../../me.jpg" alt="" />
+        <div class="overlay"></div>
+        <div class="content">
+          <span class="badge"><span class="dot"></span>Disponible para proyectos</span>
+          <h1>Senior <span class="grad">backend engineer</span></h1>
+          <p class="role">Java · Kotlin · Spring Boot · Hexagonal Architecture · AWS</p>
+          <div class="ctas">
+            <a class="btn btn-primary" href="#">↓ CV English</a>
+            <a class="btn btn-primary" href="#">↓ CV Español</a>
+            <a class="btn btn-ghost" href="#">Get in touch</a>
+          </div>
+          <div class="stats">
+            <div class="stat"><span class="v">12+</span><span class="l">años exp</span></div>
+            <div class="stat"><span class="v">8</span><span class="l">stacks</span></div>
+            <div class="stat"><span class="v">∞</span><span class="l">deploys</span></div>
+            <div class="stat"><span class="v">2</span><span class="l">idiomas</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =================== AI SECTION VARIANTS =================== -->
+<section class="variant-section" id="ai">
+  <h2>2. AI / Claude Code section</h2>
+  <p class="sub">Posición confirmada: después de Projects, antes de Contact. 4 layouts para presentar tu experiencia con Claude Code.</p>
+
+  <!-- AI v1: compact list -->
+  <div class="variant-card">
+    <div class="label"><span class="num">1</span> Lista compacta</div>
+    <p class="title">Lista densa — máx info, mín scroll</p>
+    <p class="desc">Cada proyecto: tag + nombre + 1-línea + link. Funciona si tienes 6–10 proyectos AI. Mantiene el momentum scroll.</p>
+    <div class="stage">
+      <div class="ai-base ai-v1">
+        <div class="eyebrow">AI Engineering</div>
+        <h2>Construyendo con <span class="grad">Claude Code</span></h2>
+        <p class="intro">Llevo X meses integrando Claude Code en mi workflow de backend engineering: agents personalizados, skills GSD, y proyectos AI-native.</p>
+        <div class="list">
+          <div class="item">
+            <span class="tag">MCP</span>
+            <div>
+              <div class="name">spring-ai-qdrant-mcp</div>
+              <div class="desc">MCP server bridging Spring AI to Qdrant vector DB</div>
+            </div>
+            <a href="#">github →</a>
+          </div>
+          <div class="item">
+            <span class="tag">SKILL</span>
+            <div>
+              <div class="name">GSD workflows</div>
+              <div class="desc">39+ subagents + skills para discuss→plan→execute→verify</div>
+            </div>
+            <a href="#">docs →</a>
+          </div>
+          <div class="item">
+            <span class="tag">APP</span>
+            <div>
+              <div class="name">claude-kanban</div>
+              <div class="desc">Kanban app construido 100% con Claude Code agentic loop</div>
+            </div>
+            <a href="#">live →</a>
+          </div>
+          <div class="item">
+            <span class="tag">CLI</span>
+            <div>
+              <div class="name">caveman mode</div>
+              <div class="desc">Skill de compresión de output ~75% token savings</div>
+            </div>
+            <a href="#">readme →</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI v2: cards -->
+  <div class="variant-card">
+    <div class="label"><span class="num">2</span> Cards (mismo pattern que Projects)</div>
+    <p class="title">Grid de cards con icono, descripción y tech chips</p>
+    <p class="desc">Reusa el componente <code>ProjectCard</code> pattern de Phase 6 con variantes AI. Consistente visualmente con Projects pero diferencia por icono mono en lugar de screenshot.</p>
+    <div class="stage">
+      <div class="ai-base ai-v2">
+        <div class="eyebrow">AI Engineering</div>
+        <h2>Construyendo con <span class="grad">Claude Code</span></h2>
+        <p class="intro">Workflows, MCP servers y apps construidas con AI agents.</p>
+        <div class="grid">
+          <div class="card">
+            <div class="icon">MCP</div>
+            <h3>spring-ai-qdrant-mcp</h3>
+            <p>MCP server bridging Spring AI to Qdrant vector DB for RAG pipelines.</p>
+            <div class="chips"><span class="chip">java</span><span class="chip">spring-ai</span><span class="chip">qdrant</span><span class="chip">mcp</span></div>
+          </div>
+          <div class="card">
+            <div class="icon">GSD</div>
+            <h3>GSD agentic workflows</h3>
+            <p>39+ subagents + skills for discuss→plan→execute→verify cycles in Claude Code.</p>
+            <div class="chips"><span class="chip">claude-code</span><span class="chip">agents</span><span class="chip">tooling</span></div>
+          </div>
+          <div class="card">
+            <div class="icon">KAN</div>
+            <h3>claude-kanban</h3>
+            <p>Kanban app shipped end-to-end through Claude Code agentic loops only.</p>
+            <div class="chips"><span class="chip">react</span><span class="chip">node</span><span class="chip">claude-code</span></div>
+          </div>
+          <div class="card">
+            <div class="icon">CAV</div>
+            <h3>caveman skill</h3>
+            <p>Token-compression mode that cuts output ~75% while keeping technical accuracy.</p>
+            <div class="chips"><span class="chip">skill</span><span class="chip">prompts</span><span class="chip">claude-code</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI v3: mix manifesto + cards -->
+  <div class="variant-card">
+    <div class="label"><span class="num">3</span> Mix — manifesto + featured cards</div>
+    <p class="title">Texto narrativo a la izquierda, 3 cards destacados a la derecha</p>
+    <p class="desc">Establece tu POV ("Cómo trabajo con AI"), luego highlights de proyectos. Mayor profundidad sin overwhelm.</p>
+    <div class="stage">
+      <div class="ai-base ai-v3">
+        <div class="eyebrow">AI Engineering</div>
+        <h2>Construyendo con <span class="grad">Claude Code</span></h2>
+        <div class="layout">
+          <div class="manifesto">
+            <p>Llevo meses integrando Claude Code como parte del stack de backend engineering. No es generación de boilerplate — es discuss → plan → execute → verify, con agentes y skills personalizados.</p>
+            <p>He construido 39+ subagents propios, skills GSD que disciplinan el workflow (atomic commits, verification gates, ADR tracking), y experimentado con MCP servers para integrar bases vectoriales.</p>
+            <div class="quote">"AI no reemplaza ingeniería — la amplifica cuando hay disciplina alrededor."</div>
+            <p>Los proyectos a la derecha son experimentos reales que envié al mundo.</p>
+          </div>
+          <div class="featured">
+            <div class="mini">
+              <div class="top"><span class="name">spring-ai-qdrant-mcp</span><span class="tag">MCP</span></div>
+              <p>MCP server connecting Spring AI to Qdrant for production RAG.</p>
+            </div>
+            <div class="mini">
+              <div class="top"><span class="name">GSD workflows</span><span class="tag">SKILL</span></div>
+              <p>Atomic commits + verification gates + ADR tracking for AI dev.</p>
+            </div>
+            <div class="mini">
+              <div class="top"><span class="name">claude-kanban</span><span class="tag">APP</span></div>
+              <p>Kanban end-to-end via agentic loops, zero hand-typed code.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI v4: narrative summary -->
+  <div class="variant-card">
+    <div class="label"><span class="num">4</span> Resumen narrativo</div>
+    <p class="title">Manifesto largo + bullets + links</p>
+    <p class="desc">Sin cards visuales — todo prosa estructurada. Para cuando quieres contar la historia sin distracción visual. Funciona bien con un solo link out al final ("ver todo en GitHub").</p>
+    <div class="stage">
+      <div class="ai-base ai-v4">
+        <div class="eyebrow">AI Engineering</div>
+        <h2>Mi práctica con <span class="grad">Claude Code</span></h2>
+        <div class="narrative">
+          <p>Llevo meses construyendo software con <strong>Claude Code</strong> como peer engineer — no como autocomplete. Mi enfoque combina hexagonal architecture, atomic commits, y verification gates en cada paso.</p>
+          <p>He construido un sistema de workflows (<strong>GSD — Get Shit Done</strong>) que disciplina el ciclo: <code>discuss → plan → execute → verify</code>, con artefactos en <code>.planning/</code>, ADRs en <code>docs/adr/</code>, y subagents especializados (build-validator, code-reviewer, tdd-guide, doc-classifier).</p>
+          <p>Resultados reales:</p>
+          <ul>
+            <li><strong>39+ subagents</strong> custom — desde clasificadores de docs hasta milestone auditors</li>
+            <li><strong>50+ skills</strong> integradas, incluyendo <code>caveman</code> (compresión ~75% tokens) y <code>spotless</code></li>
+            <li><strong>MCP servers</strong> conectando Spring AI a Qdrant (RAG production-ready)</li>
+            <li><strong>Apps end-to-end</strong> entregadas con loops agénticos — claude-kanban, este mismo portfolio</li>
+          </ul>
+          <p>El common thread: <strong>AI no reemplaza ingeniería — la amplifica cuando hay disciplina arquitectónica alrededor.</strong></p>
+          <div class="footer-links">
+            <a class="link" href="#">→ GSD repo</a>
+            <a class="link" href="#">→ spring-ai-qdrant-mcp</a>
+            <a class="link" href="#">→ Ver subagents</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI v5: numbered showcase + categorized listings -->
+  <div class="variant-card">
+    <div class="label"><span class="num">5</span> Numbered showcase — guides + agents + skills + apps</div>
+    <p class="title">Contadores + listings categorizados (lo que pediste)</p>
+    <p class="desc">Surfacea volumen real (counters) y nombres concretos de guides, agents, skills y commands construidos. Termina con apps shipped. Máxima densidad de evidencia.</p>
+    <div class="stage">
+      <div class="ai-base ai-v5">
+        <div class="eyebrow">AI Engineering</div>
+        <h2>Mi práctica con <span class="grad">Claude Code</span></h2>
+        <p class="intro">Llevo meses construyendo workflows, agents y skills para usar Claude Code como peer engineer, no como autocomplete. Inventario real:</p>
+
+        <div class="counters">
+          <div class="counter"><span class="n">15</span><span class="l">guidelines</span></div>
+          <div class="counter"><span class="n">37</span><span class="l">subagents</span></div>
+          <div class="counter"><span class="n">81</span><span class="l">skills</span></div>
+          <div class="counter"><span class="n">20</span><span class="l">commands</span></div>
+          <div class="counter"><span class="n">86</span><span class="l">workflows</span></div>
+        </div>
+
+        <div class="columns">
+          <div class="col">
+            <h4>Guidelines <span class="count">15</span></h4>
+            <ul>
+              <li class="featured">architecture</li>
+              <li class="featured">hexagonal</li>
+              <li>adr</li>
+              <li>ddd</li>
+              <li>clean-code</li>
+              <li>java-style</li>
+              <li>kotlin-style</li>
+              <li>spring-boot</li>
+              <li>gradle</li>
+              <li>testing</li>
+              <li>observability</li>
+              <li>diagrams</li>
+              <li>resources</li>
+              <li>gsd-guide</li>
+              <li>claude-code-guide</li>
+            </ul>
+          </div>
+
+          <div class="col">
+            <h4>Featured agents <span class="count">37 total</span></h4>
+            <ul>
+              <li class="featured">gsd-roadmapper</li>
+              <li class="featured">gsd-planner</li>
+              <li class="featured">gsd-executor</li>
+              <li class="featured">gsd-verifier</li>
+              <li>gsd-debugger</li>
+              <li>gsd-code-reviewer</li>
+              <li>gsd-security-auditor</li>
+              <li>gsd-ui-auditor</li>
+              <li>gsd-doc-classifier</li>
+              <li>gsd-doc-synthesizer</li>
+              <li>gsd-integration-checker</li>
+              <li>gsd-pattern-mapper</li>
+              <li>gsd-codebase-mapper</li>
+              <li>gsd-framework-selector</li>
+              <li>tdd-guide</li>
+              <li>build-error-resolver</li>
+            </ul>
+          </div>
+
+          <div class="col">
+            <h4>Featured skills <span class="count">81 total</span></h4>
+            <ul>
+              <li class="featured">gsd-discuss-phase</li>
+              <li class="featured">gsd-plan-phase</li>
+              <li class="featured">gsd-execute-phase</li>
+              <li class="featured">gsd-complete-milestone</li>
+              <li>gsd-audit-uat</li>
+              <li>gsd-audit-milestone</li>
+              <li>gsd-verify-work</li>
+              <li>gsd-debug</li>
+              <li>gsd-autonomous</li>
+              <li>caveman</li>
+              <li>simplify</li>
+              <li>mem-search</li>
+              <li>spotless</li>
+              <li>frontend-design</li>
+            </ul>
+          </div>
+
+          <div class="col">
+            <h4>Commands <span class="count">20</span></h4>
+            <ul>
+              <li class="featured">scaffold-feature</li>
+              <li class="featured">add-adr</li>
+              <li>add-endpoint</li>
+              <li>add-usecase</li>
+              <li>add-migration</li>
+              <li>add-messaging</li>
+              <li>add-observability</li>
+              <li>add-test</li>
+              <li>code-review</li>
+              <li>fix-bug</li>
+              <li>refactor</li>
+              <li>tdd</li>
+              <li>init-project</li>
+              <li>docker-k8s</li>
+              <li>aws</li>
+              <li>keycloak</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="apps">
+          <h4>Apps & frameworks shipped</h4>
+          <div class="row">
+            <div class="app">
+              <div class="name">GSD — Get Shit Done</div>
+              <p class="desc">Workflow framework: discuss → plan → execute → verify con atomic commits, verification gates, ADR tracking.</p>
+            </div>
+            <div class="app">
+              <div class="name">spring-ai-qdrant-mcp</div>
+              <p class="desc">MCP server bridging Spring AI to Qdrant vector DB para production-ready RAG.</p>
+            </div>
+            <div class="app">
+              <div class="name">claude-kanban</div>
+              <p class="desc">Kanban app entregada end-to-end vía Claude Code agentic loops.</p>
+            </div>
+            <div class="app">
+              <div class="name">caveman</div>
+              <p class="desc">Skill de compresión de output ~75% token savings sin perder rigor técnico.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI v7: SALES PITCH - engineer for hire — LOCKED -->
+  <div class="variant-card" style="border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent); background: linear-gradient(135deg, rgba(16,185,129,0.04), rgba(59,130,246,0.02));">
+    <div class="label" style="color: var(--accent-light)"><span class="num" style="background: var(--accent); color: var(--ink-950);">7 ✓ LOCKED</span> Engineer-for-hire pitch</div>
+    <p class="title">Posicionamiento como servicio — vendes habilidades, herramientas son evidencia</p>
+    <p class="desc">Headline directo + value props + proof points (counters como evidencia, no como protagonista) + servicios concretos + CTA fuerte hacia Contact. Convierte visitas en conversaciones.</p>
+    <div class="stage">
+      <div class="ai-base ai-v7">
+
+        <!-- Pitch hero -->
+        <div class="pitch-hero">
+          <div class="eyebrow" style="justify-content:center;">AI Engineering · Para tu equipo</div>
+          <h2>Sistemas backend <span class="grad">entregados con disciplina AI</span></h2>
+          <p class="sub-lead">Soy senior backend engineer. Combino hexagonal architecture + Spring Boot + agentic workflows con Claude Code para entregar features production-ready en una fracción del tiempo — sin sacrificar testing, ADRs ni observability.</p>
+          <div class="cta-row">
+            <a class="cta-primary" href="#contact">Hablemos de tu proyecto →</a>
+            <a class="cta-ghost" href="#projects">Ver proyectos</a>
+          </div>
+        </div>
+
+        <!-- Value props -->
+        <div class="value-grid">
+          <div class="value">
+            <div class="vnum">01 · Velocity</div>
+            <h3>Entrega 3–5× más rápida</h3>
+            <p>Workflows agénticos (discuss → plan → execute → verify) ejecutan en horas lo que toma días con desarrollo tradicional, manteniendo atomic commits y testing real.</p>
+          </div>
+          <div class="value">
+            <div class="vnum">02 · Discipline</div>
+            <h3>Hexagonal sin atajos</h3>
+            <p>Cada feature respeta ports & adapters, ADRs para decisiones significativas, ArchUnit para enforzar boundaries. AI acelera la mano, no relaja el estándar.</p>
+          </div>
+          <div class="value">
+            <div class="vnum">03 · Quality</div>
+            <h3>Tests + observability built-in</h3>
+            <p>JUnit + Testcontainers + Karate desde el day-one. Micrometer + OpenTelemetry + structured logs. No "lo haremos después" — viene en el primer commit.</p>
+          </div>
+          <div class="value">
+            <div class="vnum">04 · Transfer</div>
+            <h3>Tu equipo se lleva el workflow</h3>
+            <p>Documentación viva (PROJECT.md, ADRs, retrospectivas) + handover de los agents y skills usados. No queda lock-in en mi cabeza — queda en tu repo.</p>
+          </div>
+        </div>
+
+        <!-- Proof points -->
+        <div class="proof">
+          <div class="ptitle">Track record</div>
+          <h3 class="pheading">Construí mi propio toolkit antes de venderlo</h3>
+          <div class="pstats">
+            <div class="pstat"><div class="pn">37</div><div class="pl">custom agents</div></div>
+            <div class="pstat"><div class="pn">81</div><div class="pl">workflow skills</div></div>
+            <div class="pstat"><div class="pn">86</div><div class="pl">orchestrations</div></div>
+            <div class="pstat"><div class="pn">15</div><div class="pl">guidelines</div></div>
+            <div class="pstat"><div class="pn">4</div><div class="pl">apps shipped</div></div>
+          </div>
+        </div>
+
+        <!-- Services -->
+        <div>
+          <div class="eyebrow">Servicios concretos</div>
+          <div class="services">
+            <div class="svc">
+              <h4>Greenfield builds</h4>
+              <p>Spring Boot + hexagonal desde cero, con CI/CD, observability y testing infra completas.</p>
+            </div>
+            <div class="svc">
+              <h4>AI workflow setup</h4>
+              <p>Implemento GSD o similar en tu repo: agents, skills, ADRs, retrospectivas. Tu team se vuelve agentic-native.</p>
+            </div>
+            <div class="svc">
+              <h4>MCP server development</h4>
+              <p>Integraciones AI custom (vector DBs, internal APIs) via Model Context Protocol — production-ready.</p>
+            </div>
+            <div class="svc">
+              <h4>Legacy refactor</h4>
+              <p>Migro monolitos a hexagonal con outbox, CDC, transactional consistency garantizada.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stack credentials -->
+        <div class="stack-strip">
+          <span>Java 21</span><span>Kotlin 2.x</span><span>Spring Boot 3</span><span>Hexagonal</span><span>PostgreSQL</span><span>Kafka</span><span>Redis</span><span>AWS</span><span>Docker</span><span>Kubernetes</span><span>Terraform</span><span>Claude Code</span><span>MCP</span><span>Spring AI</span>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- AI v6: bento showcase with premium cards -->
+  <div class="variant-card" style="border-color: var(--brand); box-shadow: 0 0 0 2px var(--brand-muted);">
+    <div class="label" style="color: var(--brand-light)"><span class="num" style="background: var(--brand); color: white;">6 ✨ NEW</span> Bento showcase — premium cards</div>
+    <p class="title">Cards refinadas en bento grid (asymmetric layout)</p>
+    <p class="desc">Mismo contenido que V5 pero como cards visuales: hero card grande (manifesto + 3 stats), 4 category cards (counter grande + pills featured), 2 app showcase cards. Gradient border on hover. Mobile collapses a stack.</p>
+    <div class="stage">
+      <div class="ai-base ai-v6">
+        <div class="eyebrow">AI Engineering</div>
+        <h2>Mi práctica con <span class="grad">Claude Code</span></h2>
+        <p class="intro">Workflows, agents y skills construidos para tratar a Claude Code como peer engineer.</p>
+
+        <div class="bento">
+
+          <!-- Hero / manifesto card (big, top-left) -->
+          <div class="b b-tall hero-card">
+            <div class="cat">Manifesto</div>
+            <div class="quote">"AI no reemplaza ingeniería. <span class="grad">La amplifica</span> cuando hay disciplina arquitectónica alrededor."</div>
+            <p class="lead">Llevo meses construyendo workflows (GSD), subagents y skills para usar Claude Code como peer engineer — no como autocomplete. Discuss → plan → execute → verify, con atomic commits y verification gates.</p>
+            <div class="stats-row">
+              <div class="stat-mini"><span class="nv">15</span><span class="nl">guidelines</span></div>
+              <div class="stat-mini"><span class="nv">86</span><span class="nl">workflows</span></div>
+              <div class="stat-mini"><span class="nv">4</span><span class="nl">apps shipped</span></div>
+            </div>
+          </div>
+
+          <!-- Category: Subagents -->
+          <div class="b b-sq">
+            <div class="cat">Subagents</div>
+            <div class="big-n">37</div>
+            <div class="title">Custom subagents</div>
+            <p class="lead">Roadmapper, planner, executor, debugger, code-reviewer, security-auditor, doc-classifier, UI-auditor…</p>
+            <div class="pills">
+              <span class="hot">gsd-roadmapper</span>
+              <span class="hot">gsd-planner</span>
+              <span>gsd-executor</span>
+              <span>gsd-debugger</span>
+              <span>tdd-guide</span>
+            </div>
+          </div>
+
+          <!-- Category: Skills -->
+          <div class="b b-sq">
+            <div class="cat">Skills</div>
+            <div class="big-n">81</div>
+            <div class="title">Workflow skills</div>
+            <p class="lead">GSD lifecycle, caveman compression, simplify, mem-search, spotless, frontend-design.</p>
+            <div class="pills">
+              <span class="hot">gsd-discuss-phase</span>
+              <span class="hot">gsd-execute-phase</span>
+              <span>caveman</span>
+              <span>simplify</span>
+              <span>mem-search</span>
+            </div>
+          </div>
+
+          <!-- Category: Guidelines -->
+          <div class="b b-half">
+            <div class="cat">Guidelines</div>
+            <div class="big-n small">15</div>
+            <div class="title">Living architecture guides</div>
+            <p class="lead">Source of truth para hexagonal, ADRs, DDD, clean code, Spring Boot, testing, observability, Gradle. Referenciadas desde cada skill.</p>
+            <div class="pills">
+              <span class="hot">architecture</span>
+              <span class="hot">hexagonal</span>
+              <span>adr</span>
+              <span>ddd</span>
+              <span>clean-code</span>
+              <span>java-style</span>
+              <span>kotlin-style</span>
+              <span>spring-boot</span>
+              <span>testing</span>
+              <span>observability</span>
+            </div>
+          </div>
+
+          <!-- Category: Commands -->
+          <div class="b b-half">
+            <div class="cat">Slash commands</div>
+            <div class="big-n small">20</div>
+            <div class="title">One-shot scaffolds</div>
+            <p class="lead">Scaffold features, ADRs, endpoints, use cases, migrations, messaging, observability — todo respetando hexagonal boundaries.</p>
+            <div class="pills">
+              <span class="hot">scaffold-feature</span>
+              <span class="hot">add-adr</span>
+              <span>add-endpoint</span>
+              <span>add-usecase</span>
+              <span>add-migration</span>
+              <span>fix-bug</span>
+              <span>refactor</span>
+              <span>code-review</span>
+            </div>
+          </div>
+
+          <!-- App: GSD framework -->
+          <div class="b b-wide app-card">
+            <div class="app-head">
+              <div>
+                <div class="cat">Flagship framework</div>
+                <div class="name">GSD — Get Shit Done</div>
+              </div>
+              <span class="badge-tag">FRAMEWORK</span>
+            </div>
+            <p class="lead">Workflow framework para Claude Code: discuss → plan → execute → verify. Atomic commits, verification gates, ADR tracking, milestone audits. 86 workflows orquestados por 37 subagents.</p>
+            <div class="stack">
+              <span>claude-code</span><span>node-cli</span><span>typescript</span><span>git</span><span>agentic</span>
+            </div>
+            <div class="links">
+              <a href="#">github →</a>
+              <a href="#">npm →</a>
+            </div>
+          </div>
+
+          <!-- App: spring-ai-qdrant-mcp -->
+          <div class="b b-wide app-card">
+            <div class="app-head">
+              <div>
+                <div class="cat">MCP server</div>
+                <div class="name">spring-ai-qdrant-mcp</div>
+              </div>
+              <span class="badge-tag">MCP</span>
+            </div>
+            <p class="lead">MCP server bridging Spring AI to Qdrant vector DB. Production-ready RAG pipelines con hexagonal architecture y testcontainers.</p>
+            <div class="stack">
+              <span>java-21</span><span>spring-boot</span><span>spring-ai</span><span>qdrant</span><span>mcp-protocol</span>
+            </div>
+            <div class="links">
+              <a href="#">github →</a>
+              <a href="#">docs →</a>
+            </div>
+          </div>
+
+          <!-- App: claude-kanban -->
+          <div class="b b-wide app-card">
+            <div class="app-head">
+              <div>
+                <div class="cat">End-to-end</div>
+                <div class="name">claude-kanban</div>
+              </div>
+              <span class="badge-tag">APP</span>
+            </div>
+            <p class="lead">Kanban app entregada 100% vía Claude Code agentic loops — sin código tipeado a mano. Demo del paradigma "AI as peer engineer".</p>
+            <div class="stack">
+              <span>react</span><span>node</span><span>claude-code</span><span>agentic-loop</span>
+            </div>
+            <div class="links">
+              <a href="#">github →</a>
+              <a href="#">live →</a>
+            </div>
+          </div>
+
+          <!-- App: caveman -->
+          <div class="b b-wide app-card">
+            <div class="app-head">
+              <div>
+                <div class="cat">Token efficiency</div>
+                <div class="name">caveman</div>
+              </div>
+              <span class="badge-tag">SKILL</span>
+            </div>
+            <p class="lead">Skill de compresión que reduce el output de Claude ~75% sin perder rigor técnico. Modos: lite, full, ultra.</p>
+            <div class="stack">
+              <span>claude-skill</span><span>prompt-engineering</span><span>cost-optimization</span>
+            </div>
+            <div class="links">
+              <a href="#">github →</a>
+              <a href="#">readme →</a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =================== DECIDE =================== -->
+<section class="decide" id="decide">
+  <h2>Decide</h2>
+  <p>Responde en chat (al claude) con tu elección:</p>
+  <pre>hero: C ✓ LOCKED
+ai:   7 ✓ LOCKED (engineer-for-hire pitch)
+
+Inspect / iterate sobre V7. Pick area:
+- headline:  ¿el copy del título cambia?
+- sub-lead:  ¿el párrafo bajo el título?
+- values:    ¿Velocity 3-5× ok? ¿añadir/quitar/reordenar 4 props?
+- proof:     ¿qué números surfacear? (37/81/86/15/4 ok? algunos out?)
+- services:  ¿4 servicios cubren tu oferta real? añadir/quitar
+- ctas:      ¿target del primary? (mailto / calendly / #contact / form)
+- stack:     ¿tech strip correcto?
+- testim:    ¿añadir client logos / testimonials?
+- pricing:   ¿hint pricing? ("discovery call gratis", "from $X/mo")
+- visual:    spacing, density, gradient, hierarchy</pre>
+  <p style="margin-top:16px;">Luego cave actualiza REQUIREMENTS.md con la decisión y construye el roadmap v3.6.</p>
+</section>
+
+</body>
+</html>

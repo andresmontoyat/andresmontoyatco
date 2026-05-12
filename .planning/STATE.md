@@ -1,10 +1,9 @@
 ---
 gsd_state_version: 1.0
-milestone: between-milestones
-milestone_name: v3.5 closed (partial); v3.6 not yet scoped
-status: idle
-stopped_at: null
-last_updated: "2026-05-12T14:40:00.000Z"
+milestone: v3.6
+milestone_name: AI Practice & Brand Refresh
+status: planning
+last_updated: "2026-05-12T16:35:34.661Z"
 last_activity: 2026-05-12
 progress:
   total_phases: 0
@@ -25,12 +24,10 @@ See: .planning/PROJECT.md (updated 2026-05-12)
 
 ## Current Position
 
-Phase: — (between milestones)
+Phase: Not started (defining requirements)
 Plan: —
-Status: v3.5 closed partial — run `/gsd-new-milestone` to scope v3.6
-Last activity: 2026-05-12 — milestone v3.5 closed (themes + projects shipped; deploy deferred)
-
-Progress: [░░░░░░░░░░] 0%
+Status: Defining requirements
+Last activity: 2026-05-12 — Milestone v3.6 started
 
 ## Performance Metrics
 
