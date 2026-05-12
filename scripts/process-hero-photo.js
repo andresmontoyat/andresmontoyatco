@@ -37,10 +37,13 @@ const SIZE_WARN_BYTES = 300_000
 
 async function processOne({ width, file }) {
   const outPath = path.join(OUT_DIR, file)
+  // Sharp 0.33+ strips ALL metadata (incl. EXIF) by default unless .withMetadata()
+  // is called to preserve it. Omitting .withMetadata() is the canonical way to
+  // strip EXIF in modern sharp — the older `.withMetadata({ exif: false })` API
+  // throws ERR_INVALID_OPTION_VALUE in sharp 0.34.
   await sharp(SRC)
     .resize({ width, withoutEnlargement: true })
     .webp({ quality: 82 })
-    .withMetadata({ exif: false })
     .toFile(outPath)
   const { size } = fs.statSync(outPath)
   const human = `${(size / 1024).toFixed(1)} KB`

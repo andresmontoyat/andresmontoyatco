@@ -27,3 +27,8 @@ lighthouse-report*.json
 lighthouse-report*.html
 lighthouse-light-a11y
 dist/
+
+# Hero photo raw source (Phase 8 / HERO-01) — large JPEG kept locally for re-processing.
+# Optimized public/me-*.webp ARE tracked. Re-run `npm run hero:process` to regenerate.
+me.jpg
+me.png
