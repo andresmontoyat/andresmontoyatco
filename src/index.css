@@ -4,26 +4,39 @@
 
 @layer base {
   :root {
-    /* Surface scale */
-    --color-surface-deepest: theme(colors.ink.950);
-    --color-surface-deep:    theme(colors.ink.900);
-    --color-surface-mid:     theme(colors.ink.800);
-    --color-surface-raised:  theme(colors.ink.700);
+    /* Surface scale (ink) — canonical token-mirror names (dark defaults) */
+    --color-ink-950: #0D0D1A;
+    --color-ink-900: #12121F;
+    --color-ink-800: #1A1A2E;
+    --color-ink-700: #1F1F3A;
+    --color-ink-600: #252545;
+    --color-ink-500: #2D2D5A;
+    --color-ink-400: #3A3A6A;
 
-    /* Brand */
-    --color-brand:       theme(colors.brand.DEFAULT);
-    --color-brand-light: theme(colors.brand.light);
-    --color-brand-dark:  theme(colors.brand.dark);
-    --color-brand-muted: theme(colors.brand.muted);
+    /* Surface aliases — Phase 5 backward compat (raw CSS that references these still resolves) */
+    --color-surface-deepest: var(--color-ink-950);
+    --color-surface-deep:    var(--color-ink-900);
+    --color-surface-mid:     var(--color-ink-800);
+    --color-surface-raised:  var(--color-ink-700);
 
-    /* Accent */
-    --color-accent:      theme(colors.accent.DEFAULT);
-    --color-accent-light: theme(colors.accent.light);
+    /* Brand — current indigo (no palette change in this plan; Plan 07-02 swaps to blue) */
+    --color-brand:        #6C63FF;
+    --color-brand-light:  #8B85FF;
+    --color-brand-dark:   #4A42E8;
+    --color-brand-muted:  rgba(108,99,255,0.15);
+
+    /* Accent — current coral (no palette change; Plan 07-02 swaps to emerald).
+       NOTE: accent-dark and accent-muted are NEW (symmetric with brand). */
+    --color-accent:        #FF6B6B;
+    --color-accent-light:  #FF8E8E;
+    --color-accent-dark:   #E64444;
+    --color-accent-muted:  rgba(255,107,107,0.15);
 
     /* Text */
-    --color-text-primary:   theme(colors.text.primary);
-    --color-text-secondary: theme(colors.text.secondary);
-    --color-text-muted:     theme(colors.text.muted);
+    --color-text-primary:   #F0F0FF;
+    --color-text-secondary: #A0A0C0;
+    --color-text-muted:     #606080;
+    --color-text-inverse:   #0D0D1A;
   }
 
   [data-theme="light"] {
