@@ -89,10 +89,13 @@
     --color-text-muted:     #646478;
     --color-text-inverse:   #F0F0FF;
 
-    /* Hero — photo + overlay + h1 shadow (Phase 8 / HERO-01, light overrides) */
+    /* Hero — photo + overlay + h1 shadow (Phase 8 / HERO-01, light overrides)
+       Phase 8 review WR-04: top overlay alpha raised 0.3 → 0.7 so the status
+       badge and first H1 line render on a strong white wash; H1 shadow flipped
+       from dark blur to a tight light halo (dark text → light backdrop). */
     --hero-photo-filter: grayscale(0.15) brightness(0.85);
-    --hero-overlay: linear-gradient(180deg, rgba(250, 250, 250, 0.3) 0%, rgba(250, 250, 250, 0.85) 75%);
-    --hero-h1-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    --hero-overlay: linear-gradient(180deg, rgba(250, 250, 250, 0.7) 0%, rgba(250, 250, 250, 0.95) 75%);
+    --hero-h1-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
 
     /* Background gradients — light overrides (Phase 7 review WR-01, WR-02) */
     /* WCAG-AA pair: #2563EB (brand on light) + #047857 (accent on light) */
