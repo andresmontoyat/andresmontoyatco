@@ -14,7 +14,39 @@ findings:
   warning: 5
   info: 4
   total: 9
-status: issues_found
+status: fixed
+fixed_at: 2026-05-15T16:05:00Z
+fixed_scope: critical+warning
+fixes_applied:
+  - id: WR-01
+    commit: 24b44d1
+    files: [src/index.css, tailwind.config.js]
+    summary: bg-hero-gradient -> var(--bg-hero-gradient) with :root + [data-theme="light"] overrides
+  - id: WR-02
+    commit: 5ba6132
+    files: [src/index.css, tailwind.config.js]
+    summary: bg-brand-gradient + bg-card-gradient -> CSS vars; light uses WCAG-AA pair #2563EB / #047857
+  - id: WR-03
+    commit: dfbee63
+    files: [src/index.css, tailwind.config.js]
+    summary: shadow-brand/-lg/card -> CSS vars; light overrides use brand-on-light chroma + lower card alpha
+  - id: WR-04
+    commit: 02b476f
+    files: [src/index.css]
+    summary: '[data-theme="light"] { color-scheme: light } added so UA chrome flips with theme'
+  - id: WR-05
+    commit: 66d5c7c
+    files: [src/components/Experience.js]
+    summary: dropped /50 opacity suffix on hover:border-brand (Tailwind v2 PostCSS7-compat cannot synthesize alpha from CSS-var color)
+fixes_skipped:
+  - id: IN-01
+    reason: out of scope (Info-only; severity_scope = critical+warning)
+  - id: IN-02
+    reason: out of scope (Info-only; severity_scope = critical+warning)
+  - id: IN-03
+    reason: out of scope (Info-only; severity_scope = critical+warning)
+  - id: IN-04
+    reason: out of scope (Info-only; severity_scope = critical+warning)
 ---
 
 # Phase 7: Code Review Report
