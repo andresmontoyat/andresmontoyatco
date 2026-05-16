@@ -61,7 +61,7 @@ export default function Hero() {
         src="/me-1600.webp"
         srcSet="/me-800.webp 800w, /me-1600.webp 1600w"
         sizes="100vw"
-        alt="Carlos Andres Montoya"
+        alt=""
         fetchPriority="high"
         loading="eager"
         decoding="async"
