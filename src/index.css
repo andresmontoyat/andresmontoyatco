@@ -113,6 +113,12 @@
     color-scheme: dark;
   }
 
+  /* Phase 7 review WR-04: flip native UA controls (scrollbars, form chrome,
+     autofill, pre-paint background) to light when light theme is active. */
+  [data-theme="light"] {
+    color-scheme: light;
+  }
+
   body {
     background-color: var(--color-surface-deepest);
     color: var(--color-text-primary);
