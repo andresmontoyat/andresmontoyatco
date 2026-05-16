@@ -47,6 +47,11 @@
                         linear-gradient(180deg, #12121F 0%, #0D0D1A 100%);
     --bg-brand-gradient: linear-gradient(135deg, #3B82F6 0%, #10B981 100%);
     --bg-card-gradient: linear-gradient(145deg, rgba(59, 130, 246, 0.08), rgba(16, 185, 129, 0.04));
+
+    /* Shadows — theme-aware (Phase 7 review WR-03) */
+    --shadow-brand:    0 20px 40px -20px rgba(59, 130, 246, 0.35);
+    --shadow-brand-lg: 0 25px 50px -20px rgba(59, 130, 246, 0.55);
+    --shadow-card:     0 4px 24px rgba(13, 13, 26, 0.6);
   }
 
   [data-theme="light"] {
@@ -95,6 +100,12 @@
                         linear-gradient(180deg, #FAFAFA 0%, #FFFFFF 100%);
     --bg-brand-gradient: linear-gradient(135deg, #2563EB 0%, #047857 100%);
     --bg-card-gradient: linear-gradient(145deg, rgba(37, 99, 235, 0.06), rgba(4, 120, 87, 0.04));
+
+    /* Shadows — light overrides (Phase 7 review WR-03) */
+    /* Use brand-on-light (#2563EB) chroma + lower alpha to avoid heavy halo on #FAFAFA */
+    --shadow-brand:    0 20px 40px -20px rgba(37, 99, 235, 0.30);
+    --shadow-brand-lg: 0 25px 50px -20px rgba(37, 99, 235, 0.45);
+    --shadow-card:     0 4px 24px rgba(13, 13, 26, 0.12);
   }
 
   html {

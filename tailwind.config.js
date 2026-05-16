@@ -51,9 +51,11 @@ module.exports = {
         'card-gradient': 'var(--bg-card-gradient)',
       },
       boxShadow: {
-        brand:    '0 20px 40px -20px rgba(59,130,246,0.35)',
-        'brand-lg': '0 25px 50px -20px rgba(59,130,246,0.55)',
-        card:     '0 4px 24px rgba(13,13,26,0.6)',
+        // Shadows resolve via CSS vars (theme-aware) — see src/index.css
+        // (:root + [data-theme="light"]). Phase 7 review WR-03.
+        brand:     'var(--shadow-brand)',
+        'brand-lg':'var(--shadow-brand-lg)',
+        card:      'var(--shadow-card)',
       },
       animation: {
         'fade-in': 'fadeIn 0.5s ease-out',
