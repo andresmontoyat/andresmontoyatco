@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v3.6
 milestone_name: — AI Practice & Brand Refresh
-status: Defining requirements
-stopped_at: null (clean close — between milestones)
-last_updated: "2026-05-12T18:33:52.965Z"
-last_activity: 2026-05-12 — Milestone v3.6 started
+status: Phase 10 UAT in progress
+stopped_at: "Awaiting human to run Test #1 (`npm run dev`, click theme toggle at 1440px)"
+last_updated: "2026-05-16T15:35:00.000Z"
+last_activity: "2026-05-16 — Backlog scaffolded as 999.x phases (12 items)"
 progress:
   total_phases: 5
-  completed_phases: 0
-  total_plans: 2
-  completed_plans: 1
-  percent: 50
+  completed_phases: 3
+  total_plans: 3
+  completed_plans: 3
+  percent: 60
 ---
 
 # Project State
@@ -21,68 +21,57 @@ progress:
 See: .planning/PROJECT.md (updated 2026-05-12)
 
 **Core value:** The hero section and overall first impression must stop recruiters mid-scroll and make them want to learn more about Carlos.
-**Current focus:** Planning next milestone (v3.6) — carry deferred DEPLOY-01/02/03 from v3.5
+**Current focus:** Phase 10 — Real-browser UAT + a11y sweep (11-test human verification grid)
 
 ## Current Position
 
-Phase: Not started (defining requirements)
-Plan: —
-Status: Defining requirements
-Last activity: 2026-05-12 — Milestone v3.6 started
+Phase: 10 of 5 active (Real-browser UAT + a11y sweep)
+Plan: 10-UAT.md (conversational UAT, not a regular PLAN)
+Status: UAT in progress — 0/11 tests executed, 11 pending
+Last activity: 2026-05-13 — UAT test plan created, Test #1 (dev mode dark→light at 1440px) next
 
-## Performance Metrics
+## Completed Phases (v3.6)
 
-**Velocity (v3.4 baseline):**
+- **Phase 7** — Tailwind CSS-var refactor + brand palette swap (THEME-01 + COLOR-01) — verified 2026-05-12
+- **Phase 8** — Hero photo integration (HERO-01) — verified 2026-05-12
+- **Phase 9** — AI / Claude Code section (AI-01 + AI-01-CICD) — verified 2026-05-13 (5/5 success criteria)
 
-- Total plans completed (v3.4): 23
-- Timeline: 16 days (2026-04-21 → 2026-05-07)
-- Files modified: 111
+## Phase 10 UAT Test Grid
 
-**v3.5 actual:**
+11 tests in `.planning/phases/10-real-browser-uat-a11y/10-UAT.md`:
 
-- Phases delivered: 2 of 3 (Phase 5, Phase 6)
-- Plans completed: 6 (Phase 7 never planned)
-- Timeline: 5 days (2026-05-07 → 2026-05-12)
-- Phase 7 (Production Deploy) deferred to v3.6
+- Tests 1–4: Theme toggle (THEME-01 + COLOR-01) — dev/iPhone/prod/persistence
+- Tests 5–7: Hero photo (HERO-01) — viewports/light mode/reduced-motion
+- Tests 8–10: AI section (AI-01) — nav scroll-spy/CTAs/WCAG contrast
+- Test 11: Lighthouse mobile audit — Perf ≥95 / A11y 100 / BP 100 / SEO 100
+
+All human-driven; Claude cannot drive browser.
 
 ## Accumulated Context
 
 ### Decisions (carried from v3.4)
 
-- **D-01**: In-place component modification — no V2 files, retain git history per file
-- **D-02/03**: Native CSS scroll-behavior + custom IntersectionObserver hooks (useActiveSection, useInView) — no react-scroll, no JS animation library
-- **D-05**: Mobile menu via createPortal(document.body) — avoids z-index conflicts with sticky nav
-- **D-06**: Manual browser-only testing — no test infrastructure (6 consecutive milestones deferred, locked to v3.6+)
-- **D-13/14/15**: IntersectionObserver useInView(threshold: 0.25) + .animate-on-scroll/.is-visible CSS classes; 100ms stagger via transitionDelay; all motion-safe: prefixed
+- **D-01**: In-place component modification — no V2 files
+- **D-02/03**: Native CSS scroll-behavior + IntersectionObserver hooks
+- **D-05**: Mobile menu via createPortal(document.body)
+- **D-06**: Manual browser-only testing — no test infrastructure
+- **D-13/14/15**: useInView(0.25) + .animate-on-scroll/.is-visible + 100ms stagger + motion-safe:
 
-### Decisions Validated in v3.5
+### Decisions Pending (deferred to v3.7)
 
-- Theme: Dark (default) + Light only — no system mode ✓
-- Theme persistence: localStorage key `cam-theme` ✓
-- ThemeContext mirrors LanguageContext pattern ✓
-- `[data-theme="light"]` CSS variable overrides on `:root` ✓
-- Projects data: `src/data/projects.js` mirroring experience.js bilingual pattern ✓
-- Projects screenshots: public/projects/ with brand-gradient fallback ✓
-- Projects position in App.js: between Experience and Contact ✓
-- Projects chunk lazy-loaded — separate `Projects-DucOh_hO.js` chunk ✓
-
-### Decisions Pending (deferred to v3.6)
-
-- Deploy: Vercel — vite-react preset, build cmd `npm run build`, output `dist/` (locked but not executed)
-- Domain: andresmontoyat.co — DNS to Vercel (locked but not configured)
-- Manual DNS checkpoint required during DEPLOY-02 execution — autonomous: false
+- DEPLOY-01/02/03 — Vercel + andresmontoyat.co + DNS
 
 ### Pending Todos
 
-None. v3.5 left no in-flight work.
+None.
 
 ### Blockers/Concerns
 
-- Site not yet live at andresmontoyat.co — DEPLOY-01/02/03 deferred to v3.6
-- Vercel account access + DNS provider credentials must be coordinated before v3.6 Phase 7 (renumbered) can execute
+- Phase 10 UAT requires human-driven browser execution — cannot self-complete
+- Phase 11 (architecture diagrams cross-repo) still not started — depends on Phase 9 (✓ done) so unblocked once UAT closes
 
 ## Session Continuity
 
-Last session: 2026-05-12T14:40:00.000Z — milestone v3.5 closed (partial)
-Stopped at: null (clean close — between milestones)
-Resume file: None
+Last session: 2026-05-13T14:51:00.000Z — Phase 10 UAT plan created
+Stopped at: Awaiting human to run Test #1 (`npm run dev`, click theme toggle at 1440px)
+Resume file: `.planning/phases/10-real-browser-uat-a11y/10-UAT.md`

@@ -102,24 +102,88 @@
 
 ---
 
-## Long-Term Backlog
+## Backlog
 
-Tracked but not yet scoped to a milestone:
+Tracked but not yet scoped to a milestone. Each item lives as a `999.x-slug` phase directory under `.planning/phases/` and is reviewed via `/gsd-review-backlog`.
 
 ### Deployment (v3.7 candidate — carried from v3.5)
 
-- **DEPLOY-01** — Vercel auto-deploy from main
-- **DEPLOY-02** — andresmontoyat.co custom domain + HTTPS
-- **DEPLOY-03** — PR preview deploys + OG card validation
+### Phase 999.1: deploy-vercel-auto (BACKLOG)
 
-### Other backlog
+**Requirement:** DEPLOY-01
+**Goal:** Vercel auto-deploy from `main` on every push
+**Directory:** `.planning/phases/999.1-deploy-vercel-auto/`
 
-- VIS-02 — Company logo SVGs in experience timeline
-- VIS-04 — Testimonials section
-- ASEO-01 — JSON-LD Person schema
-- ASEO-02 — WebP image optimization pipeline
-- ASEO-03 — Sitemap generation
-- INTX-01 — Contact form (requires backend)
-- INTX-02 — Blog / articles section
-- INTX-03 — GitHub activity integration
-- Test infrastructure (Vitest / Playwright / RTL) — 7 consecutive milestones deferred
+### Phase 999.2: deploy-custom-domain (BACKLOG)
+
+**Requirement:** DEPLOY-02
+**Goal:** andresmontoyat.co custom domain + HTTPS via Vercel DNS
+**Directory:** `.planning/phases/999.2-deploy-custom-domain/`
+
+### Phase 999.3: deploy-pr-preview (BACKLOG)
+
+**Requirement:** DEPLOY-03
+**Goal:** PR preview deploys + Open Graph card validation
+**Directory:** `.planning/phases/999.3-deploy-pr-preview/`
+
+### Visual polish
+
+### Phase 999.4: vis-company-logos (BACKLOG)
+
+**Requirement:** VIS-02
+**Goal:** Company logo SVGs in experience timeline entries
+**Directory:** `.planning/phases/999.4-vis-company-logos/`
+
+### Phase 999.5: vis-testimonials (BACKLOG)
+
+**Requirement:** VIS-04
+**Goal:** Testimonials section with rotating quote cards
+**Directory:** `.planning/phases/999.5-vis-testimonials/`
+
+### SEO & performance
+
+### Phase 999.6: aseo-jsonld-person (BACKLOG)
+
+**Requirement:** ASEO-01
+**Goal:** JSON-LD Person schema in `index.html` head
+**Directory:** `.planning/phases/999.6-aseo-jsonld-person/`
+
+### Phase 999.7: aseo-webp-pipeline (BACKLOG)
+
+**Requirement:** ASEO-02
+**Goal:** WebP image optimization pipeline (sharp + responsive sizes)
+**Directory:** `.planning/phases/999.7-aseo-webp-pipeline/`
+
+### Phase 999.8: aseo-sitemap (BACKLOG)
+
+**Requirement:** ASEO-03
+**Goal:** `sitemap.xml` generation at build time
+**Directory:** `.planning/phases/999.8-aseo-sitemap/`
+
+### Interaction & content
+
+### Phase 999.9: intx-contact-form (BACKLOG)
+
+**Requirement:** INTX-01
+**Goal:** Functional contact form (requires backend / forwarder)
+**Directory:** `.planning/phases/999.9-intx-contact-form/`
+
+### Phase 999.10: intx-blog (BACKLOG)
+
+**Requirement:** INTX-02
+**Goal:** Blog / articles section with MDX or markdown source
+**Directory:** `.planning/phases/999.10-intx-blog/`
+
+### Phase 999.11: intx-github-activity (BACKLOG)
+
+**Requirement:** INTX-03
+**Goal:** GitHub activity integration (recent commits / PR / contribution graph)
+**Directory:** `.planning/phases/999.11-intx-github-activity/`
+
+### Testing
+
+### Phase 999.12: test-infrastructure (BACKLOG)
+
+**Requirement:** TEST-INFRA
+**Goal:** Vitest + Playwright + RTL test infrastructure (7 milestones deferred)
+**Directory:** `.planning/phases/999.12-test-infrastructure/`
