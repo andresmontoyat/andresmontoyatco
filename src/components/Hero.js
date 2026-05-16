@@ -63,7 +63,6 @@ export default function Hero() {
         sizes="100vw"
         alt=""
         fetchPriority="high"
-        loading="eager"
         decoding="async"
         className="absolute inset-0 z-0 w-full h-full object-cover"
         style={{ objectPosition: 'center 30%', filter: 'var(--hero-photo-filter)' }}
