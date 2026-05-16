@@ -42,9 +42,11 @@
     --hero-overlay: linear-gradient(180deg, rgba(13, 13, 26, 0.4) 0%, rgba(13, 13, 26, 0.95) 75%);
     --hero-h1-shadow: 0 2px 16px rgba(0, 0, 0, 0.55);
 
-    /* Background gradients — theme-aware (Phase 7 review WR-01) */
+    /* Background gradients — theme-aware (Phase 7 review WR-01, WR-02) */
     --bg-hero-gradient: radial-gradient(ellipse 80% 50% at 50% -20%, rgba(59, 130, 246, 0.15), transparent),
                         linear-gradient(180deg, #12121F 0%, #0D0D1A 100%);
+    --bg-brand-gradient: linear-gradient(135deg, #3B82F6 0%, #10B981 100%);
+    --bg-card-gradient: linear-gradient(145deg, rgba(59, 130, 246, 0.08), rgba(16, 185, 129, 0.04));
   }
 
   [data-theme="light"] {
@@ -87,9 +89,12 @@
     --hero-overlay: linear-gradient(180deg, rgba(250, 250, 250, 0.3) 0%, rgba(250, 250, 250, 0.85) 75%);
     --hero-h1-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
 
-    /* Background gradients — light overrides (Phase 7 review WR-01) */
+    /* Background gradients — light overrides (Phase 7 review WR-01, WR-02) */
+    /* WCAG-AA pair: #2563EB (brand on light) + #047857 (accent on light) */
     --bg-hero-gradient: radial-gradient(ellipse 80% 50% at 50% -20%, rgba(37, 99, 235, 0.10), transparent),
                         linear-gradient(180deg, #FAFAFA 0%, #FFFFFF 100%);
+    --bg-brand-gradient: linear-gradient(135deg, #2563EB 0%, #047857 100%);
+    --bg-card-gradient: linear-gradient(145deg, rgba(37, 99, 235, 0.06), rgba(4, 120, 87, 0.04));
   }
 
   html {

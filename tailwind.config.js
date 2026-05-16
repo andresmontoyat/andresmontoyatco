@@ -44,11 +44,11 @@ module.exports = {
         display: ['Inter', 'SF Pro Display', 'system-ui', 'sans-serif'],
       },
       backgroundImage: {
-        // hero-gradient resolves via CSS var (theme-aware) — see src/index.css
-        // (:root + [data-theme="light"]). Phase 7 review WR-01.
+        // Gradients resolve via CSS vars (theme-aware) — see src/index.css
+        // (:root + [data-theme="light"]). Phase 7 review WR-01 / WR-02.
         'hero-gradient': 'var(--bg-hero-gradient)',
-        'brand-gradient': 'linear-gradient(135deg, #3B82F6 0%, #10B981 100%)',
-        'card-gradient': 'linear-gradient(145deg, rgba(59,130,246,0.08), rgba(16,185,129,0.04))',
+        'brand-gradient': 'var(--bg-brand-gradient)',
+        'card-gradient': 'var(--bg-card-gradient)',
       },
       boxShadow: {
         brand:    '0 20px 40px -20px rgba(59,130,246,0.35)',
