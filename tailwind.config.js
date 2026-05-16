@@ -44,7 +44,9 @@ module.exports = {
         display: ['Inter', 'SF Pro Display', 'system-ui', 'sans-serif'],
       },
       backgroundImage: {
-        'hero-gradient': 'radial-gradient(ellipse 80% 50% at 50% -20%, rgba(59,130,246,0.15), transparent), linear-gradient(180deg, #12121F 0%, #0D0D1A 100%)',
+        // hero-gradient resolves via CSS var (theme-aware) — see src/index.css
+        // (:root + [data-theme="light"]). Phase 7 review WR-01.
+        'hero-gradient': 'var(--bg-hero-gradient)',
         'brand-gradient': 'linear-gradient(135deg, #3B82F6 0%, #10B981 100%)',
         'card-gradient': 'linear-gradient(145deg, rgba(59,130,246,0.08), rgba(16,185,129,0.04))',
       },
