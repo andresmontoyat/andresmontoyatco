@@ -66,7 +66,7 @@ export default function Claude() {
 
 function PitchHero({ t }) {
   return (
-    <div className="text-center max-w-3xl mx-auto bg-gradient-to-br from-[rgba(16,185,129,0.04)] to-[rgba(59,130,246,0.02)] rounded-2xl p-8 md:p-12 mb-12">
+    <div className="text-center max-w-3xl mx-auto bg-card-gradient rounded-2xl p-8 md:p-12 mb-12">
       <p className="text-brand font-mono text-xs uppercase tracking-widest">
         {t.claude.label}
       </p>
