@@ -13,6 +13,11 @@
     --color-ink-500: #2D2D5A;
     --color-ink-400: #3A3A6A;
 
+    /* Pre-resolved alpha variants — Tailwind cannot splice /alpha into a
+       CSS-var-backed color (Phase 9 review WR-02). Provide rgba literals
+       here so arbitrary-value classes (bg-[var(--color-ink-500-60)]) work. */
+    --color-ink-500-60: rgba(45, 45, 90, 0.6);
+
     /* Surface aliases — Phase 5 backward compat (raw CSS that references these still resolves) */
     --color-surface-deepest: var(--color-ink-950);
     --color-surface-deep:    var(--color-ink-900);
@@ -63,6 +68,9 @@
     --color-ink-600: #DEDEEA;
     --color-ink-500: #C8C8D6;
     --color-ink-400: #A8A8BC;
+
+    /* Pre-resolved alpha variants — light theme override (Phase 9 review WR-02). */
+    --color-ink-500-60: rgba(200, 200, 214, 0.6);
 
     /* Surface aliases — Phase 5 backward compat (raw CSS that references these still resolves) */
     --color-surface-deepest: var(--color-ink-950);

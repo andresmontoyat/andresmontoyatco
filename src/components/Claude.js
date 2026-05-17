@@ -113,7 +113,7 @@ function ValueCard({ id, title, desc, index }) {
 
 function ProofBlock({ t, counters }) {
   return (
-    <div className="mt-20 bg-ink-500/60 border border-ink-400 rounded-2xl p-8 md:p-12">
+    <div className="mt-20 bg-[var(--color-ink-500-60)] border border-ink-400 rounded-2xl p-8 md:p-12">
       <p className="text-brand font-mono text-xs uppercase tracking-widest">
         {t.claude.proofLabel}
       </p>
