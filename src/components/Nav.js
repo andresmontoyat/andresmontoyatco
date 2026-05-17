@@ -4,7 +4,17 @@ import { useLanguage } from '../i18n/LanguageContext'
 import useActiveSection from '../hooks/useActiveSection'
 import ThemeToggle from './_shared/ThemeToggle'
 
-const SECTION_IDS = ['about', 'skills', 'experience', 'projects', 'claude-code', 'contact']
+// Single source of truth for primary navigation (Phase 9 review WR-07).
+// SECTION_IDS (scroll-spy), DesktopNav and MobileMenu all derive from this list.
+const NAV_ITEMS = [
+  { id: 'about',       labelKey: 'about' },
+  { id: 'skills',      labelKey: 'skills' },
+  { id: 'experience',  labelKey: 'experience' },
+  { id: 'projects',    labelKey: 'projects' },
+  { id: 'claude-code', labelKey: 'claudeCode' },
+  { id: 'contact',     labelKey: 'contact' },
+]
+const SECTION_IDS = NAV_ITEMS.map((item) => item.id)
 
 export default function Nav() {
   const { lang, setLang, t } = useLanguage()
@@ -60,24 +70,16 @@ function Logomark() {
 }
 
 function DesktopNav({ t, activeSection }) {
-  const links = [
-    { id: 'about', label: t.nav.about },
-    { id: 'skills', label: t.nav.skills },
-    { id: 'experience', label: t.nav.experience },
-    { id: 'projects', label: t.nav.projects },
-    { id: 'claude-code', label: t.nav.claudeCode },
-    { id: 'contact', label: t.nav.contact },
-  ]
   return (
     <nav className="hidden md:flex gap-7 text-xs font-mono">
-      {links.map((l) => {
-        const isActive = activeSection === l.id
+      {NAV_ITEMS.map((item) => {
+        const isActive = activeSection === item.id
         const cls = isActive
           ? 'text-brand font-normal border-b-2 border-brand pb-0.5 transition-colors duration-200'
           : 'text-text-secondary font-normal hover:text-brand transition-colors duration-200'
         return (
-          <a key={l.id} href={`#${l.id}`} className={cls}>
-            {l.label}
+          <a key={item.id} href={`#${item.id}`} className={cls}>
+            {t.nav[item.labelKey]}
           </a>
         )
       })}
@@ -170,15 +172,6 @@ function MobileMenu({ open, onClose, t, lang, setLang, activeSection }) {
 
   if (typeof document === 'undefined') return null
 
-  const links = [
-    { id: 'about', label: t.nav.about },
-    { id: 'skills', label: t.nav.skills },
-    { id: 'experience', label: t.nav.experience },
-    { id: 'projects', label: t.nav.projects },
-    { id: 'claude-code', label: t.nav.claudeCode },
-    { id: 'contact', label: t.nav.contact },
-  ]
-
   const overlay = (
     <div
       id="mobile-menu"
@@ -203,19 +196,19 @@ function MobileMenu({ open, onClose, t, lang, setLang, activeSection }) {
           <ThemeToggle />
           <LangPill lang={lang} setLang={setLang} />
         </div>
-        {links.map((l) => {
-          const isActive = activeSection === l.id
+        {NAV_ITEMS.map((item) => {
+          const isActive = activeSection === item.id
           const cls = isActive
             ? 'text-2xl font-extrabold text-brand border-b-2 border-brand pb-0.5'
             : 'text-2xl font-extrabold text-text-primary'
           return (
             <a
-              key={l.id}
-              href={`#${l.id}`}
+              key={item.id}
+              href={`#${item.id}`}
               onClick={onClose}
               className={cls}
             >
-              {l.label}
+              {t.nav[item.labelKey]}
             </a>
           )
         })}
