@@ -82,7 +82,6 @@ export const APPS = [
       es: '47 reusable GitHub Actions workflows + 15 starter templates (Java, Krakend, React). GitFlow strategy, quality gates (SonarQube · OWASP · ArchUnit · Qodana), deploys EC2 / EC2-over-WireGuard-VPN / EKS.',
     },
     stack: ['github-actions', 'gitflow', 'sonarqube', 'owasp', 'eks', 'ec2', 'wireguard', 'ecr', 'helm', 'jenkins'],
-    links: [],
   },
   {
     slug: 'gsd',
@@ -93,7 +92,6 @@ export const APPS = [
       es: 'Metodología agéntica Get-Shit-Done para Claude Code: 37 subagents propios, 81 skills, 86 orquestaciones y 15 guidelines arquitectónicos que conducen el ciclo discuss → plan → execute → verify.',
     },
     stack: ['claude-code', 'subagents', 'skills', 'mcp', 'orchestration', 'tdd', 'hexagonal'],
-    links: [],
   },
   {
     slug: 'spring-ai-qdrant-mcp',
@@ -105,7 +103,6 @@ export const APPS = [
       es: 'Servidor Model Context Protocol construido con Spring Boot 3 + Spring AI + Qdrant vector store. Expone retrieval RAG sobre bases de conocimiento privadas como herramientas MCP que cualquier cliente Claude-compatible puede invocar.',
     },
     stack: ['spring-boot-3', 'spring-ai', 'qdrant', 'mcp', 'rag', 'java-21'],
-    links: [],
   },
 ]
 
