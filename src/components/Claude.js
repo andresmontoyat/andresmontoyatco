@@ -17,7 +17,7 @@ export default function Claude() {
       <div className="max-w-6xl mx-auto px-6">
         <PitchHero t={t} />
 
-        <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-16 animate-on-scroll${inView ? ' is-visible' : ''}`}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-16">
           {VALUES.map((v, i) => (
             <ValueCard
               key={v.key}
@@ -25,6 +25,7 @@ export default function Claude() {
               title={t.claude.values[v.key]}
               desc={v.desc[lang]}
               index={i}
+              inView={inView}
             />
           ))}
         </div>
@@ -34,18 +35,19 @@ export default function Claude() {
         <p className="text-brand font-mono text-xs uppercase tracking-widest mt-12">
           {t.claude.servicesLabel}
         </p>
-        <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-8 animate-on-scroll${inView ? ' is-visible' : ''}`}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-8">
           {SERVICES.map((s, i) => (
             <ServiceCard
               key={s.key}
               title={t.claude.services[s.key]}
               desc={s.desc[lang]}
               index={i}
+              inView={inView}
             />
           ))}
         </div>
 
-        <div className={`grid grid-cols-1 md:grid-cols-3 gap-6 mt-8 animate-on-scroll${inView ? ' is-visible' : ''}`}>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
           {APPS.map((a, i) => (
             <FeaturedAppCard
               key={a.slug}
@@ -54,6 +56,7 @@ export default function Claude() {
               desc={a.desc[lang]}
               stack={a.stack}
               index={i}
+              inView={inView}
             />
           ))}
         </div>
@@ -98,11 +101,11 @@ function PitchHero({ t }) {
   )
 }
 
-function ValueCard({ id, title, desc, index }) {
+function ValueCard({ id, title, desc, index, inView }) {
   return (
     <div
       style={{ transitionDelay: `${index * 100}ms` }}
-      className="bg-ink-500 border border-ink-400 rounded-xl p-6 motion-safe:transition-all motion-safe:duration-300 hover:border-brand hover:-translate-y-1"
+      className={`animate-on-scroll${inView ? ' is-visible' : ''} bg-ink-500 border border-ink-400 rounded-xl p-6 hover:border-brand`}
     >
       <div className="text-brand font-mono text-2xl font-extrabold">{id}</div>
       <h3 className="text-text-primary font-extrabold text-lg mt-3">{title}</h3>
@@ -134,11 +137,11 @@ function ProofBlock({ t, counters }) {
   )
 }
 
-function ServiceCard({ title, desc, index }) {
+function ServiceCard({ title, desc, index, inView }) {
   return (
     <div
       style={{ transitionDelay: `${index * 100}ms` }}
-      className="border-l-4 border-brand bg-ink-500 rounded-r-xl p-6 motion-safe:transition-all motion-safe:duration-300 hover:-translate-y-1"
+      className={`animate-on-scroll${inView ? ' is-visible' : ''} border-l-4 border-brand bg-ink-500 rounded-r-xl p-6`}
     >
       <h3 className="text-text-primary font-extrabold text-base">{title}</h3>
       <p className="text-text-secondary text-sm mt-2">{desc}</p>
@@ -146,11 +149,11 @@ function ServiceCard({ title, desc, index }) {
   )
 }
 
-function FeaturedAppCard({ name, tag, desc, stack, index }) {
+function FeaturedAppCard({ name, tag, desc, stack, index, inView }) {
   return (
     <div
       style={{ transitionDelay: `${index * 100}ms` }}
-      className="bg-ink-500 border border-ink-400 rounded-xl p-6 motion-safe:transition-all motion-safe:duration-300 hover:border-brand"
+      className={`animate-on-scroll${inView ? ' is-visible' : ''} bg-ink-500 border border-ink-400 rounded-xl p-6 hover:border-brand`}
     >
       <div className="flex items-center justify-between">
         <h3 className="font-mono text-base font-extrabold text-text-primary">{name}</h3>
