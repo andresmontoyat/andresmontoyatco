@@ -49,8 +49,8 @@ export default function Claude() {
           {APPS.map((a, i) => (
             <FeaturedAppCard
               key={a.slug}
-              name={a.name}
-              tag={a.tag}
+              name={a.name[lang]}
+              tag={a.tag[lang]}
               desc={a.desc[lang]}
               stack={a.stack}
               index={i}
