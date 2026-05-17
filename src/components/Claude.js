@@ -86,13 +86,13 @@ function PitchHero({ t }) {
       <div className="flex flex-col sm:flex-row gap-4 justify-center mt-10">
         <a
           href="#contact"
-          className="bg-brand-gradient text-ink-900 font-extrabold px-8 py-4 rounded-lg motion-safe:transition-transform motion-safe:hover:-translate-y-0.5 shadow-brand"
+          className="bg-brand-gradient text-ink-900 font-extrabold px-8 py-4 rounded-lg motion-safe:transition-transform motion-safe:hover:-translate-y-0.5 shadow-brand focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-light focus-visible:ring-offset-2 focus-visible:ring-offset-ink-900"
         >
           {t.claude.ctaPrimary}
         </a>
         <a
           href="#projects"
-          className="border border-ink-400 text-text-primary px-8 py-4 rounded-lg motion-safe:transition-colors hover:border-brand hover:text-brand"
+          className="border border-ink-400 text-text-primary px-8 py-4 rounded-lg motion-safe:transition-colors hover:border-brand hover:text-brand focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-ink-900"
         >
           {t.claude.ctaSecondary}
         </a>
