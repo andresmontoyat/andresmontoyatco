@@ -4,8 +4,8 @@ milestone: v3.6
 milestone_name: — AI Practice & Brand Refresh
 status: Phase 10 UAT in progress
 stopped_at: "Awaiting human to run Test #1 (`npm run dev`, click theme toggle at 1440px)"
-last_updated: "2026-05-16T15:35:00.000Z"
-last_activity: "2026-05-16 — Backlog scaffolded as 999.x phases (12 items)"
+last_updated: "2026-05-16T16:30:00.000Z"
+last_activity: "2026-05-16 — Code review + fixes complete for phases 7/8/9 (18 warnings, 21 atomic commits)"
 progress:
   total_phases: 5
   completed_phases: 3
