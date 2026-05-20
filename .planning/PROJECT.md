@@ -8,22 +8,24 @@
 - v3.5 (2026-05-12 — **partial**): Themes & Projects delivered, deploy deferred. See [`milestones/v3.5-ROADMAP.md`](milestones/v3.5-ROADMAP.md).
 - v3.4 (2026-05-07): Brownfield redesign baseline — Vite 6 + React 18 + Tailwind v3.4, bilingual nav, char-reveal Hero, vertical Experience timeline, email-hero Contact, branded Open Graph, Lighthouse 98/100/100/100 mobile. See [`milestones/v3.4-ROADMAP.md`](milestones/v3.4-ROADMAP.md).
 
-## Current Milestone: v3.7 Production Deploy (next — to be defined via `/gsd-new-milestone`)
+## Current Milestone: v3.7 Production Deploy
 
-**Goal (provisional):** Ship the portfolio live at `andresmontoyat.co` via Vercel, close the UAT pre-deploy gate (Tests 3-11 from Phase 10), and validate Lighthouse mobile holds the v3.4 baseline (98/100/100/100).
+**Goal:** Ship the portfolio live — Vercel auto-deploy first (`*.vercel.app` URL), then custom domain `andresmontoyat.co` + DNS + HTTPS, then PR preview deploys with OG card validation. UAT pre-deploy gate (Phase 10 Tests 3-11) folded into Phase 11 before merging deploy config; Lighthouse mobile Test #11 is the HARD gate (must hold v3.4 baseline 98/100/100/100).
 
-**Provisional target features (refine in `/gsd-new-milestone`):**
-- UAT-GATE — Run Phase 10 UAT Tests 3-11 against a production build before deploy. Test #11 Lighthouse mobile is the HARD gate.
-- DEPLOY-01 — Vercel auto-deploy from `main` (vite-react preset, output `dist/`)
-- DEPLOY-02 — Custom domain `andresmontoyat.co` + DNS records → Vercel; HTTPS via Vercel auto-cert
-- DEPLOY-03 — PR preview deploys with OG card validation
+**Target features:**
+- DEPLOY-01 + UAT-GATE *(v3.7 Phase 11)* Vercel auto-deploy from `main` (vite-react preset, output `dist/`) with UAT pre-deploy gate (Tests 3-10 against `npx serve dist`; Test #11 Lighthouse mobile against deployed Vercel URL — HARD gate)
+- DEPLOY-02 *(v3.7 Phase 12)* Custom domain andresmontoyat.co + DNS records (CNAME/A) → Vercel; HTTPS via Vercel auto-cert; OG card validates on canonical domain
+- DEPLOY-03 *(v3.7 Phase 13)* PR preview deploys + per-PR OG card validation
 
-**Locked decisions carrying into v3.7:**
+**Locked decisions:**
 - Vercel locked as host (no Netlify override) — DEPLOY-01/02/03 specs already target Vercel
-- No git tag until production site is live — once v3.7 deploy completes, tag v3.7 (and retroactively v3.5 / v3.6 if desired)
-- Test infrastructure: still deferred (8th consecutive milestone) unless regression cost forces revisit
+- Deploy sequence: Vercel-first → DNS after — confirmed 2026-05-20 (user preference: deploy + verify on `*.vercel.app` URL before DNS cutover)
+- UAT-GATE folded into Phase 11 (not a standalone phase) — Tests 3-10 against local `npx serve dist`; Test #11 Lighthouse against deployed Vercel URL once `main` ships
+- Test #11 Lighthouse mobile must hold v3.4 baseline 98/100/100/100 — HARD gate before custom-domain cutover (Phase 12)
+- Tag `v3.7` once production live at `andresmontoyat.co` (first tag since v3.4 — covers v3.5/v3.6 deliveries retroactively as "site went live with v3.7")
+- Test infrastructure: still deferred (9th consecutive milestone — flag for explicit review post-deploy)
 - VIS-05 (claude-kanban + caveman cards) backlog — not v3.7 scope
-- DIAGRAMS-01 (Phase 11): re-roadmap when bandwidth permits — not v3.7 scope
+- DIAGRAMS-01 (cross-repo diagrams): backlog 999.13 — re-roadmap when bandwidth permits
 
 ## What This Is
 
@@ -76,12 +78,11 @@ The hero section and overall first impression must stop recruiters mid-scroll an
 - [x] **AI-01** Bilingual sales-pitch Claude Code section between Projects and Contact — 9.95 KB lazy chunk; PitchHero + 4 ValueCard + ProofBlock (7 counters) + 5 ServiceCard + 3 FeaturedAppCard (GSD, spring-ai-qdrant-mcp, ci-templates) + StackStrip (17 chips); scroll-spy in Desktop + Mobile nav; CTAs → #contact / #projects — v3.6 Phase 9 (note: shipped with 3 of original 5 featured-app cards; claude-kanban + caveman moved to backlog as VIS-05)
 - [x] **AI-01-CICD** `soldife/ci-templates` surfaced as DevOps evidence in AI section — app card with `OPEN SOURCE / DEVOPS` badge + 10 tech chips, DevOps automation service card, +2 proof counters (47 workflows / 15 templates), bilingual EN+ES — v3.6 Phase 9
 
-### Active (v3.7 — to be confirmed via `/gsd-new-milestone`)
+### Active (v3.7)
 
-- [ ] **UAT-GATE** *(v3.7 Phase 1 — provisional)* Execute Phase 10 UAT Tests 3-11 (deferred from v3.6 closure) against production build. Test #11 (Lighthouse mobile audit: Perf ≥ 95 / A11y 100 / BP 100 / SEO 100) is HARD gate before Vercel deploy.
-- [ ] **DEPLOY-01** *(deferred from v3.5/v3.6)* Vercel production deploy — auto-deploy from main, vite-react preset, build `npm run build`, output `dist/`
-- [ ] **DEPLOY-02** *(deferred from v3.5/v3.6)* Custom domain andresmontoyat.co + DNS records → Vercel; HTTPS via auto-cert
-- [ ] **DEPLOY-03** *(deferred from v3.5/v3.6)* Auto-preview deploys per PR with OG card validation
+- [ ] **DEPLOY-01** *(v3.7 Phase 11)* Vercel production deploy — auto-deploy from main, vite-react preset, build `npm run build`, output `dist/`; folds UAT pre-deploy gate (Tests 3-10 against local `npx serve dist`; Test #11 Lighthouse against deployed `*.vercel.app` URL — HARD gate Perf ≥ 95 / A11y 100 / BP 100 / SEO 100)
+- [ ] **DEPLOY-02** *(v3.7 Phase 12)* Custom domain andresmontoyat.co + DNS records (CNAME/A) → Vercel; HTTPS via auto-cert; OG card validates on canonical domain
+- [ ] **DEPLOY-03** *(v3.7 Phase 13)* Auto-preview deploys per PR with OG card validation
 
 ### Backlog
 
@@ -172,4 +173,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-05-20 after v3.6 milestone close — AI Practice & Brand Refresh delivered 5/5 active REQs; production deploy + UAT pre-deploy gate carry to v3.7*
+*Last updated: 2026-05-20 — milestone v3.7 STARTED (Production Deploy: 3 REQs, Phases 11–13; deploy-first → DNS-after → PR previews sequence; UAT-GATE folded into Phase 11)*
