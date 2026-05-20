@@ -1,5 +1,34 @@
 # Milestones
 
+## v3.6 AI Practice & Brand Refresh (Closed: 2026-05-20 — code shipped, deploy + UAT closure deferred to v3.7)
+
+**Status:** ✅ Code shipped — production deploy still pending v3.7
+**Phases delivered:** 4 of 5 (Phase 7, 8, 9 ✓ code-verified; Phase 10 UAT closed partial 2/11; Phase 11 de-scoped)
+**Plans completed:** 4 plans across 64 commits (+5670/-180 LOC, 51 files, 9-day timeline)
+**Requirements satisfied:** 5 of 5 active (THEME-01, COLOR-01, HERO-01, AI-01, AI-01-CICD); DIAGRAMS-01 deferred
+**Audit:** `milestones/v3.6-MILESTONE-AUDIT.md` — verdict `tech_debt` (no blockers; verification debt explicitly carried to v3.7 pre-deploy gate)
+
+**Key accomplishments:**
+
+- **THEME-01 (Phase 7)** — Tailwind config refactored to CSS-var indirection (`:root` + `[data-theme="light"]`); theme toggle functionally flips all 8 sections — Phase 5 false-positive UAT debt closed
+- **COLOR-01 (Phase 7)** — Brand palette swap to blue-500 (`#3B82F6`) + emerald-500 (`#10B981`); WCAG AA contrast in both modes; legacy hex sweep clean; og-image regenerated
+- **HERO-01 (Phase 8)** — Cinematic full-bleed hero photo via `<picture>` with 800w/1600w WebP sources; theme-aware `--hero-*` CSS vars; sharp pipeline + LCP preload (140 KB desktop / 49 KB mobile)
+- **AI-01 + AI-01-CICD (Phase 9)** — Bilingual sales-pitch Claude Code section between Projects and Contact; lazy-loaded 9.95 KB chunk; 7-counter proof + 5 services + 3 featured apps (GSD, spring-ai-qdrant-mcp, ci-templates); scroll-spy in Desktop + Mobile nav; CTAs route to #contact / #projects
+- **Cross-phase integration verified** — 8/8 wiring checks WIRED (gsd-integration-checker); zero gaps, zero broken E2E flows
+
+**Known deferred items at close:** 14 (see STATE.md Deferred Items)
+
+- Phase 8/9 `human_verified: pending` (11 visual + Lighthouse items) → v3.7 Phase 1 pre-deploy gate
+- Phase 10 UAT Tests 3-11 (9 tests skipped; Test #11 Lighthouse mobile is HARD gate before Vercel deploy)
+- DIAGRAMS-01 (Phase 11 de-scoped) — re-roadmap in future milestone
+- VIS-05 (backlog) — claude-kanban + caveman featured-app cards (AI-01 shipped 3 of original 5)
+- Test infrastructure (7th consecutive milestone deferred)
+- DEPLOY-01/02/03 still pending (carries forward from v3.5 → v3.7)
+
+**Decision:** Closed v3.6 without git tag — consistent with v3.5; tag deferred until production site is live (v3.7).
+
+---
+
 ## v3.5 Themes, Projects & Production (Closed: 2026-05-12 — partial)
 
 **Status:** ⚠ Partially shipped — themes + projects delivered; deploy phase deferred to v3.6

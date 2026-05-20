@@ -1,104 +1,72 @@
 # Roadmap: Carlos Montoya Portfolio Redesign
 
-## Shipped Milestones
+## Milestones
 
-- **v3.4** — Brownfield redesign: Vite 6 + React 18 + Tailwind v3.4, sticky bilingual nav, char-reveal hero, vertical experience timeline, email-hero contact, Open Graph, Lighthouse 98/100/100/100. (Shipped 2026-05-07 — see [`milestones/v3.4-ROADMAP.md`](milestones/v3.4-ROADMAP.md))
-- **v3.5** ⚠ — Themes & Projects shipped (VIS-01, VIS-03, DEBT-01/02/03); **deploy deferred to v3.7** (DEPLOY-01/02/03 carry forward). Closed 2026-05-12 without git tag. See [`milestones/v3.5-ROADMAP.md`](milestones/v3.5-ROADMAP.md) and [`milestones/v3.5-MILESTONE-AUDIT.md`](milestones/v3.5-MILESTONE-AUDIT.md).
+- ✅ **v3.4** — Brownfield redesign baseline: Vite 6 + React 18 + Tailwind v3.4, sticky bilingual nav, char-reveal hero, vertical experience timeline, email-hero contact, Open Graph, Lighthouse 98/100/100/100 (shipped 2026-05-07 — see [`milestones/v3.4-ROADMAP.md`](milestones/v3.4-ROADMAP.md))
+- ⚠ **v3.5 — Themes, Projects & Production** — Themes & Projects shipped (VIS-01, VIS-03, DEBT-01/02/03); deploy deferred to v3.7 (closed 2026-05-12 — see [`milestones/v3.5-ROADMAP.md`](milestones/v3.5-ROADMAP.md) and [`milestones/v3.5-MILESTONE-AUDIT.md`](milestones/v3.5-MILESTONE-AUDIT.md))
+- ✅ **v3.6 — AI Practice & Brand Refresh** — Code shipped: brand palette swap, theme toggle root-cause fix, hero photo, sales-pitch Claude Code section. 5/5 active REQs satisfied. UAT visual+Lighthouse + DEPLOY-01/02/03 + DIAGRAMS-01 carry to v3.7. Closed without git tag (production not yet live). See [`milestones/v3.6-ROADMAP.md`](milestones/v3.6-ROADMAP.md) and [`milestones/v3.6-MILESTONE-AUDIT.md`](milestones/v3.6-MILESTONE-AUDIT.md).
+- 📋 **v3.7 — Production Deploy** *(next, to be defined via `/gsd-new-milestone`)* — Run UAT pre-deploy gate (Tests 3-11 from Phase 10), ship to Vercel, configure andresmontoyat.co domain + DNS + HTTPS, enable PR preview deploys.
 
 ---
 
-## Active Milestone: v3.6 — AI Practice & Brand Refresh
-
-**Goal:** Refresh brand palette (blue + emerald), fix theme toggle root bug, integrate hero photo, and ship a sales-focused AI/Claude Code section positioning Carlos as engineer-for-hire.
-
-**Requirements:** 5 capabilities (THEME-01, COLOR-01, HERO-01, AI-01 + AI-01-CICD sub-feature, DIAGRAMS-01)
-**Phases:** 7–11 (continuing numbering from v3.5; Phase 7 slot reused since v3.5 deploy work deferred to v3.7)
-**Git tag:** No tag at close (consistent with v3.5; site still not live until v3.7 deploy)
-
 ## Phases
 
-- [ ] **Phase 7: Tailwind CSS-var refactor + Brand palette** — fix theme toggle root cause, swap brand→blue-500 and accent→emerald-500
-- [ ] **Phase 8: Hero photo integration** — me.jpg as overlay full-bleed in Hero
-- [ ] **Phase 9: AI / Claude Code section** — sales pitch (engineer-for-hire) between Projects and Contact, bilingual
-- [ ] **Phase 10: Real-browser UAT + a11y sweep** — verify themes ACTUALLY flip (Phase 5 false-positive correction), Lighthouse re-audit
-- [ ] **Phase 11: Architecture diagrams (cross-repo)** — generate diagrams in each AI repo (gradle plantuml + structurizr for JVM; Mermaid manual for non-JVM), sync to portfolio, render in AI section modal
+<details>
+<summary>✅ v3.4 Brownfield Redesign (Phases 1-4) — SHIPPED 2026-05-07</summary>
 
-## Phase Details
+See [`milestones/v3.4-ROADMAP.md`](milestones/v3.4-ROADMAP.md) for full phase details.
 
-### Phase 7: Tailwind CSS-var refactor + Brand palette swap
-**Goal**: Theme toggle actually flips ALL visible surfaces, text, and accents — not just `<body>` background. Brand identity shifts from indigo/coral to blue/emerald across light and dark modes.
-**Depends on**: Phase 6 (v3.5)
-**Requirements**: THEME-01, COLOR-01
-**Success Criteria** (what must be TRUE):
-  1. Clicking the sun/moon button visually flips every section (Hero, About, Skills, Experience, Projects, Contact, Footer) between dark and light themes — not just the body bg
-  2. `tailwind.config.js` color palettes (`ink.*`, `brand.*`, `accent.*`, `text.*`) reference CSS variables via `var(--color-*)` instead of hardcoded hex values
-  3. New brand palette is visible: every reference to former indigo `#6C63FF` now renders as blue-500 `#3B82F6`; every reference to former coral `#FF6B6B` now renders as emerald-500 `#10B981`
-  4. Both `:root` (dark defaults) and `[data-theme="light"]` blocks in `index.css` define the full token set; light mode preserves WCAG AA contrast on all text+surface combinations
-  5. `npm run og:gen` still produces a valid `og-image.png` with the new gradient (no breakage in self-hosted og-template)
-**Plans**: TBD (planner derives)
-**UI hint**: yes
+</details>
 
-### Phase 8: Hero photo integration
-**Goal**: A visitor opening the site immediately sees Carlos's face as a cinematic full-bleed Hero background, with the existing headline + CTAs layered cleanly on top.
-**Depends on**: Phase 7
-**Requirements**: HERO-01
-**Success Criteria** (what must be TRUE):
-  1. `me.jpg` is served from `public/me.jpg` (moved from repo root); no `public/` reference is broken
-  2. Hero renders the photo as a full-bleed background with `filter: grayscale(0.2) brightness(0.35)` and the existing gradient overlay; the photo is visible but does not compete with the text for attention
-  3. Existing Hero elements remain functional: status badge with pulsing dot, char-reveal h1, role line, EN+ES CV CTAs, 4-stat grid, scroll cue
-  4. Headline text uses a `text-shadow` for legibility against the photo at all 4 breakpoints (iPhone 14, Pixel 7, iPad, 1440px+)
-  5. Image loads efficiently (acceptable size, lazy attribute where appropriate) — Lighthouse Performance stays ≥ 95 mobile; no CLS regression
-**Plans**: TBD
-**UI hint**: yes
+<details>
+<summary>⚠ v3.5 Themes, Projects & Production (Phases 5-7) — CLOSED 2026-05-12 (Phase 7 deploy deferred)</summary>
 
-### Phase 9: AI / Claude Code section
-**Goal**: Visitors who scroll past Projects encounter a sales-focused section positioning Carlos as an AI-disciplined backend engineer-for-hire; CTAs route to Contact.
-**Depends on**: Phase 8
-**Requirements**: AI-01
-**Success Criteria** (what must be TRUE):
-  1. A new section with `id="claude-code"` exists in `App.js`, lazy-loaded via `Suspense`, positioned between Projects and Contact; nav scroll-spy highlights it (entry in `SECTION_IDS` + `DesktopNav` + `MobileMenu`)
-  2. The section renders the V7 sales-pitch layout (sketched in `.planning/sketches/v3.6-variants.html`): centered headline + sub-lead + dual CTAs, 4 value-prop cards, proof block with 7 counters, 5 service cards, 3 featured-app cards (GSD / spring-ai-qdrant-mcp / ci-templates), stack-strip credentials
-  3. All copy renders bilingually from `translations.js` (`t.claude.*` namespace in both EN and ES); language toggle flips the section content without remount
-  4. Primary CTA links to `#contact`; secondary CTA links to `#projects`; both work on desktop and mobile
-  5. The section emits a separate lazy chunk in `vite build` output (verified via build manifest); main bundle does not grow beyond the v3.5 Projects-chunk pattern
-**Plans**: TBD
-**UI hint**: yes
+- [x] Phase 5: Theme & Tech Debt (4/4 plans) — completed 2026-05-08
+- [x] Phase 6: Projects Showcase (2/2 plans) — completed 2026-05-08
+- [ ] Phase 7: Production Deploy — **not delivered**, deferred to v3.7
 
-### Phase 10: Real-browser UAT + a11y sweep
-**Goal**: Every v3.6 capability is verified in a live browser by a human (Phase 5 had a false-positive UAT — this phase pays that debt) and Lighthouse mobile scores hold the v3.4 baseline.
-**Depends on**: Phase 9
-**Requirements**: (UAT/verification of THEME-01, COLOR-01, HERO-01, AI-01, AI-01-CICD)
-**Success Criteria** (what must be TRUE):
-  1. Theme toggle is exercised in `npm run dev` AND in production `dist/` build — both modes visually flip ALL sections at iPhone 14, iPad, and 1440px viewports
-  2. Light mode passes WCAG AA contrast on every text element introduced in v3.6 (Hero overlay, AI section values, services, proof counters)
-  3. The Hero photo overlay renders correctly with text legibility at all 4 breakpoints; reduced-motion users still see a static Hero (no animation regressions)
-  4. The AI section is reachable via nav on Desktop and Mobile (scroll-spy + click); CTAs to `#contact` and `#projects` scroll smoothly
-  5. Lighthouse mobile audit: Performance ≥ 95, Accessibility 100, Best Practices 100, SEO 100 — no regression vs v3.4 baseline (Performance 98 / 100 / 100 / 100)
-**Plans**: TBD
-**UI hint**: yes
+See [`milestones/v3.5-ROADMAP.md`](milestones/v3.5-ROADMAP.md).
 
-### Phase 11: Architecture diagrams (cross-repo)
-**Goal**: Each featured AI project carries its own architecture diagrams in its repo, and the portfolio AI section surfaces them via a modal on each app card.
-**Depends on**: Phase 9
-**Requirements**: DIAGRAMS-01
-**Success Criteria** (what must be TRUE):
-  1. `spring-ai-qdrant-mcp` adopts a gradle PlantUML + Structurizr pattern (`io.gitlab.plunts.plantuml v2.3.0` + Structurizr DSL + a `structurizrExport` task); `./gradlew build` produces `architecture/diagrams/*.{puml,svg}` and `architecture/structurizr/export/{mermaid,plantuml}/*` without errors
-  2. Each non-JVM repo (GSD, claude-kanban, ci-templates, caveman) has Mermaid `.mmd` source(s) under `docs/architecture/` matching the per-repo coverage spec (1–2 diagrams per repo)
-  3. `scripts/sync-diagrams.sh` in the portfolio repo reads each AI repo (path-configurable env vars or config block) and copies outputs to `public/claude-code/diagrams/<repo-slug>/`; re-runnable, idempotent (same outputs on second run)
-  4. AI section app cards become clickable; clicking opens a modal that renders the diagram (Mermaid live via `mermaid.js` for `.mmd`; `<img>` for SVG/PNG exports); modal closes on Escape, backdrop click, and explicit close button; keyboard focus trap during open
-  5. AI section continues to lazy-load — modal/Mermaid library do not inflate the main bundle (only loaded on demand when a card is clicked)
-**Plans**: TBD
-**UI hint**: yes
+</details>
+
+<details>
+<summary>✅ v3.6 AI Practice & Brand Refresh (Phases 7-10) — CLOSED 2026-05-20 (Phase 11 de-scoped)</summary>
+
+- [x] Phase 7: Tailwind CSS-var refactor + Brand palette (2/2 plans) — completed 2026-05-12 (THEME-01, COLOR-01)
+- [x] Phase 8: Hero photo integration (1/1 plan) — completed 2026-05-12 (HERO-01) — visual UAT deferred to v3.7 pre-deploy gate
+- [x] Phase 9: AI / Claude Code section (1/1 plan) — completed 2026-05-12 (AI-01, AI-01-CICD) — visual UAT deferred to v3.7 pre-deploy gate
+- [◐] Phase 10: Real-browser UAT + a11y sweep — closed partial 2026-05-20 (2/11 pass + 9 skip → v3.7 pre-deploy gate)
+- [ ] Phase 11: Architecture diagrams (cross-repo) — **de-scoped** from v3.6 (DIAGRAMS-01 re-roadmap in future milestone)
+
+See [`milestones/v3.6-ROADMAP.md`](milestones/v3.6-ROADMAP.md) and [`milestones/v3.6-MILESTONE-AUDIT.md`](milestones/v3.6-MILESTONE-AUDIT.md).
+
+</details>
+
+### 📋 v3.7 Production Deploy (next — to be defined via `/gsd-new-milestone`)
+
+Provisional phase outline (refine in `/gsd-new-milestone`):
+
+- [ ] **Phase 1 (v3.7): UAT pre-deploy gate** — execute Phase 10 Tests 3-11 against production build; Test #11 Lighthouse mobile is HARD gate
+- [ ] **Phase 2 (v3.7): deploy-vercel-auto** — Vercel auto-deploy from main (was backlog 999.1) — DEPLOY-01
+- [ ] **Phase 3 (v3.7): deploy-custom-domain** — andresmontoyat.co + DNS + HTTPS (was backlog 999.2) — DEPLOY-02
+- [ ] **Phase 4 (v3.7): deploy-pr-preview** — PR preview deploys + OG card validation (was backlog 999.3) — DEPLOY-03
+
+---
 
 ## Progress Table
 
-| Phase | Plans Complete | Status | Completed |
-|-------|----------------|--------|-----------|
-| 7. Tailwind CSS-var refactor + Brand palette | 0/TBD | Not started | - |
-| 8. Hero photo integration | 0/TBD | Not started | - |
-| 9. AI / Claude Code section | 0/TBD | Not started | - |
-| 10. Real-browser UAT + a11y sweep | 0/TBD | Not started | - |
-| 11. Architecture diagrams (cross-repo) | 0/TBD | Not started | - |
+| Phase | Milestone | Plans Complete | Status | Completed |
+|-------|-----------|----------------|--------|-----------|
+| 1-4 | v3.4 | All | ✓ Complete | 2026-05-07 |
+| 5. Theme & Tech Debt | v3.5 | 4/4 | ✓ Complete | 2026-05-08 |
+| 6. Projects Showcase | v3.5 | 2/2 | ✓ Complete | 2026-05-08 |
+| 7. (v3.5 deploy) | v3.5 | 0 / not planned | ✗ Deferred → v3.7 | — |
+| 7. Tailwind CSS-var + Brand | v3.6 | 2/2 | ✓ Complete | 2026-05-12 |
+| 8. Hero photo integration | v3.6 | 1/1 | ✓ Complete (code) | 2026-05-12 |
+| 9. AI / Claude Code section | v3.6 | 1/1 | ✓ Complete (code) | 2026-05-12 |
+| 10. Real-browser UAT + a11y | v3.6 | UAT (no PLAN) | ◐ Closed Partial (2/11) | 2026-05-20 |
+| 11. Architecture diagrams | v3.6 | 0 / not planned | ✗ De-scoped → future | — |
+| 1-4. (v3.7 deploy phases) | v3.7 | — | 📋 To be defined | — |
 
 ---
 
@@ -106,25 +74,33 @@
 
 Tracked but not yet scoped to a milestone. Each item lives as a `999.x-slug` phase directory under `.planning/phases/` and is reviewed via `/gsd-review-backlog`.
 
-### Deployment (v3.7 candidate — carried from v3.5)
+### Deployment (v3.7 candidate — carried from v3.5/v3.6)
 
-### Phase 999.1: deploy-vercel-auto (BACKLOG)
+### Phase 999.1: deploy-vercel-auto (BACKLOG → v3.7 candidate)
 
 **Requirement:** DEPLOY-01
 **Goal:** Vercel auto-deploy from `main` on every push
 **Directory:** `.planning/phases/999.1-deploy-vercel-auto/`
 
-### Phase 999.2: deploy-custom-domain (BACKLOG)
+### Phase 999.2: deploy-custom-domain (BACKLOG → v3.7 candidate)
 
 **Requirement:** DEPLOY-02
 **Goal:** andresmontoyat.co custom domain + HTTPS via Vercel DNS
 **Directory:** `.planning/phases/999.2-deploy-custom-domain/`
 
-### Phase 999.3: deploy-pr-preview (BACKLOG)
+### Phase 999.3: deploy-pr-preview (BACKLOG → v3.7 candidate)
 
 **Requirement:** DEPLOY-03
 **Goal:** PR preview deploys + Open Graph card validation
 **Directory:** `.planning/phases/999.3-deploy-pr-preview/`
+
+### Architecture diagrams (de-scoped from v3.6 Phase 11)
+
+### Phase 999.13: diagrams-cross-repo (BACKLOG)
+
+**Requirement:** DIAGRAMS-01
+**Goal:** Cross-repo architecture diagrams (gradle PlantUML + Structurizr for `spring-ai-qdrant-mcp`; Mermaid `.mmd` for GSD/claude-kanban/ci-templates/caveman); sync to portfolio; clickable AI app cards open modal
+**Directory:** *(to be created when re-roadmap'd)*
 
 ### Visual polish
 
@@ -139,6 +115,12 @@ Tracked but not yet scoped to a milestone. Each item lives as a `999.x-slug` pha
 **Requirement:** VIS-04
 **Goal:** Testimonials section with rotating quote cards
 **Directory:** `.planning/phases/999.5-vis-testimonials/`
+
+### Phase 999.14: vis-claude-kanban-caveman-cards (BACKLOG)
+
+**Requirement:** VIS-05
+**Goal:** Add claude-kanban + caveman featured-app cards back into AI section (deferred from AI-01 — shipped with 3 of original 5)
+**Directory:** *(to be created when re-roadmap'd)*
 
 ### SEO & performance
 
@@ -185,5 +167,5 @@ Tracked but not yet scoped to a milestone. Each item lives as a `999.x-slug` pha
 ### Phase 999.12: test-infrastructure (BACKLOG)
 
 **Requirement:** TEST-INFRA
-**Goal:** Vitest + Playwright + RTL test infrastructure (7 milestones deferred)
+**Goal:** Vitest + Playwright + RTL test infrastructure (8 milestones deferred through v3.6)
 **Directory:** `.planning/phases/999.12-test-infrastructure/`
