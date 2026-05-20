@@ -22,7 +22,7 @@ Requirements for the v3.6 release. Phase numbering continues from v3.5 (which le
 
 ### AI / Claude Code Section
 
-- [ ] **AI-01**: New AI section positioned between Projects and Contact in `App.js`. Variant 7 (engineer-for-hire sales pitch): centered pitch headline + sub-lead + dual CTAs (`#contact` primary, `#projects` ghost), 4 value-prop cards (Velocity, Discipline, Quality, Transfer), proof block (7 counters: 37 agents, 81 skills, 86 workflows, 15 guidelines, 47 CI workflows, 15 starter templates, 5 apps shipped), 5 services cards (Greenfield builds, AI workflow setup, MCP server development, Legacy refactor, DevOps automation), 5 featured-app cards (GSD framework, spring-ai-qdrant-mcp, claude-kanban, caveman, ci-templates), stack-strip credentials (14+ tech chips including GitHub Actions, Jenkins). Fully bilingual EN+ES via `translations.js`. `#claude-code` scroll-spy entry in `SECTION_IDS` + DesktopNav + MobileMenu. Lazy-loaded Suspense boundary, emits separate chunk. Mirrors Projects integration pattern from Phase 6.
+- [ ] **AI-01**: New AI section positioned between Projects and Contact in `App.js`. Variant 7 (engineer-for-hire sales pitch): centered pitch headline + sub-lead + dual CTAs (`#contact` primary, `#projects` ghost), 4 value-prop cards (Velocity, Discipline, Quality, Transfer), proof block (7 counters: 37 agents, 81 skills, 86 workflows, 15 guidelines, 47 CI workflows, 15 starter templates, 5 apps shipped), 5 services cards (Greenfield builds, AI workflow setup, MCP server development, Legacy refactor, DevOps automation), 3 featured-app cards (GSD framework, spring-ai-qdrant-mcp, ci-templates) — claude-kanban + caveman deferred to Future Backlog (see VIS-05 below), stack-strip credentials (17 tech chips including GitHub Actions, Jenkins). Fully bilingual EN+ES via `translations.js`. `#claude-code` scroll-spy entry in `SECTION_IDS` + DesktopNav + MobileMenu. Lazy-loaded Suspense boundary, emits separate chunk. Mirrors Projects integration pattern from Phase 6.
 
 - [ ] **AI-01-CICD** (sub-feature of AI-01): Surface `soldife/ci-templates` as evidence of CI/CD discipline in the AI section. Content additions:
   - **App card** with badge `OPEN SOURCE / DEVOPS`: short description ("47 reusable GitHub Actions workflows + 15 starter templates for Java, Krakend, React. GitFlow strategy, EC2 / EC2-VPN-WireGuard / EKS deploy targets, ECR + GitHub Packages registries, quality gates: SonarQube + OWASP + ArchUnit + Qodana, commit-lint + semver automation"), tech chips (github-actions, gitflow, sonarqube, owasp, eks, ec2, wireguard, ecr, helm, jenkins)
@@ -76,6 +76,7 @@ Tracked but not in current roadmap:
 ### Visual Enhancements
 - **VIS-02**: Company logo SVGs in experience timeline
 - **VIS-04**: Testimonials or recommendations section (links to AI-section social proof)
+- **VIS-05**: Add claude-kanban + caveman featured-app cards to AI section (deferred from AI-01 final spec — shipped with 3 cards instead of 5)
 
 ### Advanced SEO
 - **ASEO-01**: JSON-LD structured data for Person schema
@@ -91,10 +92,10 @@ Tracked but not in current roadmap:
 
 | REQ-ID | Phase | Status |
 |--------|-------|--------|
-| THEME-01 | Phase 7 | Pending |
-| COLOR-01 | Phase 7 | Pending |
-| HERO-01 | Phase 8 | Pending |
-| AI-01 | Phase 9 | Pending |
-| AI-01-CICD | Phase 9 (sub of AI-01) | Pending |
-| DIAGRAMS-01 | Phase 11 | Pending |
-| (UAT verification of all REQs) | Phase 10 | Pending |
+| THEME-01 | Phase 7 | Done (verified 2026-05-12) |
+| COLOR-01 | Phase 7 | Done (verified 2026-05-12) |
+| HERO-01 | Phase 8 | Done (verified 2026-05-12) |
+| AI-01 | Phase 9 | Done (verified 2026-05-13, 5/5 SC) |
+| AI-01-CICD | Phase 9 (sub of AI-01) | Done (verified 2026-05-13) |
+| DIAGRAMS-01 | Phase 11 | Deferred (moved out of v3.6 — re-roadmap in future milestone) |
+| (UAT verification of all REQs) | Phase 10 | Partial (2/11 pass, 9 skip → v3.7 pre-deploy gate) |

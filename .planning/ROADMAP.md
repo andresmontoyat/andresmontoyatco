@@ -57,7 +57,7 @@
 **Requirements**: AI-01
 **Success Criteria** (what must be TRUE):
   1. A new section with `id="claude-code"` exists in `App.js`, lazy-loaded via `Suspense`, positioned between Projects and Contact; nav scroll-spy highlights it (entry in `SECTION_IDS` + `DesktopNav` + `MobileMenu`)
-  2. The section renders the V7 sales-pitch layout (sketched in `.planning/sketches/v3.6-variants.html`): centered headline + sub-lead + dual CTAs, 4 value-prop cards, proof block with 5 counters, 4 service cards, stack-strip credentials
+  2. The section renders the V7 sales-pitch layout (sketched in `.planning/sketches/v3.6-variants.html`): centered headline + sub-lead + dual CTAs, 4 value-prop cards, proof block with 7 counters, 5 service cards, 3 featured-app cards (GSD / spring-ai-qdrant-mcp / ci-templates), stack-strip credentials
   3. All copy renders bilingually from `translations.js` (`t.claude.*` namespace in both EN and ES); language toggle flips the section content without remount
   4. Primary CTA links to `#contact`; secondary CTA links to `#projects`; both work on desktop and mobile
   5. The section emits a separate lazy chunk in `vite build` output (verified via build manifest); main bundle does not grow beyond the v3.5 Projects-chunk pattern
