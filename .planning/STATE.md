@@ -2,10 +2,10 @@
 gsd_state_version: 1.0
 milestone: v3.7
 milestone_name: — Production Deploy
-status: planning
-stopped_at: "v3.7 milestone opened — defining REQUIREMENTS.md + ROADMAP.md"
-last_updated: "2026-05-20T20:55:00.000Z"
-last_activity: "2026-05-20 — Milestone v3.7 Production Deploy started; scope confirmed (Vercel-first → DNS → PR previews); UAT-GATE folded into Phase 11"
+status: Phase 11 context gathered; ready for planning
+stopped_at: "Phase 11 context gathered — next: /gsd-plan-phase 11"
+last_updated: "2026-05-20T21:15:00.000Z"
+last_activity: "2026-05-20 — Phase 11 CONTEXT.md written; 4 decisions locked (vercel.json-first + explicit config + local-first UAT + adapt lighthouse:mobile script); og:url typo at index.html:23 flagged for planner"
 progress:
   total_phases: 3
   completed_phases: 0
@@ -73,6 +73,6 @@ Last activity: 2026-05-20 — Milestone v3.7 started
 
 ## Session Continuity
 
-Last session: 2026-05-20T20:55:00.000Z — v3.7 milestone opened, scope confirmed
-Stopped at: PROJECT.md + STATE.md updated; next: write REQUIREMENTS.md + ROADMAP.md, commit, then `/gsd-discuss-phase 11` or `/gsd-plan-phase 11`
-Resume file: n/a (milestone-open clean state)
+Last session: 2026-05-20T21:15:00.000Z — Phase 11 context discussion complete
+Stopped at: Phase 11 CONTEXT.md + DISCUSSION-LOG.md committed (5a30b2c); next: `/clear` then `/gsd-plan-phase 11`
+Resume file: `.planning/phases/11-vercel-deploy-uat-gate/11-CONTEXT.md`
