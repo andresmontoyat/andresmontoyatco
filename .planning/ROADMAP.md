@@ -5,7 +5,7 @@
 - ✅ **v3.4** — Brownfield redesign baseline: Vite 6 + React 18 + Tailwind v3.4, sticky bilingual nav, char-reveal hero, vertical experience timeline, email-hero contact, Open Graph, Lighthouse 98/100/100/100 (shipped 2026-05-07 — see [`milestones/v3.4-ROADMAP.md`](milestones/v3.4-ROADMAP.md))
 - ⚠ **v3.5 — Themes, Projects & Production** — Themes & Projects shipped (VIS-01, VIS-03, DEBT-01/02/03); deploy deferred to v3.7 (closed 2026-05-12 — see [`milestones/v3.5-ROADMAP.md`](milestones/v3.5-ROADMAP.md) and [`milestones/v3.5-MILESTONE-AUDIT.md`](milestones/v3.5-MILESTONE-AUDIT.md))
 - ✅ **v3.6 — AI Practice & Brand Refresh** — Code shipped: brand palette swap, theme toggle root-cause fix, hero photo, sales-pitch Claude Code section. 5/5 active REQs satisfied. UAT visual+Lighthouse + DEPLOY-01/02/03 + DIAGRAMS-01 carry to v3.7. Closed without git tag (production not yet live). See [`milestones/v3.6-ROADMAP.md`](milestones/v3.6-ROADMAP.md) and [`milestones/v3.6-MILESTONE-AUDIT.md`](milestones/v3.6-MILESTONE-AUDIT.md).
-- 📋 **v3.7 — Production Deploy** *(next, to be defined via `/gsd-new-milestone`)* — Run UAT pre-deploy gate (Tests 3-11 from Phase 10), ship to Vercel, configure andresmontoyat.co domain + DNS + HTTPS, enable PR preview deploys.
+- 🚧 **v3.7 — Production Deploy** *(active, opened 2026-05-20)* — Vercel auto-deploy first (Phase 11 folds UAT-GATE: Tests 3-10 local + Test #11 Lighthouse mobile HARD gate), custom domain andresmontoyat.co + DNS (Phase 12), PR preview deploys (Phase 13). Tag `v3.7` once production live.
 
 ---
 
@@ -42,14 +42,62 @@ See [`milestones/v3.6-ROADMAP.md`](milestones/v3.6-ROADMAP.md) and [`milestones/
 
 </details>
 
-### 📋 v3.7 Production Deploy (next — to be defined via `/gsd-new-milestone`)
+### 🚧 v3.7 Production Deploy (active, opened 2026-05-20)
 
-Provisional phase outline (refine in `/gsd-new-milestone`):
+**Goal:** Ship the portfolio live at `andresmontoyat.co` via Vercel. Deploy-first → DNS-after → PR previews sequence per user decision 2026-05-20.
 
-- [ ] **Phase 1 (v3.7): UAT pre-deploy gate** — execute Phase 10 Tests 3-11 against production build; Test #11 Lighthouse mobile is HARD gate
-- [ ] **Phase 2 (v3.7): deploy-vercel-auto** — Vercel auto-deploy from main (was backlog 999.1) — DEPLOY-01
-- [ ] **Phase 3 (v3.7): deploy-custom-domain** — andresmontoyat.co + DNS + HTTPS (was backlog 999.2) — DEPLOY-02
-- [ ] **Phase 4 (v3.7): deploy-pr-preview** — PR preview deploys + OG card validation (was backlog 999.3) — DEPLOY-03
+- [ ] **Phase 11: Vercel auto-deploy + UAT pre-deploy gate** (DEPLOY-01)
+- [ ] **Phase 12: Custom domain andresmontoyat.co + DNS** (DEPLOY-02)
+- [ ] **Phase 13: PR preview deploys + OG card validation** (DEPLOY-03)
+
+## Phase Details (v3.7)
+
+### Phase 11: Vercel auto-deploy + UAT pre-deploy gate
+**Goal**: Portfolio is live at a stable `*.vercel.app` URL, auto-deploys on every push to `main`, and the v3.6 UAT visual+Lighthouse debt is paid (Phase 10 Tests 3-11) before the deploy config merges.
+**Depends on**: v3.6 milestone close (✓ done 2026-05-20)
+**Requirements**: DEPLOY-01 (folds UAT-GATE)
+**Success Criteria** (what must be TRUE):
+  1. Vercel project linked to repo (`vercel link`); pushing to `main` triggers a production deploy that completes successfully; deployed URL renders the portfolio identically to local `npx serve dist`
+  2. Phase 10 UAT Tests 3-10 all PASS against local `npx serve dist` build (theme prod build, localStorage persistence, hero photo at iPhone 14 / Pixel 7 / iPad / 1440px, hero photo light mode, reduced-motion, nav scroll-spy click, AI section CTAs + EN/ES, WCAG AA contrast light mode)
+  3. Phase 10 Test #11 Lighthouse mobile audit run against the deployed `*.vercel.app` URL passes the HARD gate: Performance ≥ 95 / Accessibility 100 / Best Practices 100 / SEO 100 — matching v3.4 baseline 98/100/100/100. Lighthouse fail blocks Phase 12.
+  4. SPA fallback verified: direct hit on `*.vercel.app/#contact` (or any anchor) serves `index.html` and scroll-jumps correctly; no 404 page from Vercel for deep-link anchors
+  5. Cache headers respected: static assets (hashed bundles in `dist/assets/*`) have long max-age + immutable; `index.html` is no-cache or short-cache so deploys propagate
+**Plans**: TBD (planner derives)
+**UI hint**: no (infra phase)
+
+### Phase 12: Custom domain andresmontoyat.co + DNS
+**Goal**: The portfolio resolves at `https://andresmontoyat.co` with valid HTTPS; OG card validates on the canonical domain.
+**Depends on**: Phase 11 (Vercel deploy URL stable + Lighthouse gate passed)
+**Requirements**: DEPLOY-02
+**Success Criteria** (what must be TRUE):
+  1. `andresmontoyat.co` is registered as a custom domain on the Vercel project; DNS records configured at the registrar (apex `A 76.76.21.21` + `www` CNAME `cname.vercel-dns.com`, or apex CNAME flattening if registrar supports it)
+  2. HTTPS certificate auto-provisioned by Vercel (Let's Encrypt); TLS handshake valid on both `andresmontoyat.co` and `www.andresmontoyat.co` (verify via `curl -vI https://andresmontoyat.co` or `openssl s_client`)
+  3. Canonical redirect chosen and implemented: either `www.andresmontoyat.co` → `andresmontoyat.co` (apex canonical) or reverse. One stable canonical URL; no redirect loops.
+  4. OG meta tags work on the canonical domain: `og:url` + `<link rel="canonical">` updated in `index.html` if they were relative or hardcoded to dev URL; LinkedIn / Twitter / Facebook share-debugger renders the og-image.png correctly with title/description
+  5. After cutover, the deployed Vercel URL (`*.vercel.app`) either keeps working or redirects to canonical — no broken bookmarks for anyone who hit Phase 11 URL during deploy validation
+**Plans**: TBD
+**UI hint**: no
+
+### Phase 13: PR preview deploys + OG card validation
+**Goal**: Every PR against `main` gets an auto-deployed preview URL with working OG meta tags, so reviewers and recruiters can validate visual changes pre-merge.
+**Depends on**: Phase 11 (Vercel project) + Phase 12 (canonical OG meta tags)
+**Requirements**: DEPLOY-03
+**Success Criteria** (what must be TRUE):
+  1. Opening a PR against `main` triggers a Vercel preview deploy to a unique URL (`*-pr-<num>.vercel.app` or branch-derived); Vercel GitHub bot posts the URL as a PR comment within ~2 minutes of push
+  2. The preview URL renders the portfolio identically to production (theme toggle, hero photo, AI section, bilingual EN/ES) — no environment drift between preview and production
+  3. OG meta tags work on preview URLs: no hard-coded `https://andresmontoyat.co` `og:url` causing share-debugger to reject preview hosts; share-debugger on a sample preview URL returns the og-image.png + title/description
+  4. Closing or merging a PR cleans up the preview deploy (Vercel default behavior — verify it does not accumulate stale previews)
+  5. Branch protection on `main` updated to require Vercel deploy check (optional but recommended) — preview deploy success becomes a merge gate
+**Plans**: TBD
+**UI hint**: no
+
+## Progress Table (v3.7)
+
+| Phase | Plans Complete | Status | Completed |
+|-------|----------------|--------|-----------|
+| 11. Vercel auto-deploy + UAT gate | 0/TBD | Not started | - |
+| 12. Custom domain andresmontoyat.co + DNS | 0/TBD | Not started | - |
+| 13. PR preview deploys + OG validation | 0/TBD | Not started | - |
 
 ---
 
@@ -65,34 +113,16 @@ Provisional phase outline (refine in `/gsd-new-milestone`):
 | 8. Hero photo integration | v3.6 | 1/1 | ✓ Complete (code) | 2026-05-12 |
 | 9. AI / Claude Code section | v3.6 | 1/1 | ✓ Complete (code) | 2026-05-12 |
 | 10. Real-browser UAT + a11y | v3.6 | UAT (no PLAN) | ◐ Closed Partial (2/11) | 2026-05-20 |
-| 11. Architecture diagrams | v3.6 | 0 / not planned | ✗ De-scoped → future | — |
-| 1-4. (v3.7 deploy phases) | v3.7 | — | 📋 To be defined | — |
+| 11. Architecture diagrams | v3.6 | 0 / not planned | ✗ De-scoped → 999.13 backlog | — |
+| 11. Vercel deploy + UAT gate | v3.7 | 0/TBD | Not started | — |
+| 12. Custom domain + DNS | v3.7 | 0/TBD | Not started | — |
+| 13. PR preview deploys | v3.7 | 0/TBD | Not started | — |
 
 ---
 
 ## Backlog
 
 Tracked but not yet scoped to a milestone. Each item lives as a `999.x-slug` phase directory under `.planning/phases/` and is reviewed via `/gsd-review-backlog`.
-
-### Deployment (v3.7 candidate — carried from v3.5/v3.6)
-
-### Phase 999.1: deploy-vercel-auto (BACKLOG → v3.7 candidate)
-
-**Requirement:** DEPLOY-01
-**Goal:** Vercel auto-deploy from `main` on every push
-**Directory:** `.planning/phases/999.1-deploy-vercel-auto/`
-
-### Phase 999.2: deploy-custom-domain (BACKLOG → v3.7 candidate)
-
-**Requirement:** DEPLOY-02
-**Goal:** andresmontoyat.co custom domain + HTTPS via Vercel DNS
-**Directory:** `.planning/phases/999.2-deploy-custom-domain/`
-
-### Phase 999.3: deploy-pr-preview (BACKLOG → v3.7 candidate)
-
-**Requirement:** DEPLOY-03
-**Goal:** PR preview deploys + Open Graph card validation
-**Directory:** `.planning/phases/999.3-deploy-pr-preview/`
 
 ### Architecture diagrams (de-scoped from v3.6 Phase 11)
 
