@@ -62,7 +62,12 @@ See [`milestones/v3.6-ROADMAP.md`](milestones/v3.6-ROADMAP.md) and [`milestones/
   3. Phase 10 Test #11 Lighthouse mobile audit run against the deployed `*.vercel.app` URL passes the HARD gate: Performance ≥ 95 / Accessibility 100 / Best Practices 100 / SEO 100 — matching v3.4 baseline 98/100/100/100. Lighthouse fail blocks Phase 12.
   4. SPA fallback verified: direct hit on `*.vercel.app/#contact` (or any anchor) serves `index.html` and scroll-jumps correctly; no 404 page from Vercel for deep-link anchors
   5. Cache headers respected: static assets (hashed bundles in `dist/assets/*`) have long max-age + immutable; `index.html` is no-cache or short-cache so deploys propagate
-**Plans**: TBD (planner derives)
+**Plans**: 5 plans
+  - [ ] 11-01-PLAN.md — vercel.json + .gitignore (.vercel/) + index.html og:url typo fix (Wave 1, autonomous)
+  - [ ] 11-02-PLAN.md — adapt lighthouse:mobile for deployed URL + tighten lighthouse:check thresholds to Phase 11 HARD gate (Wave 1, autonomous, parallel with 11-01)
+  - [ ] 11-03-PLAN.md — local UAT Tests 3-10 against `npx serve dist` (Wave 2, non-autonomous, human browser-driven)
+  - [ ] 11-04-PLAN.md — vercel login + vercel link + first production deploy + curl-verify SPA fallback + cache headers (Wave 3, non-autonomous, interactive CLI auth)
+  - [ ] 11-05-PLAN.md — Lighthouse mobile audit against deployed *.vercel.app URL + HARD gate verdict (Wave 4, mixed; Phase 12 unblock signal)
 **UI hint**: no (infra phase)
 
 ### Phase 12: Custom domain andresmontoyat.co + DNS
@@ -95,7 +100,7 @@ See [`milestones/v3.6-ROADMAP.md`](milestones/v3.6-ROADMAP.md) and [`milestones/
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 11. Vercel auto-deploy + UAT gate | 0/TBD | Not started | - |
+| 11. Vercel auto-deploy + UAT gate | 0/5 | Planned | - |
 | 12. Custom domain andresmontoyat.co + DNS | 0/TBD | Not started | - |
 | 13. PR preview deploys + OG validation | 0/TBD | Not started | - |
 
@@ -114,7 +119,7 @@ See [`milestones/v3.6-ROADMAP.md`](milestones/v3.6-ROADMAP.md) and [`milestones/
 | 9. AI / Claude Code section | v3.6 | 1/1 | ✓ Complete (code) | 2026-05-12 |
 | 10. Real-browser UAT + a11y | v3.6 | UAT (no PLAN) | ◐ Closed Partial (2/11) | 2026-05-20 |
 | 11. Architecture diagrams | v3.6 | 0 / not planned | ✗ De-scoped → 999.13 backlog | — |
-| 11. Vercel deploy + UAT gate | v3.7 | 0/TBD | Not started | — |
+| 11. Vercel deploy + UAT gate | v3.7 | 0/5 | Planned | — |
 | 12. Custom domain + DNS | v3.7 | 0/TBD | Not started | — |
 | 13. PR preview deploys | v3.7 | 0/TBD | Not started | — |
 
