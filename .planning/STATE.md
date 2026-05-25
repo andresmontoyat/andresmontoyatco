@@ -1,15 +1,15 @@
 ---
 gsd_state_version: 1.0
 milestone: v3.7
-milestone_name: — Production Deploy
-status: Phase 11 context gathered; ready for planning
-stopped_at: "Phase 11 context gathered — next: /gsd-plan-phase 11"
-last_updated: "2026-05-20T21:15:00.000Z"
-last_activity: "2026-05-20 — Phase 11 CONTEXT.md written; 4 decisions locked (vercel.json-first + explicit config + local-first UAT + adapt lighthouse:mobile script); og:url typo at index.html:23 flagged for planner"
+milestone_name: Production Deploy
+status: executing
+stopped_at: "Phase 11 CONTEXT.md + DISCUSSION-LOG.md committed (5a30b2c); next: `/clear` then `/gsd-plan-phase 11`"
+last_updated: "2026-05-25T14:15:11.384Z"
+last_activity: 2026-05-25 -- Phase 11 execution started
 progress:
   total_phases: 3
   completed_phases: 0
-  total_plans: 0
+  total_plans: 5
   completed_plans: 0
   percent: 0
 ---
@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-05-20 — v3.7 milestone open)
 
 **Core value:** The hero section and overall first impression must stop recruiters mid-scroll and make them want to learn more about Carlos — and convert visits into engineering conversations.
-**Current focus:** Ship portfolio live. Phase 11 (Vercel deploy + UAT gate) → Phase 12 (custom domain + DNS) → Phase 13 (PR previews).
+**Current focus:** Phase 11 — vercel-deploy-uat-gate
 
 ## Current Position
 
-Phase: Not started (defining requirements + roadmap)
-Plan: —
-Status: Defining requirements
-Last activity: 2026-05-20 — Milestone v3.7 started
+Phase: 11 (vercel-deploy-uat-gate) — EXECUTING
+Plan: 1 of 5
+Status: Executing Phase 11
+Last activity: 2026-05-25 -- Phase 11 execution started
 
 ## Milestone Scope (v3.7)
 

@@ -32,3 +32,6 @@ dist/
 # Optimized public/me-*.webp ARE tracked. Re-run `npm run hero:process` to regenerate.
 me.jpg
 me.png
+
+# Vercel CLI local metadata (project ID + auth token) — never commit
+.vercel/
