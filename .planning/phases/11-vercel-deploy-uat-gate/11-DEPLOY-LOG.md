@@ -7,8 +7,8 @@ vercel_org_scope: carlos-andrs-montoya-tobns-projects
 production_url: https://andresmontoyatco.vercel.app
 first_deploy_id: dpl_ES8AwCTPgyLeqR2ivsnk1jSscZe6
 first_deploy_specific_url: https://andresmontoyatco-1krb8280k-carlos-andrs-montoya-tobns-projects.vercel.app
-auto_deploy_verified: false
-auto_deploy_test_commit_sha: __pending__
+auto_deploy_verified: true
+auto_deploy_test_commit_sha: 46c628d
 ---
 
 # Phase 11-04 Vercel Deploy Log
@@ -33,11 +33,11 @@ Root cause: Vercel path-to-regexp forbids a **nested capturing group** inside a 
 Fix (commit `bc2fe34`): changed inner group to non-capturing `(?:png|...)`. Re-deploy succeeded.
 
 ## Smoke-Test (Task 3) — visual, browser
-- Hero photo loads (full-bleed, face visible): __pending user confirm__
-- Theme toggle works (all sections flip): __pending user confirm__
-- LangPill EN/ES: __pending user confirm__
-- Claude section visible + CTAs scroll: __pending user confirm__
-- Overall parity vs local UAT (11-03): __pending user confirm__
+- Hero photo loads (full-bleed, face visible): pass
+- Theme toggle works (all sections flip): pass
+- LangPill EN/ES: pass
+- Claude section visible + CTAs scroll: pass
+- Overall parity vs local UAT (11-03): pass — no regression vs local prod build (Carlos, Chrome, 2026-05-28)
 
 ## curl Header Verification (Task 4) — all PASS
 
@@ -71,9 +71,14 @@ content-type: image/vnd.microsoft.icon
 ## Auto-Deploy on Push to Main
 - Git integration enabled: yes — `andresmontoyat/andresmontoyatco` connected (verified via `vercel git connect`: "already connected to your project")
 - Production branch: main
-- Test commit SHA: this deploy-log commit (push triggers auto-deploy)
-- Vercel "Building" deployment seen within 30s: see monitor below
-- Reached "Ready" state: see monitor below
+- Test commit SHA: 46c628d (deploy-log commit pushed to main)
+- Auto-deploy deployment: https://andresmontoyatco-5vdvczctv-carlos-andrs-montoya-tobns-projects.vercel.app
+- Vercel "Building" deployment seen within 30s: yes (appeared after push)
+- Reached "Ready" state: yes — Production, 10s build, alias andresmontoyatco.vercel.app now points to it
 
 ## Closure
-**Verdict:** __pending — curl + deploy PASS; awaiting visual smoke + auto-deploy confirmation__
+**Verdict:** [DEPLOY COMPLETE — Plan 11-05 (Lighthouse against deployed URL) unblocked]
+
+Production live: https://andresmontoyatco.vercel.app
+All Task acceptance criteria met: link (Task 2) · first deploy (Task 3) · curl SPA+cache (Task 4 all PASS) · visual smoke (Task 3, pass) · auto-deploy on push to main (Task 5, verified via deployment 5vdvczctv).
+Note (D-12, accepted): og:url/og:image still point to andresmontoyat.co (not live until Phase 12) — share-card preview on the *.vercel.app URL will mismatch until custom domain lands.

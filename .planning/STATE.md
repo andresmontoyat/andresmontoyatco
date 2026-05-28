@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v3.7
 milestone_name: Production Deploy
 status: executing
-stopped_at: "Plan 11-03 complete — local UAT 8/8 PASS (503e680). Gate cleared; next: Plan 11-04 Vercel deploy (needs `vercel login` + `vercel link`)"
-last_updated: "2026-05-28T00:02:00.000Z"
-last_activity: 2026-05-27 -- Plan 11-03 local UAT 8/8 PASS
+stopped_at: "Plan 11-04 complete — site LIVE at https://andresmontoyatco.vercel.app (auto-deploy on main verified). Next: Plan 11-05 Lighthouse HARD gate against deployed URL"
+last_updated: "2026-05-28T15:50:00.000Z"
+last_activity: 2026-05-28 -- Plan 11-04 production deploy live + auto-deploy verified
 progress:
   total_phases: 3
   completed_phases: 0
   total_plans: 5
-  completed_plans: 3
-  percent: 20
+  completed_plans: 4
+  percent: 27
 ---
 
 # Project State
@@ -26,9 +26,9 @@ See: .planning/PROJECT.md (updated 2026-05-20 — v3.7 milestone open)
 ## Current Position
 
 Phase: 11 (vercel-deploy-uat-gate) — EXECUTING
-Plan: 3 of 5 complete (11-01 ✓, 11-02 ✓, 11-03 ✓); next 11-04
-Status: Local UAT gate PASSED 8/8 — Vercel deploy unblocked
-Last activity: 2026-05-27 -- Plan 11-03 local UAT 8/8 PASS
+Plan: 4 of 5 complete (11-01..04 ✓); next 11-05
+Status: Site LIVE at https://andresmontoyatco.vercel.app — auto-deploy on main verified. Lighthouse HARD gate (11-05) remains.
+Last activity: 2026-05-28 -- Plan 11-04 production deploy live
 
 ## Milestone Scope (v3.7)
 
@@ -73,6 +73,6 @@ Last activity: 2026-05-27 -- Plan 11-03 local UAT 8/8 PASS
 
 ## Session Continuity
 
-Last session: 2026-05-27T19:55:00.000Z — Plan 11-03 local UAT executed (8/8 PASS), committed 503e680
-Stopped at: Local UAT gate cleared. Next: Plan 11-04 Vercel deploy — requires `vercel login` + `vercel link` first (see Blockers)
-Resume file: `.planning/phases/11-vercel-deploy-uat-gate/11-04-PLAN.md`
+Last session: 2026-05-28T15:50:00.000Z — Plan 11-04 deploy live (https://andresmontoyatco.vercel.app), auto-deploy verified, log+summary committed
+Stopped at: Production live. Next: Plan 11-05 Lighthouse HARD gate — `LIGHTHOUSE_TARGET_URL=https://andresmontoyatco.vercel.app npm run lighthouse:deployed && npm run lighthouse:check`
+Resume file: `.planning/phases/11-vercel-deploy-uat-gate/11-05-PLAN.md`
