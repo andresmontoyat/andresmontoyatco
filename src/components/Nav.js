@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom'
 import { useLanguage } from '../i18n/LanguageContext'
 import useActiveSection from '../hooks/useActiveSection'
 import ThemeToggle from './_shared/ThemeToggle'
+import ViewModeToggle from './_shared/ViewModeToggle'
 
 // Single source of truth for primary navigation (Phase 9 review WR-07).
 // SECTION_IDS (scroll-spy), DesktopNav and MobileMenu all derive from this list.
@@ -28,6 +29,7 @@ export default function Nav() {
         <Logomark />
         <DesktopNav t={t} activeSection={activeSection} />
         <div className="hidden md:flex items-center gap-2">
+          <ViewModeToggle />
           <ThemeToggle />
           <LangPill lang={lang} setLang={setLang} />
         </div>
@@ -193,6 +195,7 @@ function MobileMenu({ open, onClose, t, lang, setLang, activeSection }) {
       </button>
       <div className="h-full flex flex-col items-center justify-center gap-8 px-6">
         <div className="mb-10 flex items-center gap-2">
+          <ViewModeToggle />
           <ThemeToggle />
           <LangPill lang={lang} setLang={setLang} />
         </div>
