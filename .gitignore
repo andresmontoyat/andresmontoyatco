@@ -35,3 +35,6 @@ me.png
 
 # Vercel CLI local metadata (project ID + auth token) — never commit
 .vercel/
+.vercel
+.env*
+.superpowers/
