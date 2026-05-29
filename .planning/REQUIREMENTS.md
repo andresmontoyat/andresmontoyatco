@@ -25,7 +25,7 @@ current ("dev") view. Phase numbering continues from v3.7 → **starts at Phase 
   and computed by pure selectors.
 - [ ] **GAME-04** Selecting a skill shows the experiences where Carlos used it as floating bilingual
   cards — title, company, date, location, bullets, tech chips (colored by category) — plus a CV CTA.
-- [ ] **GAME-05** Visitor can toggle between game mode and the current dev view with one click; game mode
+- [x] **GAME-05** Visitor can toggle between game mode and the current dev view with one click; game mode
   is the default landing; the choice persists in `localStorage` (`cam-viewmode`) and is addressable via a
   `?mode=` deep-link.
 - [ ] **GAME-06** Game mode is accessible and crawlable: skill nodes are keyboard-navigable with
@@ -79,7 +79,7 @@ Phase 17. GAME-02 derivation is built in Phase 14 and first rendered in Phase 15
 | GAME-02 | Phase 14 (derivation) · Phase 15 (render) | Complete |
 | GAME-03 | Phase 16 | Pending |
 | GAME-04 | Phase 16 | Pending |
-| GAME-05 | Phase 14 | Pending |
+| GAME-05 | Phase 14 | Complete |
 | GAME-06 | Phase 15 | Pending |
 | GAME-07 | Phase 17 | Pending |
 | TEST-01 | Phase 14 (setup + pure-logic) · grows across 15–17 (component tests) | Complete |

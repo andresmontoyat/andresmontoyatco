@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v3.8
 milestone_name: Game Mode
-status: executing
-stopped_at: "Plan 14-01 complete. Next: execute 14-02 (ViewMode toggle + context)"
-last_updated: "2026-05-29T16:10:23.282Z"
+status: verifying
+stopped_at: "Phase 14 complete — both plans executed. GAME-05 + TEST-01 delivered. Ready for Phase 15."
+last_updated: "2026-05-29T16:25:12.562Z"
 last_activity: 2026-05-29
 progress:
   total_phases: 18
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 7
-  completed_plans: 5
-  percent: 0
+  completed_plans: 6
+  percent: 6
 ---
 
 # Project State
@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-05-29 — v3.8 milestone open)
 
 Phase: 14 (foundation-data-layer-viewmode-toggle-test-infra) — EXECUTING
 Plan: 2 of 2
-Status: Ready to execute
+Status: Phase complete — ready for verification
 Last activity: 2026-05-29
 
 ## v3.8 Phase Structure (created 2026-05-29)
@@ -81,6 +81,12 @@ enhancement so the Lighthouse mobile gate is never at risk.
 - **D-14-01-GRAPH**: buildConstellationGraph() pure fn; CURRENT_YEAR=2026 constant (no new Date()) for deterministic output; GCP→Google Cloud alias resolution before counting nodes.
 - **D-14-01-LAYOUT**: Deterministic radial category-centroid layout chosen over d3-force — zero new dependencies, trivially deterministic, no d3-force in client bundle.
 
+## Plan 14-02 Decisions (2026-05-29)
+
+- **D-14-02-LOCALSTORAGE-BRIDGE**: Node.js 22+ exposes native localStorage on globalThis — vitest populateGlobal skips it (already defined); bridged jsdom.window.localStorage to window/globalThis in setup.js so component tests and app code share the same jsdom store.
+- **D-14-02-VIEWMODE-PROVIDER**: ViewModeProvider placed inside LanguageProvider; inner MainContent component used to call useViewMode() inside provider tree (mirrors SkipLink pattern).
+- **D-14-02-GAME-PLACEHOLDER**: Game-mode branch renders plain section + h1 + p with real DOM text (no aria-hidden); Phase 15 replaces this block with the constellation renderer.
+
 ## Accumulated Decisions (historical, from v3.6/v3.7 — still constrain the codebase)
 
 - **D-v3.6-CSS-VAR**: Tailwind config references `var(--color-*)` — theme system token-driven.
@@ -105,6 +111,6 @@ enhancement so the Lighthouse mobile gate is never at risk.
 
 ## Session Continuity
 
-Last session: 2026-05-29T16:10:23.275Z
-Stopped at: Plan 14-01 complete — Vitest infra + skill catalog + constellation graph/layout. Next: execute 14-02
-Resume file: .planning/phases/14-foundation-data-layer-viewmode-toggle-test-infra/14-02-PLAN.md
+Last session: 2026-05-29T16:25:12.552Z
+Stopped at: Phase 14 complete (14-01 + 14-02). GAME-05 delivered; 57 tests green. Next: Phase 15 (accessible constellation + SEO fallback)
+Resume file: None
