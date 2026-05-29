@@ -1,78 +1,92 @@
 ---
 gsd_state_version: 1.0
-milestone: v3.7
-milestone_name: Production Deploy
-status: executing
-stopped_at: "Plan 11-04 complete — site LIVE at https://andresmontoyatco.vercel.app (auto-deploy on main verified). Next: Plan 11-05 Lighthouse HARD gate against deployed URL"
-last_updated: "2026-05-28T15:50:00.000Z"
-last_activity: 2026-05-28 -- Plan 11-04 production deploy live + auto-deploy verified
+milestone: v3.8
+milestone_name: Game Mode
+status: planning
+stopped_at: "Milestone v3.8 started (Game Mode). Defining requirements → roadmap. Spec approved: docs/superpowers/specs/2026-05-29-game-mode-design.md"
+last_updated: "2026-05-29T14:50:00.000Z"
+last_activity: 2026-05-29 -- Milestone v3.8 Game Mode started
 progress:
-  total_phases: 3
+  total_phases: 0
   completed_phases: 0
-  total_plans: 5
-  completed_plans: 4
-  percent: 27
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 # Project State
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-05-20 — v3.7 milestone open)
+See: .planning/PROJECT.md (updated 2026-05-29 — v3.8 milestone open)
 
 **Core value:** The hero section and overall first impression must stop recruiters mid-scroll and make them want to learn more about Carlos — and convert visits into engineering conversations.
-**Current focus:** Phase 11 — vercel-deploy-uat-gate
+**Current focus:** v3.8 Game Mode — interactive skill-constellation landing.
+**Design source of truth:** `docs/superpowers/specs/2026-05-29-game-mode-design.md`
 
 ## Current Position
 
-Phase: 11 (vercel-deploy-uat-gate) — EXECUTING
-Plan: 4 of 5 complete (11-01..04 ✓); next 11-05
-Status: Site LIVE at https://andresmontoyatco.vercel.app — auto-deploy on main verified. Lighthouse HARD gate (11-05) remains.
-Last activity: 2026-05-28 -- Plan 11-04 production deploy live
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements
+Last activity: 2026-05-29 — Milestone v3.8 started
 
-## Milestone Scope (v3.7)
+## Milestone Scope (v3.8 Game Mode)
 
-3 REQs across 3 phases (continues numbering from v3.6; Phase 11 slot reused since DIAGRAMS-01 stayed backlog):
+8 REQs, phases continue from v3.7 → start at Phase 14.
 
-- **Phase 11 — DEPLOY-01 + UAT-GATE** Vercel auto-deploy from main + pre-deploy gate (Tests 3-10 against local `npx serve dist`; Test #11 Lighthouse against deployed Vercel URL — HARD gate)
-- **Phase 12 — DEPLOY-02** Custom domain andresmontoyat.co + DNS (CNAME/A) → Vercel; HTTPS auto-cert; OG card validates on canonical domain
-- **Phase 13 — DEPLOY-03** PR preview deploys + OG card validation per PR
+- **GAME-01** Adaptive constellation render — WebGL desktop / SVG-DOM mobile (same data, two intensities)
+- **GAME-02** Skill graph — nodes=skill, edges=co-occurrence, category clustering
+- **GAME-03** Filters — multi-skill + year/timeline + categories + reset
+- **GAME-04** Floating bilingual ExperienceCard on skill select + CV CTA
+- **GAME-05** Game/dev toggle — default game, persisted localStorage (`cam-viewmode`) + `?mode=`
+- **GAME-06** A11y (keyboard nodes, dialog cards, sr-only fallback, reduced-motion) + SEO
+- **GAME-07** Hold Lighthouse mobile HARD gate + perf budget
+- **TEST-01** Vitest + RTL test infrastructure (pays down debt deferred 9 milestones)
 
-## Accumulated Decisions (from v3.6)
+## v3.8 Decisions (logged at milestone open)
 
-- **D-v3.6-CSS-VAR**: Tailwind config refactored to reference `var(--color-*)` — theme system token-driven
-- **D-v3.6-BRAND**: Blue-500 + emerald-500 palette in both modes; WCAG AA holds
-- **D-v3.6-HERO-VARIANT-C**: `<picture>` + WebP 800w/1600w + sharp pipeline + theme-aware `--hero-*` CSS vars
-- **D-v3.6-AI-SECTION**: Lazy-load + bilingual `t.*` namespace + scroll-spy pattern (reusable template)
-- **D-v3.6-AI-DOC-DRIFT**: AI-01 shipped 3 featured-app cards instead of 5 (VIS-05 backlog)
-- **D-v3.6-CLOSE**: Phase 10 UAT closed early; 9 tests carried to v3.7 Phase 11 as pre-deploy gate
-- **D-v3.6-NO-TAG**: Tag deferred until production live (v3.7)
+- **D-v3.8-SCOPE**: Feature inside existing portfolio repo; new milestone, NOT new-project / not a repo replace.
+- **D-v3.8-METAPHOR**: Skill constellation; **node = skill** (job secondary; click skill → experiences as cards).
+- **D-v3.8-NATURE**: Playable interactive visualization — explorable/playful, no objective, no win/lose.
+- **D-v3.8-DEFAULT**: Game mode is the default landing; toggle to dev view persisted.
+- **D-v3.8-ADAPTIVE**: WebGL desktop / SVG-DOM mobile resolves the conflict between game-default and the HARD Lighthouse mobile gate. DOM fallback doubles as SEO + a11y.
+- **D-v3.8-TEST**: Introduce Vitest + RTL this milestone (test-infra debt paydown).
+- **D-v3.8-PHASES**: Phase numbering continues → v3.8 starts at Phase 14.
 
-## v3.7 Decisions (logged at milestone open)
+## v3.7 → v3.8 Pivot (2026-05-29)
 
-- **D-v3.7-SEQ**: Deploy-first → DNS-after sequence (user preference 2026-05-20). Verify on `*.vercel.app` URL before DNS cutover. Reduces blast radius if deploy config has issues.
-- **D-v3.7-UAT-FOLD**: UAT pre-deploy gate folded into Phase 11 (not standalone phase). Tests 3-10 against local `npx serve dist`; Test #11 Lighthouse mobile against deployed Vercel URL.
-- **D-v3.7-LIGHTHOUSE-GATE**: Test #11 Lighthouse mobile is HARD gate — must hold v3.4 baseline 98/100/100/100. Blocks Phase 12 custom-domain cutover.
-- **D-v3.7-TAG**: Tag `v3.7` once production live at `andresmontoyat.co`. First tag since v3.4 — implicitly covers v3.5/v3.6 deliveries as "site went live with v3.7".
+- **D-PIVOT**: Paused v3.7 (Production Deploy) to start v3.8 (Game Mode). Site already live + auto-deploy verified.
+- **Deploy carried as deferred** (site live on `*.vercel.app`):
+  - **11-05 Lighthouse gate verdict** — not yet run against production; still HARD gate before custom-domain cutover.
+  - **DEPLOY-02** custom domain andresmontoyat.co + DNS.
+  - **DEPLOY-03** PR preview deploys + OG validation.
+  - Resume file (when deploy resumes): `.planning/phases/11-vercel-deploy-uat-gate/11-05-PLAN.md`
 
-## Blockers/Concerns Entering v3.7
+## Accumulated Decisions (historical, from v3.6/v3.7 — still constrain the codebase)
 
-- **Vercel account + auth**: requires `vercel login` + `vercel link` before Phase 11 (provision project, get deploy URL)
-- **DNS registrar credentials**: required for Phase 12 (CNAME/A records for `andresmontoyat.co`). Confirm registrar (likely Namecheap/Cloudflare/GoDaddy — verify before Phase 12)
-- **Lighthouse mobile baseline risk**: hero photo (Phase 8) + AI section (Phase 9) added since v3.4. Risk if combined payload regressed Performance below 95.
-- **8 consecutive milestones deferring test infrastructure** — first sign of regression debt warrants revisit decision post-deploy
+- **D-v3.6-CSS-VAR**: Tailwind config references `var(--color-*)` — theme system token-driven.
+- **D-v3.6-BRAND**: Blue-500 + emerald-500 palette in both modes; WCAG AA holds.
+- **D-v3.6-HERO-VARIANT-C**: `<picture>` + WebP 800w/1600w + sharp pipeline + theme-aware `--hero-*` CSS vars.
+- **D-v3.6-AI-SECTION**: Lazy-load + bilingual `t.*` namespace + scroll-spy pattern (reusable template).
+- **D-theme/lang Context pattern**: ThemeContext/LanguageContext = provider + hook + localStorage key. ViewModeContext (v3.8) mirrors this.
 
-## Backlog / Out of Scope (for v3.7)
+## Blockers/Concerns Entering v3.8
 
-- VIS-05 (claude-kanban + caveman cards)
-- DIAGRAMS-01 (cross-repo diagrams, backlog 999.13)
-- VIS-02 (company logos), VIS-04 (testimonials)
-- ASEO-01/02/03 (JSON-LD, WebP pipeline, sitemap)
-- INTX-01/02/03 (contact form backend, blog, GH activity)
-- Test infrastructure (Vitest / Playwright / RTL) — 9th milestone deferred
+- **WebGL library choice** (three.js vs react-three-fiber vs thin force-graph wrapper) — bundle vs ergonomics; resolve in planning.
+- **Desktop breakpoint** for WebGL activation — resolve in planning.
+- **Lighthouse mobile gate risk**: game is default landing; must keep mobile path light enough to hold Perf ≥95. Adaptive render is the mitigation.
+- **Test-infra is brand new** (Vitest+RTL) — first test setup in the project; budget for scaffolding.
+
+## Backlog / Out of Scope (for v3.8)
+
+- Deploy/domain (carried from v3.7 — see Pivot above)
+- Text search in game mode, sound, tutorial/onboarding, URL-encoded filter state, achievement animations, WebGL on mobile
+- VIS-05 (claude-kanban + caveman cards), DIAGRAMS-01 (cross-repo diagrams)
+- VIS-02 (company logos), VIS-04 (testimonials), ASEO-01/02/03, INTX-01/02/03
 
 ## Session Continuity
 
-Last session: 2026-05-28T15:50:00.000Z — Plan 11-04 deploy live (https://andresmontoyatco.vercel.app), auto-deploy verified, log+summary committed
-Stopped at: Production live. Next: Plan 11-05 Lighthouse HARD gate — `LIGHTHOUSE_TARGET_URL=https://andresmontoyatco.vercel.app npm run lighthouse:deployed && npm run lighthouse:check`
-Resume file: `.planning/phases/11-vercel-deploy-uat-gate/11-05-PLAN.md`
+Last session: 2026-05-29 — Brainstormed v3.8 Game Mode, design spec approved + committed (1ba2ea1). Started milestone v3.8: PROJECT.md updated, STATE.md reset. Next: define REQUIREMENTS.md → roadmap.
+Stopped at: Milestone v3.8 open, defining requirements.
+Resume file: —

@@ -8,24 +8,31 @@
 - v3.5 (2026-05-12 — **partial**): Themes & Projects delivered, deploy deferred. See [`milestones/v3.5-ROADMAP.md`](milestones/v3.5-ROADMAP.md).
 - v3.4 (2026-05-07): Brownfield redesign baseline — Vite 6 + React 18 + Tailwind v3.4, bilingual nav, char-reveal Hero, vertical Experience timeline, email-hero Contact, branded Open Graph, Lighthouse 98/100/100/100 mobile. See [`milestones/v3.4-ROADMAP.md`](milestones/v3.4-ROADMAP.md).
 
-## Current Milestone: v3.7 Production Deploy
+## Current Milestone: v3.8 Game Mode
 
-**Goal:** Ship the portfolio live — Vercel auto-deploy first (`*.vercel.app` URL), then custom domain `andresmontoyat.co` + DNS + HTTPS, then PR preview deploys with OG card validation. UAT pre-deploy gate (Phase 10 Tests 3-11) folded into Phase 11 before merging deploy config; Lighthouse mobile Test #11 is the HARD gate (must hold v3.4 baseline 98/100/100/100).
+**Goal:** Add an interactive "game mode" — a skill constellation as the default landing (node = skill, edges = tech co-occurrence) with floating bilingual experience cards, multi-skill/year/category filters, and a persisted one-click toggle to the current ("dev") view. Adaptive render (full WebGL on desktop, lightweight SVG/DOM on mobile) keeps the Lighthouse mobile HARD gate, WCAG 2.1 AA, and SEO. Introduces Vitest + RTL test infrastructure.
+
+**Source of truth:** `docs/superpowers/specs/2026-05-29-game-mode-design.md` (full decision log + architecture — read before planning).
 
 **Target features:**
-- DEPLOY-01 + UAT-GATE *(v3.7 Phase 11)* Vercel auto-deploy from `main` (vite-react preset, output `dist/`) with UAT pre-deploy gate (Tests 3-10 against `npx serve dist`; Test #11 Lighthouse mobile against deployed Vercel URL — HARD gate)
-- DEPLOY-02 *(v3.7 Phase 12)* Custom domain andresmontoyat.co + DNS records (CNAME/A) → Vercel; HTTPS via Vercel auto-cert; OG card validates on canonical domain
-- DEPLOY-03 *(v3.7 Phase 13)* PR preview deploys + per-PR OG card validation
+- **GAME-01** Adaptive constellation render — full WebGL on desktop, lightweight SVG/DOM static path on mobile (same data, two intensities; capability + viewport + reduced-motion detection)
+- **GAME-02** Skill graph — nodes = skills, edges = co-occurrence in the same job, clustering by skill category (derived from `experience.js` tech[] + new `skills.js` category map)
+- **GAME-03** Navigation/filters — multi-skill select + year/timeline (2007–2026) + category chips + reset (pure selectors)
+- **GAME-04** Floating bilingual `ExperienceCard` on skill select — title/company/date/location/bullets/tech chips + CV CTA
+- **GAME-05** Game/dev toggle — default landing = game; one-click to dev view; persisted in localStorage (`cam-viewmode`); `?mode=` deep-link
+- **GAME-06** Accessibility + SEO — keyboard-navigable nodes, dialog/popover semantics for cards, sr-only full-experience fallback list, reduced-motion path
+- **GAME-07** Hold the Lighthouse mobile HARD gate (Perf ≥95 / A11y 100 / BP 100 / SEO 100) + perf budget (three.js only in lazy desktop chunk; baked layout positions; < ~30KB gz added on mobile path)
+- **TEST-01** Introduce Vitest + React Testing Library test infrastructure (unit-test pure graph/filter logic near-100%; component tests for toggle/card/filters)
 
 **Locked decisions:**
-- Vercel locked as host (no Netlify override) — DEPLOY-01/02/03 specs already target Vercel
-- Deploy sequence: Vercel-first → DNS after — confirmed 2026-05-20 (user preference: deploy + verify on `*.vercel.app` URL before DNS cutover)
-- UAT-GATE folded into Phase 11 (not a standalone phase) — Tests 3-10 against local `npx serve dist`; Test #11 Lighthouse against deployed Vercel URL once `main` ships
-- Test #11 Lighthouse mobile must hold v3.4 baseline 98/100/100/100 — HARD gate before custom-domain cutover (Phase 12)
-- Tag `v3.7` once production live at `andresmontoyat.co` (first tag since v3.4 — covers v3.5/v3.6 deliveries retroactively as "site went live with v3.7")
-- Test infrastructure: still deferred (9th consecutive milestone — flag for explicit review post-deploy)
-- VIS-05 (claude-kanban + caveman cards) backlog — not v3.7 scope
-- DIAGRAMS-01 (cross-repo diagrams): backlog 999.13 — re-roadmap when bandwidth permits
+- Feature lives in the existing portfolio repo; this is a new milestone, not a new project (`/gsd:new-project` blocked — project exists)
+- Metaphor = skill constellation; **node = skill** (job is secondary; click skill → its experiences as cards)
+- Playable interactive visualization — explorable/playful, **no objective, no win/lose**
+- Game is the **default landing**; perf/SEO risk mitigated by the adaptive render (D7 in spec)
+- **Adaptive render** resolves the conflict between "game default" and the HARD Lighthouse mobile gate — WebGL desktop / SVG mobile; DOM fallback doubles as SEO + a11y
+- v3.8 introduces **Vitest + RTL** — pays down test-infra debt deferred across 9 milestones
+- Phase numbering continues → v3.8 starts at **Phase 14** (v3.7 reserved 11–13 for deploy)
+- v3.7 deploy work (11-05 Lighthouse gate verdict, DEPLOY-02 custom domain, DEPLOY-03 PR preview) **carried as deferred** — site remains live on `*.vercel.app`; deploy/domain resumed in a future milestone
 
 ## What This Is
 
@@ -78,11 +85,22 @@ The hero section and overall first impression must stop recruiters mid-scroll an
 - [x] **AI-01** Bilingual sales-pitch Claude Code section between Projects and Contact — 9.95 KB lazy chunk; PitchHero + 4 ValueCard + ProofBlock (7 counters) + 5 ServiceCard + 3 FeaturedAppCard (GSD, spring-ai-qdrant-mcp, ci-templates) + StackStrip (17 chips); scroll-spy in Desktop + Mobile nav; CTAs → #contact / #projects — v3.6 Phase 9 (note: shipped with 3 of original 5 featured-app cards; claude-kanban + caveman moved to backlog as VIS-05)
 - [x] **AI-01-CICD** `soldife/ci-templates` surfaced as DevOps evidence in AI section — app card with `OPEN SOURCE / DEVOPS` badge + 10 tech chips, DevOps automation service card, +2 proof counters (47 workflows / 15 templates), bilingual EN+ES — v3.6 Phase 9
 
-### Active (v3.7)
+### Active (v3.8)
 
-- [ ] **DEPLOY-01** *(v3.7 Phase 11)* Vercel production deploy — auto-deploy from main, vite-react preset, build `npm run build`, output `dist/`; folds UAT pre-deploy gate (Tests 3-10 against local `npx serve dist`; Test #11 Lighthouse against deployed `*.vercel.app` URL — HARD gate Perf ≥ 95 / A11y 100 / BP 100 / SEO 100)
-- [ ] **DEPLOY-02** *(v3.7 Phase 12)* Custom domain andresmontoyat.co + DNS records (CNAME/A) → Vercel; HTTPS via auto-cert; OG card validates on canonical domain
-- [ ] **DEPLOY-03** *(v3.7 Phase 13)* Auto-preview deploys per PR with OG card validation
+- [ ] **GAME-01** Adaptive constellation render — WebGL desktop / SVG-DOM mobile
+- [ ] **GAME-02** Skill graph — nodes=skill, edges=co-occurrence, category clustering
+- [ ] **GAME-03** Filters — multi-skill + year/timeline + categories + reset
+- [ ] **GAME-04** Floating bilingual ExperienceCard on skill select + CV CTA
+- [ ] **GAME-05** Game/dev toggle — default game, persisted localStorage + `?mode=`
+- [ ] **GAME-06** A11y (keyboard nodes, dialog cards, sr-only fallback, reduced-motion) + SEO
+- [ ] **GAME-07** Hold Lighthouse mobile HARD gate + perf budget
+- [ ] **TEST-01** Vitest + RTL test infrastructure
+
+### Deferred (carried from v3.7 — site live on `*.vercel.app`, auto-deploy verified)
+
+- [ ] **DEPLOY-01 (gate)** Lighthouse mobile gate verdict (Plan 11-05) — deferred 2026-05-29; site auto-deploys from main, formal gate run still pending. Remains HARD gate before custom-domain cutover.
+- [ ] **DEPLOY-02** Custom domain andresmontoyat.co + DNS (CNAME/A) → Vercel; HTTPS auto-cert; OG card on canonical domain
+- [ ] **DEPLOY-03** Auto-preview deploys per PR with OG card validation
 
 ### Backlog
 
@@ -173,4 +191,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-05-20 — milestone v3.7 STARTED (Production Deploy: 3 REQs, Phases 11–13; deploy-first → DNS-after → PR previews sequence; UAT-GATE folded into Phase 11)*
+*Last updated: 2026-05-29 — milestone v3.8 STARTED (Game Mode: skill-constellation landing, 8 REQs GAME-01..07 + TEST-01, phases from 14). v3.7 paused; deploy REQs (11-05 gate, DEPLOY-02/03) carried as deferred — site live on *.vercel.app.*
