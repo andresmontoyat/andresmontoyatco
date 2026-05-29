@@ -19,6 +19,7 @@ const EXPERIENCE = [
       ],
     },
     tech: ['Java', 'Spring Boot', 'Claude Code', 'GitHub Copilot', 'JetBrains Junie'],
+    period: { start: 2026, end: null },
     featured: true,
   },
   {
@@ -39,6 +40,7 @@ const EXPERIENCE = [
       ],
     },
     tech: ['Java', 'Spring Boot', 'Microservices'],
+    period: { start: 2024, end: 2025 },
     featured: true,
   },
   {
@@ -59,6 +61,7 @@ const EXPERIENCE = [
       ],
     },
     tech: ['Java', 'Keycloak', 'KrakenD', 'Kubernetes', 'GKE', 'Google Cloud'],
+    period: { start: 2024, end: 2025 },
     featured: true,
   },
   {
@@ -79,6 +82,7 @@ const EXPERIENCE = [
       ],
     },
     tech: ['Java', 'Spring Boot', 'AWS', 'Keycloak', 'GCP'],
+    period: { start: 2020, end: 2022 },
     featured: true,
   },
   {
@@ -99,6 +103,7 @@ const EXPERIENCE = [
       ],
     },
     tech: ['Java', 'Oracle Service Bus', 'WebSphere', 'Jenkins'],
+    period: { start: 2013, end: 2015 },
     featured: true,
   },
   {
@@ -117,6 +122,7 @@ const EXPERIENCE = [
       ],
     },
     tech: ['Java', 'Spring Boot', 'Microservices'],
+    period: { start: 2023, end: 2024 },
   },
   {
     date: { en: 'Apr 2022 — Jun 2023', es: 'Abr 2022 — Jun 2023' },
@@ -134,6 +140,7 @@ const EXPERIENCE = [
       ],
     },
     tech: ['Java', 'Spring Boot', 'Spring Security', 'Microservices'],
+    period: { start: 2022, end: 2023 },
   },
   {
     date: { en: 'May 2021 — Feb 2022', es: 'May 2021 — Feb 2022' },
@@ -151,6 +158,7 @@ const EXPERIENCE = [
       ],
     },
     tech: ['Jenkins', 'SonarQube', 'Nexus', 'Docker', 'Microservices'],
+    period: { start: 2021, end: 2022 },
   },
   {
     date: { en: 'Nov 2009 — Jan 2021', es: 'Nov 2009 — Ene 2021' },
@@ -168,6 +176,7 @@ const EXPERIENCE = [
       ],
     },
     tech: ['Java', 'AWS', 'IoT', 'Spring Boot'],
+    period: { start: 2009, end: 2021 },
   },
   {
     date: { en: 'Jun 2012 — Aug 2013', es: 'Jun 2012 — Ago 2013' },
@@ -185,6 +194,7 @@ const EXPERIENCE = [
       ],
     },
     tech: ['Java', 'Asterisk', 'Raspberry Pi'],
+    period: { start: 2012, end: 2013 },
   },
   {
     date: { en: 'Jun 2009 — Jun 2010', es: 'Jun 2009 — Jun 2010' },
@@ -202,6 +212,7 @@ const EXPERIENCE = [
       ],
     },
     tech: ['Java', 'JEE 5', 'Oracle SQL'],
+    period: { start: 2009, end: 2010 },
   },
   {
     date: { en: 'Apr 2007 — Jun 2009', es: 'Abr 2007 — Jun 2009' },
@@ -219,6 +230,7 @@ const EXPERIENCE = [
       ],
     },
     tech: ['Java', 'SQL Server', 'MySQL'],
+    period: { start: 2007, end: 2009 },
   },
 ]
 
