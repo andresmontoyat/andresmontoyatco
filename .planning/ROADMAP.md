@@ -43,7 +43,7 @@
   4. The visitor can toggle between game and dev view with one click; game is the default landing; the choice persists in `localStorage` (`cam-viewmode`) and is addressable via a `?mode=` deep-link, surviving reload
   5. `npm test` runs a Vitest + React Testing Library suite; the pure graph/filter logic is unit-tested near-100% and the ViewMode toggle + persistence has a passing component test
 **Plans**: 2 plans
-  - [ ] 14-01-PLAN.md — Vitest+RTL test infra + skills.js catalog + skill-graph/layout derivation + numeric `period` (GAME-02, TEST-01; Wave 1, autonomous)
+  - [x] 14-01-PLAN.md — Vitest+RTL test infra + skills.js catalog + skill-graph/layout derivation + numeric `period` (GAME-02, TEST-01; Wave 1, autonomous)
   - [ ] 14-02-PLAN.md — ViewModeContext + Game/Dev toggle pill + App/Nav wiring + crawlable game placeholder + persistence/`?mode=` component test (GAME-05, TEST-01; Wave 2, autonomous, depends on 14-01)
 **UI hint**: yes
 
@@ -183,7 +183,7 @@ See [`milestones/v3.6-ROADMAP.md`](milestones/v3.6-ROADMAP.md) and [`milestones/
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 14. Foundation — Data, ViewMode & Test Infra | 0/2 | Planned | - |
+| 14. Foundation — Data, ViewMode & Test Infra | 1/2 | In Progress|  |
 | 15. Accessible Constellation & SEO Fallback | 0/TBD | Not started | - |
 | 16. Filters & Floating ExperienceCard | 0/TBD | Not started | - |
 | 17. WebGL Desktop Renderer & Lighthouse Gate | 0/TBD | Not started | - |

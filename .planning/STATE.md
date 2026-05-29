@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v3.8
 milestone_name: Game Mode
-status: planning
-stopped_at: "Roadmap created for v3.8 (Game Mode). 4 phases (14–17) defined, all 8 REQs mapped. Next: /gsd:plan-phase 14. Spec: docs/superpowers/specs/2026-05-29-game-mode-design.md"
-last_updated: "2026-05-29T14:52:00.000Z"
-last_activity: 2026-05-29 -- v3.8 roadmap created (phases 14–17)
+status: executing
+stopped_at: "Plan 14-01 complete. Next: execute 14-02 (ViewMode toggle + context)"
+last_updated: "2026-05-29T16:10:23.282Z"
+last_activity: 2026-05-29
 progress:
-  total_phases: 4
+  total_phases: 18
   completed_phases: 0
-  total_plans: 0
-  completed_plans: 0
+  total_plans: 7
+  completed_plans: 5
   percent: 0
 ---
 
@@ -21,15 +21,15 @@ progress:
 See: .planning/PROJECT.md (updated 2026-05-29 — v3.8 milestone open)
 
 **Core value:** The hero section and overall first impression must stop recruiters mid-scroll and make them want to learn more about Carlos — and convert visits into engineering conversations.
-**Current focus:** v3.8 Game Mode — interactive skill-constellation landing.
+**Current focus:** Phase 14 — foundation-data-layer-viewmode-toggle-test-infra
 **Design source of truth:** `docs/superpowers/specs/2026-05-29-game-mode-design.md`
 
 ## Current Position
 
-Phase: Not started — roadmap created (phases 14–17 defined)
-Plan: —
-Status: Planning (roadmap done; next: plan Phase 14)
-Last activity: 2026-05-29 — v3.8 roadmap created, all 8 REQs mapped
+Phase: 14 (foundation-data-layer-viewmode-toggle-test-infra) — EXECUTING
+Plan: 2 of 2
+Status: Ready to execute
+Last activity: 2026-05-29
 
 ## v3.8 Phase Structure (created 2026-05-29)
 
@@ -75,6 +75,12 @@ enhancement so the Lighthouse mobile gate is never at risk.
   - Resume file (when deploy resumes): `.planning/phases/11-vercel-deploy-uat-gate/11-05-PLAN.md`
   - v3.7 phases 11–13 retained in ROADMAP.md as DEFERRED (reserved, NOT renumbered).
 
+## Plan 14-01 Decisions (2026-05-29)
+
+- **D-14-01-TEST**: Vitest 2.1.9 (2.2.x not yet published) + RTL test block colocated inside vite.config.js to preserve esbuild.loader:jsx for .js test files; 36 tests green.
+- **D-14-01-GRAPH**: buildConstellationGraph() pure fn; CURRENT_YEAR=2026 constant (no new Date()) for deterministic output; GCP→Google Cloud alias resolution before counting nodes.
+- **D-14-01-LAYOUT**: Deterministic radial category-centroid layout chosen over d3-force — zero new dependencies, trivially deterministic, no d3-force in client bundle.
+
 ## Accumulated Decisions (historical, from v3.6/v3.7 — still constrain the codebase)
 
 - **D-v3.6-CSS-VAR**: Tailwind config references `var(--color-*)` — theme system token-driven.
@@ -99,6 +105,6 @@ enhancement so the Lighthouse mobile gate is never at risk.
 
 ## Session Continuity
 
-Last session: 2026-05-29 — Brainstormed v3.8 Game Mode, design spec approved + committed (1ba2ea1). Started milestone v3.8: PROJECT.md updated, STATE.md reset, REQUIREMENTS.md defined. Roadmap created: 4 phases (14–17), all 8 REQs mapped, traceability filled.
-Stopped at: v3.8 roadmap created. Next: `/gsd:plan-phase 14`.
-Resume file: —
+Last session: 2026-05-29T16:10:23.275Z
+Stopped at: Plan 14-01 complete — Vitest infra + skill catalog + constellation graph/layout. Next: execute 14-02
+Resume file: .planning/phases/14-foundation-data-layer-viewmode-toggle-test-infra/14-02-PLAN.md

@@ -17,7 +17,7 @@ current ("dev") view. Phase numbering continues from v3.7 → **starts at Phase 
   device — full WebGL on desktop, a lightweight SVG/DOM static path on mobile (and on no-WebGL,
   reduced-motion, or save-data). Same content in both; capability + viewport + `prefers-reduced-motion`
   detection chooses the renderer behind a single props contract.
-- [ ] **GAME-02** Constellation nodes are skills (Carlos's technologies); edges connect skills that
+- [x] **GAME-02** Constellation nodes are skills (Carlos's technologies); edges connect skills that
   co-occur in the same job; nodes cluster visually by skill category (color/zone). Graph derived from
   `experience.js` `tech[]` + a new `skills.js` category map (with GCP/Google Cloud normalization).
 - [ ] **GAME-03** Visitor can filter/navigate by selecting multiple skills, by a year/timeline range
@@ -38,7 +38,7 @@ current ("dev") view. Phase numbering continues from v3.7 → **starts at Phase 
 
 ### Testing
 
-- [ ] **TEST-01** The project has a Vitest + React Testing Library test setup; pure graph/filter logic
+- [x] **TEST-01** The project has a Vitest + React Testing Library test setup; pure graph/filter logic
   (`constellation.graph.js` derivation, `useConstellation` selectors) is unit-tested near-100%, and key
   components (ViewMode toggle + persistence, ExperienceCard open/close/focus, SkillFilters selection,
   capability-based renderer selection) have component tests.
@@ -76,13 +76,13 @@ Phase 17. GAME-02 derivation is built in Phase 14 and first rendered in Phase 15
 | REQ-ID | Phase(s) | Status |
 |--------|----------|--------|
 | GAME-01 | Phase 15 (contract + SVG path) · Phase 17 (WebGL adapter) | Pending |
-| GAME-02 | Phase 14 (derivation) · Phase 15 (render) | Pending |
+| GAME-02 | Phase 14 (derivation) · Phase 15 (render) | Complete |
 | GAME-03 | Phase 16 | Pending |
 | GAME-04 | Phase 16 | Pending |
 | GAME-05 | Phase 14 | Pending |
 | GAME-06 | Phase 15 | Pending |
 | GAME-07 | Phase 17 | Pending |
-| TEST-01 | Phase 14 (setup + pure-logic) · grows across 15–17 (component tests) | Pending |
+| TEST-01 | Phase 14 (setup + pure-logic) · grows across 15–17 (component tests) | Complete |
 
 **Coverage:** 8 / 8 v3.8 requirements mapped. No orphans. Each requirement has a single primary
 delivery phase; GAME-01, GAME-02, and TEST-01 note their secondary phases where the work continues.
