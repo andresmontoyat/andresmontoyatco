@@ -12,6 +12,16 @@ const translations = {
       skipToContent: 'Skip to content',
       themeLight: 'Switch to light mode',
       themeDark: 'Switch to dark mode',
+      modeGame: 'Game',
+      modeDev: 'Dev',
+      viewModeToGame: 'Switch to game view',
+      viewModeToDev: 'Switch to developer view',
+    },
+    game: {
+      loadingTitle: 'Game mode is loading',
+      loadingBody: 'The interactive skill constellation arrives next. Switch to Dev view for the full portfolio.',
+      empty: 'No skill data available.',
+      error: "Couldn't load game mode. Switch to Dev view to see the portfolio.",
     },
     meta: {
       title: 'Carlos Andrés Montoya Tobón · Solutions Architect & Senior Backend Engineer',
@@ -180,6 +190,16 @@ const translations = {
       skipToContent: 'Saltar al contenido',
       themeLight: 'Cambiar a modo claro',
       themeDark: 'Cambiar a modo oscuro',
+      modeGame: 'Juego',
+      modeDev: 'Dev',
+      viewModeToGame: 'Cambiar a vista de juego',
+      viewModeToDev: 'Cambiar a vista de desarrollador',
+    },
+    game: {
+      loadingTitle: 'El modo juego está cargando',
+      loadingBody: 'La constelación interactiva de habilidades llega pronto. Cambia a la vista Dev para ver el portafolio completo.',
+      empty: 'No hay datos de habilidades disponibles.',
+      error: 'No se pudo cargar el modo juego. Cambia a la vista Dev para ver el portafolio.',
     },
     meta: {
       title: 'Carlos Andrés Montoya Tobón · Arquitecto de Soluciones e Ingeniero Backend Senior',
