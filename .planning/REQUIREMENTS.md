@@ -68,15 +68,21 @@ Not in v3.8 scope; resumed in a future milestone. Resume file: `.planning/phases
 
 ## Traceability
 
+Each v3.8 requirement maps to exactly one **primary** delivery phase (where its success is verified).
+GAME-01 is an adaptive contract delivered across two phases: the contract + SVG/DOM path lands in
+Phase 15 (its primary home, gate-safe), and the WebGL desktop adapter plugs into the same contract in
+Phase 17. GAME-02 derivation is built in Phase 14 and first rendered in Phase 15. Primary phase shown below.
+
 | REQ-ID | Phase(s) | Status |
 |--------|----------|--------|
-| GAME-01 | TBD (roadmap) | Pending |
-| GAME-02 | TBD (roadmap) | Pending |
-| GAME-03 | TBD (roadmap) | Pending |
-| GAME-04 | TBD (roadmap) | Pending |
-| GAME-05 | TBD (roadmap) | Pending |
-| GAME-06 | TBD (roadmap) | Pending |
-| GAME-07 | TBD (roadmap) | Pending |
-| TEST-01 | TBD (roadmap) | Pending |
+| GAME-01 | Phase 15 (contract + SVG path) · Phase 17 (WebGL adapter) | Pending |
+| GAME-02 | Phase 14 (derivation) · Phase 15 (render) | Pending |
+| GAME-03 | Phase 16 | Pending |
+| GAME-04 | Phase 16 | Pending |
+| GAME-05 | Phase 14 | Pending |
+| GAME-06 | Phase 15 | Pending |
+| GAME-07 | Phase 17 | Pending |
+| TEST-01 | Phase 14 (setup + pure-logic) · grows across 15–17 (component tests) | Pending |
 
-_Traceability filled by the roadmapper once phases are created._
+**Coverage:** 8 / 8 v3.8 requirements mapped. No orphans. Each requirement has a single primary
+delivery phase; GAME-01, GAME-02, and TEST-01 note their secondary phases where the work continues.
