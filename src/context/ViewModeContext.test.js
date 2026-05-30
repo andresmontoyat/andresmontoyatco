@@ -131,13 +131,19 @@ describe('ViewModeContext — ?mode= query param', () => {
 
 describe('ViewModeContext — localStorage throw safety', () => {
   test('when localStorage.getItem throws, falls back to default "game" without crashing', () => {
+    // WR-04: restoration MUST live in finally — Storage.prototype is
+    // process-wide; if a future assertion regression throws before the
+    // restore line, every later test inherits the throwing getItem.
     const originalGetItem = Storage.prototype.getItem
     Storage.prototype.getItem = () => { throw new Error('storage blocked') }
-    let ref
-    expect(() => {
-      ref = renderWithProvider()
-    }).not.toThrow()
-    expect(ref.current.viewMode).toBe('game')
-    Storage.prototype.getItem = originalGetItem
+    try {
+      let ref
+      expect(() => {
+        ref = renderWithProvider()
+      }).not.toThrow()
+      expect(ref.current.viewMode).toBe('game')
+    } finally {
+      Storage.prototype.getItem = originalGetItem
+    }
   })
 })
