@@ -31,7 +31,7 @@ export default function Nav() {
         <div className="hidden md:flex items-center gap-2">
           <ViewModeToggle />
           <ThemeToggle />
-          <LangPill lang={lang} setLang={setLang} />
+          <LangPill lang={lang} setLang={setLang} t={t} />
         </div>
         <button
           type="button"
@@ -89,17 +89,23 @@ function DesktopNav({ t, activeSection }) {
   )
 }
 
-function LangPill({ lang, setLang }) {
+function LangPill({ lang, setLang, t }) {
   const base = 'px-3 py-1.5 rounded-full transition-colors duration-150 font-mono text-xs'
   const active = 'bg-brand-gradient text-ink-900 font-extrabold'
   const inactive = 'text-text-secondary font-normal'
+  // WR-09: group aria-label describes purpose (stable across state); per-button
+  // aria-label is action-oriented ("Switch to English") to pair with aria-pressed.
   return (
-    <div className="flex gap-0.5 bg-ink-500 border border-ink-400 rounded-full p-0.5">
+    <div
+      role="group"
+      aria-label={t.nav.langGroup}
+      className="flex gap-0.5 bg-ink-500 border border-ink-400 rounded-full p-0.5"
+    >
       <button
         type="button"
         onClick={() => setLang('en')}
         className={`${base} ${lang === 'en' ? active : inactive}`}
-        aria-label="English"
+        aria-label={t.nav.langSwitchEn}
         aria-pressed={lang === 'en'}
       >
         EN
@@ -108,7 +114,7 @@ function LangPill({ lang, setLang }) {
         type="button"
         onClick={() => setLang('es')}
         className={`${base} ${lang === 'es' ? active : inactive}`}
-        aria-label="Español"
+        aria-label={t.nav.langSwitchEs}
         aria-pressed={lang === 'es'}
       >
         ES
@@ -197,7 +203,7 @@ function MobileMenu({ open, onClose, t, lang, setLang, activeSection }) {
         <div className="mb-10 flex items-center gap-2">
           <ViewModeToggle />
           <ThemeToggle />
-          <LangPill lang={lang} setLang={setLang} />
+          <LangPill lang={lang} setLang={setLang} t={t} />
         </div>
         {NAV_ITEMS.map((item) => {
           const isActive = activeSection === item.id

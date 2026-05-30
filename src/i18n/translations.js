@@ -17,6 +17,9 @@ const translations = {
       viewModeGroup: 'View mode',
       viewModeToGame: 'Switch to game view',
       viewModeToDev: 'Switch to developer view',
+      langGroup: 'Language',
+      langSwitchEn: 'Switch to English',
+      langSwitchEs: 'Switch to Spanish',
     },
     game: {
       loadingTitle: 'Game mode is loading',
@@ -196,6 +199,9 @@ const translations = {
       viewModeGroup: 'Modo de vista',
       viewModeToGame: 'Cambiar a vista de juego',
       viewModeToDev: 'Cambiar a vista de desarrollador',
+      langGroup: 'Idioma',
+      langSwitchEn: 'Cambiar a inglés',
+      langSwitchEs: 'Cambiar a español',
     },
     game: {
       loadingTitle: 'El modo juego está cargando',
