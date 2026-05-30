@@ -170,4 +170,26 @@ describe('buildConstellationGraph - edges', () => {
     // Both Blerify (idx2) and KLEVER (idx3) have Java + Google Cloud/GCP
     expect(javaGC.weight).toBeGreaterThanOrEqual(2)
   })
+
+  // WR-03 regression: skill labels containing '|' must not collide with the
+  // edge-key delimiter. (The old `${a}|${b}` key would split 'REST | gRPC'
+  // into the wrong tuple via key.split('|').)
+  it('does not collapse or mis-split edges when a skill label contains a pipe character', () => {
+    const syntheticSkills = {
+      ...SKILLS,
+      'A|B': { category: 'lang', aliases: [] },
+      C: { category: 'lang', aliases: [] },
+    }
+    const syntheticExperience = [{
+      company: 'Synthetic',
+      period: { start: 2024, end: 2024 },
+      tech: ['A|B', 'C'],
+    }]
+    const { edges } = buildConstellationGraph(syntheticExperience, syntheticSkills)
+    const edge = findEdge(edges, 'A|B', 'C')
+    expect(edge).not.toBeNull()
+    expect(edge.source === 'A|B' || edge.target === 'A|B').toBe(true)
+    expect(edge.source === 'C' || edge.target === 'C').toBe(true)
+    expect(edge.weight).toBe(1)
+  })
 })
