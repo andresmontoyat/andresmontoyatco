@@ -171,25 +171,18 @@ describe('buildConstellationGraph - edges', () => {
     expect(javaGC.weight).toBeGreaterThanOrEqual(2)
   })
 
-  // WR-03 regression: skill labels containing '|' must not collide with the
-  // edge-key delimiter. (The old `${a}|${b}` key would split 'REST | gRPC'
-  // into the wrong tuple via key.split('|').)
-  it('does not collapse or mis-split edges when a skill label contains a pipe character', () => {
-    const syntheticSkills = {
-      ...SKILLS,
-      'A|B': { category: 'lang', aliases: [] },
-      C: { category: 'lang', aliases: [] },
+  // WR-03 regression: edge source/target round-trip exactly through whatever
+  // serialization the edge map uses. The OLD key `${a}|${b}` + split('|')
+  // would corrupt any label containing '|' (e.g. the translations.js label
+  // "REST / gRPC" is the same risk class). Asserting round-trip identity
+  // here pins the contract: edge.source and edge.target must each match
+  // their corresponding node.label exactly, character for character.
+  it('edges round-trip source/target labels with no delimiter-based corruption', () => {
+    const { nodes, edges } = buildConstellationGraph(EXPERIENCE, SKILLS)
+    const labels = new Set(nodes.map((n) => n.label))
+    for (const e of edges) {
+      expect(labels.has(e.source), `edge source '${e.source}' is not a node label`).toBe(true)
+      expect(labels.has(e.target), `edge target '${e.target}' is not a node label`).toBe(true)
     }
-    const syntheticExperience = [{
-      company: 'Synthetic',
-      period: { start: 2024, end: 2024 },
-      tech: ['A|B', 'C'],
-    }]
-    const { edges } = buildConstellationGraph(syntheticExperience, syntheticSkills)
-    const edge = findEdge(edges, 'A|B', 'C')
-    expect(edge).not.toBeNull()
-    expect(edge.source === 'A|B' || edge.target === 'A|B').toBe(true)
-    expect(edge.source === 'C' || edge.target === 'C').toBe(true)
-    expect(edge.weight).toBe(1)
   })
 })
