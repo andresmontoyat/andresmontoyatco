@@ -4,10 +4,13 @@ import { LanguageProvider, useLanguage } from './i18n/LanguageContext'
 import { ThemeProvider } from './i18n/ThemeContext'
 import { ViewModeProvider, useViewMode } from './context/ViewModeContext'
 import Nav from './components/Nav'
-import Hero from './components/Hero'
-import About from './components/About'
-import Skill from './components/Skill'
 
+// WR-06: Hero/About/Skill are dev-mode-only. Default viewMode is 'game'
+// which never mounts them. Lazy-load them so the initial JS bundle on the
+// game route stays lean (Lighthouse-mobile gate downstream).
+const Hero = React.lazy(() => import('./components/Hero'))
+const About = React.lazy(() => import('./components/About'))
+const Skill = React.lazy(() => import('./components/Skill'))
 const Experience = React.lazy(() => import('./components/Experience'))
 const Projects = React.lazy(() => import('./components/Projects'))
 const Claude = React.lazy(() => import('./components/Claude'))
@@ -51,9 +54,15 @@ function MainContent() {
 
   return (
     <main id="main">
-      <Hero />
-      <About />
-      <Skill />
+      <Suspense fallback={SectionFallback}>
+        <Hero />
+      </Suspense>
+      <Suspense fallback={SectionFallback}>
+        <About />
+      </Suspense>
+      <Suspense fallback={SectionFallback}>
+        <Skill />
+      </Suspense>
       <Suspense fallback={SectionFallback}>
         <Experience />
       </Suspense>
