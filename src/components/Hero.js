@@ -62,7 +62,7 @@ export default function Hero() {
         srcSet="/me-800.webp 800w, /me-1600.webp 1600w"
         sizes="100vw"
         alt=""
-        fetchPriority="high"
+        fetchpriority="high"
         decoding="async"
         className="absolute inset-0 z-0 w-full h-full object-cover"
         style={{ objectPosition: 'center 30%', filter: 'var(--hero-photo-filter)' }}
