@@ -1,12 +1,32 @@
+// Skill-category accents — these are DATA values (graph-node fill identity for the
+// constellation), NOT Tailwind styling tokens. They are pinned to the design spec
+// (Phase 14 UI-SPEC, design-system color palette) and are consumed by
+// `buildConstellationGraph` to color nodes in the SVG canvas. They intentionally
+// bypass the CSS-var theme system because the constellation has a single visual
+// identity across light/dark themes (the canvas darkens its own backdrop). If a
+// future phase needs theme-aware node colors, migrate these into theme-resolved
+// tokens (e.g. `--color-skill-lang`) in src/index.css + tailwind.config.js and
+// expose them through a JS resolver — out of scope for Phase 14.
+const SKILL_CATEGORY_COLORS = {
+  lang:     '#3b82f6',
+  ai:       '#a855f7',
+  arch:     '#06b6d4',
+  cloud:    '#10b981',
+  devops:   '#f59e0b',
+  security: '#ef4444',
+  data:     '#8b5cf6',
+  hardware: '#ec4899',
+}
+
 export const SKILL_CATEGORIES = {
-  lang: { en: 'Languages & Frameworks', es: 'Lenguajes & Frameworks', color: '#3b82f6' },
-  ai: { en: 'AI Tooling', es: 'Herramientas IA', color: '#a855f7' },
-  arch: { en: 'Architecture & Integration', es: 'Arquitectura & Integración', color: '#06b6d4' },
-  cloud: { en: 'Cloud', es: 'Cloud', color: '#10b981' },
-  devops: { en: 'DevOps & Infra', es: 'DevOps & Infra', color: '#f59e0b' },
-  security: { en: 'Security', es: 'Seguridad', color: '#ef4444' },
-  data: { en: 'Data', es: 'Datos', color: '#8b5cf6' },
-  hardware: { en: 'IoT & Hardware', es: 'IoT & Hardware', color: '#ec4899' },
+  lang:     { en: 'Languages & Frameworks',     es: 'Lenguajes & Frameworks',     color: SKILL_CATEGORY_COLORS.lang },
+  ai:       { en: 'AI Tooling',                 es: 'Herramientas IA',            color: SKILL_CATEGORY_COLORS.ai },
+  arch:     { en: 'Architecture & Integration', es: 'Arquitectura & Integración', color: SKILL_CATEGORY_COLORS.arch },
+  cloud:    { en: 'Cloud',                      es: 'Cloud',                      color: SKILL_CATEGORY_COLORS.cloud },
+  devops:   { en: 'DevOps & Infra',             es: 'DevOps & Infra',             color: SKILL_CATEGORY_COLORS.devops },
+  security: { en: 'Security',                   es: 'Seguridad',                  color: SKILL_CATEGORY_COLORS.security },
+  data:     { en: 'Data',                       es: 'Datos',                      color: SKILL_CATEGORY_COLORS.data },
+  hardware: { en: 'IoT & Hardware',             es: 'IoT & Hardware',             color: SKILL_CATEGORY_COLORS.hardware },
 }
 
 // Canonical skill id → { category, aliases }
