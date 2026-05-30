@@ -25,7 +25,30 @@ findings:
   warning: 9
   info: 4
   total: 15
-status: issues_found
+status: fixed
+fix_pass:
+  fixed_at: 2026-05-30T13:50:00Z
+  scope: critical_and_warning
+  resolved:
+    - CR-01  # extract SKILL_CATEGORY_COLORS with intent comment (data values, not styling tokens)
+    - CR-02  # ViewModeToggle group aria-label stable across state (added t.nav.viewModeGroup)
+    - WR-01  # setup.js jsdom bridge confirmed load-bearing on Node 22 + Vitest 2.1.9 — comment added, code retained (reviewer assumption falsified by empirical test failure: 21 tests fail when bridge is removed)
+    - WR-02  # CURRENT_YEAR sync TODO referencing both downstream test assertion sites
+    - WR-03  # edge-key delimiter switched to JSON.stringify tuple + label-round-trip regression test
+    - WR-04  # Storage.prototype mutation wrapped in try/finally
+    - WR-05  # window.location stub replaced with window.history.pushState (both test files)
+    - WR-06  # Hero/About/Skill lazy-loaded — verified in build chunks (Hero-*.js, About-*.js, Skill-*.js now split)
+    - WR-07  # unused options param removed from computeLayout
+    - WR-08  # n===2 half-radius rationale documented
+    - WR-09  # LangPill aria labels: stable group label + action-oriented per-button labels (3 new bilingual keys)
+  skipped: []
+  deferred_info:
+    - IN-01  # skills.cards translation drift — out of scope this pass
+    - IN-02  # apostrophe asymmetry — flagged as out-of-scope by reviewer
+    - IN-03  # SegmentedPill extraction — refactor opportunity, defer
+    - IN-04  # ring start-angle comment — defer
+  tests_pass: 58/58
+  build_pass: true
 ---
 
 # Phase 14: Code Review Report
@@ -33,7 +56,7 @@ status: issues_found
 **Reviewed:** 2026-05-30T13:25:00Z
 **Depth:** standard
 **Files Reviewed:** 16
-**Status:** issues_found
+**Status:** fixed (Critical + Warning resolved 2026-05-30T13:50:00Z — see frontmatter `fix_pass` block)
 
 ## Summary
 
