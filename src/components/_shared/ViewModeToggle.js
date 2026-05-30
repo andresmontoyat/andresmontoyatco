@@ -10,12 +10,14 @@ export default function ViewModeToggle() {
   const active = 'bg-brand-gradient text-ink-900 font-extrabold'
   const inactive = 'text-text-secondary font-normal'
 
-  const pillAriaLabel = viewMode === 'game' ? t.nav.viewModeToDev : t.nav.viewModeToGame
-
+  // CR-02: role="group" describes a PURPOSE, not an action. Keep the group
+  // aria-label stable across state — per-button aria-pressed + aria-label
+  // (see modeGame/modeDev below, and the action-oriented "Switch to..."
+  // copy on the buttons themselves) convey the action semantics.
   return (
     <div
       role="group"
-      aria-label={pillAriaLabel}
+      aria-label={t.nav.viewModeGroup}
       className="flex gap-0.5 bg-ink-500 border border-ink-400 rounded-full p-0.5"
     >
       <button

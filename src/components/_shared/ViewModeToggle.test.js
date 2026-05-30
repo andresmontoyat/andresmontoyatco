@@ -51,11 +51,12 @@ describe('ViewModeToggle — rendering', () => {
     expect(devBtn).toHaveAttribute('aria-pressed', 'false')
   })
 
-  test('pill-level aria-label announces the TARGET action (in game → viewModeToDev copy)', () => {
+  test('pill-level aria-label announces the stable group PURPOSE (CR-02)', () => {
     render(<ViewModeToggle />, { wrapper: Providers })
-    // When viewMode is 'game', the pill aria-label should be "switch to developer view"
+    // The group's accessible name should describe the group's purpose, not
+    // a state-dependent action. Per-button aria-pressed conveys the action.
     const pill = screen.getByRole('group')
-    expect(pill).toHaveAttribute('aria-label', 'Switch to developer view')
+    expect(pill).toHaveAttribute('aria-label', 'View mode')
   })
 })
 
@@ -98,12 +99,13 @@ describe('ViewModeToggle — interaction', () => {
     expect(devBtn).toHaveAttribute('aria-pressed', 'true')
   })
 
-  test('pill aria-label flips to viewModeToGame copy after switching to dev', async () => {
+  test('pill aria-label stays stable across state changes (CR-02)', async () => {
     const user = userEvent.setup()
     render(<ViewModeToggle />, { wrapper: Providers })
     const devBtn = screen.getByRole('button', { name: /dev/i })
     await user.click(devBtn)
     const pill = screen.getByRole('group')
-    expect(pill).toHaveAttribute('aria-label', 'Switch to game view')
+    // Group label is purpose, not action — must NOT mutate with state.
+    expect(pill).toHaveAttribute('aria-label', 'View mode')
   })
 })
