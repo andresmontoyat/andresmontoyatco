@@ -14,7 +14,7 @@
 
 ### v3.8 Game Mode (Phases 14–17) — ACTIVE
 
-- [ ] **Phase 14: Foundation — Data Layer, ViewMode Toggle & Test Infra** — skills.js category map + skill-graph derivation + numeric `period` field + baked layout; persisted game/dev toggle; Vitest + RTL setup with pure-logic tests
+- [x] **Phase 14: Foundation — Data Layer, ViewMode Toggle & Test Infra** *(complete 2026-05-30)* — skills.js category map + skill-graph derivation + numeric `period` field + baked layout; persisted game/dev toggle; Vitest + RTL setup with pure-logic tests
 - [ ] **Phase 15: Accessible Constellation & SEO Fallback** — gate-safe SVG/DOM constellation render with category clustering; keyboard nav, dialog semantics, sr-only full-experience fallback, reduced-motion path
 - [ ] **Phase 16: Filters & Floating ExperienceCard** — multi-skill + year/timeline + category filters with reset; floating bilingual experience cards with tech chips + CV CTA on skill select
 - [ ] **Phase 17: WebGL Desktop Renderer & Lighthouse Gate** — lazy-loaded three.js desktop renderer behind the shared contract; perf budget enforced + Lighthouse mobile HARD gate re-verified

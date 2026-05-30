@@ -3,7 +3,7 @@ gsd_state_version: 1.0
 milestone: v3.8
 milestone_name: Game Mode
 status: ready_to_plan
-stopped_at: Phase 14 complete (2/2) — ready to discuss Phase 999.4
+stopped_at: Phase 14 complete (2/2) — ready to discuss Phase 15
 last_updated: 2026-05-30T13:32:53.569Z
 last_activity: 2026-05-29
 progress:
@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-05-29 — v3.8 milestone open)
 
 **Core value:** The hero section and overall first impression must stop recruiters mid-scroll and make them want to learn more about Carlos — and convert visits into engineering conversations.
-**Current focus:** Phase 999.4 — vis company logos
+**Current focus:** Phase 15 — Accessible Constellation & SEO Fallback (v3.8 next)
 **Design source of truth:** `docs/superpowers/specs/2026-05-29-game-mode-design.md`
 
 ## Current Position
 
-Phase: 999.4
+Phase: 15
 Plan: Not started
-Status: Ready to plan
+Status: Ready to discuss
 Last activity: 2026-05-30
 
 ## v3.8 Phase Structure (created 2026-05-29)
