@@ -1,6 +1,11 @@
 import { SKILL_CATEGORIES, resolveCanonical } from '../data/skills.js'
 
-// Fixed constant for "Present" — deterministic, no new Date() call
+// Fixed constant for "Present" — deterministic, no new Date() call.
+// TODO(WR-02): bump CURRENT_YEAR at the start of each calendar year.
+// Synchronized assertions live in:
+//   - src/data/skills.test.js (Coderio period.start expectation)
+//   - src/game/constellation.graph.test.js (java.years[1] assertion)
+// Update all three together to keep the displayed [min, max] range honest.
 export const CURRENT_YEAR = 2026
 
 /**
