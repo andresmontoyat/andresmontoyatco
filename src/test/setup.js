@@ -6,6 +6,13 @@ import '@testing-library/jest-dom/vitest'
 // Bridge jsdom.window.localStorage/sessionStorage so component code that
 // accesses `window.localStorage` and test code that accesses `window.localStorage`
 // both reach the jsdom store.
+//
+// LOAD-BEARING (Phase 14 WR-01): the `jsdom` global is exposed by vitest's
+// jsdom environment when `test.environmentOptions.jsdom` is set (see
+// vite.config.js). Removing this bridge causes 21 tests to fail on Node 22
+// with TypeError "Cannot read properties of undefined (reading 'clear')"
+// against `window.localStorage`. Verified locally on 2026-05-30. Do not
+// delete without re-running `npm run test:run` on Node 22+ first.
 if (typeof jsdom !== 'undefined' && jsdom.window) {
   const jsdomLS = jsdom.window.localStorage
   const jsdomSS = jsdom.window.sessionStorage
