@@ -10,12 +10,13 @@ function ContextConsumer({ contextRef }) {
 }
 
 // Stub window.location.search for ?mode= query param tests.
+// WR-05: use the real History API instead of Object.defineProperty on
+// window.location — JSDOM keeps the Location object intact, so methods
+// like assign/replace/reload + getters like origin/hostname still work,
+// and there's no test-pollution risk for downstream test files.
 function setLocationSearch(search) {
-  Object.defineProperty(window, 'location', {
-    value: { ...window.location, search },
-    writable: true,
-    configurable: true,
-  })
+  const qs = search.startsWith('?') || search === '' ? search : `?${search}`
+  window.history.pushState({}, '', `/${qs}`)
 }
 
 function renderWithProvider() {

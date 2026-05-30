@@ -18,11 +18,9 @@ function Providers({ children }) {
 
 beforeEach(() => {
   window.localStorage.clear()
-  Object.defineProperty(window, 'location', {
-    value: { ...window.location, search: '' },
-    writable: true,
-    configurable: true,
-  })
+  // WR-05: use the real History API instead of redefining window.location.
+  // JSDOM keeps the Location object intact this way.
+  window.history.pushState({}, '', '/')
 })
 
 afterEach(() => {
