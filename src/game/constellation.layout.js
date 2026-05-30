@@ -65,6 +65,9 @@ export function computeLayout(nodes) {
       // Multiple nodes: evenly distribute on a sub-ring
       for (let i = 0; i < n; i++) {
         const angle = (2 * Math.PI * i) / n - Math.PI / 2
+        // WR-08: 2-node clusters look visually stretched at full radius —
+        // pull them closer (60%) so the pair reads as a single category
+        // rather than two singletons. 3+ nodes naturally distribute well.
         const radius = n === 2 ? NODE_CLUSTER_RADIUS * 0.6 : NODE_CLUSTER_RADIUS
         layout[catNodes[i].id] = {
           x: centroid.x + radius * Math.cos(angle),
