@@ -20,10 +20,9 @@ const NODE_CLUSTER_RADIUS = 80   // radius within which nodes spread around thei
  * Compute deterministic baked positions for a set of nodes, clustered by category.
  *
  * @param {Array} nodes - Array of node objects with { id, category }
- * @param {Object} [options] - Reserved for future use
  * @returns {Object} Map of node.id → { x, y }
  */
-export function computeLayout(nodes, options = {}) {
+export function computeLayout(nodes) {
   if (!nodes || nodes.length === 0) return {}
 
   // Determine which categories are represented (preserve CATEGORY_ORDER for determinism)
