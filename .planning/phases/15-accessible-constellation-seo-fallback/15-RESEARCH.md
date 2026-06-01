@@ -761,7 +761,7 @@ export default function ConstellationFallback({ experiences, lang }) {
 
 ---
 
-## Open Questions
+## Open Questions (RESOLVED)
 
 1. **SVG `aria-hidden` vs per-node roles**
    - What we know: The UI-SPEC notes both approaches are valid (lines 690-697). `aria-hidden` on SVG avoids inconsistent browser SVG ARIA exposure.
