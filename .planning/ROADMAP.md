@@ -58,7 +58,10 @@
   3. Skill nodes are keyboard-navigable (Tab/arrow keys, Enter selects) with descriptive `aria-label`s (skill name + experience count); AA contrast holds for nodes/edges in both dark and light themes
   4. A visually-hidden but DOM-present semantic list of all 12 experiences (full bilingual text) is in the markup so screen readers, crawlers, and ATS read the complete career content
   5. Skill nodes and edges render bilingually (EN/ES) and follow the active theme; an empty/no-data state degrades gracefully instead of crashing
-**Plans**: TBD
+**Plans**: 3 plans
+  - [ ] 15-01-PLAN.md — GameMode orchestrator + sr-only ConstellationFallback + derived bilingual H1 (GAME-01, GAME-06; Wave 1, autonomous, MVP Slice 1)
+  - [ ] 15-02-PLAN.md — SvgConstellation visual renderer + useConstellation hook + constellation tokens/keyframes + GameMode wiring (GAME-01, GAME-02; Wave 2, autonomous, MVP Slice 2, depends on 15-01)
+  - [ ] 15-03-PLAN.md — spatialNav helper + role=application wrapper + roving tabindex + Enter/Space/Esc + aria-live + focus ring + hint pill (GAME-01, GAME-06; Wave 3, autonomous, MVP Slice 3, depends on 15-01,15-02)
 **UI hint**: yes
 
 ### Phase 16: Filters & Floating ExperienceCard
