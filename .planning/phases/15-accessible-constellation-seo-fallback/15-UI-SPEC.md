@@ -55,8 +55,8 @@ Reuses the project 4px-base Tailwind scale. Net-new usages in Phase 15:
 | Token | Value | Usage in Phase 15 |
 |-------|-------|-------------------|
 | xs | 4px | Node label gap from node center; hint-pill icon/text gap (`gap-1`) |
-| sm | 8px | Hint-pill horizontal padding (`px-2`); aria-live region inset from edge |
-| md | 16px | H1 block bottom margin to constellation; hint-pill vertical padding (`py-1`) |
+| sm | 8px | Hint-pill horizontal padding (`px-2`) AND vertical padding (`py-2`); aria-live region inset from edge |
+| md | 16px | H1 block bottom margin to constellation |
 | lg | 24px | Outer padding of constellation section (mobile sides, `px-6`) |
 | xl | 32px | Gap between H1 block and constellation SVG on desktop |
 | 2xl | 48px | Constellation section top padding below sticky nav |
@@ -65,6 +65,7 @@ Reuses the project 4px-base Tailwind scale. Net-new usages in Phase 15:
 **Exceptions:**
 - SVG node radii are in SVG user-units (see Sizing Scale section) — not Tailwind spacing tokens.
 - **44×44px minimum touch target** on the constellation root element (the single tab-stop for the roving group) — WCAG 2.5.5. Achieved via `min-h-[44px] min-w-[44px]` on the focusable wrapper, matching the ThemeToggle / ViewModeToggle pattern.
+- Hint pill uses `px-3` (12px) horizontal + `py-2` (8px) vertical — both multiples of 4. No 6px (py-1.5) values anywhere in this phase.
 
 ---
 
@@ -72,16 +73,18 @@ Reuses the project 4px-base Tailwind scale. Net-new usages in Phase 15:
 
 Phase 15 introduces two new type roles: the document H1 and the hint pill. All others reuse locked scale.
 
+**Weights in play this phase: 400 regular + 700 bold only. No other weights.**
+
 | Role | Size | Weight | Line Height | Font | Usage |
 |------|------|--------|-------------|------|-------|
-| Document H1 (constellation heading) | 28px (`text-2xl` mobile) / 36px (`text-4xl` desktop) | 700 bold | 1.2 | Inter | `game.h1` key — "19 years. 27 skills. One constellation." |
+| Document H1 (constellation heading) | 28px (`text-2xl`) mobile / 36px (`text-4xl`) tablet+desktop | 700 bold | 1.2 | Inter | `game.h1` key — "{N} years. {skillCount} skills. One constellation." |
 | Sub-copy (below H1) | 16px (`text-base`) | 400 regular | 1.5 | Inter | `game.subCopy` key — click-to-explore instruction |
-| Node label (SVG `<text>`) | 11px mobile / 12px desktop | 400 regular | 1.0 (single line) | Inter | Skill name beneath node; hidden until hover/focus |
+| Node label (SVG `<text>`) | 12px across all breakpoints | 400 regular | 1.0 (single line) | Inter | Skill name beneath node; hidden until hover/focus |
 | Hint pill text | 12px (`text-xs`) | 400 regular | 1.0 | JetBrains Mono | "Click a star · Toca una estrella" reduced-motion fallback |
-| sr-only fallback headings | 16px inherits (visually hidden) | 600 semibold | 1.5 | Inter | Section heading in the sr-only experience list |
+| sr-only fallback headings | 16px inherits (visually hidden) | 700 bold | 1.5 | Inter | Section heading in the sr-only experience list (visually hidden — weight has no visual impact) |
 | sr-only fallback body | 16px inherits (visually hidden) | 400 regular | 1.5 | Inter | Experience bullets in sr-only list |
 
-**Weights in play this phase:** 400 regular + 600 semibold + 700 bold. No new weights added to the font load (700 is already loaded by hero `font-bold`).
+**4 unique sizes: 12px · 16px · 28px · 36px. 2 weights: 400 regular · 700 bold.**
 
 ---
 
@@ -111,7 +114,7 @@ Add these CSS custom properties to `:root` and `[data-theme="light"]` in `src/in
 --color-constellation-edge:       rgba(160, 160, 192, 0.25);   /* neutral mid-tone, low alpha */
 --color-constellation-edge-heavy: rgba(160, 160, 192, 0.55);   /* weight ≥ 2 edges */
 --color-constellation-halo:       rgba(255, 255, 255, 0.18);   /* outer glow around active node */
---color-hint-pill-bg:             rgba(45, 45, 90, 0.80);      /* ink-500 at 80% — semi-opaque */
+--color-hint-pill-bg:             rgba(20, 20, 50, 0.95);      /* dark ink at 95% — ensures text contrast ≥4.5:1 */
 --color-hint-pill-text:           #A0A0C0;                     /* text-secondary */
 
 /* Light overrides */
@@ -191,9 +194,9 @@ The `--color-ink-800` light value (`#F0F0F5`) is the worst-case backdrop for nod
 **H1 / sub-copy text on page background:** `text-primary` dark (`#F0F0FF` on `#0D0D1A` = ~18:1 PASS) /
 light (`#0D0D1A` on `#FFFFFF` = 21:1 PASS). No action needed.
 
-**Hint pill text on pill background:** `text-secondary` dark (`#A0A0C0`) on `rgba(45,45,90,0.80)` → solid
-equivalent `#3e3e72` → contrast ≈5.2:1 PASS. Light: `#525269` on `rgba(200,200,214,0.85)` → solid
-`#cbcbd7` → contrast ≈4.8:1 PASS.
+**Hint pill text on pill background (dark):** `#A0A0C0` on `rgba(20,20,50,0.95)` → solid equivalent over
+`#0D0D1A` ≈ `#141432` → contrast ≈ 7.1:1 PASS (clears 4.5:1 text threshold).
+Light: `#525269` on `rgba(200,200,214,0.85)` → solid `#cbcbd7` → contrast ≈ 4.8:1 PASS.
 
 **Accent reserved for (explicit list — Phase 15):**
 1. Focus-visible ring on the constellation root wrapper (`focus-visible:ring-2 focus-visible:ring-brand`).
@@ -204,6 +207,22 @@ equivalent `#3e3e72` → contrast ≈5.2:1 PASS. Light: `#525269` on `rgba(200,2
    focus/hover) uses `text-brand` for the skill name text.
 
 Accent is NOT used for node fills (those are locked semantic data colors), edge strokes, or the hint pill.
+
+---
+
+## Active-State Contract
+
+### Initial resting state (all breakpoints, all motion preferences)
+
+**All nodes render at `fill-opacity: 1.0` on mount, before any user interaction.** The `0.35` dim value
+for inactive nodes applies ONLY AFTER a node has been selected (i.e., after `selectedSkillId` is non-null
+for the first time). This rule holds in both motion-safe and reduced-motion paths:
+
+- Motion-safe: nodes reveal via `nodeReveal` animation at `fill-opacity: 1.0`; no dimming until selection.
+- Reduced-motion: nodes paint instantly at `fill-opacity: 1.0`; no dimming until selection.
+
+**Rule:** `fill-opacity: 0.35` on inactive nodes is a POST-SELECTION state, not a default resting state.
+The `selectedSkillId === null` check must guard against premature dimming at mount.
 
 ---
 
@@ -311,9 +330,9 @@ hintFadeOut: {
 ```
 Phase 1 — Node reveal (0ms → 800ms total):
   - Order: descending by count (Java first, then next biggest, ..., count=1 last)
-  - Stagger: 30ms per node × 27 nodes = 810ms maximum stagger onset
+  - Stagger: 30ms per node × 26 nodes = 780ms maximum stagger onset
   - Each node animation duration: 400ms
-  - Last node completes at: 30ms × 26 + 400ms ≈ 1180ms
+  - Last node completes at: 30ms × 25 + 400ms ≈ 1150ms
   - Implementation: inline style `animationDelay: {i * 30}ms` on each <g> element
     (i = index in the count-sorted node array, 0-indexed)
 
@@ -348,7 +367,7 @@ The global `index.css` rule (`animation-duration: 0.01ms !important; animation-i
 2. Skip `animate-pulse2` — the `motion-safe:` prefix handles this.
 3. Skip `filter: drop-shadow` halo — keep `filter: none` always (no performance cost, no distraction).
 4. Show the **hint pill** instead of the pulse as the "start here" affordance.
-5. Apply `fill-opacity` distinction immediately (active = 1.0, inactive = 0.35) without transition.
+5. Apply `fill-opacity` distinction immediately (active = 1.0, inactive = 0.35) without transition — but only after `selectedSkillId` is non-null (see Active-State Contract above).
 
 **Detection:** Use `window.matchMedia('(prefers-reduced-motion: reduce)').matches` in the component (or the existing `motion-safe:` Tailwind variant for class-based guards).
 
@@ -361,7 +380,7 @@ static overlay **after** the pulse stops on first interaction under the motion-s
 |----------|-------|
 | Text | `t.game.hintPill` — EN: "Click a star · Toca una estrella" / ES: "Toca una estrella · Click a star" (bilingual even in a single string, per the design spec; the `·` separator needs no translation) |
 | Position | Centered below constellation SVG, `mt-4` (16px margin-top) |
-| Style | `bg-hint-pill-bg text-hint-pill-text text-xs font-mono rounded-full px-3 py-1.5 inline-block` |
+| Style | `bg-hint-pill-bg text-hint-pill-text text-xs font-mono rounded-full px-3 py-2 inline-block` |
 | Aria | `aria-hidden="true"` — it is a visual affordance; SR users get the constellation `aria-label` instead |
 | Fade-out | Applies `animate-hint-fade-out` + `pointer-events: none` on first interaction (same stop condition as pulse); removed from DOM after fade completes (`onAnimationEnd` → unmount) |
 | Reduced-motion | Under `prefers-reduced-motion: reduce`: show statically, no fade animation. Remove from DOM on first interaction without animation. |
@@ -527,13 +546,23 @@ const h1 = `${yearsActive} ${t.game.h1Years}. ${skillCount} ${t.game.h1Skills}. 
 
 The integers are NEVER hardcoded. A unit test asserts `yearsActive === 19` and `skillCount === 26` (the
 canonical count after GCP→Google Cloud alias resolution, excluding GCP as a duplicate) against the live
-data. Update the test assertions when the data changes.
+data. Update the test when the data changes.
 
-_Note: `SKILLS` in `src/data/skills.js` has 26 entries (GCP is an alias, not a canonical entry). The spec
-copy "27 skills" appears to count before alias normalization. The displayed number must come from
-`Object.keys(SKILLS).length` (26 canonical) OR from `buildConstellationGraph` node count (whichever
-produces the live truth). If the intent is 27, one skill may be missing from the catalog — executor
-verifies against live data and the unit test locks the correct value._
+```js
+// src/game/GameMode.test.js (or dedicated h1-derivation.test.js)
+it('derives yearsActive and skillCount from live data', () => {
+  const yearsActive = Math.max(...EXPERIENCE.map(e => e.period.end ?? CURRENT_YEAR))
+                    - Math.min(...EXPERIENCE.map(e => e.period.start))
+  const skillCount = buildConstellationGraph(EXPERIENCE, SKILLS).nodes.length
+  expect(yearsActive).toBe(19)   // update when Coderio period.end changes
+  expect(skillCount).toBe(26)    // exact canonical count; GCP alias excluded; update when catalog changes
+})
+```
+
+_Note: `SKILLS` in `src/data/skills.js` has 26 canonical entries (GCP is an alias, not a canonical entry).
+`skillCount` is 26 unless new skills are added to the catalog. When the catalog changes, update the test
+assertion — that is the intended contract. The displayed number comes from `buildConstellationGraph` node
+count (live truth from the graph builder, not a hardcoded constant)._
 
 ---
 
@@ -638,7 +667,7 @@ The focus detection uses a `focusedNodeId` state (updated via `onFocus`/`onBlur`
     {/* Hint pill — below SVG, centered */}
     {showHintPill && (
       <p
-        className="text-center mt-4 text-xs font-mono text-hint-pill-text bg-hint-pill-bg rounded-full px-3 py-1.5 inline-block"
+        className="text-center mt-4 text-xs font-mono text-hint-pill-text bg-hint-pill-bg rounded-full px-3 py-2 inline-block"
         aria-hidden="true"
       >
         {t.game.hintPill}
@@ -671,10 +700,13 @@ contract's requirements (per-node label, live region, Esc behavior) must hold in
 
 | Viewport | SVG max-height | H1 size | Layout notes |
 |----------|----------------|---------|--------------|
-| < 480px (mobile S) | 280px | `text-xl` (20px) | Hint pill always shown (reduced-motion default on many mobile OSes) |
+| < 480px (mobile S) | 280px | `text-2xl` (28px) | Hint pill always shown (reduced-motion default on many mobile OSes) |
 | 480–767px (mobile L) | 380px | `text-2xl` (28px) | |
-| 768–1023px (tablet) | 500px | `text-3xl` (30px) | Hint pill transitions to pulse on motion-safe |
+| 768–1023px (tablet) | 500px | `text-4xl` (36px) | Hint pill transitions to pulse on motion-safe |
 | ≥ 1024px (desktop) | 600px | `text-4xl` (36px) | Full node radii (desktop scale) |
+
+_H1 uses two Tailwind steps only: `text-2xl` (28px) on mobile (< 768px) and `text-4xl` (36px) on
+tablet+desktop (≥ 768px). This keeps the spec to 4 unique sizes: 12px · 16px · 28px · 36px._
 
 ---
 
@@ -755,7 +787,7 @@ All copy is bilingual via `LanguageContext`. New translation keys live under `ga
 
 | Element | EN copy | ES copy |
 |---------|---------|---------|
-| Document H1 (derived at render time) | `"{N} years. {M} skills. One constellation."` | `"{N} años. {M} skills. Una constelación."` |
+| Document H1 (derived at render time) | `"{yearsActive} years. {skillCount} skills. One constellation."` | `"{yearsActive} años. {skillCount} skills. Una constelación."` |
 | Sub-copy | `"Click a star to explore where Carlos used it."` | `"Haz clic en una estrella para explorar dónde la usó Carlos."` |
 | Constellation `aria-label` | `"Interactive skill constellation. Use arrow keys to navigate between skills. Press Enter or Space to select a skill."` | `"Constelación interactiva de habilidades. Usa las teclas de flecha para navegar entre habilidades. Presiona Enter o Espacio para seleccionar."` |
 | Node `aria-label` (template) | `"{skill}, {category}, used in {n} job(s)."` | `"{skill}, {categoría}, usado en {n} trabajo(s)."` |
@@ -766,20 +798,11 @@ All copy is bilingual via `LanguageContext`. New translation keys live under `ga
 | Empty state (0 nodes) | `"No skill data available."` (existing `t.game.empty`) | `"No hay datos de habilidades disponibles."` (existing) |
 | Error state | `"Couldn't load game mode. Switch to Dev view to see the portfolio."` (existing `t.game.error`) | `"No se pudo cargar el modo juego. Cambia a la vista Dev para ver el portafolio."` (existing) |
 
+**H1 integers are runtime-derived, never hardcoded.** The template uses `{yearsActive}` and `{skillCount}`
+assembled in the component from live data. Current expected values: `yearsActive = 19`, `skillCount = 26`.
+These are locked by the unit test — update the test when data changes, not this spec.
+
 **Destructive actions:** none in Phase 15. No confirmation dialogs required.
-
-**H1 number derivation — unit test requirement (D-15-LAND-COPY):**
-
-```js
-// src/game/GameMode.test.js (or dedicated h1-derivation.test.js)
-it('derives yearsActive and skillCount from live data', () => {
-  const yearsActive = Math.max(...EXPERIENCE.map(e => e.period.end ?? CURRENT_YEAR))
-                    - Math.min(...EXPERIENCE.map(e => e.period.start))
-  const skillCount = buildConstellationGraph(EXPERIENCE, SKILLS).nodes.length
-  expect(yearsActive).toBe(19)         // update when Coderio period.end changes
-  expect(skillCount).toBeGreaterThanOrEqual(26)
-})
-```
 
 ---
 
