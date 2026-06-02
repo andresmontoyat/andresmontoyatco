@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useMemo } from 'react'
 import { useLanguage } from '../i18n/LanguageContext'
 import { useTheme } from '../i18n/ThemeContext'
 import { useViewMode } from '../context/ViewModeContext'
@@ -9,6 +9,9 @@ import { computeLayout } from './constellation.layout'
 import useConstellation from './useConstellation'
 import SvgConstellation from './renderers/SvgConstellation'
 import ConstellationFallback from './ConstellationFallback'
+import SkillFilters from './SkillFilters'
+import ExperienceCard from './ExperienceCard'
+import { composeFilters } from './filters'
 
 // D-15-LAND-COPY: derive at module load from live data — never hardcode
 const maxYear = Math.max(...EXPERIENCE.map((e) => e.period.end ?? CURRENT_YEAR))
@@ -73,6 +76,26 @@ export default function GameMode() {
 
   const h1Text = `${yearsActive} ${t.game.h1Years}. ${skillCount} ${t.game.h1Skills}. ${t.game.h1Tagline}`
 
+  // D-16-INTERSECT-AND (Pitfall 7 — memoize so card render doesn't recompute on every parent render).
+  // Composed jobs = experiences intersecting [selectedSkillId, ...selectedSkills] ∩ yearRange ∩ category.
+  // selectedSkills is filtered to avoid duplicating the locked selectedSkillId in the intersection.
+  const cardJobs = useMemo(() => {
+    if (cons.selectedSkillId === null) return []
+    const composedSkillIds = [
+      cons.selectedSkillId,
+      ...cons.selectedSkills.filter((s) => s !== cons.selectedSkillId),
+    ]
+    return composeFilters(
+      EXPERIENCE,
+      { skillIds: composedSkillIds, yearRange: cons.yearRange, category: cons.category },
+      SKILLS,
+    )
+  }, [cons.selectedSkillId, cons.selectedSkills, cons.yearRange, cons.category])
+
+  const selectedNode = cons.selectedSkillId !== null
+    ? GRAPH_NODES.find((n) => n.id === cons.selectedSkillId)
+    : null
+
   const errorFallback = (
     <p className="text-text-secondary text-base text-center py-8">
       {t.game.error}{' '}
@@ -95,8 +118,24 @@ export default function GameMode() {
         <p className="text-base text-text-secondary leading-relaxed">{t.game.subCopy}</p>
       </div>
 
+      <SkillFilters
+        nodes={GRAPH_NODES}
+        selectedSkills={cons.selectedSkills}
+        yearRange={cons.yearRange}
+        yearBounds={cons.yearBounds}
+        category={cons.category}
+        isFilterActive={cons.isFilterActive}
+        onToggleSkill={cons.toggleSkill}
+        onYearRangeChange={cons.setYearRange}
+        onCategoryChange={cons.setCategory}
+        onReset={cons.resetFilters}
+        lang={lang}
+        t={t}
+      />
+
       <ConstellationErrorBoundary fallback={errorFallback}>
         <div
+          data-game-interactive
           className="w-full max-w-3xl relative"
           data-testid="renderer-slot"
           data-theme={theme}
@@ -109,6 +148,7 @@ export default function GameMode() {
             highlightedSkillIds={cons.highlightedSkillIds}
             selectedSkillId={cons.selectedSkillId}
             yearRange={cons.yearRange}
+            justFilteredId={cons.justFilteredId}
             theme={theme}
             lang={lang}
             t={t}
@@ -117,6 +157,19 @@ export default function GameMode() {
           />
         </div>
       </ConstellationErrorBoundary>
+
+      {cons.selectedSkillId !== null && selectedNode && (
+        <ExperienceCard
+          selectedNode={selectedNode}
+          jobs={cardJobs}
+          selectedSkills={[cons.selectedSkillId, ...cons.selectedSkills]}
+          lang={lang}
+          t={t}
+          onClose={() => cons.onSelectSkill(cons.selectedSkillId)}
+          onToggleSkill={cons.toggleSkill}
+          position={LAYOUT[cons.selectedSkillId] ?? null}
+        />
+      )}
 
       <ConstellationFallback experiences={EXPERIENCE} lang={lang} t={t} />
     </section>

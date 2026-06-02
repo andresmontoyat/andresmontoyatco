@@ -144,7 +144,9 @@ describe('GameMode - rendered component', () => {
     const dockerG = container.querySelector('g[data-node-id="Docker"]')
     fireEvent.click(dockerG)
     await waitFor(() => {
-      const heading = screen.getByRole('heading', { level: 2 })
+      // Scope to the dialog so we don't collide with ConstellationFallback's h2.
+      const dialog = screen.getByRole('dialog')
+      const heading = dialog.querySelector('#card-skill-heading')
       expect(heading.textContent).toContain('Docker')
     })
   })
