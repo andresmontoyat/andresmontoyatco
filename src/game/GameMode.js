@@ -1,10 +1,13 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useLanguage } from '../i18n/LanguageContext'
 import { useTheme } from '../i18n/ThemeContext'
 import { useViewMode } from '../context/ViewModeContext'
 import EXPERIENCE from '../data/experience'
 import { SKILLS } from '../data/skills'
-import { CURRENT_YEAR } from './constellation.graph'
+import { buildConstellationGraph, CURRENT_YEAR } from './constellation.graph'
+import { computeLayout } from './constellation.layout'
+import useConstellation from './useConstellation'
+import SvgConstellation from './renderers/SvgConstellation'
 import ConstellationFallback from './ConstellationFallback'
 
 // D-15-LAND-COPY: derive at module load from live data — never hardcode
@@ -12,8 +15,30 @@ const maxYear = Math.max(...EXPERIENCE.map((e) => e.period.end ?? CURRENT_YEAR))
 const minYear = Math.min(...EXPERIENCE.map((e) => e.period.start))
 export const yearsActive = maxYear - minYear
 
-// D-15-LAND-COPY: canonical SKILLS catalog count (not graph node count)
-export const skillCount = Object.keys(SKILLS).length
+// Build graph once at module load — shared between skillCount and renderer props
+const { nodes: GRAPH_NODES, edges: GRAPH_EDGES } = buildConstellationGraph(EXPERIENCE, SKILLS)
+const LAYOUT = computeLayout(GRAPH_NODES)
+
+// D-15-LAND-COPY: graph node count (alias-normalized canonical count)
+export const skillCount = GRAPH_NODES.length
+
+// Capability detection — Phase 17: branch on capabilities for WebGL adapter; Phase 15 always SVG.
+function detectCapabilities() {
+  if (typeof window === 'undefined') {
+    return { prefersReducedMotion: true, saveData: false, isMobile: true, hasWebGL: false }
+  }
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  const saveData = (typeof navigator !== 'undefined' && navigator.connection && navigator.connection.saveData) || false
+  const isMobile = window.innerWidth < 768
+  let hasWebGL = false
+  try {
+    const c = document.createElement('canvas')
+    hasWebGL = !!(c.getContext('webgl') || c.getContext('experimental-webgl'))
+  } catch (e) {
+    hasWebGL = false
+  }
+  return { prefersReducedMotion, saveData, isMobile, hasWebGL }
+}
 
 class ConstellationErrorBoundary extends React.Component {
   constructor(props) {
@@ -42,6 +67,9 @@ export default function GameMode() {
   const { lang, t } = useLanguage()
   const { theme } = useTheme()
   const { setViewMode } = useViewMode()
+
+  const [capabilities] = useState(() => detectCapabilities())
+  const cons = useConstellation(GRAPH_NODES)
 
   const h1Text = `${yearsActive} ${t.game.h1Years}. ${skillCount} ${t.game.h1Skills}. ${t.game.h1Tagline}`
 
@@ -72,13 +100,21 @@ export default function GameMode() {
           className="w-full max-w-3xl relative"
           data-testid="renderer-slot"
           data-theme={theme}
+          data-prefers-reduced-motion={capabilities.prefersReducedMotion ? 'true' : 'false'}
         >
-          <p
-            className="text-text-secondary text-sm py-12 text-center"
-            data-testid="renderer-placeholder"
-          >
-            {t.game.empty}
-          </p>
+          <SvgConstellation
+            nodes={GRAPH_NODES}
+            edges={GRAPH_EDGES}
+            layout={LAYOUT}
+            highlightedSkillIds={cons.highlightedSkillIds}
+            selectedSkillId={cons.selectedSkillId}
+            yearRange={cons.yearRange}
+            theme={theme}
+            lang={lang}
+            t={t}
+            onSelectSkill={cons.onSelectSkill}
+            onHoverSkill={cons.onHoverSkill}
+          />
         </div>
       </ConstellationErrorBoundary>
 

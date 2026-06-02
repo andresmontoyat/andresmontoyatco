@@ -57,6 +57,13 @@
     --shadow-brand:    0 20px 40px -20px rgba(59, 130, 246, 0.35);
     --shadow-brand-lg: 0 25px 50px -20px rgba(59, 130, 246, 0.55);
     --shadow-card:     0 4px 24px rgba(13, 13, 26, 0.6);
+
+    /* ── Constellation-specific tokens (Phase 15) ── */
+    --color-constellation-edge:       rgba(160, 160, 192, 0.25);
+    --color-constellation-edge-heavy: rgba(160, 160, 192, 0.55);
+    --color-constellation-halo:       rgba(255, 255, 255, 0.18);
+    --color-hint-pill-bg:             rgba(20, 20, 50, 0.95);
+    --color-hint-pill-text:           #A0A0C0;
   }
 
   [data-theme="light"] {
@@ -117,6 +124,13 @@
     --shadow-brand:    0 20px 40px -20px rgba(37, 99, 235, 0.30);
     --shadow-brand-lg: 0 25px 50px -20px rgba(37, 99, 235, 0.45);
     --shadow-card:     0 4px 24px rgba(13, 13, 26, 0.12);
+
+    /* ── Constellation-specific tokens (Phase 15) — light overrides ── */
+    --color-constellation-edge:       rgba(80, 80, 120, 0.20);
+    --color-constellation-edge-heavy: rgba(80, 80, 120, 0.45);
+    --color-constellation-halo:       rgba(0, 0, 40, 0.12);
+    --color-hint-pill-bg:             rgba(200, 200, 214, 0.85);
+    --color-hint-pill-text:           #525269;
   }
 
   html {

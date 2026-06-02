@@ -71,4 +71,28 @@ describe('GameMode - rendered component', () => {
     const { getByTestId } = renderWithProviders(<GameMode />, { lang: 'en' })
     expect(getByTestId('renderer-slot')).toBeInTheDocument()
   })
+
+  it('renders <svg> inside renderer-slot after wiring', () => {
+    const { container } = renderWithProviders(<GameMode />, { lang: 'en' })
+    const slot = container.querySelector('[data-testid="renderer-slot"]')
+    expect(slot.querySelector('svg')).toBeTruthy()
+  })
+
+  it('renders 26 node <g> elements', () => {
+    const { container } = renderWithProviders(<GameMode />, { lang: 'en' })
+    expect(container.querySelectorAll('g.nodes > g').length).toBe(26)
+  })
+
+  it('passes theme prop through to SvgConstellation', () => {
+    const { container } = renderWithProviders(<GameMode />, { lang: 'en' })
+    const archStroke = container.querySelector('g.nodes circle[stroke="#0891b2"]')
+    expect(archStroke).toBeNull()
+  })
+
+  it('still renders ConstellationFallback after wiring renderer', () => {
+    renderWithProviders(<GameMode />, { lang: 'en' })
+    expect(
+      screen.getByRole('heading', { name: 'Full career experience' })
+    ).toBeInTheDocument()
+  })
 })
