@@ -121,6 +121,11 @@ export default function ExperienceCard({
               className="text-xl font-bold text-text-primary focus:outline-none"
             >
               {selectedNode.label}
+              <span className="ml-2 text-xs font-mono text-text-secondary">
+                {jobs.length === 1
+                  ? t.game.cardJobsCountSingular
+                  : t.game.cardJobsCount.replace('{n}', String(jobs.length))}
+              </span>
             </h2>
             <button
               type="button"
@@ -134,8 +139,89 @@ export default function ExperienceCard({
               </svg>
             </button>
           </header>
-          {/* Body (job list / empty state) filled in Task 2 */}
-          {/* Footer (CV CTA) filled in Task 2 */}
+
+          {jobs.length === 0 ? (
+            <p
+              role="status"
+              className="text-text-secondary text-sm px-4 py-8 text-center"
+            >
+              {t.game.filterEmpty}
+            </p>
+          ) : (
+            <ol
+              className="overflow-y-auto px-4 pb-4 pt-3 space-y-4"
+              aria-label={t.game.cardJobsListLabel.replace('{skill}', selectedNode.label)}
+            >
+              {jobs.map((job, i) => (
+                <li key={`${job.company}-${i}`}>
+                  <article>
+                    <div className="flex justify-between items-baseline gap-4 flex-wrap mb-1">
+                      <span className="font-mono text-xs text-brand">{job.date[lang]}</span>
+                      <span className="font-mono text-xs text-text-muted bg-ink-700 border border-ink-400 rounded-full px-2 py-1">
+                        {job.company}
+                      </span>
+                    </div>
+                    <h3 className="text-sm font-semibold text-text-primary mb-1">
+                      {job.title[lang]}
+                    </h3>
+                    <div className="text-xs font-mono text-text-secondary mb-3">
+                      {job.location[lang]}
+                    </div>
+                    <ul className="text-sm text-text-secondary leading-relaxed space-y-1 mb-3">
+                      {job.bullets[lang].map((b, j) => (
+                        <li key={j} className="relative pl-6">
+                          <span className="absolute left-0 text-brand">&#9656;</span>{b}
+                        </li>
+                      ))}
+                    </ul>
+                    <div
+                      role="group"
+                      aria-label={t.game.techChipsLabel}
+                      className="flex flex-wrap gap-2"
+                    >
+                      {job.tech.map((tech) => {
+                        const isActive = selectedSkills.includes(tech)
+                        const isLocked = tech === selectedNode.id
+                        return (
+                          <button
+                            key={tech}
+                            type="button"
+                            onClick={isLocked ? undefined : () => onToggleSkill(tech)}
+                            aria-pressed={isActive}
+                            aria-disabled={isLocked}
+                            className={`px-3 py-1 rounded-full font-mono text-xs min-h-[44px] inline-flex items-center
+                                        focus:outline-none focus-visible:ring-2 focus-visible:ring-brand
+                                        ${isActive
+                              ? 'bg-chip-activeBg text-chip-activeText'
+                              : 'bg-ink-700 border border-ink-400 text-text-secondary'}
+                                        ${isLocked
+                              ? 'opacity-75 cursor-default'
+                              : 'motion-safe:transition-colors duration-150 hover:border-brand'}`}
+                          >
+                            {tech}
+                          </button>
+                        )
+                      })}
+                    </div>
+                  </article>
+                </li>
+              ))}
+            </ol>
+          )}
+
+          <footer className="px-4 py-3 border-t border-card-border">
+            <a
+              href={`/CV_Carlos_Montoya_${lang === 'en' ? 'EN' : 'ES'}.docx`}
+              download
+              aria-label={t.game.cvCtaLabel}
+              className="w-full h-11 rounded-lg bg-cvCta-bg text-cvCta-text text-sm font-semibold
+                         flex items-center justify-center hover:bg-cvCta-hoverBg
+                         motion-safe:transition-colors duration-200
+                         focus:outline-none focus-visible:ring-2 focus-visible:ring-brand"
+            >
+              {t.game.cvCtaLabel}
+            </a>
+          </footer>
         </div>
       </div>
     </>
