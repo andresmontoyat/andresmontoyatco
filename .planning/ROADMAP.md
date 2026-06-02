@@ -59,9 +59,9 @@
   4. A visually-hidden but DOM-present semantic list of all 12 experiences (full bilingual text) is in the markup so screen readers, crawlers, and ATS read the complete career content
   5. Skill nodes and edges render bilingually (EN/ES) and follow the active theme; an empty/no-data state degrades gracefully instead of crashing
 **Plans**: 3 plans
-  - [ ] 15-01-PLAN.md — GameMode orchestrator + sr-only ConstellationFallback + derived bilingual H1 (GAME-01, GAME-06; Wave 1, autonomous, MVP Slice 1)
-  - [ ] 15-02-PLAN.md — SvgConstellation visual renderer + useConstellation hook + constellation tokens/keyframes + GameMode wiring (GAME-01, GAME-02; Wave 2, autonomous, MVP Slice 2, depends on 15-01)
-  - [ ] 15-03-PLAN.md — spatialNav helper + role=application wrapper + roving tabindex + Enter/Space/Esc + aria-live + focus ring + hint pill (GAME-01, GAME-06; Wave 3, autonomous, MVP Slice 3, depends on 15-01,15-02)
+  - [x] 15-01-PLAN.md — GameMode orchestrator + sr-only ConstellationFallback + derived bilingual H1 (GAME-01, GAME-06; Wave 1, autonomous, MVP Slice 1)
+  - [x] 15-02-PLAN.md — SvgConstellation visual renderer + useConstellation hook + constellation tokens/keyframes + GameMode wiring (GAME-01, GAME-02; Wave 2, autonomous, MVP Slice 2, depends on 15-01)
+  - [x] 15-03-PLAN.md — spatialNav helper + role=application wrapper + roving tabindex + Enter/Space/Esc + aria-live + focus ring + hint pill (GAME-01, GAME-06; Wave 3, autonomous, MVP Slice 3, depends on 15-01,15-02)
 **UI hint**: yes
 
 ### Phase 16: Filters & Floating ExperienceCard
@@ -187,7 +187,7 @@ See [`milestones/v3.6-ROADMAP.md`](milestones/v3.6-ROADMAP.md) and [`milestones/
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 14. Foundation — Data, ViewMode & Test Infra | 2/2 | Complete    | 2026-05-30 |
-| 15. Accessible Constellation & SEO Fallback | 0/TBD | Not started | - |
+| 15. Accessible Constellation & SEO Fallback | 3/3 | Complete   | 2026-06-02 |
 | 16. Filters & Floating ExperienceCard | 0/TBD | Not started | - |
 | 17. WebGL Desktop Renderer & Lighthouse Gate | 0/TBD | Not started | - |
 
