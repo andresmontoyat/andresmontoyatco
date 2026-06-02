@@ -65,13 +65,43 @@ function buildNodeLabel(node, lang, t) {
   return `${node.label}, ${categoryLabel}, ${t.game.nodeUsedIn} ${node.count} ${noun}.`
 }
 
+// D-16-YEAR-EFFECT: a node matches yearRange when null (pass-through) OR its
+// .years tuple intersects [from, to]. Nodes without .years (test fixtures or
+// pre-Phase-14 graph data) are treated as non-matching when a yearRange is set —
+// safer default than silent pass-through, and aligns with the renderer-consumer
+// contract from 16-PATTERNS.md.
+function nodeMatchesYearRange(node, yearRange) {
+  if (!yearRange) return true
+  if (!node.years) return false
+  const [from, to] = yearRange
+  return node.years[0] <= to && node.years[1] >= from
+}
+
+// D-16-INTERSECT-HIGHLIGHT + D-16-YEAR-EFFECT: composite dim predicate.
+// When any Phase 16 filter is active (highlightedSkillIds non-empty OR yearRange set):
+//   dim when node is NOT in highlightedSkillIds OR fails yearRange intersection.
+// Otherwise, fall back to Phase 15 single-select dim behavior.
+function shouldDimNode(node, { selectedSkillId, highlightedSkillIds, yearRange }) {
+  const filtersActive = (highlightedSkillIds && highlightedSkillIds.length > 0) || yearRange != null
+  if (filtersActive) {
+    const inHighlight = highlightedSkillIds && highlightedSkillIds.length > 0
+      ? highlightedSkillIds.includes(node.id)
+      : true
+    const inYear = nodeMatchesYearRange(node, yearRange)
+    return !(inHighlight && inYear)
+  }
+  // Phase 15 fallback: single-select halo dims everything except the selected node
+  return selectedSkillId !== null && node.id !== selectedSkillId
+}
+
 export default function SvgConstellation({
   nodes,
   edges,
   layout,
-  highlightedSkillIds, // eslint-disable-line no-unused-vars
+  highlightedSkillIds,
   selectedSkillId,
-  yearRange, // eslint-disable-line no-unused-vars
+  yearRange,
+  justFilteredId = null,
   theme,
   lang,
   t,
@@ -192,6 +222,16 @@ export default function SvgConstellation({
             let edgeOpacity = 0
             if (isHeavy) edgeOpacity = 1
             else if (incidentToActive) edgeOpacity = 1
+            // D-16-YEAR-EFFECT + D-16-INTERSECT-HIGHLIGHT: when Phase 16 filters are
+            // active, edges incident to dimmed nodes also dim (multiplied by 0.35).
+            const filtersActive = (highlightedSkillIds && highlightedSkillIds.length > 0) || yearRange != null
+            if (filtersActive) {
+              const sourceNode = nodes.find((n) => n.id === e.source)
+              const targetNode = nodes.find((n) => n.id === e.target)
+              const sourceDim = sourceNode && shouldDimNode(sourceNode, { selectedSkillId, highlightedSkillIds, yearRange })
+              const targetDim = targetNode && shouldDimNode(targetNode, { selectedSkillId, highlightedSkillIds, yearRange })
+              if (sourceDim || targetDim) edgeOpacity *= 0.35
+            }
             return (
               <line
                 key={`${e.source}-${e.target}`}
@@ -220,8 +260,13 @@ export default function SvgConstellation({
             const r = computeRadius(node.count, maxCount, breakpoint)
             const isSelected = node.id === selectedSkillId
 
-            // Guard against premature dimming before any selection
-            const fillOpacity = selectedSkillId !== null && !isSelected ? 0.35 : 1
+            // D-16-INTERSECT-HIGHLIGHT / D-16-YEAR-EFFECT: composite dim — falls back
+            // to Phase 15 single-select behavior when no Phase 16 filter is active.
+            const fillOpacity = shouldDimNode(node, {
+              selectedSkillId,
+              highlightedSkillIds,
+              yearRange,
+            }) ? 0.35 : 1
 
             const lightStroke = theme === 'light' ? LIGHT_THEME_STROKES[node.category] : 'none'
             const lightStrokeWidth = theme === 'light' ? 1.5 : 0
@@ -232,6 +277,16 @@ export default function SvgConstellation({
               : 'none'
 
             const isFocused = focusedNodeId === node.id
+
+            // D-16-CHIP-FLASH (RESEARCH §7): apply motion-safe:animate-chip-flash on
+            // the just-toggled node. CSS motion-safe variant already gates reduced-motion,
+            // but the explicit JS guard belts-and-suspenders for environments where the
+            // utility is stripped or motion-safe variant is unavailable.
+            const flashClass = node.id === justFilteredId && !prefersReducedMotion
+              ? 'motion-safe:animate-chip-flash'
+              : ''
+            const baseAnim = prefersReducedMotion ? '' : 'motion-safe:animate-node-reveal'
+            const groupClassName = [baseAnim, flashClass].filter(Boolean).join(' ')
 
             return (
               <g
@@ -250,7 +305,7 @@ export default function SvgConstellation({
                   animationName: prefersReducedMotion ? 'none' : undefined,
                   cursor: 'pointer',
                 }}
-                className={prefersReducedMotion ? '' : 'motion-safe:animate-node-reveal'}
+                className={groupClassName}
                 onClick={() => { setHasInteracted(true); onSelectSkill(node.id) }}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' || e.key === ' ') {
@@ -279,7 +334,10 @@ export default function SvgConstellation({
                   fillOpacity={fillOpacity}
                   stroke={lightStroke}
                   strokeWidth={lightStrokeWidth}
-                  style={{ filter: haloFilter }}
+                  style={{
+                    filter: haloFilter,
+                    transition: prefersReducedMotion ? 'none' : 'fill-opacity 200ms ease-out',
+                  }}
                 />
                 <circle
                   cx={pos.x}
