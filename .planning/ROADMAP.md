@@ -75,7 +75,13 @@
   3. Selecting a skill opens floating bilingual `ExperienceCard`(s) for the jobs that used it — showing title, company, date, location, bullets, and tech chips colored by category
   4. Each experience card exposes a CV CTA that downloads the correct `CV_Carlos_Montoya_{EN,ES}.docx` for the active language
   5. Filter selectors and the experience-card content render correctly in both EN/ES and both themes; selecting a skill with no matching experiences shows an empty state, never a crash
-**Plans**: TBD
+**Plans**: 6 plans
+  - [ ] 16-01-PLAN.md — RED tests scaffold for filters/useConstellation/SkillFilters/ExperienceCard/SvgConstellation/GameMode (GAME-03+04; Wave 0, autonomous)
+  - [ ] 16-02-PLAN.md — filters.js pure selectors + i18n t.game.* keys + Tailwind tokens/keyframes + index.css vars (GAME-03+04; Wave 1, autonomous, depends on 16-01)
+  - [ ] 16-03-PLAN.md — useConstellation filter state + SvgConstellation highlightedSkillIds/yearRange dim consumer (GAME-03; Wave 2, autonomous, depends on 16-02)
+  - [ ] 16-04-PLAN.md — SkillFilters bar with chip clusters + WAI-ARIA dual-thumb YearRangeSlider + reset button (GAME-03; Wave 3, autonomous, depends on 16-02)
+  - [ ] 16-05-PLAN.md — ExperienceCard role=dialog portal with focus trap + click-outside + tech chips + bilingual CV CTA + empty state (GAME-04; Wave 4, autonomous, depends on 16-02)
+  - [ ] 16-06-PLAN.md — GameMode wiring + Nav data-game-interactive + bundle budget check (GAME-03+04; Wave 5, autonomous, depends on 16-03+04+05)
 **UI hint**: yes
 
 ### Phase 17: WebGL Desktop Renderer & Lighthouse Gate
