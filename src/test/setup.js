@@ -1,5 +1,15 @@
 import '@testing-library/jest-dom/vitest'
 
+// jsdom does not implement HTMLCanvasElement.prototype.getContext — calling it
+// emits a stderr stack trace and returns undefined. GameMode.detectCapabilities
+// probes WebGL via a transient <canvas> on mount; without this mock every test
+// rendering <GameMode /> pollutes stderr. Stub to null so the WebGL probe
+// silently reports "not supported" and the SVG path (the only Phase 15 path)
+// resolves cleanly.
+if (typeof HTMLCanvasElement !== 'undefined') {
+  HTMLCanvasElement.prototype.getContext = () => null
+}
+
 // Node.js 22+ exposes a native `localStorage` on globalThis that prevents
 // vitest's populateGlobal from copying jsdom's localStorage to the test global
 // scope (populateGlobal skips keys already defined in Node's globalThis).

@@ -94,6 +94,7 @@ export default function SvgConstellation({
   })
 
   const [focusedNodeId, setFocusedNodeId] = useState(null)
+  const [hoveredNodeId, setHoveredNodeId] = useState(null)
   const [hasInteracted, setHasInteracted] = useState(false)
   const [announcement, setAnnouncement] = useState('')
 
@@ -183,6 +184,14 @@ export default function SvgConstellation({
             const sourcePos = layout[e.source]
             const targetPos = layout[e.target]
             if (!sourcePos || !targetPos) return null
+            // D-15-VIS-EDGE: weight ≥2 always visible; weight-1 fades in only when
+            // incident to the active node (selected → focused → hovered fallback).
+            const activeId = selectedSkillId || focusedNodeId || hoveredNodeId
+            const incidentToActive = activeId !== null && (e.source === activeId || e.target === activeId)
+            const isHeavy = e.weight >= 2
+            let edgeOpacity = 0
+            if (isHeavy) edgeOpacity = 1
+            else if (incidentToActive) edgeOpacity = 1
             return (
               <line
                 key={`${e.source}-${e.target}`}
@@ -193,7 +202,8 @@ export default function SvgConstellation({
                 stroke={e.weight >= 2 ? 'var(--color-constellation-edge-heavy)' : 'var(--color-constellation-edge)'}
                 strokeWidth={edgeStrokeWidth(e.weight)}
                 style={{
-                  opacity: e.weight >= 2 ? 1 : 0,
+                  opacity: edgeOpacity,
+                  transition: prefersReducedMotion ? 'none' : 'opacity 200ms ease-out',
                   pointerEvents: 'none',
                 }}
                 className={prefersReducedMotion ? '' : 'motion-safe:animate-edge-reveal'}
@@ -249,8 +259,15 @@ export default function SvgConstellation({
                     onSelectSkill(node.id)
                   }
                 }}
-                onMouseEnter={() => { setHasInteracted(true); onHoverSkill(node.id) }}
-                onMouseLeave={() => onHoverSkill(null)}
+                onMouseEnter={() => {
+                  setHasInteracted(true)
+                  setHoveredNodeId(node.id)
+                  onHoverSkill(node.id)
+                }}
+                onMouseLeave={() => {
+                  setHoveredNodeId(null)
+                  onHoverSkill(null)
+                }}
                 onFocus={() => { setHasInteracted(true); setFocusedNodeId(node.id) }}
                 onBlur={() => setFocusedNodeId(null)}
               >
@@ -303,10 +320,7 @@ export default function SvgConstellation({
       </svg>
 
       {prefersReducedMotion && !hasInteracted && (
-        <p
-          className="text-center mt-4 text-xs font-mono text-hintPill-text bg-hintPill-bg rounded-full px-3 py-2 inline-block"
-          aria-hidden="true"
-        >
+        <p className="text-center mt-4 text-xs font-mono text-hintPill-text bg-hintPill-bg rounded-full px-3 py-2 inline-block">
           {t.game.hintPill}
         </p>
       )}
