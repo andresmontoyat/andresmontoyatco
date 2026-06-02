@@ -302,4 +302,102 @@ describe('SvgConstellation', () => {
     const focusRing = javaG.querySelector('circle[stroke="var(--color-brand)"]')
     expect(focusRing).toBeTruthy()
   })
+
+  // ─── Phase 16: filter consumers + chip-flash + reduced-motion guard (RED) ──
+
+  it('dims nodes not in highlightedSkillIds when the array is non-empty', () => {
+    const { container } = renderRenderer({
+      selectedSkillId: null,
+      highlightedSkillIds: ['Java'],
+    })
+    const javaCircle = container.querySelector('g[data-node-id="Java"] circle:first-child')
+    const dockerCircle = container.querySelector('g[data-node-id="Docker"] circle:first-child')
+    expect(parseFloat(javaCircle.getAttribute('fill-opacity'))).toBeCloseTo(1, 1)
+    expect(parseFloat(dockerCircle.getAttribute('fill-opacity'))).toBeCloseTo(0.35, 1)
+  })
+
+  it('dims nodes whose years[] does not intersect yearRange (D-16-YEAR-EFFECT)', () => {
+    const customNodes = [
+      { id: 'Java', label: 'Java', category: 'lang', count: 4, years: [2007, 2026] },
+      { id: 'Asterisk', label: 'Asterisk', category: 'hardware', count: 1, years: [2008, 2009] },
+    ]
+    const customLayout = { Java: { x: 500, y: 500 }, Asterisk: { x: 200, y: 200 } }
+    const { container } = renderRenderer({
+      nodes: customNodes,
+      edges: [],
+      layout: customLayout,
+      yearRange: [2020, 2026],
+    })
+    const javaCircle = container.querySelector('g[data-node-id="Java"] circle:first-child')
+    const asteriskCircle = container.querySelector('g[data-node-id="Asterisk"] circle:first-child')
+    expect(parseFloat(javaCircle.getAttribute('fill-opacity'))).toBeCloseTo(1, 1)
+    expect(parseFloat(asteriskCircle.getAttribute('fill-opacity'))).toBeCloseTo(0.35, 1)
+  })
+
+  it('dims edges incident to non-highlighted nodes when filters active', () => {
+    const { container } = renderRenderer({
+      highlightedSkillIds: ['Java'],
+    })
+    const lines = container.querySelectorAll('g.edges > line')
+    // Java↔Docker edge (weight 3): Java highlighted but Docker dimmed → edge dimmed
+    const javaDockerLine = lines[0]
+    const dockerAwsLine = lines[1]
+    // Either an explicit reduced opacity OR style.opacity < 1 should be observable
+    const javaDockerOpacity = parseFloat(
+      javaDockerLine.style.opacity || javaDockerLine.getAttribute('opacity') || '1'
+    )
+    expect(javaDockerOpacity).toBeLessThan(1)
+    // Docker↔AWS: neither endpoint is in highlightedSkillIds — must also be dimmed
+    const dockerAwsOpacity = parseFloat(
+      dockerAwsLine.style.opacity || dockerAwsLine.getAttribute('opacity') || '1'
+    )
+    expect(dockerAwsOpacity).toBeLessThan(1)
+  })
+
+  it('applies animate-chip-flash class to the node whose id matches justFilteredId (BLOCKER 2)', () => {
+    const { container, rerender } = render(
+      <SvgConstellation
+        nodes={FIXTURE_NODES}
+        edges={FIXTURE_EDGES}
+        layout={FIXTURE_LAYOUT}
+        highlightedSkillIds={[]}
+        selectedSkillId={null}
+        yearRange={null}
+        justFilteredId="Java"
+        theme="dark"
+        lang="en"
+        t={t}
+        onSelectSkill={vi.fn()}
+        onHoverSkill={vi.fn()}
+      />
+    )
+    const javaG = container.querySelector('g[data-node-id="Java"]')
+    expect(javaG.className.baseVal || javaG.getAttribute('class') || '').toContain('animate-chip-flash')
+
+    rerender(
+      <SvgConstellation
+        nodes={FIXTURE_NODES}
+        edges={FIXTURE_EDGES}
+        layout={FIXTURE_LAYOUT}
+        highlightedSkillIds={[]}
+        selectedSkillId={null}
+        yearRange={null}
+        justFilteredId="Docker"
+        theme="dark"
+        lang="en"
+        t={t}
+        onSelectSkill={vi.fn()}
+        onHoverSkill={vi.fn()}
+      />
+    )
+    const javaG2 = container.querySelector('g[data-node-id="Java"]')
+    expect(javaG2.className.baseVal || javaG2.getAttribute('class') || '').not.toContain('animate-chip-flash')
+  })
+
+  it('reduced-motion guard: node circle inline transition is "none" under prefers-reduced-motion (WARNING 6)', () => {
+    window.matchMedia = makeMockMatchMedia(true)
+    const { container } = renderRenderer({ highlightedSkillIds: ['Java'] })
+    const javaCircle = container.querySelector('g[data-node-id="Java"] circle:first-child')
+    expect(javaCircle.style.transition).toBe('none')
+  })
 })

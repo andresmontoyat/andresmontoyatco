@@ -1,9 +1,10 @@
 import React from 'react'
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { LanguageProvider } from '../i18n/LanguageContext.js'
 import { ThemeProvider } from '../i18n/ThemeContext.js'
 import { ViewModeProvider } from '../context/ViewModeContext.js'
+import translations from '../i18n/translations.js'
 import GameMode, { yearsActive, skillCount } from './GameMode.js'
 
 function renderWithProviders(ui, { lang = 'en' } = {}) {
@@ -94,5 +95,57 @@ describe('GameMode - rendered component', () => {
     expect(
       screen.getByRole('heading', { name: 'Full career experience' })
     ).toBeInTheDocument()
+  })
+
+  // ─── Phase 16: filters + ExperienceCard wiring (RED) ────────────────────────
+
+  it('renders <SkillFilters /> with role=group + filterBarLabel as a child below the H1', () => {
+    renderWithProviders(<GameMode />, { lang: 'en' })
+    const t = translations.en
+    const filterBar = screen.getByRole('group', { name: t.game.filterBarLabel })
+    expect(filterBar).toBeInTheDocument()
+  })
+
+  it('does NOT render <ExperienceCard /> when selectedSkillId is null (initial state)', () => {
+    renderWithProviders(<GameMode />, { lang: 'en' })
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+  })
+
+  it('renders <ExperienceCard /> after clicking a node sets selectedSkillId', async () => {
+    const { container } = renderWithProviders(<GameMode />, { lang: 'en' })
+    const javaG = container.querySelector('g[data-node-id="Java"]')
+    expect(javaG).toBeTruthy()
+    fireEvent.click(javaG)
+    await waitFor(() => {
+      expect(screen.getByRole('dialog')).toBeInTheDocument()
+    })
+  })
+
+  it('click-outside discrimination: clicking the SVG background does NOT close the card; clicking a different node SWAPS the card (BLOCKER 1)', async () => {
+    const { container } = renderWithProviders(<GameMode />, { lang: 'en' })
+
+    // Open the Java card
+    const javaG = container.querySelector('g[data-node-id="Java"]')
+    fireEvent.click(javaG)
+    await waitFor(() => expect(screen.getByRole('dialog')).toBeInTheDocument())
+
+    // The renderer-slot wrapper must carry data-game-interactive (Plan 06 Task 1)
+    const slot = container.querySelector('[data-testid="renderer-slot"]')
+    expect(slot.hasAttribute('data-game-interactive')).toBe(true)
+
+    // Click on the SVG root (background) — inside [data-game-interactive], must NOT close
+    await new Promise((r) => requestAnimationFrame(() => r()))
+    const svg = slot.querySelector('svg')
+    fireEvent.mouseDown(svg)
+    await new Promise((r) => setTimeout(r, 20))
+    expect(screen.getByRole('dialog')).toBeInTheDocument()
+
+    // Click a different node → card SWAPS to that skill (Docker has fewer jobs than Java)
+    const dockerG = container.querySelector('g[data-node-id="Docker"]')
+    fireEvent.click(dockerG)
+    await waitFor(() => {
+      const heading = screen.getByRole('heading', { level: 2 })
+      expect(heading.textContent).toContain('Docker')
+    })
   })
 })
