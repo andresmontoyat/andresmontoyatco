@@ -13,7 +13,7 @@ current ("dev") view. Phase numbering continues from v3.7 → **starts at Phase 
 
 ### Game Mode
 
-- [ ] **GAME-01** Visitor lands on an interactive skill constellation by default; the render adapts to the
+- [x] **GAME-01** Visitor lands on an interactive skill constellation by default; the render adapts to the
   device — full WebGL on desktop, a lightweight SVG/DOM static path on mobile (and on no-WebGL,
   reduced-motion, or save-data). Same content in both; capability + viewport + `prefers-reduced-motion`
   detection chooses the renderer behind a single props contract.
@@ -28,7 +28,7 @@ current ("dev") view. Phase numbering continues from v3.7 → **starts at Phase 
 - [x] **GAME-05** Visitor can toggle between game mode and the current dev view with one click; game mode
   is the default landing; the choice persists in `localStorage` (`cam-viewmode`) and is addressable via a
   `?mode=` deep-link.
-- [ ] **GAME-06** Game mode is accessible and crawlable: skill nodes are keyboard-navigable with
+- [x] **GAME-06** Game mode is accessible and crawlable: skill nodes are keyboard-navigable with
   `aria-label`s, experience cards use dialog/popover semantics (focus trap, Esc to close), a visually-hidden
   full-experience list is present in the DOM for screen readers / crawlers / ATS in both render paths, and
   `prefers-reduced-motion` disables physics/particles. WCAG 2.1 AA contrast holds in dark and light themes.
@@ -75,12 +75,12 @@ Phase 17. GAME-02 derivation is built in Phase 14 and first rendered in Phase 15
 
 | REQ-ID | Phase(s) | Status |
 |--------|----------|--------|
-| GAME-01 | Phase 15 (contract + SVG path) · Phase 17 (WebGL adapter) | Pending |
+| GAME-01 | Phase 15 (contract + SVG path) · Phase 17 (WebGL adapter) | Complete |
 | GAME-02 | Phase 14 (derivation) · Phase 15 (render) | Complete |
 | GAME-03 | Phase 16 | Pending |
 | GAME-04 | Phase 16 | Pending |
 | GAME-05 | Phase 14 | Complete |
-| GAME-06 | Phase 15 | Pending |
+| GAME-06 | Phase 15 | Complete |
 | GAME-07 | Phase 17 | Pending |
 | TEST-01 | Phase 14 (setup + pure-logic) · grows across 15–17 (component tests) | Complete |
 

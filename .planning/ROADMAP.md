@@ -187,7 +187,7 @@ See [`milestones/v3.6-ROADMAP.md`](milestones/v3.6-ROADMAP.md) and [`milestones/
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 14. Foundation — Data, ViewMode & Test Infra | 2/2 | Complete    | 2026-05-30 |
-| 15. Accessible Constellation & SEO Fallback | 3/3 | Complete   | 2026-06-02 |
+| 15. Accessible Constellation & SEO Fallback | 3/3 | Complete    | 2026-06-02 |
 | 16. Filters & Floating ExperienceCard | 0/TBD | Not started | - |
 | 17. WebGL Desktop Renderer & Lighthouse Gate | 0/TBD | Not started | - |
 
