@@ -1298,9 +1298,14 @@ function onKey(e) {
 
 ---
 
-## Open Questions
+## Open Questions (RESOLVED)
+
+> **Resolution date:** 2026-06-02. All 5 questions resolved during plan-checker revision pass. Inline `RESOLVED:` annotations below capture the chosen path for each.
 
 1. **Should the Nav `<header>` get `data-game-interactive`, OR should the allow-list extend to `header`?**
+
+   **RESOLVED:** Add `data-game-interactive` to the GameMode renderer-slot wrapper div (Plan 06 Task 1) AND to the Nav `<header>` (Plan 06 Task 2). The renderer-slot wrapper resolves checker BLOCKER 1 (SVG background clicks must not close the card); the Nav header resolves Pitfall 6 (theme/lang toggle clicks must not close the card). Both are explicit attribute adds — no implicit `closest('header')` extension.
+
    - What we know: D-16-FLOW-CLOSE-EMPTY says click outside `[data-game-interactive]` closes; theme/lang toggles live in Nav and must not close.
    - What's unclear: whether the planner prefers an explicit attribute add (Nav.js edit) or an implicit allow-list extension.
    - Recommendation: explicit `data-game-interactive` on `<header>` in `Nav.js` (one-line edit). Add a Phase 16 task for this.
@@ -1310,20 +1315,28 @@ function onKey(e) {
    - What's unclear: whether UAT will demand it.
    - Recommendation: ship v1 without functional drag; X-button + Esc + overlay-tap close are sufficient. Add a Phase 16 follow-up plan slot for drag-down if user reviews demand it.
 
+   **RESOLVED:** Defer drag-down-to-close to v2 — ship X-button + Esc + overlay-tap only in Phase 16. Drag-handle bar remains a visual affordance per UI-SPEC.
+
 3. **YearRangeSlider extraction to separate file — required or optional?**
    - What we know: UI-SPEC and CONTEXT both reference it inline as part of SkillFilters.
    - What's unclear: file-size discipline preference.
    - Recommendation: build inline. If `SkillFilters.js` exceeds 280 LOC, extract to `YearRangeSlider.js` mechanically.
+
+   **RESOLVED:** Inline inside `SkillFilters.js` for v1. Extraction is mechanical and can happen later if LOC ceiling hit.
 
 4. **Pointer-drag on slider thumbs — v1 or v2?**
    - What we know: Keyboard contract is the locked a11y requirement. Pointer drag is convenience.
    - What's unclear: recruiter expectation.
    - Recommendation: ship keyboard-only for v1. Pointer drag is a 30-LOC follow-up if needed.
 
+   **RESOLVED:** Keyboard-only for v1. Pointer drag deferred to v2 follow-up if recruiter UAT demands it.
+
 5. **`React.memo` on chip components?**
    - What we know: 26 skill chips + 8 category chips × re-render on every filter state change.
    - What's unclear: whether profiler shows render thrash.
    - Recommendation: do NOT add `React.memo` in v1. Per §8 the cost is negligible. Add only after profiling.
+
+   **RESOLVED:** No `React.memo` in v1 — ship without; revisit only if profiling shows render thrash.
 
 ---
 
