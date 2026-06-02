@@ -37,6 +37,16 @@ module.exports = {
           muted:     'var(--color-text-muted)',
           inverse:   'var(--color-text-inverse)',
         },
+        // Constellation tokens — CSS-var backed, theme-aware (Phase 15)
+        constellation: {
+          edge:      'var(--color-constellation-edge)',
+          edgeHeavy: 'var(--color-constellation-edge-heavy)',
+          halo:      'var(--color-constellation-halo)',
+        },
+        hintPill: {
+          bg:   'var(--color-hint-pill-bg)',
+          text: 'var(--color-hint-pill-text)',
+        },
       },
       fontFamily: {
         sans: ['Inter', 'SF Pro Display', 'Segoe UI', 'system-ui', 'sans-serif'],
@@ -58,9 +68,13 @@ module.exports = {
         card:      'var(--shadow-card)',
       },
       animation: {
-        'fade-in': 'fadeIn 0.5s ease-out',
-        'slide-up': 'slideUp 0.6s ease-out',
-        pulse2: 'pulse2 2s ease-in-out infinite',
+        'fade-in':      'fadeIn 0.5s ease-out',
+        'slide-up':     'slideUp 0.6s ease-out',
+        pulse2:         'pulse2 2s ease-in-out infinite',
+        // Constellation reveal animations (Phase 15) — use motion-safe: prefix
+        'node-reveal':   'nodeReveal 400ms cubic-bezier(0.34, 1.56, 0.64, 1) both',
+        'edge-reveal':   'edgeReveal 300ms ease-out both',
+        'hint-fade-out': 'hintFadeOut 600ms ease-in forwards',
       },
       keyframes: {
         fadeIn: {
@@ -76,6 +90,23 @@ module.exports = {
         pulse2: {
           '0%,100%': { opacity: '1' },
           '50%':     { opacity: '0.4' },
+        },
+        // Constellation node reveal — scale from center (GPU-composited transform+opacity)
+        nodeReveal: {
+          '0%':   { opacity: '0', transform: 'scale(0.3)' },
+          '70%':  { opacity: '1', transform: 'scale(1.1)' },
+          '100%': { opacity: '1', transform: 'scale(1.0)' },
+        },
+        // Edge reveal — opacity-only (GPU-composited; stroke-dashoffset requires pathLength normalization)
+        edgeReveal: {
+          '0%':   { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+        // Hint pill fade out — used when user interacts with constellation
+        hintFadeOut: {
+          '0%':   { opacity: '1' },
+          '80%':  { opacity: '1' },
+          '100%': { opacity: '0', pointerEvents: 'none' },
         },
       },
     },
