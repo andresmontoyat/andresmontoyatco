@@ -23,7 +23,7 @@ export default function Nav() {
   const activeSection = useActiveSection(SECTION_IDS)
 
   return (
-    <header className="sticky top-0 z-50 backdrop-blur-md bg-ink-900/70 border-b border-ink-600">
+    <header data-game-interactive className="sticky top-0 z-50 backdrop-blur-md bg-ink-900/70 border-b border-ink-600">
       <ProgressBar />
       <div className="max-w-6xl mx-auto flex items-center justify-between px-6 py-4">
         <Logomark />
