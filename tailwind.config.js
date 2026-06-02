@@ -47,6 +47,29 @@ module.exports = {
           bg:   'var(--color-hint-pill-bg)',
           text: 'var(--color-hint-pill-text)',
         },
+        // Phase 16 — filter chips, year slider, floating card, CV CTA
+        chip: {
+          activeBg:      'var(--color-chip-active-bg)',
+          activeText:    'var(--color-chip-active-text)',
+          outlineBorder: 'var(--color-chip-outline-border)',
+          outlineText:   'var(--color-chip-outline-text)',
+        },
+        slider: {
+          track:       'var(--color-slider-track)',
+          range:       'var(--color-slider-range)',
+          thumb:       'var(--color-slider-thumb)',
+          thumbBorder: 'var(--color-slider-thumb-border)',
+        },
+        card: {
+          bg:      'var(--color-card-bg)',
+          border:  'var(--color-card-border)',
+          overlay: 'var(--color-card-overlay-bg)',
+        },
+        cvCta: {
+          bg:      'var(--color-cv-cta-bg)',
+          text:    'var(--color-cv-cta-text)',
+          hoverBg: 'var(--color-cv-cta-hover-bg)',
+        },
       },
       fontFamily: {
         sans: ['Inter', 'SF Pro Display', 'Segoe UI', 'system-ui', 'sans-serif'],
@@ -75,6 +98,14 @@ module.exports = {
         'node-reveal':   'nodeReveal 400ms cubic-bezier(0.34, 1.56, 0.64, 1) both',
         'edge-reveal':   'edgeReveal 300ms ease-out both',
         'hint-fade-out': 'hintFadeOut 600ms ease-in forwards',
+        // Phase 16 — filter chip + floating card animations
+        // NOTE: All Phase 16 card + chip animations MUST be applied with motion-safe: prefix
+        // Example: 'motion-safe:animate-card-fade-in' never 'animate-card-fade-in'
+        'card-fade-in':  'cardFadeIn 200ms cubic-bezier(0.22, 1, 0.36, 1) both',
+        'card-slide-up': 'cardSlideUp 250ms cubic-bezier(0.22, 1, 0.36, 1) both',
+        'card-swap-out': 'cardSwapOut 75ms ease-in both',
+        'card-swap-in':  'cardSwapIn 75ms ease-out both',
+        'chip-flash':    'chipFlash 100ms ease-out both',
       },
       keyframes: {
         fadeIn: {
@@ -107,6 +138,28 @@ module.exports = {
           '0%':   { opacity: '1' },
           '80%':  { opacity: '1' },
           '100%': { opacity: '0', pointerEvents: 'none' },
+        },
+        // Phase 16 keyframes — GPU-composited transform+opacity only
+        cardFadeIn: {
+          '0%':   { opacity: '0', transform: 'scale(0.96)' },
+          '100%': { opacity: '1', transform: 'scale(1.0)' },
+        },
+        cardSlideUp: {
+          '0%':   { opacity: '0', transform: 'translateY(100%)' },
+          '100%': { opacity: '1', transform: 'translateY(0%)' },
+        },
+        cardSwapOut: {
+          '0%':   { opacity: '1' },
+          '100%': { opacity: '0' },
+        },
+        cardSwapIn: {
+          '0%':   { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+        chipFlash: {
+          '0%':   { opacity: '1' },
+          '50%':  { opacity: '0.5', transform: 'scale(0.94)' },
+          '100%': { opacity: '1', transform: 'scale(1.0)' },
         },
       },
     },

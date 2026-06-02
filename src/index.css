@@ -64,6 +64,23 @@
     --color-constellation-halo:       rgba(255, 255, 255, 0.18);
     --color-hint-pill-bg:             rgba(20, 20, 50, 0.95);
     --color-hint-pill-text:           #A0A0C0;
+
+    /* ── Filter chips + slider + card surfaces (Phase 16) ── */
+    --color-chip-active-bg:       var(--color-brand);
+    --color-chip-active-text:     #FFFFFF;
+    --color-chip-outline-border:  var(--color-ink-400);
+    --color-chip-outline-text:    var(--color-text-secondary);
+    --color-slider-track:         var(--color-ink-600);
+    --color-slider-range:         var(--color-brand);
+    --color-slider-thumb:         var(--color-brand);
+    --color-slider-thumb-border:  var(--color-ink-950);
+    --color-card-bg:              var(--color-ink-800);
+    --color-card-border:          var(--color-ink-600);
+    --color-card-shadow:          0 8px 32px rgba(13, 13, 26, 0.72), 0 2px 8px rgba(13, 13, 26, 0.48);
+    --color-card-overlay-bg:      rgba(13, 13, 26, 0.60);
+    --color-cv-cta-bg:            var(--color-brand);
+    --color-cv-cta-text:          #FFFFFF;
+    --color-cv-cta-hover-bg:      var(--color-brand-dark);
   }
 
   [data-theme="light"] {
@@ -131,6 +148,23 @@
     --color-constellation-halo:       rgba(0, 0, 40, 0.12);
     --color-hint-pill-bg:             rgba(200, 200, 214, 0.85);
     --color-hint-pill-text:           #525269;
+
+    /* ── Filter + card light-theme overrides (Phase 16) ── */
+    --color-chip-active-bg:       var(--color-brand);
+    --color-chip-active-text:     #FFFFFF;
+    --color-chip-outline-border:  var(--color-ink-400);
+    --color-chip-outline-text:    var(--color-text-secondary);
+    --color-slider-track:         var(--color-ink-600);
+    --color-slider-range:         var(--color-brand);
+    --color-slider-thumb:         var(--color-brand);
+    --color-slider-thumb-border:  var(--color-ink-950);
+    --color-card-bg:              var(--color-ink-800);
+    --color-card-border:          var(--color-ink-600);
+    --color-card-shadow:          0 8px 32px rgba(13, 13, 26, 0.16), 0 2px 8px rgba(13, 13, 26, 0.10);
+    --color-card-overlay-bg:      rgba(13, 13, 26, 0.30);
+    --color-cv-cta-bg:            var(--color-brand);
+    --color-cv-cta-text:          #FFFFFF;
+    --color-cv-cta-hover-bg:      var(--color-brand-dark);
   }
 
   html {
@@ -201,6 +235,15 @@
   .animate-on-scroll.is-visible {
     opacity: 1;
     transform: translateY(0);
+  }
+
+  /* Phase 16: mobile filter toolbar horizontal scroll without visible scrollbar */
+  .scrollbar-hide {
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
   }
 }
 
