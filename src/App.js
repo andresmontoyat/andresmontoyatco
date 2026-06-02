@@ -8,6 +8,7 @@ import Nav from './components/Nav'
 // WR-06: Hero/About/Skill are dev-mode-only. Default viewMode is 'game'
 // which never mounts them. Lazy-load them so the initial JS bundle on the
 // game route stays lean (Lighthouse-mobile gate downstream).
+const GameMode = React.lazy(() => import('./game/GameMode'))
 const Hero = React.lazy(() => import('./components/Hero'))
 const About = React.lazy(() => import('./components/About'))
 const Skill = React.lazy(() => import('./components/Skill'))
@@ -35,19 +36,13 @@ function SkipLink() {
 // the full dev-view sections. Mirrors the SkipLink inner-component pattern.
 function MainContent() {
   const { viewMode } = useViewMode()
-  const { t } = useLanguage()
 
   if (viewMode === 'game') {
     return (
       <main id="main">
-        <section className="flex flex-col items-center justify-center min-h-screen px-6 py-20 text-center">
-          <h1 className="text-3xl font-extrabold text-text-primary mb-4">
-            {t.game.loadingTitle}
-          </h1>
-          <p className="text-text-secondary max-w-lg">
-            {t.game.loadingBody}
-          </p>
-        </section>
+        <Suspense fallback={SectionFallback}>
+          <GameMode />
+        </Suspense>
       </main>
     )
   }
