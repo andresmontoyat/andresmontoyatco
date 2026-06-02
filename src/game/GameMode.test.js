@@ -1,12 +1,10 @@
+import React from 'react'
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { LanguageProvider } from '../i18n/LanguageContext.js'
 import { ThemeProvider } from '../i18n/ThemeContext.js'
 import { ViewModeProvider } from '../context/ViewModeContext.js'
 import GameMode, { yearsActive, skillCount } from './GameMode.js'
-import EXPERIENCE from '../data/experience.js'
-import { SKILLS } from '../data/skills.js'
-import { CURRENT_YEAR } from './constellation.graph.js'
 
 function renderWithProviders(ui, { lang = 'en' } = {}) {
   localStorage.setItem('cam-lang', lang)
