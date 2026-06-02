@@ -2,10 +2,10 @@
 gsd_state_version: 1.0
 milestone: v3.8
 milestone_name: Game Mode
-status: planning
-stopped_at: Phase 15 UI-SPEC approved
-last_updated: "2026-06-02T13:39:03.381Z"
-last_activity: 2026-06-02
+status: ready_to_execute
+stopped_at: Phase 16 planned (6 plans, revised after plan-checker pass) — ready to execute
+last_updated: "2026-06-02T12:39:00.000Z"
+last_activity: 2026-06-02 -- Phase 16 plans created + revised
 progress:
   total_phases: 18
   completed_phases: 1
@@ -21,15 +21,15 @@ progress:
 See: .planning/PROJECT.md (updated 2026-05-29 — v3.8 milestone open)
 
 **Core value:** The hero section and overall first impression must stop recruiters mid-scroll and make them want to learn more about Carlos — and convert visits into engineering conversations.
-**Current focus:** Phase 999.4 — vis company logos
+**Current focus:** Phase 16 — Filters & Floating ExperienceCard
 **Design source of truth:** `docs/superpowers/specs/2026-05-29-game-mode-design.md`
 
 ## Current Position
 
-Phase: 999.4
-Plan: Not started
-Status: Ready to plan
-Last activity: 2026-06-02
+Phase: 16 — Filters & Floating ExperienceCard
+Plans: 6 created (16-01..16-06), revised after plan-checker conditional_pass
+Status: Ready to execute
+Last activity: 2026-06-02 — plans committed (356ec3c) + revised (e3d6666)
 
 ## v3.8 Phase Structure (created 2026-05-29)
 
@@ -111,6 +111,13 @@ enhancement so the Lighthouse mobile gate is never at risk.
 
 ## Session Continuity
 
-Last session: 2026-06-01T21:44:35.326Z
-Stopped at: Phase 15 UI-SPEC approved
-Resume file: .planning/phases/15-accessible-constellation-seo-fallback/15-UI-SPEC.md
+Last session: 2026-06-02T12:39:00.000Z
+Stopped at: Phase 16 plans revised after plan-checker conditional_pass — ready to execute
+Resume file: .planning/phases/16-filters-floating-experiencecard/16-01-PLAN.md
+
+## Plan 16 Decisions (2026-06-02)
+
+- **D-16-CARD-POSITION**: Desktop ExperienceCard = node-anchored popover (offset +24x/-60y from LAYOUT[skillId] center); mobile = bottom-sheet. Matches UI-SPEC §Layout verbatim.
+- **D-16-CHIP-FLASH**: Tech-chip click flash SHIPS — `justFilteredId` state in useConstellation (100ms setTimeout clear), `motion-safe:animate-chip-flash` class in SvgConstellation. Reduced-motion = no-op.
+- **D-16-CLICK-OUTSIDE-RENDERER**: Constellation renderer-slot wrapper in GameMode.js gains `data-game-interactive` attribute — prevents SVG background click from racing card-swap.
+- **D-16-BUNDLE-GATE**: Plan 06 enforces gzip-size gate on GameMode chunk — HARD FAIL > 16 kB, WARN 14–16 kB, PASS ≤ 14 kB. Estimated final ~13.6 kB gz.
