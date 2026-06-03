@@ -16,7 +16,7 @@
 
 - [x] **Phase 14: Foundation — Data Layer, ViewMode Toggle & Test Infra** *(complete 2026-05-30)* — skills.js category map + skill-graph derivation + numeric `period` field + baked layout; persisted game/dev toggle; Vitest + RTL setup with pure-logic tests
 - [ ] **Phase 15: Accessible Constellation & SEO Fallback** — gate-safe SVG/DOM constellation render with category clustering; keyboard nav, dialog semantics, sr-only full-experience fallback, reduced-motion path
-- [ ] **Phase 16: Filters & Floating ExperienceCard** — multi-skill + year/timeline + category filters with reset; floating bilingual experience cards with tech chips + CV CTA on skill select
+- [x] **Phase 16: Filters & Floating ExperienceCard** *(complete 2026-06-03)* — multi-skill + year/timeline + category filters with reset; floating bilingual experience cards with tech chips + CV CTA on skill select. 183/183 tests GREEN, 8.82 kB gz, UAT 9/9 pass
 - [ ] **Phase 17: WebGL Desktop Renderer & Lighthouse Gate** — lazy-loaded three.js desktop renderer behind the shared contract; perf budget enforced + Lighthouse mobile HARD gate re-verified
 
 ### v3.7 Production Deploy (Phases 11–13) — ⏸ DEFERRED
