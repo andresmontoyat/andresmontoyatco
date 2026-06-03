@@ -1,8 +1,8 @@
 ---
 phase: 16-filters-floating-experiencecard
 verified: 2026-06-02T10:54:00-05:00
-status: human_needed
-score: 5/5 must-haves verified (automated); awaits human UAT for visual/animation/SR criteria
+status: passed
+score: 5/5 must-haves verified (automated) + 9/9 human UAT items pass (2026-06-03)
 overrides_applied: 0
 re_verification:
   previous_status: none

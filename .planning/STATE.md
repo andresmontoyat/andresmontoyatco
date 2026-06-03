@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v3.8
 milestone_name: Game Mode
-status: ready_to_execute
-stopped_at: Phase 16 planned (6 plans, revised after plan-checker pass) — ready to execute
-last_updated: "2026-06-02T12:39:00.000Z"
-last_activity: 2026-06-02 -- Phase 16 plans created + revised
+status: ready_to_plan
+stopped_at: Phase 16 complete (6/6 plans, UAT 9/9 pass) — ready to plan Phase 17
+last_updated: "2026-06-03T00:00:00.000Z"
+last_activity: 2026-06-03 -- Phase 16 UAT complete, phase signed off
 progress:
   total_phases: 18
-  completed_phases: 1
-  total_plans: 10
-  completed_plans: 42
-  percent: 6
+  completed_phases: 3
+  total_plans: 16
+  completed_plans: 15
+  percent: 17
 ---
 
 # Project State
@@ -21,15 +21,15 @@ progress:
 See: .planning/PROJECT.md (updated 2026-05-29 — v3.8 milestone open)
 
 **Core value:** The hero section and overall first impression must stop recruiters mid-scroll and make them want to learn more about Carlos — and convert visits into engineering conversations.
-**Current focus:** Phase 16 — Filters & Floating ExperienceCard
+**Current focus:** Phase 17 — WebGL Desktop Renderer & Lighthouse Gate (next)
 **Design source of truth:** `docs/superpowers/specs/2026-05-29-game-mode-design.md`
 
 ## Current Position
 
-Phase: 16 — Filters & Floating ExperienceCard
-Plans: 6 created (16-01..16-06), revised after plan-checker conditional_pass
-Status: Ready to execute
-Last activity: 2026-06-02 — plans committed (356ec3c) + revised (e3d6666)
+Phase: 16 — COMPLETE (signed off 2026-06-03; 6/6 plans, UAT 9/9 pass, 8.82 kB gz)
+Next: Phase 17 — WebGL Desktop Renderer & Lighthouse Gate (ready to plan)
+Status: Ready to plan Phase 17
+Last activity: 2026-06-03 -- Phase 16 UAT complete, phase signed off
 
 ## v3.8 Phase Structure (created 2026-05-29)
 
