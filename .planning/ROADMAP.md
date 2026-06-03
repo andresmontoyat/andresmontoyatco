@@ -95,7 +95,12 @@
   3. The mobile/light path adds < ~30KB gz over the current baseline (no three.js, no d3-force on the client; vector-only assets, reused fonts)
   4. A Lighthouse mobile audit on the game-mode default landing passes the HARD gate: Performance ≥95 / Accessibility 100 / Best Practices 100 / SEO 100 — matching the v3.4 baseline
   5. The desktop WebGL renderer has a capability-based-selection component test confirming it is chosen on desktop and the SVG path is chosen otherwise
-**Plans**: TBD
+**Plans**: 5 plans
+  - [ ] 17-01-PLAN.md — Slice 1 walking-thin: lift detectCapabilities → useRendererCapability hook + extract RendererErrorBoundary from GameMode + minimal WebGLConstellation (1 Point smoke) + GameMode wiring with React.lazy/Suspense (GAME-01, GAME-07; Wave 1, autonomous, MVP Slice 1)
+  - [ ] 17-02-PLAN.md — Slice 2 full graph parity: 26 Points geometry + LineSegments edges + theme reactivity (CSS-var → uniforms) + selectedSkillId halo + dim attribute + light-theme stroke ring (GAME-01, GAME-07; Wave 2, autonomous, MVP Slice 2, depends on 17-01)
+  - [ ] 17-03-PLAN.md — Slice 3 ambient motion: rAF loop + visibilitychange pause + 2D drift + selected glow pulse + halo brighten on highlighted (GAME-01, GAME-07; Wave 3, autonomous, MVP Slice 3, depends on 17-02)
+  - [ ] 17-04-PLAN.md — Slice 4 chip-flash port (justFilteredId shader uniforms) + weight-1 edge reveal (uActiveNodeId) + canvas pointermove/pick → onHoverSkill (GAME-01, GAME-07; Wave 4, autonomous, MVP Slice 4, depends on 17-03)
+  - [ ] 17-05-PLAN.md — Slice 5 bundle gate (scripts/check-bundle-gate.mjs HARD ≤38.82 kB gz + three.js leak detection) + Lighthouse mobile HARD gate re-verification + dev FpsCounter widget + UAT scaffold — closes v3.8 (GAME-01, GAME-07; Wave 5, mixed/checkpoint, MVP Slice 5, depends on 17-04)
 **UI hint**: yes
 
 ---
@@ -194,8 +199,8 @@ See [`milestones/v3.6-ROADMAP.md`](milestones/v3.6-ROADMAP.md) and [`milestones/
 |-------|----------------|--------|-----------|
 | 14. Foundation — Data, ViewMode & Test Infra | 2/2 | Complete    | 2026-05-30 |
 | 15. Accessible Constellation & SEO Fallback | 3/3 | Complete    | 2026-06-02 |
-| 16. Filters & Floating ExperienceCard | 0/TBD | Not started | - |
-| 17. WebGL Desktop Renderer & Lighthouse Gate | 0/TBD | Not started | - |
+| 16. Filters & Floating ExperienceCard | 6/6 | Complete    | 2026-06-03 |
+| 17. WebGL Desktop Renderer & Lighthouse Gate | 0/5 | Planned     | - |
 
 ## Progress Table (all milestones)
 
