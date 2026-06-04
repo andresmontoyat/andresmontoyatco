@@ -1,11 +1,43 @@
 import React from 'react'
-import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import {
+  describe, it, expect, beforeEach, afterEach, vi,
+} from 'vitest'
+import {
+  render, screen, fireEvent, waitFor,
+} from '@testing-library/react'
 import { LanguageProvider } from '../i18n/LanguageContext.js'
 import { ThemeProvider } from '../i18n/ThemeContext.js'
 import { ViewModeProvider } from '../context/ViewModeContext.js'
 import translations from '../i18n/translations.js'
 import GameMode, { yearsActive, skillCount } from './GameMode.js'
+
+// Phase 17 SC-5 hoisted capability mock — mutable shared state lets each
+// test drive useRendererCapability's return value via capabilityState.value.
+// Default 'svg' so all pre-Phase-17 tests continue to exercise the SVG path
+// they were authored against.
+const { capabilityState } = vi.hoisted(() => ({
+  capabilityState: { value: 'svg' },
+}))
+
+vi.mock('./useRendererCapability', () => ({
+  default: () => capabilityState.value,
+}))
+
+// Phase 17 SC-5 three.js mock (Pitfall 7) — fake WebGLRenderer so the lazy
+// WebGL chunk mounts cleanly in jsdom for SC-5 Test A and live-swap Test C.
+vi.mock('three', async (importOriginal) => {
+  const actual = await importOriginal()
+  return {
+    ...actual,
+    WebGLRenderer: vi.fn(() => ({
+      setSize: vi.fn(),
+      setPixelRatio: vi.fn(),
+      render: vi.fn(),
+      domElement: document.createElement('canvas'),
+      dispose: vi.fn(),
+    })),
+  }
+})
 
 function renderWithProviders(ui, { lang = 'en' } = {}) {
   localStorage.setItem('cam-lang', lang)
@@ -149,5 +181,81 @@ describe('GameMode - rendered component', () => {
       const heading = dialog.querySelector('#card-skill-heading')
       expect(heading.textContent).toContain('Docker')
     })
+  })
+})
+
+// ─── Phase 17 SC-5: capability-based renderer selection + live-swap ─────────
+
+describe('GameMode - Phase 17 SC-5 capability-based renderer selection', () => {
+  let getContextSpy
+
+  beforeEach(() => {
+    // Pitfall 1: override global null stub so capability detection's WebGL
+    // probe (still runs inside the real hook for any unmocked code path) is
+    // happy. The vi.mock above replaces useRendererCapability entirely; this
+    // spy belts-and-suspenders any leakage.
+    getContextSpy = vi
+      .spyOn(HTMLCanvasElement.prototype, 'getContext')
+      .mockReturnValue({})
+  })
+
+  afterEach(() => {
+    capabilityState.value = 'svg'
+    getContextSpy.mockRestore()
+  })
+
+  it("Test A: capability='webgl' mounts WebGLConstellation under Suspense + lazy import", async () => {
+    capabilityState.value = 'webgl'
+    const { findByTestId } = renderWithProviders(<GameMode />, { lang: 'en' })
+    // findByTestId awaits Suspense → lazy chunk resolution → WebGL canvas.
+    const canvas = await findByTestId('webgl-canvas')
+    expect(canvas).toBeInTheDocument()
+    expect(canvas.tagName.toLowerCase()).toBe('canvas')
+    expect(canvas.getAttribute('aria-hidden')).toBe('true')
+  })
+
+  it("Test B: capability='svg' mounts SvgConstellation directly with no Suspense flash", () => {
+    capabilityState.value = 'svg'
+    const { container } = renderWithProviders(<GameMode />, { lang: 'en' })
+    const slot = container.querySelector('[data-testid="renderer-slot"]')
+    expect(slot).toBeInTheDocument()
+    // SVG path mounts immediately — no canvas, an svg root inside the slot.
+    expect(slot.querySelector('canvas[data-testid="webgl-canvas"]')).toBeNull()
+    expect(slot.querySelector('svg')).toBeTruthy()
+    // data-renderer attribute reflects the capability selection.
+    expect(slot.getAttribute('data-renderer')).toBe('svg')
+  })
+
+  it('Test C: live-swap preserves selection state across renderer remount', async () => {
+    // Start on SVG, select Java, then flip capability to webgl and assert
+    // the canvas appears AND the dialog (which mirrors selectedSkillId via
+    // useConstellation living ABOVE the renderer slot) is still present.
+    capabilityState.value = 'svg'
+    const { container, rerender, findByTestId } = renderWithProviders(
+      <GameMode />,
+      { lang: 'en' },
+    )
+    const javaG = container.querySelector('g[data-node-id="Java"]')
+    fireEvent.click(javaG)
+    await waitFor(() => expect(screen.getByRole('dialog')).toBeInTheDocument())
+
+    // Flip the capability — re-render the SAME tree so useConstellation state
+    // (which lives in the GameMode component above the renderer slot) is
+    // preserved across the renderer subtree remount.
+    capabilityState.value = 'webgl'
+    rerender(
+      <ThemeProvider>
+        <LanguageProvider>
+          <ViewModeProvider>
+            <GameMode />
+          </ViewModeProvider>
+        </LanguageProvider>
+      </ThemeProvider>,
+    )
+    const canvas = await findByTestId('webgl-canvas')
+    expect(canvas).toBeInTheDocument()
+    // Selection state preserved across the swap: the ExperienceCard dialog
+    // (driven by selectedSkillId in useConstellation) still in DOM.
+    expect(screen.getByRole('dialog')).toBeInTheDocument()
   })
 })
