@@ -1,9 +1,10 @@
 ---
 phase: 17-webgl-desktop-renderer-lighthouse-gate
 verified: 2026-06-03T23:35:00-05:00
-status: gaps_found
-score: 4/5 must-haves verified (SC-1, SC-3, SC-4 deferred-to-human, SC-5 verified; SC-2 partial — see gap)
-re_verification: false
+status: human_needed
+score: 5/5 must-haves verified (SC-1, SC-2, SC-3, SC-5 PASS; SC-4 deferred to human UAT)
+sc2_fixed: "commit 79991a3 — RendererErrorBoundary fallback now <SvgConstellation {...rendererProps}/>; SC-2 regression test added; 253/253 GREEN"
+re_verification: true
 overrides_applied: 0
 gaps:
   - truth: "SC-2 — WebGL init failure falls back to the SVG renderer via an ErrorBoundary, never a broken screen"
