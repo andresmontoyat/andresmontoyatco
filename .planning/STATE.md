@@ -2,10 +2,10 @@
 gsd_state_version: 1.0
 milestone: v3.8
 milestone_name: Game Mode
-status: ready_to_plan
-stopped_at: Phase 16 complete (6/6 plans, UAT 9/9 pass) — ready to plan Phase 17
-last_updated: "2026-06-03T00:00:00.000Z"
-last_activity: 2026-06-03 -- Phase 16 UAT complete, phase signed off
+status: ready_to_execute
+stopped_at: Phase 17 planned (5 MVP slices, revised after plan-checker conditional_pass) — ready to execute
+last_updated: "2026-06-03T19:23:00.000Z"
+last_activity: 2026-06-03 -- Phase 17 plans created + revised + verified
 progress:
   total_phases: 18
   completed_phases: 3
@@ -26,10 +26,18 @@ See: .planning/PROJECT.md (updated 2026-05-29 — v3.8 milestone open)
 
 ## Current Position
 
-Phase: 16 — COMPLETE (signed off 2026-06-03; 6/6 plans, UAT 9/9 pass, 8.82 kB gz)
-Next: Phase 17 — WebGL Desktop Renderer & Lighthouse Gate (ready to plan)
-Status: Ready to plan Phase 17
-Last activity: 2026-06-03 -- Phase 16 UAT complete, phase signed off
+Phase: 17 — WebGL Desktop Renderer & Lighthouse Gate
+Plans: 5 MVP vertical slices (17-01..17-05), revised after plan-checker conditional_pass (3 BLOCKERs + 6 WARNINGs all addressed)
+Status: Ready to execute (sequential waves — vertical-slice trade-off)
+Last activity: 2026-06-03 -- Phase 17 plans created (a94823c) + revised (ad35a68)
+
+## Plan 17 Decisions (2026-06-03)
+
+- **D-17-EXTRACT**: Slice 1 LIFTS `ConstellationErrorBoundary` (GameMode.js:46-67) + `detectCapabilities` (GameMode.js:29-44) to standalone files. Does NOT re-author from scratch. Cleans inline versions + `data-prefers-reduced-motion` attr.
+- **D-17-HOVERED-PROP**: `hoveredSkillId` stays owned by `useConstellation` (already at lines 55, 73, 132). WebGL consumes via props (NOT internal useState). GameMode passes via shared `rendererProps` to BOTH SvgConstellation + WebGLConstellation — Phase 17 doesn't silently extend the contract for one renderer.
+- **D-17-EDGE-RGBA**: Edge geometry uses `BufferAttribute(arr, 4)` + `material.transparent=true` for per-vertex alpha. Avoids light-theme parity failure where pre-multiplied RGB fades to black against light bg.
+- **D-17-LIGHTHOUSE-FLOW**: Phase 17 close runs `npm run lighthouse:mobile` (self-contained, spins up vite preview on :4173) → `npm run lighthouse:check` (programmatic HARD gate, exit code IS verdict). Drops `npx serve dist` from initial plan. Phase 11-05 deployed-*.vercel.app gate stays deferred.
+- **D-17-SC5-TEST**: `src/game/GameMode.test.js` REQUIRED for SC-5 ("capability-based-selection component test"). Slice 1 creates it.
 
 ## v3.8 Phase Structure (created 2026-05-29)
 
@@ -111,9 +119,9 @@ enhancement so the Lighthouse mobile gate is never at risk.
 
 ## Session Continuity
 
-Last session: 2026-06-02T12:39:00.000Z
-Stopped at: Phase 16 plans revised after plan-checker conditional_pass — ready to execute
-Resume file: .planning/phases/16-filters-floating-experiencecard/16-01-PLAN.md
+Last session: 2026-06-03T19:23:00.000Z
+Stopped at: Phase 17 plans revised after plan-checker conditional_pass — ready to execute
+Resume file: .planning/phases/17-webgl-desktop-renderer-lighthouse-gate/17-01-PLAN.md
 
 ## Plan 16 Decisions (2026-06-02)
 
