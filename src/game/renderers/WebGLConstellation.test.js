@@ -1,10 +1,22 @@
 import React from 'react'
+import fs from 'node:fs'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 import {
   describe, it, expect, vi, beforeEach, afterEach,
 } from 'vitest'
 import { render, cleanup } from '@testing-library/react'
-import { Color } from 'three'
+import { Color, Scene } from 'three'
 import WebGLConstellation, { parseCSSColor, parseCSSAlpha } from './WebGLConstellation.js'
+
+// Slice 4 — load WebGL source once at module load for static-analysis assertions
+// (BLOCKER 2 negative grep; shader self-reset semantic encoded shader-side).
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
+const WEBGL_SOURCE = fs.readFileSync(
+  path.join(__dirname, 'WebGLConstellation.js'),
+  'utf8',
+)
 
 // Pitfall 7 mitigation: jsdom has no real WebGL — mock the three.js
 // WebGLRenderer constructor with a fake { setSize, setPixelRatio, render,
@@ -535,5 +547,198 @@ describe('WebGLConstellation Slice 3 — rAF loop + visibility pause', () => {
       if (i !== 0 && i !== 5) expect(v).toBe(0.0)
     })
     setAttrSpy.mockRestore()
+  })
+})
+
+// ────────────────────────────────────────────────────────────────────────────
+// Slice 4 — Chip-flash shader uniforms (justFilteredId → uFlashNodeId +
+// uFlashStartTime) + weight-1 edge reveal via uActiveNodeId (hoveredSkillId
+// arrives as a PROP per BLOCKER 2 — NO internal hover useState) + canvas
+// pointermove → props.onHoverSkill callback (no setState) + canvas click →
+// props.onSelectSkill callback. RGBA edge alpha goes in 4th component
+// (WARNING 5 — alpha NOT pre-multiplied into RGB).
+//
+// We capture the live ShaderMaterial via `Scene.prototype.add` — the Points
+// instance is added first, and Points.material is the ShaderMaterial. This
+// avoids breaking the existing `three` vi.mock factory (which passes through
+// every class via importOriginal).
+// ────────────────────────────────────────────────────────────────────────────
+
+function captureSceneAdds() {
+  const added = []
+  const spy = vi.spyOn(Scene.prototype, 'add').mockImplementation(function add(obj) {
+    added.push(obj)
+    return this
+  })
+  return { added, restore: () => spy.mockRestore() }
+}
+
+describe('WebGLConstellation Slice 4 — chip-flash + weight-1 edge reveal + pointer-pick onHoverSkill (BLOCKER 2)', () => {
+  let added
+  let restoreAdd
+
+  beforeEach(() => {
+    const cap = captureSceneAdds()
+    added = cap.added
+    restoreAdd = cap.restore
+  })
+
+  afterEach(() => {
+    if (restoreAdd) restoreAdd()
+  })
+
+  it('initializes uFlashNodeId === -1 and uFlashStartTime === -Infinity when justFilteredId is null', () => {
+    render(<WebGLConstellation {...fullProps} justFilteredId={null} />)
+    const points = added.find((o) => o && o.material && o.material.uniforms)
+    expect(points).toBeDefined()
+    const u = points.material.uniforms
+    expect(u.uFlashNodeId.value).toBe(-1)
+    expect(u.uFlashStartTime.value).toBe(-Infinity)
+  })
+
+  it('sets uFlashNodeId to nodeIdToIndex(justFilteredId) AND uFlashStartTime to current uTime when justFilteredId becomes non-null', () => {
+    const { rerender } = render(<WebGLConstellation {...fullProps} justFilteredId={null} />)
+    const points = added.find((o) => o && o.material && o.material.uniforms)
+    const u = points.material.uniforms
+    // Force a known uTime so we can assert uFlashStartTime captures it (NOT performance.now — Pitfall 18)
+    u.uTime.value = 1.234
+    rerender(<WebGLConstellation {...fullProps} justFilteredId="skill-0" />)
+    expect(u.uFlashNodeId.value).toBe(0) // skill-0 → index 0 in fixture
+    // uFlashStartTime captures the CURRENT shader uTime (Pitfall 18)
+    expect(u.uFlashStartTime.value).toBeCloseTo(1.234, 4)
+  })
+
+  it('shader source self-resets after 100 ms via flashProgress clamp (no JS timeout — Pitfall 18)', () => {
+    // The vertex shader source must contain the 0.1s window clamp.
+    // After 100ms (uTime - uFlashStartTime >= 0.1) the flash term clamps to 1.0
+    // and the curve returns to no-op. We assert the shader source contains
+    // the clamp expression so the self-reset semantic is encoded shader-side.
+    expect(WEBGL_SOURCE).toMatch(/clamp\(\s*\(\s*uTime\s*-\s*uFlashStartTime\s*\)\s*\/\s*0\.1\s*,\s*0\.0\s*,\s*1\.0\s*\)/)
+  })
+
+  it('switches uFlashNodeId to the new index when justFilteredId changes to a different node', () => {
+    const { rerender } = render(<WebGLConstellation {...fullProps} justFilteredId="skill-0" />)
+    const points = added.find((o) => o && o.material && o.material.uniforms)
+    const u = points.material.uniforms
+    u.uTime.value = 5.0
+    rerender(<WebGLConstellation {...fullProps} justFilteredId="skill-7" />)
+    expect(u.uFlashNodeId.value).toBe(7)
+    expect(u.uFlashStartTime.value).toBeCloseTo(5.0, 4)
+  })
+
+  it('sets uActiveNodeId to nodeIdToIndex(selectedSkillId) when selectedSkillId prop becomes non-null', () => {
+    const { rerender } = render(<WebGLConstellation
+      {...fullProps}
+      selectedSkillId={null}
+      hoveredSkillId={null}
+    />)
+    const points = added.find((o) => o && o.material && o.material.uniforms)
+    const u = points.material.uniforms
+    expect(u.uActiveNodeId.value).toBe(-1)
+    rerender(<WebGLConstellation
+      {...fullProps}
+      selectedSkillId="skill-3"
+      hoveredSkillId={null}
+    />)
+    expect(u.uActiveNodeId.value).toBe(3)
+  })
+
+  it('sets uActiveNodeId to nodeIdToIndex(hoveredSkillId) when hover PROP changes (BLOCKER 2 — hoveredSkillId is a prop)', () => {
+    const { rerender } = render(<WebGLConstellation
+      {...fullProps}
+      selectedSkillId={null}
+      hoveredSkillId={null}
+    />)
+    const points = added.find((o) => o && o.material && o.material.uniforms)
+    const u = points.material.uniforms
+    expect(u.uActiveNodeId.value).toBe(-1)
+    // Hover prop flows in FROM the hook — WebGL has no internal state to set
+    rerender(<WebGLConstellation
+      {...fullProps}
+      selectedSkillId={null}
+      hoveredSkillId="skill-5"
+    />)
+    expect(u.uActiveNodeId.value).toBe(5)
+  })
+
+  it('selectedSkillId wins over hoveredSkillId in uActiveNodeId fall-through (Phase 15 D-15-VIS-EDGE order)', () => {
+    const { rerender } = render(<WebGLConstellation
+      {...fullProps}
+      selectedSkillId={null}
+      hoveredSkillId={null}
+    />)
+    const points = added.find((o) => o && o.material && o.material.uniforms)
+    const u = points.material.uniforms
+    rerender(<WebGLConstellation
+      {...fullProps}
+      selectedSkillId="skill-2"
+      hoveredSkillId="skill-9"
+    />)
+    expect(u.uActiveNodeId.value).toBe(2) // selected wins
+  })
+
+  it('canvas pointermove over a node calls props.onHoverSkill(id) — CALLBACK-OUT, no internal setState (BLOCKER 2)', () => {
+    const onHoverSkill = vi.fn()
+    const { container } = render(<WebGLConstellation
+      {...fullProps}
+      hoveredSkillId={null}
+      onHoverSkill={onHoverSkill}
+    />)
+    const canvas = container.querySelector('canvas[data-testid="webgl-canvas"]')
+    // Override getBoundingClientRect so projected coords are deterministic.
+    // Fixture: layout[skill-0] = { x: 100, y: 100 } in 0..1000 ortho space.
+    // With rect width=1000, height=1000 → projected x=100, y=100 in pixels.
+    canvas.getBoundingClientRect = () => ({
+      left: 0, top: 0, width: 1000, height: 1000, right: 1000, bottom: 1000,
+    })
+    const evt = new MouseEvent('pointermove', {
+      bubbles: true, clientX: 100, clientY: 100,
+    })
+    canvas.dispatchEvent(evt)
+    expect(onHoverSkill).toHaveBeenCalledWith('skill-0')
+  })
+
+  it('canvas pointermove far from any node calls props.onHoverSkill(null)', () => {
+    const onHoverSkill = vi.fn()
+    const { container } = render(<WebGLConstellation
+      {...fullProps}
+      hoveredSkillId="skill-0"
+      onHoverSkill={onHoverSkill}
+    />)
+    const canvas = container.querySelector('canvas[data-testid="webgl-canvas"]')
+    canvas.getBoundingClientRect = () => ({
+      left: 0, top: 0, width: 1000, height: 1000, right: 1000, bottom: 1000,
+    })
+    // Coords (999, 999) are far from every fixture node — pick returns null
+    const evt = new MouseEvent('pointermove', {
+      bubbles: true, clientX: 999, clientY: 999,
+    })
+    canvas.dispatchEvent(evt)
+    expect(onHoverSkill).toHaveBeenCalledWith(null)
+  })
+
+  it('source code contains NO useState call for hover state (BLOCKER 2 negative assertion)', () => {
+    // Static analysis on the source — confirms WebGL owns ZERO hover state.
+    // Regex parity with acceptance criterion:
+    //   rg "useState\(.*hover|useState\(.*Hover|setHoveredSkillId|setHoveredNodeId"
+    const banned = /useState\([^)]*hover|useState\([^)]*Hover|setHoveredSkillId|setHoveredNodeId/
+    expect(WEBGL_SOURCE).not.toMatch(banned)
+  })
+
+  it('canvas click over a node calls props.onSelectSkill(id) — CALLBACK-OUT to the hook toggle-off semantic', () => {
+    const onSelectSkill = vi.fn()
+    const { container } = render(<WebGLConstellation
+      {...fullProps}
+      onSelectSkill={onSelectSkill}
+    />)
+    const canvas = container.querySelector('canvas[data-testid="webgl-canvas"]')
+    canvas.getBoundingClientRect = () => ({
+      left: 0, top: 0, width: 1000, height: 1000, right: 1000, bottom: 1000,
+    })
+    const evt = new MouseEvent('click', {
+      bubbles: true, clientX: 100, clientY: 100,
+    })
+    canvas.dispatchEvent(evt)
+    expect(onSelectSkill).toHaveBeenCalledWith('skill-0')
   })
 })
