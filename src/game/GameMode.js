@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react'
+import React, { useMemo, Suspense } from 'react'
 import { useLanguage } from '../i18n/LanguageContext'
 import { useTheme } from '../i18n/ThemeContext'
 import { useViewMode } from '../context/ViewModeContext'
@@ -12,6 +12,8 @@ import ConstellationFallback from './ConstellationFallback'
 import SkillFilters from './SkillFilters'
 import ExperienceCard from './ExperienceCard'
 import { composeFilters } from './filters'
+import RendererErrorBoundary from './RendererErrorBoundary'
+import useRendererCapability from './useRendererCapability'
 
 // D-15-LAND-COPY: derive at module load from live data — never hardcode
 const maxYear = Math.max(...EXPERIENCE.map((e) => e.period.end ?? CURRENT_YEAR))
@@ -25,53 +27,19 @@ const LAYOUT = computeLayout(GRAPH_NODES)
 // D-15-LAND-COPY: graph node count (alias-normalized canonical count)
 export const skillCount = GRAPH_NODES.length
 
-// Capability detection — Phase 17: branch on capabilities for WebGL adapter; Phase 15 always SVG.
-function detectCapabilities() {
-  if (typeof window === 'undefined') {
-    return { prefersReducedMotion: true, saveData: false, isMobile: true, hasWebGL: false }
-  }
-  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-  const saveData = (typeof navigator !== 'undefined' && navigator.connection && navigator.connection.saveData) || false
-  const isMobile = window.innerWidth < 768
-  let hasWebGL = false
-  try {
-    const c = document.createElement('canvas')
-    hasWebGL = !!(c.getContext('webgl') || c.getContext('experimental-webgl'))
-  } catch (e) {
-    hasWebGL = false
-  }
-  return { prefersReducedMotion, saveData, isMobile, hasWebGL }
-}
-
-class ConstellationErrorBoundary extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = { hasError: false }
-  }
-
-  static getDerivedStateFromError() {
-    return { hasError: true }
-  }
-
-  componentDidCatch(error, info) {
-    // eslint-disable-next-line no-console
-    console.error('Constellation error:', error, info)
-  }
-
-  render() {
-    const { hasError } = this.state
-    const { fallback, children } = this.props
-    if (hasError) return fallback
-    return children
-  }
-}
+// Pattern G: React.lazy() MUST live at module scope. If placed inside the
+// component body, React would recreate the lazy boundary on every render
+// → infinite re-fetch loop on the WebGL chunk.
+const WebGLConstellation = React.lazy(() => import('./renderers/WebGLConstellation'))
 
 export default function GameMode() {
   const { lang, t } = useLanguage()
   const { theme } = useTheme()
   const { setViewMode } = useViewMode()
 
-  const [capabilities] = useState(() => detectCapabilities())
+  // Phase 17: capability detection lifted into reactive hook returning 'webgl'|'svg'.
+  // Replaces the inline detectCapabilities() + useState(...) pattern from Phase 16.
+  const capability = useRendererCapability()
   const cons = useConstellation(GRAPH_NODES)
 
   const h1Text = `${yearsActive} ${t.game.h1Years}. ${skillCount} ${t.game.h1Skills}. ${t.game.h1Tagline}`
@@ -96,7 +64,7 @@ export default function GameMode() {
     ? GRAPH_NODES.find((n) => n.id === cons.selectedSkillId)
     : null
 
-  const errorFallback = (
+  const errorFallbackUI = (
     <p className="text-text-secondary text-base text-center py-8">
       {t.game.error}{' '}
       <button
@@ -109,6 +77,33 @@ export default function GameMode() {
     </p>
   )
 
+  // Phase 17 BLOCKER 2: shared rendererProps spread to BOTH renderer slots.
+  // hoveredSkillId flows from useConstellation (which has owned hover state
+  // since Phase 15) to the renderer; WebGLConstellation consumes it as a
+  // prop, SvgConstellation receives it as an extra prop and continues to
+  // use its internal hoveredNodeId state (Phase 15 contract unchanged).
+  const rendererProps = {
+    nodes: GRAPH_NODES,
+    edges: GRAPH_EDGES,
+    layout: LAYOUT,
+    highlightedSkillIds: cons.highlightedSkillIds,
+    selectedSkillId: cons.selectedSkillId,
+    hoveredSkillId: cons.hoveredSkillId,
+    yearRange: cons.yearRange,
+    justFilteredId: cons.justFilteredId,
+    theme,
+    lang,
+    t,
+    onSelectSkill: cons.onSelectSkill,
+    onHoverSkill: cons.onHoverSkill,
+  }
+
+  // Phase 17 D-17-SELECTION-MECH: when capability='webgl', wrap the lazy
+  // WebGL renderer in Suspense+ErrorBoundary; both fallbacks render
+  // SvgConstellation per UI-SPEC Pattern H ("SVG IS the loading state").
+  // RendererErrorBoundary's outer fallback catches lazy chunk-fetch errors
+  // AND shader-compile / WebGL-ctx-creation failures so the user never
+  // sees a broken screen — SvgConstellation seamlessly takes over.
   return (
     <section id="game-mode" className="min-h-screen flex flex-col items-center px-6 pt-12 pb-8">
       <div className="text-center mb-8 md:mb-12 max-w-2xl">
@@ -133,30 +128,23 @@ export default function GameMode() {
         t={t}
       />
 
-      <ConstellationErrorBoundary fallback={errorFallback}>
+      <RendererErrorBoundary fallback={errorFallbackUI}>
         <div
           data-game-interactive
           className="w-full max-w-3xl relative"
           data-testid="renderer-slot"
           data-theme={theme}
-          data-prefers-reduced-motion={capabilities.prefersReducedMotion ? 'true' : 'false'}
+          data-renderer={capability}
         >
-          <SvgConstellation
-            nodes={GRAPH_NODES}
-            edges={GRAPH_EDGES}
-            layout={LAYOUT}
-            highlightedSkillIds={cons.highlightedSkillIds}
-            selectedSkillId={cons.selectedSkillId}
-            yearRange={cons.yearRange}
-            justFilteredId={cons.justFilteredId}
-            theme={theme}
-            lang={lang}
-            t={t}
-            onSelectSkill={cons.onSelectSkill}
-            onHoverSkill={cons.onHoverSkill}
-          />
+          {capability === 'webgl' ? (
+            <Suspense fallback={<SvgConstellation {...rendererProps} />}>
+              <WebGLConstellation {...rendererProps} />
+            </Suspense>
+          ) : (
+            <SvgConstellation {...rendererProps} />
+          )}
         </div>
-      </ConstellationErrorBoundary>
+      </RendererErrorBoundary>
 
       {cons.selectedSkillId !== null && selectedNode && (
         <ExperienceCard
