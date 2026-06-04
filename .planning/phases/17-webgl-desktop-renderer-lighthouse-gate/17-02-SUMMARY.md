@@ -42,7 +42,6 @@ key-files:
   modified:
     - src/game/renderers/WebGLConstellation.js (155 → 409 LOC; +254)
     - src/game/renderers/WebGLConstellation.test.js (101 → 357 LOC; +256, 5 → 20 it() blocks)
-    - package-lock.json (worktree npm install — three + transitive deps installed)
 
 key-decisions:
   - "Test mock strategy: use `...actual` to pass through real BufferGeometry/BufferAttribute/Color/LineBasicMaterial/ShaderMaterial/Points/LineSegments/Scene/OrthographicCamera; only WebGLRenderer is stubbed. This eliminates the plan's 'extend BufferGeometry mock to capture setAttribute' boilerplate — tests inspect real BufferAttribute instances via vi.spyOn(BufferGeometry.prototype, 'setAttribute')."
@@ -75,7 +74,7 @@ completed: 2026-06-03
 - **Started:** 2026-06-03T22:23:22Z (first npm test run)
 - **Completed:** 2026-06-03T22:28:12Z (GREEN commit landed)
 - **Tasks:** 1 (RED → GREEN cycle)
-- **Files modified:** 2 source + 1 lockfile (npm install in worktree)
+- **Files modified:** 2 source (1 implementation + 1 test); 0 dependency changes (worktree `npm install` matched existing lockfile exactly)
 
 ## Accomplishments
 
@@ -106,10 +105,12 @@ _Plan-level docs commit (this SUMMARY) follows separately._
 
 ## Files Created/Modified
 
-**Modified (2 source + 1 lockfile):**
+**Modified (2 source):**
 - `src/game/renderers/WebGLConstellation.js` — 155 → 409 LOC. Removed Slice 1 placeholder (1 Point only); added full Slice 2 geometry build, parseCSSColor + parseCSSAlpha exports, helper ports, Slice 2 GLSL shader pair, theme/halo/dim effect triad.
 - `src/game/renderers/WebGLConstellation.test.js` — 101 → 357 LOC (5 → 20 it() blocks). Added: 4 parseCSSColor tests + 3 parseCSSAlpha tests + 6 Slice 2 geometry tests + 2 theme-reactivity tests (WARNING 4 spy strategy + WARNING 5 RGBA edge re-upload via BufferAttribute.setXYZW spy). 5 Slice 1 baseline tests preserved.
-- `package-lock.json` — npm install in worktree resolved three + transitive deps (Slice 1 declared `three@^0.169` in package.json but worktree was created before install ran here; deviation Rule 3 fix below).
+
+**Environment (not committed — matched existing lockfile):**
+- `node_modules/three` installed via `npm install` in worktree (worktree was created before Slice 1's install ran; lockfile already pinned `three@^0.169` so the install was deterministic). Deviation #1 below.
 
 ## Decisions Made
 
@@ -128,9 +129,9 @@ _Plan-level docs commit (this SUMMARY) follows separately._
 - **Found during:** First `npm test` run (before writing RED tests).
 - **Issue:** `package.json` declares `"three": "^0.169.0"` from Slice 1, but `node_modules/three` did not exist in this worktree. `npm test` failed with `Failed to resolve import "three" from "src/game/renderers/WebGLConstellation.test.js"`.
 - **Fix:** Ran `npm install` in the worktree. The package was already declared in package.json with the same lockfile hash from Slice 1, so this is a legitimate dependency install (not a slopsquatted/hallucinated name) — Rule 3 exclusion does NOT apply.
-- **Files modified:** `package-lock.json` (transitive resolutions for three + sub-deps).
-- **Verification:** `node_modules/three/build/three.module.js` exists, `npm test` baseline passes 5/5, then RED tests fail as designed.
-- **Committed in:** The package-lock.json change rides along with the GREEN commit (`0d7231d`) since it is purely an environment-resolution artifact, not a behavior change. No new dependency added — the existing `three@^0.169` from Slice 1 resolved.
+- **Files modified:** none — `npm install` matched the existing `package-lock.json` exactly (Slice 1 already pinned the resolutions). No lockfile drift.
+- **Verification:** `node_modules/three/build/three.module.js` exists, `npm test` baseline passes 5/5, then RED tests fail as designed, `git status` is clean for `package-lock.json`.
+- **Committed in:** No commit needed — environment-only fix, deterministic relative to Slice 1's lockfile.
 
 **2. [Test-mock adjustment] Hex-parser RED assertion needed `getHex()` round-trip**
 - **Found during:** GREEN test run (after parseCSSColor was implemented per plan).
