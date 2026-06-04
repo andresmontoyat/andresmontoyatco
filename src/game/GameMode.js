@@ -1,7 +1,6 @@
 import React, { useMemo, Suspense } from 'react'
 import { useLanguage } from '../i18n/LanguageContext'
 import { useTheme } from '../i18n/ThemeContext'
-import { useViewMode } from '../context/ViewModeContext'
 import EXPERIENCE from '../data/experience'
 import { SKILLS } from '../data/skills'
 import { buildConstellationGraph, CURRENT_YEAR } from './constellation.graph'
@@ -36,7 +35,6 @@ const WebGLConstellation = React.lazy(() => import('./renderers/WebGLConstellati
 export default function GameMode() {
   const { lang, t } = useLanguage()
   const { theme } = useTheme()
-  const { setViewMode } = useViewMode()
 
   // Phase 17: capability detection lifted into reactive hook returning 'webgl'|'svg'.
   // Replaces the inline detectCapabilities() + useState(...) pattern from Phase 16.
@@ -64,19 +62,6 @@ export default function GameMode() {
   const selectedNode = cons.selectedSkillId !== null
     ? GRAPH_NODES.find((n) => n.id === cons.selectedSkillId)
     : null
-
-  const errorFallbackUI = (
-    <p className="text-text-secondary text-base text-center py-8">
-      {t.game.error}{' '}
-      <button
-        onClick={() => setViewMode('dev')}
-        className="text-brand underline"
-        type="button"
-      >
-        {t.nav.modeDev}
-      </button>
-    </p>
-  )
 
   // Phase 17 BLOCKER 2: shared rendererProps spread to BOTH renderer slots.
   // hoveredSkillId flows from useConstellation (which has owned hover state
@@ -129,7 +114,7 @@ export default function GameMode() {
         t={t}
       />
 
-      <RendererErrorBoundary fallback={errorFallbackUI}>
+      <RendererErrorBoundary fallback={<SvgConstellation {...rendererProps} />}>
         <div
           data-game-interactive
           className="w-full max-w-3xl relative"

@@ -258,4 +258,33 @@ describe('GameMode - Phase 17 SC-5 capability-based renderer selection', () => {
     // (driven by selectedSkillId in useConstellation) still in DOM.
     expect(screen.getByRole('dialog')).toBeInTheDocument()
   })
+
+  // SC-2 BLOCKER fix (post-Slice-5 verifier audit): RendererErrorBoundary
+  // fallback MUST render <SvgConstellation /> with the same props — NOT the
+  // Phase 15 "switch to dev mode" anchor. Asserts the boundary's fallback
+  // prop receives an SVG-rendering element so post-load WebGL crashes
+  // (shader compile, ctx loss, runtime throw) degrade silently to SVG.
+  it('SC-2: RendererErrorBoundary fallback renders SvgConstellation (not dev-mode anchor)', async () => {
+    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+
+    // Force a WebGL render error: mock WebGLRenderer to throw on construction.
+    const threeModule = await import('three')
+    threeModule.WebGLRenderer.mockImplementationOnce(() => {
+      throw new Error('shader_compile_failed')
+    })
+
+    capabilityState.value = 'webgl'
+    const { container } = renderWithProviders(<GameMode />, { lang: 'en' })
+
+    // Wait for ErrorBoundary fallback to materialize (Suspense unwinds, then catch).
+    await waitFor(() => {
+      const slot = container.querySelector('[data-testid="renderer-slot"]')
+      // Fallback is SvgConstellation — assert an <svg> renders, NOT the dev-mode <button>.
+      expect(slot?.querySelector('svg') || container.querySelector('svg')).toBeTruthy()
+    })
+    // Negative assertion: the old errorFallbackUI dev-mode "switch" anchor is NOT present.
+    expect(screen.queryByRole('button', { name: /dev mode|modo dev/i })).toBeNull()
+
+    consoleErrorSpy.mockRestore()
+  })
 })
