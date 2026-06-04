@@ -1,8 +1,33 @@
 ---
-status: pending
+status: testing
 phase: 17-webgl-desktop-renderer-lighthouse-gate
-source: 17-01-SUMMARY.md, 17-02-SUMMARY.md, 17-03-SUMMARY.md, 17-04-SUMMARY.md, 17-05-PLAN.md
+source: 17-01-SUMMARY.md, 17-02-SUMMARY.md, 17-03-SUMMARY.md, 17-04-SUMMARY.md, 17-05-SUMMARY.md
 gate_type: HARD (lighthouse:check exit code)
+started: 2026-06-04T00:00:00Z
+updated: 2026-06-04T00:00:00Z
+---
+
+## Current Test
+
+number: 1
+name: Lighthouse mobile HARD gate (SC-4)
+expected: |
+  `npm run lighthouse:mobile && npm run lighthouse:check` exits 0. Performance ≥ 0.95, Accessibility = 1.0, Best Practices = 1.0, SEO = 1.0.
+awaiting: user response
+
+## Tracking Summary
+
+total: 9
+passed: 0
+issues: 0
+pending: 9
+skipped: 0
+blocked: 0
+
+## Gaps
+
+<!-- APPENDED as user reports issues -->
+
 ---
 
 # Phase 17 UAT — WebGL Desktop Renderer & Lighthouse Gate
