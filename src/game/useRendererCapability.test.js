@@ -205,10 +205,16 @@ describe('useRendererCapability', () => {
     })
     const { unmount } = renderHook(() => useRendererCapability())
     unmount()
-    const viewportRemove = removeSpies.find((r) => r.q === '(min-width: 1024px)')
-    const motionRemove = removeSpies.find((r) => r.q === '(prefers-reduced-motion: reduce)')
-    expect(viewportRemove?.removeSpy).toHaveBeenCalled()
-    expect(motionRemove?.removeSpy).toHaveBeenCalled()
+    // matchMedia is called multiple times (initial detect + effect attach + listener re-eval).
+    // Any single instance per query whose removeEventListener fired proves cleanup ran.
+    const viewportRemovals = removeSpies
+      .filter((r) => r.q === '(min-width: 1024px)')
+      .filter((r) => r.removeSpy.mock.calls.length > 0)
+    const motionRemovals = removeSpies
+      .filter((r) => r.q === '(prefers-reduced-motion: reduce)')
+      .filter((r) => r.removeSpy.mock.calls.length > 0)
+    expect(viewportRemovals.length).toBeGreaterThanOrEqual(1)
+    expect(motionRemovals.length).toBeGreaterThanOrEqual(1)
   })
 
   it('memoization: returns the same enum across re-renders when state unchanged', () => {
