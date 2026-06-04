@@ -102,48 +102,87 @@ export function parseCSSAlpha(str) {
   return 1
 }
 
-// Slice 2 vertex shader (~14 LOC GLSL) — per-vertex size/color/halo/dim with
-// DPR-aware gl_PointSize. uHaloPulse stays 1.0 in Slice 2 (Slice 3 animates).
+// Deterministic 32-bit string hash — Slice 3 ambient drift seed. Same input
+// always produces same output so per-node phase/period values are stable
+// across renders (test-friendly + visually consistent across reloads).
+// Simple polynomial rolling hash; sufficient for ~26 nodes × 4 seeds.
+export function hashNodeId(str) {
+  const s = String(str)
+  let h = 2166136261
+  for (let i = 0; i < s.length; i += 1) {
+    h ^= s.charCodeAt(i)
+    h = (h * 16777619) >>> 0
+  }
+  return h
+}
+
+// Slice 3 vertex shader — per-vertex size/color/halo/dim with DPR-aware
+// gl_PointSize PLUS ambient drift via per-vertex phaseX/phaseY/periodX/periodY
+// driven by uTime + uDriftAmp (UI-SPEC §Animation Contract #1: amplitude
+// 0.2 SVG units, period 4-6s, deterministic per-node phase from hashNodeId).
+// uHaloPulse is animated by the rAF loop in Slice 3 (no longer constant).
 const VERTEX_SHADER = `
   attribute float size;
   attribute float halo;
   attribute float dim;
   attribute vec3 strokeColor;
+  attribute float phaseX;
+  attribute float phaseY;
+  attribute float periodX;
+  attribute float periodY;
+  attribute float isHighlighted;
   varying vec3 vColor;
   varying float vHalo;
   varying float vDim;
   varying vec3 vStrokeColor;
+  varying float vIsHighlighted;
   uniform float uDpr;
   uniform float uHaloPulse;
+  uniform float uTime;
+  uniform float uDriftAmp;
   void main() {
     vColor = color;
     vHalo = halo;
     vDim = dim;
     vStrokeColor = strokeColor;
+    vIsHighlighted = isHighlighted;
+    vec3 drifted = position + vec3(
+      uDriftAmp * sin(6.2831853 * uTime / periodX + phaseX),
+      uDriftAmp * sin(6.2831853 * uTime / periodY + phaseY),
+      0.0
+    );
     gl_PointSize = size * uDpr * (1.0 + (uHaloPulse - 1.0) * halo);
-    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(drifted, 1.0);
   }
 `
 
-// Slice 2 fragment shader (~16 LOC GLSL) — circular sprite core + stroke band
-// (light-theme ring) + halo ring (selected node) blended via uHaloColor.
+// Slice 3 fragment shader — circular sprite + stroke band + selected halo
+// (modulated by uHaloPulse for 2s 1.0→1.15 cosine pulse — UI-SPEC #2) +
+// highlighted halo ring (modulated by uHighlightAlpha for 3s 0.4→0.8 cosine
+// brighten on non-selected highlighted nodes — UI-SPEC #3).
 const FRAGMENT_SHADER = `
   varying vec3 vColor;
   varying float vHalo;
   varying float vDim;
   varying vec3 vStrokeColor;
+  varying float vIsHighlighted;
   uniform vec3 uHaloColor;
   uniform float uHaloAlpha;
   uniform float uStrokeMix;
+  uniform float uHaloPulse;
+  uniform float uHighlightAlpha;
   void main() {
     vec2 uv = gl_PointCoord - vec2(0.5);
     float r = length(uv);
     float core = 1.0 - smoothstep(0.45, 0.5, r);
     float strokeBand = smoothstep(0.40, 0.45, r) - smoothstep(0.45, 0.5, r);
     float haloRing = smoothstep(0.45, 0.5, r) - smoothstep(0.5, 0.7, r);
+    float highlightRing = smoothstep(0.50, 0.55, r) - smoothstep(0.55, 0.65, r);
     vec3 col = mix(vColor, vStrokeColor, strokeBand * uStrokeMix);
     col = mix(col, uHaloColor, vHalo * haloRing);
-    float alpha = (core + strokeBand * uStrokeMix + haloRing * vHalo * uHaloAlpha * 0.6) * vDim;
+    float selectedHaloAlpha = haloRing * vHalo * uHaloAlpha * uHaloPulse * 0.6;
+    float highlightedHaloAlpha = highlightRing * vIsHighlighted * (1.0 - vHalo) * uHaloAlpha * uHighlightAlpha;
+    float alpha = (core + strokeBand * uStrokeMix + selectedHaloAlpha + highlightedHaloAlpha) * vDim;
     if (alpha < 0.01) discard;
     gl_FragColor = vec4(col, alpha);
   }
@@ -205,6 +244,17 @@ export default function WebGLConstellation({
     const dims = new Float32Array(N)
     const halos = new Float32Array(N)
     const strokeColors = new Float32Array(N * 3)
+    // Slice 3 — per-vertex ambient drift seed (deterministic hash) + per-vertex
+    // highlight flag for the uHighlightAlpha modulation. Period range [4.0, 6.0]s
+    // per UI-SPEC #1; phase ∈ [0, 2π) so each node starts at a unique offset.
+    const phaseXs = new Float32Array(N)
+    const phaseYs = new Float32Array(N)
+    const periodXs = new Float32Array(N)
+    const periodYs = new Float32Array(N)
+    const isHighlighteds = new Float32Array(N)
+    const highlightSet = highlightedSkillIds && highlightedSkillIds.length > 0
+      ? new Set(highlightedSkillIds)
+      : null
 
     nodes.forEach((node, i) => {
       const pos = layout[node.id] || { x: 0, y: 0 }
@@ -224,6 +274,13 @@ export default function WebGLConstellation({
       strokeColors[i * 3] = stroke.r
       strokeColors[i * 3 + 1] = stroke.g
       strokeColors[i * 3 + 2] = stroke.b
+      // Deterministic per-node drift seeds (4 independent hashes via id salting).
+      phaseXs[i] = ((hashNodeId(node.id) % 1000) / 1000) * 6.2831853
+      phaseYs[i] = ((hashNodeId(`${node.id}y`) % 1000) / 1000) * 6.2831853
+      // periodX/Y range [4.0, 6.0] seconds — (hash % 1000) / 500 yields [0, 2).
+      periodXs[i] = 4.0 + ((hashNodeId(`${node.id}px`) % 1000) / 500)
+      periodYs[i] = 4.0 + ((hashNodeId(`${node.id}py`) % 1000) / 500)
+      isHighlighteds[i] = highlightSet && highlightSet.has(node.id) ? 1.0 : 0.0
     })
 
     const geometry = new BufferGeometry()
@@ -234,6 +291,11 @@ export default function WebGLConstellation({
     geometry.setAttribute('dim', new BufferAttribute(dims, 1))
     geometry.setAttribute('halo', new BufferAttribute(halos, 1))
     geometry.setAttribute('strokeColor', new BufferAttribute(strokeColors, 3))
+    geometry.setAttribute('phaseX', new BufferAttribute(phaseXs, 1))
+    geometry.setAttribute('phaseY', new BufferAttribute(phaseYs, 1))
+    geometry.setAttribute('periodX', new BufferAttribute(periodXs, 1))
+    geometry.setAttribute('periodY', new BufferAttribute(periodYs, 1))
+    geometry.setAttribute('isHighlighted', new BufferAttribute(isHighlighteds, 1))
 
     const material = new ShaderMaterial({
       vertexShader: VERTEX_SHADER,
@@ -246,11 +308,13 @@ export default function WebGLConstellation({
         uHaloAlpha: { value: 0.18 },
         uStrokeMix: { value: theme === 'light' ? 1.0 : 0.0 },
         uHaloPulse: { value: 1.0 },
-        // Slice 3/4 placeholders so the material constructor is touched once.
+        // Slice 3 — driven by the rAF loop below.
         uTime: { value: 0.0 },
+        uDriftAmp: { value: 0.2 },
+        uHighlightAlpha: { value: 0.4 },
+        // Slice 4 placeholders so the material constructor is touched once.
         uFlashNodeId: { value: -1 },
         uFlashStartTime: { value: -Infinity },
-        uHighlightAlpha: { value: 0.4 },
         uActiveNodeId: { value: -1 },
       },
     })
@@ -382,20 +446,84 @@ export default function WebGLConstellation({
     }
   }, [selectedSkillId, nodes])
 
-  // ── Dim attribute rebuild ── on any filter input change.
+  // ── Dim + isHighlighted attribute rebuild ── on any filter input change.
+  // Slice 3 extends Slice 2 with the isHighlighted per-vertex attribute that
+  // drives the fragment shader's halo-brighten ring on non-selected nodes.
   useEffect(() => {
     if (!geometryRef.current) return
     const dimAttr = geometryRef.current.getAttribute('dim')
+    const isHAttr = geometryRef.current.getAttribute('isHighlighted')
     if (!dimAttr) return
+    const highlightSet = highlightedSkillIds && highlightedSkillIds.length > 0
+      ? new Set(highlightedSkillIds)
+      : null
     nodes.forEach((node, i) => {
       const dimmed = shouldDimNode(node, { selectedSkillId, highlightedSkillIds, yearRange })
       dimAttr.setX(i, dimmed ? 0.35 : 1.0)
+      if (isHAttr) {
+        isHAttr.setX(i, highlightSet && highlightSet.has(node.id) ? 1.0 : 0.0)
+      }
     })
     dimAttr.needsUpdate = true
+    if (isHAttr) isHAttr.needsUpdate = true
     if (rendererRef.current && sceneRef.current && cameraRef.current) {
       rendererRef.current.render(sceneRef.current, cameraRef.current)
     }
   }, [highlightedSkillIds, yearRange, selectedSkillId, nodes])
+
+  // ── Slice 3 rAF loop + visibilitychange pause ── always-running animation
+  // loop per D-17-FRAMELOOP. Drives uTime accumulation + uHaloPulse cos curve
+  // (2s period, 1.0→1.15 per UI-SPEC #2) + uHighlightAlpha cos curve (3s
+  // period, 0.4→0.8 per UI-SPEC #3). Per-vertex sin drift happens entirely in
+  // the vertex shader (uTime + phaseX/Y + periodX/Y attributes).
+  //
+  // Pitfall 15: rafId=null sentinel prevents double-cancel on tab-switch race.
+  // Pitfall 16: lastT = performance.now() on resume avoids massive dt-jump
+  //   after a long hidden duration (could be minutes → seconds of uTime jump).
+  useEffect(() => {
+    let rafId = null
+    let lastT = performance.now()
+
+    function tick(t) {
+      const dt = (t - lastT) / 1000
+      lastT = t
+      const material = materialRef.current
+      if (material) {
+        material.uniforms.uTime.value += dt
+        const tNow = material.uniforms.uTime.value
+        const pulsePhase = (tNow % 2.0) / 2.0
+        material.uniforms.uHaloPulse.value = 1.0 + 0.075 * (1.0 - Math.cos(2.0 * Math.PI * pulsePhase))
+        const brightPhase = (tNow % 3.0) / 3.0
+        material.uniforms.uHighlightAlpha.value = 0.4 + 0.2 * (1.0 - Math.cos(2.0 * Math.PI * brightPhase))
+      }
+      if (rendererRef.current && sceneRef.current && cameraRef.current) {
+        rendererRef.current.render(sceneRef.current, cameraRef.current)
+      }
+      rafId = requestAnimationFrame(tick)
+    }
+
+    function onVisibility() {
+      if (document.visibilityState === 'hidden') {
+        if (rafId !== null) {
+          cancelAnimationFrame(rafId)
+          rafId = null
+        }
+      } else if (rafId === null) {
+        lastT = performance.now()
+        rafId = requestAnimationFrame(tick)
+      }
+    }
+
+    rafId = requestAnimationFrame(tick)
+    document.addEventListener('visibilitychange', onVisibility)
+    return () => {
+      if (rafId !== null) {
+        cancelAnimationFrame(rafId)
+        rafId = null
+      }
+      document.removeEventListener('visibilitychange', onVisibility)
+    }
+  }, [])
 
   return (
     <canvas
