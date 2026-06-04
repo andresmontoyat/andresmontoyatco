@@ -14,6 +14,7 @@ import ExperienceCard from './ExperienceCard'
 import { composeFilters } from './filters'
 import RendererErrorBoundary from './RendererErrorBoundary'
 import useRendererCapability from './useRendererCapability'
+import FpsCounter from './FpsCounter'
 
 // D-15-LAND-COPY: derive at module load from live data — never hardcode
 const maxYear = Math.max(...EXPERIENCE.map((e) => e.period.end ?? CURRENT_YEAR))
@@ -160,6 +161,11 @@ export default function GameMode() {
       )}
 
       <ConstellationFallback experiences={EXPERIENCE} lang={lang} t={t} />
+
+      {/* Dev-only FPS counter overlays the canvas when WebGL renderer is active.
+          Vite's import.meta.env.DEV is statically replaced as `false` in production,
+          so the entire conditional + FpsCounter import tree-shakes from the prod bundle. */}
+      {import.meta.env.DEV && capability === 'webgl' && <FpsCounter />}
     </section>
   )
 }
