@@ -12,7 +12,11 @@ import {
   Color,
 } from 'three'
 
-// Phase 17 WebGLConstellation — Slice 2 full graph parity.
+// Phase 17 WebGLConstellation — Slice 4 chip-flash + weight-1 edge reveal +
+// pointer-pick onHoverSkill callback (BLOCKER 2 — hoveredSkillId is a PROP
+// from useConstellation; WebGL owns ZERO hover state and emits hover
+// changes through the props.onHoverSkill callback only).
+//
 // Honors the Phase 15 SvgConstellation props contract verbatim. Renders 26
 // nodes as a single Points draw + ~50 edges as a single LineSegments draw with
 // RGBA per-vertex color (itemSize=4) so the alpha channel carries edge opacity
@@ -20,9 +24,6 @@ import {
 // dark↔light toggle re-reads CSS vars via getComputedStyle and re-uploads
 // uHaloColor uniform + per-vertex strokeColor + per-vertex edge RGBA color
 // within one rAF (no wrong-theme flash).
-//
-// hoveredSkillId is consumed as a PROP per BLOCKER 2 (no internal hover state).
-// Slice 4 will wire it to the weight-1 edge reveal + hover halo uniform.
 //
 // HELPERS — module-scope, ported VERBATIM from SvgConstellation.js (lines 7-30,
 // 73-95). Pattern J: each renderer owns its layout math; cross-renderer import
@@ -73,6 +74,14 @@ function shouldDimNode(node, { selectedSkillId, highlightedSkillIds, yearRange }
   return selectedSkillId !== null && node.id !== selectedSkillId
 }
 
+// Slice 4 — nodeId → vertex-index lookup for shader uniforms (uFlashNodeId,
+// uActiveNodeId). Returns -1 sentinel when nodeId is null OR not found,
+// matching the shader convention used throughout the vertex/fragment program.
+function nodeIdToIndex(nodeId, nodes) {
+  if (nodeId == null || !nodes) return -1
+  return nodes.findIndex((n) => n.id === nodeId)
+}
+
 // CSS-var → THREE.Color parser. RESEARCH §9 — handles hex, modern
 // rgb(r g b / a) (alpha stripped per Pitfall 14), and legacy rgb(r, g, b).
 // Alpha is carried separately via parseCSSAlpha for RGBA edge attribute
@@ -116,11 +125,11 @@ export function hashNodeId(str) {
   return h
 }
 
-// Slice 3 vertex shader — per-vertex size/color/halo/dim with DPR-aware
-// gl_PointSize PLUS ambient drift via per-vertex phaseX/phaseY/periodX/periodY
-// driven by uTime + uDriftAmp (UI-SPEC §Animation Contract #1: amplitude
-// 0.2 SVG units, period 4-6s, deterministic per-node phase from hashNodeId).
-// uHaloPulse is animated by the rAF loop in Slice 3 (no longer constant).
+// Slice 3+4 vertex shader — per-vertex size/color/halo/dim with DPR-aware
+// gl_PointSize PLUS ambient drift (Slice 3) PLUS Slice 4 chip-flash scale
+// modulation. vIsFlashing varying gates the scale curve so non-flashing
+// vertices stay at scale 1.0. flashProgress = clamp((uTime - uFlashStartTime)
+// / 0.1, 0.0, 1.0) — shader self-resets after 100ms (no JS cleanup).
 const VERTEX_SHADER = `
   attribute float size;
   attribute float halo;
@@ -131,41 +140,53 @@ const VERTEX_SHADER = `
   attribute float periodX;
   attribute float periodY;
   attribute float isHighlighted;
+  attribute float vertexIndex;
   varying vec3 vColor;
   varying float vHalo;
   varying float vDim;
   varying vec3 vStrokeColor;
   varying float vIsHighlighted;
+  varying float vFlashProgress;
+  varying float vIsFlashing;
   uniform float uDpr;
   uniform float uHaloPulse;
   uniform float uTime;
   uniform float uDriftAmp;
+  uniform float uFlashNodeId;
+  uniform float uFlashStartTime;
   void main() {
     vColor = color;
     vHalo = halo;
     vDim = dim;
     vStrokeColor = strokeColor;
     vIsHighlighted = isHighlighted;
+    vIsFlashing = (abs(vertexIndex - uFlashNodeId) < 0.5) ? 1.0 : 0.0;
+    vFlashProgress = clamp((uTime - uFlashStartTime) / 0.1, 0.0, 1.0);
+    float flashScale = (vIsFlashing > 0.5)
+      ? (1.0 - 0.06 * sin(vFlashProgress * 3.14159))
+      : 1.0;
     vec3 drifted = position + vec3(
       uDriftAmp * sin(6.2831853 * uTime / periodX + phaseX),
       uDriftAmp * sin(6.2831853 * uTime / periodY + phaseY),
       0.0
     );
-    gl_PointSize = size * uDpr * (1.0 + (uHaloPulse - 1.0) * halo);
+    gl_PointSize = size * uDpr * (1.0 + (uHaloPulse - 1.0) * halo) * flashScale;
     gl_Position = projectionMatrix * modelViewMatrix * vec4(drifted, 1.0);
   }
 `
 
-// Slice 3 fragment shader — circular sprite + stroke band + selected halo
-// (modulated by uHaloPulse for 2s 1.0→1.15 cosine pulse — UI-SPEC #2) +
-// highlighted halo ring (modulated by uHighlightAlpha for 3s 0.4→0.8 cosine
-// brighten on non-selected highlighted nodes — UI-SPEC #3).
+// Slice 3+4 fragment shader — circular sprite + stroke band + selected halo +
+// highlighted halo + Slice 4 chip-flash alpha modulation. flashAlpha follows
+// the same sin curve as the vertex flashScale so size + alpha pulse together
+// (1.0 → 0.5 → 1.0 over 100ms, matching Phase 16 chipFlash keyframe).
 const FRAGMENT_SHADER = `
   varying vec3 vColor;
   varying float vHalo;
   varying float vDim;
   varying vec3 vStrokeColor;
   varying float vIsHighlighted;
+  varying float vFlashProgress;
+  varying float vIsFlashing;
   uniform vec3 uHaloColor;
   uniform float uHaloAlpha;
   uniform float uStrokeMix;
@@ -182,7 +203,10 @@ const FRAGMENT_SHADER = `
     col = mix(col, uHaloColor, vHalo * haloRing);
     float selectedHaloAlpha = haloRing * vHalo * uHaloAlpha * uHaloPulse * 0.6;
     float highlightedHaloAlpha = highlightRing * vIsHighlighted * (1.0 - vHalo) * uHaloAlpha * uHighlightAlpha;
-    float alpha = (core + strokeBand * uStrokeMix + selectedHaloAlpha + highlightedHaloAlpha) * vDim;
+    float flashAlpha = (vIsFlashing > 0.5)
+      ? (1.0 - 0.5 * sin(vFlashProgress * 3.14159))
+      : 1.0;
+    float alpha = (core + strokeBand * uStrokeMix + selectedHaloAlpha + highlightedHaloAlpha) * vDim * flashAlpha;
     if (alpha < 0.01) discard;
     gl_FragColor = vec4(col, alpha);
   }
@@ -194,14 +218,14 @@ export default function WebGLConstellation({
   layout,
   highlightedSkillIds,
   selectedSkillId,
-  hoveredSkillId, // eslint-disable-line no-unused-vars
+  hoveredSkillId,
   yearRange,
-  justFilteredId, // eslint-disable-line no-unused-vars
+  justFilteredId,
   theme,
   lang, // eslint-disable-line no-unused-vars
   t, // eslint-disable-line no-unused-vars
-  onSelectSkill, // eslint-disable-line no-unused-vars
-  onHoverSkill, // eslint-disable-line no-unused-vars
+  onSelectSkill,
+  onHoverSkill,
 }) {
   const canvasRef = useRef(null)
   const sceneRef = useRef(null)
@@ -211,6 +235,9 @@ export default function WebGLConstellation({
   const geometryRef = useRef(null)
   const edgeGeometryRef = useRef(null)
   const edgeMaterialRef = useRef(null)
+  // Slice 4 — refs for sizing data used by pointer-pick (avoids stale closures
+  // when the pointermove listener is re-attached on every prop change).
+  const maxCountRef = useRef(1)
 
   // Main scene setup: 26 Points + 50 LineSegments, attributes built once per
   // (nodes, edges, layout) tuple. Dim/halo/strokeColor/edge-RGBA are
@@ -238,6 +265,7 @@ export default function WebGLConstellation({
     // ── Node geometry ── single draw, 26 Points
     const N = nodes.length
     const maxCount = Math.max(...nodes.map((n) => n.count))
+    maxCountRef.current = maxCount
     const positions = new Float32Array(N * 3)
     const colors = new Float32Array(N * 3)
     const sizes = new Float32Array(N)
@@ -252,6 +280,10 @@ export default function WebGLConstellation({
     const periodXs = new Float32Array(N)
     const periodYs = new Float32Array(N)
     const isHighlighteds = new Float32Array(N)
+    // Slice 4 — per-vertex index attribute for shader chip-flash gating.
+    // The shader compares vertexIndex to uFlashNodeId; only the matching
+    // vertex applies the flashScale + flashAlpha curves.
+    const vertexIndices = new Float32Array(N)
     const highlightSet = highlightedSkillIds && highlightedSkillIds.length > 0
       ? new Set(highlightedSkillIds)
       : null
@@ -281,6 +313,7 @@ export default function WebGLConstellation({
       periodXs[i] = 4.0 + ((hashNodeId(`${node.id}px`) % 1000) / 500)
       periodYs[i] = 4.0 + ((hashNodeId(`${node.id}py`) % 1000) / 500)
       isHighlighteds[i] = highlightSet && highlightSet.has(node.id) ? 1.0 : 0.0
+      vertexIndices[i] = i
     })
 
     const geometry = new BufferGeometry()
@@ -296,6 +329,7 @@ export default function WebGLConstellation({
     geometry.setAttribute('periodX', new BufferAttribute(periodXs, 1))
     geometry.setAttribute('periodY', new BufferAttribute(periodYs, 1))
     geometry.setAttribute('isHighlighted', new BufferAttribute(isHighlighteds, 1))
+    geometry.setAttribute('vertexIndex', new BufferAttribute(vertexIndices, 1))
 
     const material = new ShaderMaterial({
       vertexShader: VERTEX_SHADER,
@@ -312,7 +346,9 @@ export default function WebGLConstellation({
         uTime: { value: 0.0 },
         uDriftAmp: { value: 0.2 },
         uHighlightAlpha: { value: 0.4 },
-        // Slice 4 placeholders so the material constructor is touched once.
+        // Slice 4 — chip-flash + edge-reveal uniforms (default values mean
+        // "no flash" / "no active node"; updated by the dedicated useEffects
+        // below when justFilteredId / selectedSkillId / hoveredSkillId change).
         uFlashNodeId: { value: -1 },
         uFlashStartTime: { value: -Infinity },
         uActiveNodeId: { value: -1 },
@@ -470,6 +506,157 @@ export default function WebGLConstellation({
       rendererRef.current.render(sceneRef.current, cameraRef.current)
     }
   }, [highlightedSkillIds, yearRange, selectedSkillId, nodes])
+
+  // ── Slice 4 — Chip-flash uniforms (justFilteredId → uFlashNodeId +
+  // uFlashStartTime). When justFilteredId becomes a node id, capture the
+  // CURRENT shader uTime as uFlashStartTime (Pitfall 18: NOT performance.now;
+  // the 0.1s window in the vertex/fragment shader runs on the same uTime
+  // axis). When justFilteredId is null, reset uFlashNodeId to -1 so the
+  // shader gate (abs(vertexIndex - uFlashNodeId) < 0.5) misses on every
+  // vertex. The shader self-resets after 100ms via flashProgress clamp.
+  useEffect(() => {
+    if (!materialRef.current) return
+    if (justFilteredId == null) {
+      materialRef.current.uniforms.uFlashNodeId.value = -1
+      // Defensive reset of uFlashStartTime to -Infinity — the shader gate
+      // already short-circuits when uFlashNodeId === -1, but resetting the
+      // start time too keeps the reset path symmetric with the trigger path.
+      materialRef.current.uniforms.uFlashStartTime.value = -Infinity
+      return
+    }
+    materialRef.current.uniforms.uFlashNodeId.value = nodeIdToIndex(justFilteredId, nodes)
+    materialRef.current.uniforms.uFlashStartTime.value = materialRef.current.uniforms.uTime.value
+  }, [justFilteredId, nodes])
+
+  // ── Slice 4 — Active-id uniform (uActiveNodeId) drives weight-1 edge
+  // reveal in the next effect. BLOCKER 2: hoveredSkillId arrives as a PROP
+  // from useConstellation (useConstellation.js:55,73,132). NO internal
+  // useState for hover. activeId fall-through order matches Phase 15
+  // D-15-VIS-EDGE: selectedSkillId wins, then hoveredSkillId, else -1.
+  useEffect(() => {
+    if (!materialRef.current) return
+    const activeId = selectedSkillId != null ? selectedSkillId : hoveredSkillId
+    materialRef.current.uniforms.uActiveNodeId.value = nodeIdToIndex(activeId, nodes)
+  }, [selectedSkillId, hoveredSkillId, nodes])
+
+  // ── Slice 4 — Edge RGBA alpha rebuild (WARNING 5: alpha goes in 4th
+  // component, NOT pre-multiplied into RGB so light-theme blending stays
+  // correct). Weight ≥2 edges always visible at their CSS-var alpha.
+  // Weight-1 edges reveal to alpha 1.0 when their source or target equals
+  // activeId (= selectedSkillId ?? hoveredSkillId). Filter-dim multiplier
+  // (×0.35) composes via the alpha component when either endpoint is dimmed.
+  useEffect(() => {
+    if (!edgeGeometryRef.current || !edges) return
+    const edgeColorAttr = edgeGeometryRef.current.getAttribute('color')
+    if (!edgeColorAttr) return
+    const cs = typeof window !== 'undefined'
+      ? getComputedStyle(document.documentElement)
+      : null
+    const lightRaw = cs ? cs.getPropertyValue('--color-constellation-edge') : ''
+    const heavyRaw = cs ? cs.getPropertyValue('--color-constellation-edge-heavy') : ''
+    const lightCol = parseCSSColor(lightRaw)
+    const lightAlpha = parseCSSAlpha(lightRaw)
+    const heavyCol = parseCSSColor(heavyRaw)
+    const heavyAlpha = parseCSSAlpha(heavyRaw)
+    const activeId = selectedSkillId != null ? selectedSkillId : hoveredSkillId
+    const filtersActive = (highlightedSkillIds && highlightedSkillIds.length > 0)
+      || yearRange != null
+    edges.forEach((edge, i) => {
+      const isHeavy = edge.weight >= 2
+      const incidentToActive = activeId != null
+        && (edge.source === activeId || edge.target === activeId)
+      let opacity = 0
+      if (isHeavy) opacity = 1
+      else if (incidentToActive) opacity = 1
+      if (filtersActive) {
+        const sourceNode = nodes.find((n) => n.id === edge.source)
+        const targetNode = nodes.find((n) => n.id === edge.target)
+        const sourceDim = sourceNode
+          && shouldDimNode(sourceNode, { selectedSkillId, highlightedSkillIds, yearRange })
+        const targetDim = targetNode
+          && shouldDimNode(targetNode, { selectedSkillId, highlightedSkillIds, yearRange })
+        if (sourceDim || targetDim) opacity *= 0.35
+      }
+      const c = isHeavy ? heavyCol : lightCol
+      const cssAlpha = isHeavy ? heavyAlpha : lightAlpha
+      const alpha = opacity * cssAlpha
+      // WARNING 5: alpha goes in 4th component. RGB stays as-is (NOT
+      // pre-multiplied by opacity — preserves correct light-theme blending).
+      edgeColorAttr.setXYZW(i * 2, c.r, c.g, c.b, alpha)
+      edgeColorAttr.setXYZW(i * 2 + 1, c.r, c.g, c.b, alpha)
+    })
+    edgeColorAttr.needsUpdate = true
+    if (rendererRef.current && sceneRef.current && cameraRef.current) {
+      rendererRef.current.render(sceneRef.current, cameraRef.current)
+    }
+  }, [selectedSkillId, hoveredSkillId, highlightedSkillIds, yearRange, edges, nodes, theme])
+
+  // ── Slice 4 — Canvas pointer-pick (pointermove → onHoverSkill CALLBACK,
+  // pointerleave → onHoverSkill(null), click → onSelectSkill). BLOCKER 2:
+  // these are callback-OUT to props.onHoverSkill / props.onSelectSkill. The
+  // hook updates state, the hook re-renders, hoveredSkillId flows back in
+  // as a prop, and the uActiveNodeId useEffect updates the shader uniform.
+  // WebGL has ZERO internal hover state.
+  //
+  // Pointer-pick math: project each node from layout space (0..1000 ortho)
+  // to canvas pixel space via getBoundingClientRect, then test against
+  // pickRadius = computeRadius(...) + 8 device px per UI-SPEC §Node Geometry.
+  useEffect(() => {
+    const canvas = canvasRef.current
+    if (!canvas || !nodes || nodes.length === 0) return undefined
+
+    function pickAt(clientX, clientY) {
+      const rect = canvas.getBoundingClientRect()
+      const px = clientX - rect.left
+      const py = clientY - rect.top
+      const maxCount = maxCountRef.current
+      let bestId = null
+      let bestDist = Infinity
+      for (let i = 0; i < nodes.length; i += 1) {
+        const node = nodes[i]
+        const pos = layout && layout[node.id]
+        if (!pos) continue // eslint-disable-line no-continue
+        const projX = (pos.x / 1000) * rect.width
+        const projY = (pos.y / 1000) * rect.height
+        const dist = Math.hypot(px - projX, py - projY)
+        const radius = computeRadius(node.count, maxCount, 'desktop')
+        const pickRadius = radius + 8
+        if (dist <= pickRadius && dist < bestDist) {
+          bestId = node.id
+          bestDist = dist
+        }
+      }
+      return bestId
+    }
+
+    function onPointerMove(e) {
+      const matched = pickAt(e.clientX, e.clientY)
+      // BLOCKER 2: callback-out only. hoveredSkillId flows back via parent
+      // re-render. We always emit so the hook is the single source of truth
+      // for hover-clear timing (no risk of a stale compare against props).
+      if (onHoverSkill) onHoverSkill(matched)
+    }
+
+    function onPointerLeave() {
+      // Always emit null on leave so a hover state seeded by pointermove
+      // gets cleared by the hook (BLOCKER 2 — no internal state to gate on).
+      if (onHoverSkill) onHoverSkill(null)
+    }
+
+    function onClick(e) {
+      const matched = pickAt(e.clientX, e.clientY)
+      if (matched != null && onSelectSkill) onSelectSkill(matched)
+    }
+
+    canvas.addEventListener('pointermove', onPointerMove)
+    canvas.addEventListener('pointerleave', onPointerLeave)
+    canvas.addEventListener('click', onClick)
+    return () => {
+      canvas.removeEventListener('pointermove', onPointerMove)
+      canvas.removeEventListener('pointerleave', onPointerLeave)
+      canvas.removeEventListener('click', onClick)
+    }
+  }, [nodes, layout, onHoverSkill, onSelectSkill])
 
   // ── Slice 3 rAF loop + visibilitychange pause ── always-running animation
   // loop per D-17-FRAMELOOP. Drives uTime accumulation + uHaloPulse cos curve
