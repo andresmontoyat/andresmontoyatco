@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v3.8
 milestone_name: Game Mode
-status: ready_to_execute
-stopped_at: Phase 17 planned (5 MVP slices, revised after plan-checker conditional_pass) — ready to execute
-last_updated: "2026-06-03T19:23:00.000Z"
-last_activity: 2026-06-03 -- Phase 17 plans created + revised + verified
+status: ready_to_close_milestone
+stopped_at: Phase 17 complete (5/5 plans, UAT 9/9, SC-4 Lighthouse cleared) — v3.8 ready to close
+last_updated: "2026-06-06T00:00:00.000Z"
+last_activity: 2026-06-06 -- Phase 17 UAT 9/9 PASS, v3.8 Game Mode milestone complete
 progress:
   total_phases: 18
-  completed_phases: 3
-  total_plans: 16
-  completed_plans: 15
-  percent: 17
+  completed_phases: 4
+  total_plans: 21
+  completed_plans: 21
+  percent: 22
 ---
 
 # Project State
@@ -21,15 +21,15 @@ progress:
 See: .planning/PROJECT.md (updated 2026-05-29 — v3.8 milestone open)
 
 **Core value:** The hero section and overall first impression must stop recruiters mid-scroll and make them want to learn more about Carlos — and convert visits into engineering conversations.
-**Current focus:** Phase 17 — WebGL Desktop Renderer & Lighthouse Gate (next)
+**Current focus:** v3.8 milestone complete — ready to close + tag
 **Design source of truth:** `docs/superpowers/specs/2026-05-29-game-mode-design.md`
 
 ## Current Position
 
-Phase: 17 — WebGL Desktop Renderer & Lighthouse Gate
-Plans: 5 MVP vertical slices (17-01..17-05), revised after plan-checker conditional_pass (3 BLOCKERs + 6 WARNINGs all addressed)
-Status: Ready to execute (sequential waves — vertical-slice trade-off)
-Last activity: 2026-06-03 -- Phase 17 plans created (a94823c) + revised (ad35a68)
+Phase: 17 — COMPLETE (signed off 2026-06-06; 5/5 plans, 253 tests GREEN, UAT 9/9 pass, SC-4 Lighthouse HARD gate cleared)
+Milestone: v3.8 Game Mode — COMPLETE (4/4 v3.8 phases done: 14, 15, 16, 17)
+Status: Ready to close milestone v3.8 + tag release
+Last activity: 2026-06-06 -- Phase 17 UAT complete, v3.8 milestone fully delivered
 
 ## Plan 17 Decisions (2026-06-03)
 

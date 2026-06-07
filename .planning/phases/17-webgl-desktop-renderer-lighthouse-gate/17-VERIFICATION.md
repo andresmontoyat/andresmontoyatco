@@ -1,9 +1,10 @@
 ---
 phase: 17-webgl-desktop-renderer-lighthouse-gate
 verified: 2026-06-03T23:35:00-05:00
-status: human_needed
-score: 5/5 must-haves verified (SC-1, SC-2, SC-3, SC-5 PASS; SC-4 deferred to human UAT)
+status: passed
+score: 5/5 must-haves verified (SC-1, SC-2, SC-3, SC-4, SC-5 all PASS) + UAT 9/9 pass
 sc2_fixed: "commit 79991a3 — RendererErrorBoundary fallback now <SvgConstellation {...rendererProps}/>; SC-2 regression test added; 253/253 GREEN"
+sc4_verified: "2026-06-06 — npm run lighthouse:mobile && npm run lighthouse:check exit 0 (Perf ≥95 / A11y 100 / BP 100 / SEO 100). Phase 17 HARD gate passed."
 re_verification: true
 overrides_applied: 0
 gaps:

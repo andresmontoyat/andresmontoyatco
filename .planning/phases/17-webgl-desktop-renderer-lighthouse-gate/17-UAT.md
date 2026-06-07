@@ -1,26 +1,22 @@
 ---
-status: testing
+status: complete
 phase: 17-webgl-desktop-renderer-lighthouse-gate
 source: 17-01-SUMMARY.md, 17-02-SUMMARY.md, 17-03-SUMMARY.md, 17-04-SUMMARY.md, 17-05-SUMMARY.md
 gate_type: HARD (lighthouse:check exit code)
 started: 2026-06-04T00:00:00Z
-updated: 2026-06-04T00:00:00Z
+updated: 2026-06-06T00:00:00Z
 ---
 
 ## Current Test
 
-number: 1
-name: Lighthouse mobile HARD gate (SC-4)
-expected: |
-  `npm run lighthouse:mobile && npm run lighthouse:check` exits 0. Performance ≥ 0.95, Accessibility = 1.0, Best Practices = 1.0, SEO = 1.0.
-awaiting: user response
+[testing complete]
 
 ## Tracking Summary
 
 total: 9
-passed: 0
+passed: 9
 issues: 0
-pending: 9
+pending: 0
 skipped: 0
 blocked: 0
 
@@ -42,6 +38,8 @@ This is the close-out manual UAT for Phase 17. It covers the 9 tests that requir
 ---
 
 ## Test 1 — Lighthouse mobile HARD gate (SC-4) — BLOCKER 3 flow
+
+result: pass
 
 **This is the HARD gate. `lighthouse:check`'s exit code IS the verdict. No visual inspection.**
 
@@ -65,6 +63,8 @@ This is the close-out manual UAT for Phase 17. It covers the 9 tests that requir
 
 ## Test 2 — Visual parity SVG ↔ WebGL (D-17-LIB + UI-SPEC parity contract)
 
+result: pass
+
 1. `npm run dev` (vite serves on http://localhost:5173).
 2. Open Chrome DevTools, set viewport ≥ 1024px.
 3. Visit `http://localhost:5173/?renderer=webgl` — screenshot the constellation.
@@ -78,6 +78,8 @@ This is the close-out manual UAT for Phase 17. It covers the 9 tests that requir
 
 ## Test 3 — Ambient motion quality (Slice 3)
 
+result: pass
+
 1. With `?renderer=webgl` on desktop (≥1024px), observe the constellation for 30 seconds at rest (no selection, no filter).
 2. **Drift:** nodes show a subtle twinkle (sub-perceptual sinusoidal drift) — no node "moves" enough to be jarring.
 3. Select a node → halo pulses at ~2s rhythm (matches Phase 15 `animate-pulse2`).
@@ -88,6 +90,8 @@ This is the close-out manual UAT for Phase 17. It covers the 9 tests that requir
 ---
 
 ## Test 4 — Live swap on resize (D-17-RESIZE-SWAP)
+
+result: pass
 
 1. Start with viewport ≥ 1024px (WebGL active per capability hook).
 2. Select the 'java' node → halo visible on WebGL canvas.
@@ -100,6 +104,8 @@ This is the close-out manual UAT for Phase 17. It covers the 9 tests that requir
 
 ## Test 5 — URL override (D-17-OVERRIDE)
 
+result: pass
+
 1. On desktop ≥ 1024px, visit `?renderer=svg` → SvgConstellation renders (override forces SVG even though WebGL is capable).
 2. Visit `?renderer=webgl` → WebGLConstellation renders.
 3. On tablet 768-1023px, visit `?renderer=webgl` → WebGLConstellation renders (override short-circuits viewport gate per RESEARCH §7).
@@ -109,6 +115,8 @@ This is the close-out manual UAT for Phase 17. It covers the 9 tests that requir
 ---
 
 ## Test 6 — WebGL context loss (D-17-ERRORBOUNDARY-RUNTIME)
+
+result: pass
 
 1. With `?renderer=webgl` active, open `chrome://gpucrash` in a new tab to force GPU reset.
 2. Return to the portfolio tab → `RendererErrorBoundary` catches the WebGL crash, swaps to SvgConstellation silently. **No error UI, no broken screen.**
@@ -120,6 +128,8 @@ This is the close-out manual UAT for Phase 17. It covers the 9 tests that requir
 
 ## Test 7 — Reduced-motion → SVG (D-17-CAP-GATES)
 
+result: pass
+
 1. System Preferences → Accessibility → Display → **Reduce Motion: ON** (macOS) / equivalent on Windows / Linux.
 2. Reload the page on desktop ≥ 1024px → SvgConstellation renders (capability hook gates WebGL off when `prefers-reduced-motion: reduce`).
 3. DevTools Console shows **no** `[renderer-fallback]` log (the gate failed BEFORE WebGL mount — no fallback needed).
@@ -130,6 +140,8 @@ This is the close-out manual UAT for Phase 17. It covers the 9 tests that requir
 
 ## Test 8 — Save-Data → SVG (D-17-CAP-GATES)
 
+result: pass
+
 1. DevTools → Network → throttling → **Slow 3G**, OR set `Object.defineProperty(navigator.connection, 'saveData', { value: true, configurable: true })` in the console.
 2. Reload page → SvgConstellation renders (capability hook gates WebGL off when `navigator.connection.saveData === true`).
 
@@ -138,6 +150,8 @@ This is the close-out manual UAT for Phase 17. It covers the 9 tests that requir
 ---
 
 ## Test 9 — FPS counter in dev mode only
+
+result: pass
 
 1. `npm run dev` + visit `?renderer=webgl` on desktop ≥ 1024px → FPS counter visible in the bottom-left, font-mono, showing ≥ 50 fps (target 60 on modern hardware).
 2. `npm run build && grep -c FpsCounter dist/assets/*.js` → returns **0** across all chunks (Vite `import.meta.env.DEV` dead-code elimination removes the FpsCounter import + JSX from production).
