@@ -6,18 +6,11 @@
 - ⚠ **v3.5 — Themes, Projects & Production** — Themes & Projects shipped (VIS-01, VIS-03, DEBT-01/02/03); deploy deferred to v3.7 (closed 2026-05-12 — see [`milestones/v3.5-ROADMAP.md`](milestones/v3.5-ROADMAP.md) and [`milestones/v3.5-MILESTONE-AUDIT.md`](milestones/v3.5-MILESTONE-AUDIT.md))
 - ✅ **v3.6 — AI Practice & Brand Refresh** — Code shipped: brand palette swap, theme toggle root-cause fix, hero photo, sales-pitch Claude Code section. 5/5 active REQs satisfied. UAT visual+Lighthouse + DEPLOY-01/02/03 + DIAGRAMS-01 carry to v3.7. Closed without git tag (production not yet live). See [`milestones/v3.6-ROADMAP.md`](milestones/v3.6-ROADMAP.md) and [`milestones/v3.6-MILESTONE-AUDIT.md`](milestones/v3.6-MILESTONE-AUDIT.md).
 - ⏸ **v3.7 — Production Deploy** *(PAUSED, opened 2026-05-20 — deferred 2026-05-29)* — Vercel auto-deploy done (site live on `*.vercel.app`); Phase 11 Plan 11-05 Lighthouse mobile gate verdict, custom domain (Phase 12), and PR previews (Phase 13) **carried as deferred**. Resumes in a future milestone. Phases 11–13 reserved — NOT renumbered.
-- 🚧 **v3.8 — Game Mode** *(ACTIVE, opened 2026-05-29)* — Interactive skill-constellation landing (node = skill, edges = co-occurrence), floating bilingual experience cards, multi-skill/year/category filters, persisted game/dev toggle. Adaptive render (WebGL desktop / SVG-DOM mobile) holds the Lighthouse mobile HARD gate, WCAG 2.1 AA, and SEO. Introduces Vitest + RTL. **Phases 14–17.** Source of truth: [`docs/superpowers/specs/2026-05-29-game-mode-design.md`](../docs/superpowers/specs/2026-05-29-game-mode-design.md).
+- ✅ **v3.8 — Game Mode** *(SHIPPED 2026-06-06)* — Interactive skill-constellation landing (node=skill, edges=co-occurrence), floating bilingual experience cards, multi-skill/year/category filters, persisted game/dev toggle. Adaptive render (WebGL desktop / SVG-DOM mobile) holds the Lighthouse mobile HARD gate (cleared Perf ≥95 / A11y 100 / BP 100 / SEO 100). Vitest + RTL test infra introduced (253 tests GREEN). 8/8 REQs delivered (GAME-01..07 + TEST-01). Phases 14–17. See [`milestones/v3.8-ROADMAP.md`](milestones/v3.8-ROADMAP.md).
 
 ---
 
 ## Phases
-
-### v3.8 Game Mode (Phases 14–17) — ACTIVE
-
-- [x] **Phase 14: Foundation — Data Layer, ViewMode Toggle & Test Infra** *(complete 2026-05-30)* — skills.js category map + skill-graph derivation + numeric `period` field + baked layout; persisted game/dev toggle; Vitest + RTL setup with pure-logic tests
-- [ ] **Phase 15: Accessible Constellation & SEO Fallback** — gate-safe SVG/DOM constellation render with category clustering; keyboard nav, dialog semantics, sr-only full-experience fallback, reduced-motion path
-- [x] **Phase 16: Filters & Floating ExperienceCard** *(complete 2026-06-03)* — multi-skill + year/timeline + category filters with reset; floating bilingual experience cards with tech chips + CV CTA on skill select. 183/183 tests GREEN, 8.82 kB gz, UAT 9/9 pass
-- [ ] **Phase 17: WebGL Desktop Renderer & Lighthouse Gate** — lazy-loaded three.js desktop renderer behind the shared contract; perf budget enforced + Lighthouse mobile HARD gate re-verified
 
 ### v3.7 Production Deploy (Phases 11–13) — ⏸ DEFERRED
 
@@ -26,82 +19,6 @@
 - [~] **Phase 11: Vercel auto-deploy + UAT pre-deploy gate** (DEPLOY-01) — auto-deploy live; Plan 11-05 Lighthouse gate verdict deferred
 - [ ] **Phase 12: Custom domain andresmontoyat.co + DNS** (DEPLOY-02) — deferred
 - [ ] **Phase 13: PR preview deploys + OG card validation** (DEPLOY-03) — deferred
-
----
-
-## Phase Details (v3.8 — ACTIVE)
-
-### Phase 14: Foundation — Data Layer, ViewMode Toggle & Test Infra
-**Goal**: The pure data and state foundation for game mode exists and is tested — a curated skill catalog with categories, a derived skill graph (nodes/edges/year ranges) from real experience data, a baked deterministic layout, and a persisted one-click game/dev view toggle.
-**Mode:** mvp
-**Depends on**: v3.6 codebase (live on `*.vercel.app`); independent of paused v3.7 deploy work
-**Requirements**: GAME-02, GAME-05, TEST-01
-**Success Criteria** (what must be TRUE):
-  1. A new `skills.js` catalog maps every skill in `experience.js` `tech[]` to a category + color + aliases, with `GCP`/`Google Cloud` normalized to one canonical skill node (GKE stays separate)
-  2. `constellation.graph.js` derives skill nodes (with category, color, count, year range, experience indices) and co-occurrence edges (weight = shared jobs) purely from `experience.js` + `skills.js`; each experience carries a numeric `period: { start, end|null }`
-  3. Node layout positions are baked deterministically at build time (no d3-force in the client bundle); the same positions are available to any renderer
-  4. The visitor can toggle between game and dev view with one click; game is the default landing; the choice persists in `localStorage` (`cam-viewmode`) and is addressable via a `?mode=` deep-link, surviving reload
-  5. `npm test` runs a Vitest + React Testing Library suite; the pure graph/filter logic is unit-tested near-100% and the ViewMode toggle + persistence has a passing component test
-**Plans**: 2 plans
-  - [x] 14-01-PLAN.md — Vitest+RTL test infra + skills.js catalog + skill-graph/layout derivation + numeric `period` (GAME-02, TEST-01; Wave 1, autonomous)
-  - [x] 14-02-PLAN.md — ViewModeContext + Game/Dev toggle pill + App/Nav wiring + crawlable game placeholder + persistence/`?mode=` component test (GAME-05, TEST-01; Wave 2, autonomous, depends on 14-01)
-**UI hint**: yes
-
-### Phase 15: Accessible Constellation & SEO Fallback
-**Goal**: The visitor lands on an interactive, accessible skill constellation rendered via the lightweight SVG/DOM path — the gate-safe baseline that ships value on its own with full keyboard, screen-reader, and crawler support.
-**Mode:** mvp
-**Depends on**: Phase 14 (graph data, baked layout, ViewMode toggle, test infra)
-**Requirements**: GAME-01 (SVG/DOM path + renderer contract), GAME-02 (visual render), GAME-06
-**Success Criteria** (what must be TRUE):
-  1. On default landing the visitor sees a skill constellation: skills as nodes (size reflecting how many jobs used them), edges connecting skills that co-occur in the same job, visually clustered by category color/zone
-  2. The render is driven by the SVG/DOM renderer behind a single props contract, chosen by capability + viewport + `prefers-reduced-motion` + save-data detection (the same contract a desktop renderer will later plug into); reduced-motion shows a static path with no physics/particles
-  3. Skill nodes are keyboard-navigable (Tab/arrow keys, Enter selects) with descriptive `aria-label`s (skill name + experience count); AA contrast holds for nodes/edges in both dark and light themes
-  4. A visually-hidden but DOM-present semantic list of all 12 experiences (full bilingual text) is in the markup so screen readers, crawlers, and ATS read the complete career content
-  5. Skill nodes and edges render bilingually (EN/ES) and follow the active theme; an empty/no-data state degrades gracefully instead of crashing
-**Plans**: 3 plans
-  - [x] 15-01-PLAN.md — GameMode orchestrator + sr-only ConstellationFallback + derived bilingual H1 (GAME-01, GAME-06; Wave 1, autonomous, MVP Slice 1)
-  - [x] 15-02-PLAN.md — SvgConstellation visual renderer + useConstellation hook + constellation tokens/keyframes + GameMode wiring (GAME-01, GAME-02; Wave 2, autonomous, MVP Slice 2, depends on 15-01)
-  - [x] 15-03-PLAN.md — spatialNav helper + role=application wrapper + roving tabindex + Enter/Space/Esc + aria-live + focus ring + hint pill (GAME-01, GAME-06; Wave 3, autonomous, MVP Slice 3, depends on 15-01,15-02)
-**UI hint**: yes
-
-### Phase 16: Filters & Floating ExperienceCard
-**Goal**: The visitor can explore the constellation — narrow it by skills, years, and categories — and on selecting a skill sees the jobs where Carlos used it as floating bilingual experience cards.
-**Mode:** mvp
-**Depends on**: Phase 15 (accessible constellation render + node selection)
-**Requirements**: GAME-03, GAME-04
-**Success Criteria** (what must be TRUE):
-  1. The visitor can select multiple skills, set a year/timeline range (2007–2026), and pick skill-category chips; the filters combine as an intersection and a reset clears all of them at once
-  2. Applying filters highlights the matching skill subset (nodes + their edges) and dims the rest, computed by pure selectors with no flicker or jank
-  3. Selecting a skill opens floating bilingual `ExperienceCard`(s) for the jobs that used it — showing title, company, date, location, bullets, and tech chips colored by category
-  4. Each experience card exposes a CV CTA that downloads the correct `CV_Carlos_Montoya_{EN,ES}.docx` for the active language
-  5. Filter selectors and the experience-card content render correctly in both EN/ES and both themes; selecting a skill with no matching experiences shows an empty state, never a crash
-**Plans**: 6 plans
-  - [ ] 16-01-PLAN.md — RED tests scaffold for filters/useConstellation/SkillFilters/ExperienceCard/SvgConstellation/GameMode (GAME-03+04; Wave 0, autonomous)
-  - [ ] 16-02-PLAN.md — filters.js pure selectors + i18n t.game.* keys + Tailwind tokens/keyframes + index.css vars (GAME-03+04; Wave 1, autonomous, depends on 16-01)
-  - [ ] 16-03-PLAN.md — useConstellation filter state + SvgConstellation highlightedSkillIds/yearRange dim consumer (GAME-03; Wave 2, autonomous, depends on 16-02)
-  - [ ] 16-04-PLAN.md — SkillFilters bar with chip clusters + WAI-ARIA dual-thumb YearRangeSlider + reset button (GAME-03; Wave 3, autonomous, depends on 16-02)
-  - [ ] 16-05-PLAN.md — ExperienceCard role=dialog portal with focus trap + click-outside + tech chips + bilingual CV CTA + empty state (GAME-04; Wave 4, autonomous, depends on 16-02)
-  - [ ] 16-06-PLAN.md — GameMode wiring + Nav data-game-interactive + bundle budget check (GAME-03+04; Wave 5, autonomous, depends on 16-03+04+05)
-**UI hint**: yes
-
-### Phase 17: WebGL Desktop Renderer & Lighthouse Gate
-**Goal**: Desktop visitors get the full WebGL "wow" constellation as a lazy-loaded enhancement plugged into the same contract — without ever risking the Lighthouse mobile HARD gate, which is re-verified at the close.
-**Mode:** mvp
-**Depends on**: Phase 16 (full feature set on the light path proven); Phase 15 (renderer contract + SVG fallback)
-**Requirements**: GAME-01 (WebGL desktop path), GAME-07
-**Success Criteria** (what must be TRUE):
-  1. On desktop (≥ breakpoint, WebGL supported, no reduced-motion/save-data) the visitor sees the full WebGL constellation with gentle physics/glow around the baked positions; it implements the identical props contract as the SVG renderer and exposes the same selection/filter behavior
-  2. three.js (and any WebGL deps) load only in a lazy desktop chunk via React.lazy + Suspense — they are absent from the initial mobile load; a WebGL init failure falls back to the SVG renderer via an ErrorBoundary, never a broken screen
-  3. The mobile/light path adds < ~30KB gz over the current baseline (no three.js, no d3-force on the client; vector-only assets, reused fonts)
-  4. A Lighthouse mobile audit on the game-mode default landing passes the HARD gate: Performance ≥95 / Accessibility 100 / Best Practices 100 / SEO 100 — matching the v3.4 baseline
-  5. The desktop WebGL renderer has a capability-based-selection component test confirming it is chosen on desktop and the SVG path is chosen otherwise
-**Plans**: 5 plans
-  - [ ] 17-01-PLAN.md — Slice 1 walking-thin: lift detectCapabilities → useRendererCapability hook + extract RendererErrorBoundary from GameMode + minimal WebGLConstellation (1 Point smoke) + GameMode wiring with React.lazy/Suspense (GAME-01, GAME-07; Wave 1, autonomous, MVP Slice 1)
-  - [ ] 17-02-PLAN.md — Slice 2 full graph parity: 26 Points geometry + LineSegments edges + theme reactivity (CSS-var → uniforms) + selectedSkillId halo + dim attribute + light-theme stroke ring (GAME-01, GAME-07; Wave 2, autonomous, MVP Slice 2, depends on 17-01)
-  - [ ] 17-03-PLAN.md — Slice 3 ambient motion: rAF loop + visibilitychange pause + 2D drift + selected glow pulse + halo brighten on highlighted (GAME-01, GAME-07; Wave 3, autonomous, MVP Slice 3, depends on 17-02)
-  - [ ] 17-04-PLAN.md — Slice 4 chip-flash port (justFilteredId shader uniforms) + weight-1 edge reveal (uActiveNodeId) + canvas pointermove/pick → onHoverSkill (GAME-01, GAME-07; Wave 4, autonomous, MVP Slice 4, depends on 17-03)
-  - [ ] 17-05-PLAN.md — Slice 5 bundle gate (scripts/check-bundle-gate.mjs HARD ≤38.82 kB gz + three.js leak detection) + Lighthouse mobile HARD gate re-verification + dev FpsCounter widget + UAT scaffold — closes v3.8 (GAME-01, GAME-07; Wave 5, mixed/checkpoint, MVP Slice 5, depends on 17-04)
-**UI hint**: yes
 
 ---
 
@@ -191,16 +108,19 @@ See [`milestones/v3.6-ROADMAP.md`](milestones/v3.6-ROADMAP.md) and [`milestones/
 
 </details>
 
+<details>
+<summary>✅ v3.8 Game Mode (Phases 14-17) — SHIPPED 2026-06-06</summary>
+
+- [x] Phase 14: Foundation — Data Layer, ViewMode Toggle & Test Infra (2/2 plans) — completed 2026-05-30 (GAME-02, GAME-05, TEST-01)
+- [x] Phase 15: Accessible Constellation & SEO Fallback (3/3 plans) — completed 2026-06-01 (GAME-01 SVG/DOM contract, GAME-02 render, GAME-06) — UAT 6/7 pass
+- [x] Phase 16: Filters & Floating ExperienceCard (6/6 plans) — completed 2026-06-03 (GAME-03, GAME-04) — UAT 9/9 pass; 183 tests GREEN
+- [x] Phase 17: WebGL Desktop Renderer & Lighthouse Gate (5/5 plans) — completed 2026-06-06 (GAME-01 WebGL adapter, GAME-07) — UAT 9/9 pass; 253 tests GREEN; Lighthouse mobile HARD gate cleared
+
+See [`milestones/v3.8-ROADMAP.md`](milestones/v3.8-ROADMAP.md) and [`milestones/v3.8-REQUIREMENTS.md`](milestones/v3.8-REQUIREMENTS.md).
+
+</details>
+
 ---
-
-## Progress Table (v3.8 — ACTIVE)
-
-| Phase | Plans Complete | Status | Completed |
-|-------|----------------|--------|-----------|
-| 14. Foundation — Data, ViewMode & Test Infra | 2/2 | Complete    | 2026-05-30 |
-| 15. Accessible Constellation & SEO Fallback | 3/3 | Complete    | 2026-06-02 |
-| 16. Filters & Floating ExperienceCard | 6/6 | Complete    | 2026-06-03 |
-| 17. WebGL Desktop Renderer & Lighthouse Gate | 0/5 | Planned     | - |
 
 ## Progress Table (all milestones)
 
@@ -218,10 +138,10 @@ See [`milestones/v3.6-ROADMAP.md`](milestones/v3.6-ROADMAP.md) and [`milestones/
 | 11. Vercel deploy + UAT gate | v3.7 | 4/5 | ⏸ Deferred (11-05 pending) | — |
 | 12. Custom domain + DNS | v3.7 | 0/TBD | ⏸ Deferred | — |
 | 13. PR preview deploys | v3.7 | 0/TBD | ⏸ Deferred | — |
-| 14. Foundation — Data, ViewMode & Test | v3.8 | 0/2 | Planned | — |
-| 15. Accessible Constellation & SEO | v3.8 | 0/TBD | Not started | — |
-| 16. Filters & Floating ExperienceCard | v3.8 | 0/TBD | Not started | — |
-| 17. WebGL Desktop + Lighthouse Gate | v3.8 | 0/TBD | Not started | — |
+| 14. Foundation — Data, ViewMode & Test | v3.8 | 2/2 | ✓ Complete | 2026-05-30 |
+| 15. Accessible Constellation & SEO | v3.8 | 3/3 | ✓ Complete | 2026-06-01 |
+| 16. Filters & Floating ExperienceCard | v3.8 | 6/6 | ✓ Complete | 2026-06-03 |
+| 17. WebGL Desktop + Lighthouse Gate | v3.8 | 5/5 | ✓ Complete | 2026-06-06 |
 
 ---
 

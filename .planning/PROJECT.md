@@ -2,13 +2,26 @@
 
 ## Current State
 
-**Shipped:** v3.6 (closed 2026-05-20 — **code shipped; production deploy still pending v3.7**) — Brand palette refreshed (blue-500 + emerald-500), Tailwind CSS-var refactor (theme toggle genuinely flips all 8 sections — Phase 5 false-positive debt closed), cinematic full-bleed hero photo via `<picture>` w/ WebP 800w/1600w + sharp pipeline + LCP preload, bilingual sales-pitch Claude Code section (lazy-loaded 9.95 KB chunk; 7-counter proof + 5 services + 3 featured apps GSD/spring-ai-qdrant-mcp/ci-templates; scroll-spy + CTAs in Desktop + Mobile nav). 5/5 active requirements satisfied (THEME-01, COLOR-01, HERO-01, AI-01, AI-01-CICD). Phase 10 UAT closed partial (2/11 pass + 9 skip deferred to v3.7 pre-deploy gate); Phase 11 (DIAGRAMS-01) de-scoped. Cross-phase integration verified 8/8 WIRED. Closed without git tag (production site still not live). See [`milestones/v3.6-ROADMAP.md`](milestones/v3.6-ROADMAP.md), [`milestones/v3.6-MILESTONE-AUDIT.md`](milestones/v3.6-MILESTONE-AUDIT.md).
+**Shipped:** v3.8 Game Mode (closed 2026-06-06) — Interactive skill-constellation landing replaces the static-timeline-only experience. Node = skill, edges = tech co-occurrence (derived from `experience.js` tech[] + new `skills.js` 8-category map; GCP/Google Cloud normalized). Adaptive renderer: full WebGL on desktop (three.js raw via `React.lazy`, ~117 kB gz lazy chunk, ambient drift + glow pulse + halo brighten); lightweight SVG/DOM on mobile (8.91 kB gz, **stays under Lighthouse mobile HARD gate** Perf ≥95 / A11y 100 / BP 100 / SEO 100 — re-verified 2026-06-06). Filters: multi-skill (AND intersection), year-range dual-thumb slider 2007–2026 (WAI-ARIA APG), 8 category chips, reset. Floating bilingual ExperienceCard on skill-select: role=dialog + focus trap + tech chips (click adds to filter) + lang-aware CV CTA download (`CV_Carlos_Montoya_{EN,ES}.docx`); desktop = node-anchored popover, mobile = bottom-sheet. Persisted game/dev toggle (`cam-viewmode` localStorage + `?mode=` deep-link). Vitest + RTL test infrastructure introduced (test-infra debt deferred since v3.0 — 253 tests GREEN across 19 files, 39 baseline → +214). 8/8 v3.8 requirements delivered (GAME-01..07 + TEST-01). UAT 9/9 pass on Phase 17 close. See [`milestones/v3.8-ROADMAP.md`](milestones/v3.8-ROADMAP.md), [`milestones/v3.8-REQUIREMENTS.md`](milestones/v3.8-REQUIREMENTS.md).
 
 **Previously shipped:**
+- v3.6 (closed 2026-05-20 — **code shipped; production deploy still deferred**): brand palette refresh (blue-500 + emerald-500), Tailwind CSS-var refactor, cinematic full-bleed hero photo, bilingual sales-pitch Claude Code section. 5/5 active requirements satisfied. Phase 10 UAT closed partial; Phase 11 (DIAGRAMS-01) de-scoped. See [`milestones/v3.6-ROADMAP.md`](milestones/v3.6-ROADMAP.md), [`milestones/v3.6-MILESTONE-AUDIT.md`](milestones/v3.6-MILESTONE-AUDIT.md).
 - v3.5 (2026-05-12 — **partial**): Themes & Projects delivered, deploy deferred. See [`milestones/v3.5-ROADMAP.md`](milestones/v3.5-ROADMAP.md).
 - v3.4 (2026-05-07): Brownfield redesign baseline — Vite 6 + React 18 + Tailwind v3.4, bilingual nav, char-reveal Hero, vertical Experience timeline, email-hero Contact, branded Open Graph, Lighthouse 98/100/100/100 mobile. See [`milestones/v3.4-ROADMAP.md`](milestones/v3.4-ROADMAP.md).
 
-## Current Milestone: v3.8 Game Mode
+## Next Milestone
+
+Not yet defined. Likely candidates:
+- **Resume v3.7 deploy work** — Plan 11-05 (Lighthouse against deployed `*.vercel.app`), Phase 12 (custom domain `andresmontoyat.co` + DNS), Phase 13 (PR preview deploys). Site is already auto-deploying from `main` to `*.vercel.app` — the missing piece is the custom domain + formal Lighthouse verdict against the production URL.
+- **VIS-05** — claude-kanban + caveman cards back into AI section (currently 3 of original 5 featured-app cards). Carries from v3.6.
+- **DIAGRAMS-01** — cross-repo architecture diagrams. Carries from v3.6.
+
+Run `/gsd:new-milestone` to scope and roadmap the next milestone.
+
+<details>
+<summary>v3.8 Game Mode — original milestone goal (for historical reference)</summary>
+
+## v3.8 Game Mode (SHIPPED)
 
 **Goal:** Add an interactive "game mode" — a skill constellation as the default landing (node = skill, edges = tech co-occurrence) with floating bilingual experience cards, multi-skill/year/category filters, and a persisted one-click toggle to the current ("dev") view. Adaptive render (full WebGL on desktop, lightweight SVG/DOM on mobile) keeps the Lighthouse mobile HARD gate, WCAG 2.1 AA, and SEO. Introduces Vitest + RTL test infrastructure.
 
@@ -33,6 +46,8 @@
 - v3.8 introduces **Vitest + RTL** — pays down test-infra debt deferred across 9 milestones
 - Phase numbering continues → v3.8 starts at **Phase 14** (v3.7 reserved 11–13 for deploy)
 - v3.7 deploy work (11-05 Lighthouse gate verdict, DEPLOY-02 custom domain, DEPLOY-03 PR preview) **carried as deferred** — site remains live on `*.vercel.app`; deploy/domain resumed in a future milestone
+
+</details>
 
 ## What This Is
 
@@ -191,4 +206,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-05-29 — milestone v3.8 STARTED (Game Mode: skill-constellation landing, 8 REQs GAME-01..07 + TEST-01, phases from 14). v3.7 paused; deploy REQs (11-05 gate, DEPLOY-02/03) carried as deferred — site live on *.vercel.app.*
+*Last updated: 2026-06-06 — milestone v3.8 SHIPPED (Game Mode: skill-constellation landing, 8/8 REQs delivered, 253 tests GREEN, Lighthouse mobile HARD gate cleared, UAT 9/9 pass). v3.7 deploy work (Plan 11-05, DEPLOY-02/03) still deferred — next milestone candidate. Run `/gsd:new-milestone` to scope next.*

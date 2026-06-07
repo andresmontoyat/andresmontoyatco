@@ -1,35 +1,42 @@
 ---
 gsd_state_version: 1.0
-milestone: v3.8
-milestone_name: Game Mode
-status: ready_to_close_milestone
-stopped_at: Phase 17 complete (5/5 plans, UAT 9/9, SC-4 Lighthouse cleared) — v3.8 ready to close
-last_updated: "2026-06-06T00:00:00.000Z"
-last_activity: 2026-06-06 -- Phase 17 UAT 9/9 PASS, v3.8 Game Mode milestone complete
+milestone: none
+milestone_name: (between milestones)
+status: ready_for_new_milestone
+stopped_at: v3.8 Game Mode closed (4/4 phases, 16/16 plans, 253 tests GREEN, UAT 9/9 pass) — ready for /gsd:new-milestone
+last_updated: "2026-06-06T23:40:00.000Z"
+last_activity: 2026-06-06 -- v3.8 milestone archived (milestones/v3.8-ROADMAP.md + v3.8-REQUIREMENTS.md)
 progress:
-  total_phases: 18
-  completed_phases: 4
-  total_plans: 21
-  completed_plans: 21
-  percent: 22
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 # Project State
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-05-29 — v3.8 milestone open)
+See: .planning/PROJECT.md (updated 2026-06-06 — v3.8 SHIPPED)
 
 **Core value:** The hero section and overall first impression must stop recruiters mid-scroll and make them want to learn more about Carlos — and convert visits into engineering conversations.
-**Current focus:** v3.8 milestone complete — ready to close + tag
-**Design source of truth:** `docs/superpowers/specs/2026-05-29-game-mode-design.md`
+**Current focus:** No active milestone — v3.8 closed, awaiting /gsd:new-milestone
+**Last shipped:** v3.8 Game Mode (2026-06-06) — interactive skill constellation, adaptive renderer, Lighthouse HARD gate cleared
 
 ## Current Position
 
-Phase: 17 — COMPLETE (signed off 2026-06-06; 5/5 plans, 253 tests GREEN, UAT 9/9 pass, SC-4 Lighthouse HARD gate cleared)
-Milestone: v3.8 Game Mode — COMPLETE (4/4 v3.8 phases done: 14, 15, 16, 17)
-Status: Ready to close milestone v3.8 + tag release
-Last activity: 2026-06-06 -- Phase 17 UAT complete, v3.8 milestone fully delivered
+No active milestone. v3.8 Game Mode closed 2026-06-06.
+Last activity: 2026-06-06 -- v3.8 milestone archived
+
+## Next milestone candidates
+
+Carried forward / deferred work:
+- **Resume v3.7 deploy** — Plan 11-05 (Lighthouse against deployed `*.vercel.app`), Phase 12 (custom domain andresmontoyat.co + DNS), Phase 13 (PR previews). Site auto-deploys but lacks custom domain + formal production-URL Lighthouse verdict.
+- **VIS-05** — claude-kanban + caveman cards back into AI section
+- **DIAGRAMS-01** — cross-repo architecture diagrams
+
+Run `/gsd:new-milestone` to scope + roadmap next.
 
 ## Plan 17 Decisions (2026-06-03)
 
