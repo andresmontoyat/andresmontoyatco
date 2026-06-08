@@ -41,7 +41,8 @@
   3. At mobile viewport (~390×844, iPhone 14), same: constellation visible above the fold — filters bar repositioned for this constraint
   4. Filters bar remains discoverable and operable on all 3 viewports (not hidden behind a toggle that loses affordance)
   5. No regression in Lighthouse mobile HARD gate (Perf ≥95 / A11y 100 / BP 100 / SEO 100) or any of the 253 existing tests
-**Plans**: TBD
+**Plans**: 1 plan
+  - [ ] 18-01-PLAN.md — Above-the-fold layout restructure: compact H1 (text-xl/2xl + mb-4), relocate sub-copy to ConstellationFallback sr-only, SkillFilters → fixed bottom-0 z-30 bar, renderer slot flex-1 min-h-0 pb-20/24 (Wave 1, autonomous, 3-task MVP slice: RED test → GREEN restructure → bundle gate + SUMMARY)
 **UI hint**: yes
 
 ### Phase 19: Never-static constellation
