@@ -2,15 +2,16 @@
 gsd_state_version: 1.0
 milestone: v3.9
 milestone_name: Game Mode Polish
-status: planning
-last_updated: "2026-06-08T14:47:27.270Z"
-last_activity: 2026-06-08
+status: Awaiting next milestone
+stopped_at: Closing v3.9 milestone — archive ceremony in progress
+last_updated: "2026-06-08T21:30:14.101Z"
+last_activity: 2026-06-08 — Milestone v3.9 completed and archived
 progress:
-  total_phases: 0
-  completed_phases: 0
-  total_plans: 0
-  completed_plans: 0
-  percent: 0
+  total_phases: 16
+  completed_phases: 1
+  total_plans: 6
+  completed_plans: 5
+  percent: 6
 ---
 
 # Project State
@@ -20,15 +21,15 @@ progress:
 See: .planning/PROJECT.md (updated 2026-06-06 — v3.8 SHIPPED)
 
 **Core value:** The hero section and overall first impression must stop recruiters mid-scroll and make them want to learn more about Carlos — and convert visits into engineering conversations.
-**Current focus:** No active milestone — v3.8 closed, awaiting /gsd:new-milestone
+**Current focus:** Phase 18 — above-the-fold-layout
 **Last shipped:** v3.8 Game Mode (2026-06-06) — interactive skill constellation, adaptive renderer, Lighthouse HARD gate cleared
 
 ## Current Position
 
-Phase: Not started (defining requirements)
+Phase: Milestone v3.9 complete
 Plan: —
-Status: Defining requirements
-Last activity: 2026-06-08 — Milestone v3.9 started
+Status: Awaiting next milestone
+Last activity: 2026-06-08 — Milestone v3.9 completed and archived
 
 ## Next milestone candidates
 
@@ -128,9 +129,20 @@ enhancement so the Lighthouse mobile gate is never at risk.
 
 ## Session Continuity
 
-Last session: 2026-06-03T19:23:00.000Z
-Stopped at: Phase 17 plans revised after plan-checker conditional_pass — ready to execute
-Resume file: .planning/phases/17-webgl-desktop-renderer-lighthouse-gate/17-01-PLAN.md
+Last session: 2026-06-08T21:29:00.000Z
+Stopped at: Closing v3.9 milestone — archive ceremony in progress
+Resume file: n/a — v3.9 closed, awaiting milestone ceremony
+
+## Deferred Items
+
+Items acknowledged and deferred at milestone close on 2026-06-08:
+
+| Category | Item | Status |
+|----------|------|--------|
+| uat_gap | Phase 10 (10-UAT.md) | unknown — 0 pending scenarios (v3.6 carryover) |
+| uat_gap | Phase 11 (11-UAT-LOCAL.md) | unknown — 0 pending scenarios (v3.7 carryover) |
+| uat_gap | Phase 15 (15-HUMAN-UAT.md) | passed — 0 pending scenarios (v3.8 carryover) |
+| seed | SEED-3D-CONSTELLATION | dormant — intentionally parked for v3.10+ wow milestone |
 
 ## Plan 16 Decisions (2026-06-02)
 
@@ -138,3 +150,7 @@ Resume file: .planning/phases/17-webgl-desktop-renderer-lighthouse-gate/17-01-PL
 - **D-16-CHIP-FLASH**: Tech-chip click flash SHIPS — `justFilteredId` state in useConstellation (100ms setTimeout clear), `motion-safe:animate-chip-flash` class in SvgConstellation. Reduced-motion = no-op.
 - **D-16-CLICK-OUTSIDE-RENDERER**: Constellation renderer-slot wrapper in GameMode.js gains `data-game-interactive` attribute — prevents SVG background click from racing card-swap.
 - **D-16-BUNDLE-GATE**: Plan 06 enforces gzip-size gate on GameMode chunk — HARD FAIL > 16 kB, WARN 14–16 kB, PASS ≤ 14 kB. Estimated final ~13.6 kB gz.
+
+## Operator Next Steps
+
+- Start the next milestone with /gsd-new-milestone

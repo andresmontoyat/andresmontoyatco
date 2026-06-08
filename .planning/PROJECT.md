@@ -2,24 +2,23 @@
 
 ## Current State
 
-**Shipped:** v3.8 Game Mode (closed 2026-06-06) — Interactive skill-constellation landing replaces the static-timeline-only experience. Node = skill, edges = tech co-occurrence (derived from `experience.js` tech[] + new `skills.js` 8-category map; GCP/Google Cloud normalized). Adaptive renderer: full WebGL on desktop (three.js raw via `React.lazy`, ~117 kB gz lazy chunk, ambient drift + glow pulse + halo brighten); lightweight SVG/DOM on mobile (8.91 kB gz, **stays under Lighthouse mobile HARD gate** Perf ≥95 / A11y 100 / BP 100 / SEO 100 — re-verified 2026-06-06). Filters: multi-skill (AND intersection), year-range dual-thumb slider 2007–2026 (WAI-ARIA APG), 8 category chips, reset. Floating bilingual ExperienceCard on skill-select: role=dialog + focus trap + tech chips (click adds to filter) + lang-aware CV CTA download (`CV_Carlos_Montoya_{EN,ES}.docx`); desktop = node-anchored popover, mobile = bottom-sheet. Persisted game/dev toggle (`cam-viewmode` localStorage + `?mode=` deep-link). Vitest + RTL test infrastructure introduced (test-infra debt deferred since v3.0 — 253 tests GREEN across 19 files, 39 baseline → +214). 8/8 v3.8 requirements delivered (GAME-01..07 + TEST-01). UAT 9/9 pass on Phase 17 close. See [`milestones/v3.8-ROADMAP.md`](milestones/v3.8-ROADMAP.md), [`milestones/v3.8-REQUIREMENTS.md`](milestones/v3.8-REQUIREMENTS.md).
+**Shipped:** v3.9 Game Mode Polish (closed 2026-06-08) — Micro-milestone, same-day delivery. Two UX polish fixes parity-tighten v3.8 Game Mode: (1) above-the-fold layout — SkillFilters → fixed `bottom-0 z-30` bar, compact H1, sub-copy → sr-only, renderer slot `flex-1 min-h-0 pb-20/24` — constellation visible without scroll on desktop ≥1024px / tablet ~768px / mobile ~390px (POLISH-01); (2) never-static constellation — SVG ambient twinkle (`motion-safe:animate-svg-twinkle`, 4s ease-in-out infinite opacity 1.0→0.7→1.0, GPU-composited, deterministic per-node phase offset `-(sortIndex * 137) % 4000`ms; `prefers-reduced-motion: reduce` users keep fully static a11y path) (POLISH-02). 261/261 tests GREEN. GameMode bundle 8.87 kB gz (under v3.8 ceiling). Zero new deps. Tag `v3.9` on commit `4e9c2b3`. 2/2 REQs delivered. See [`milestones/v3.9-ROADMAP.md`](milestones/v3.9-ROADMAP.md), [`milestones/v3.9-REQUIREMENTS.md`](milestones/v3.9-REQUIREMENTS.md).
 
 **Previously shipped:**
+- v3.8 Game Mode (closed 2026-06-06) — Interactive skill-constellation landing replaces the static-timeline-only experience. Node = skill, edges = tech co-occurrence. Adaptive renderer: full WebGL on desktop (three.js raw via `React.lazy`, ~117 kB gz lazy chunk, ambient drift + glow pulse + halo brighten); lightweight SVG/DOM on mobile (8.91 kB gz, **stays under Lighthouse mobile HARD gate** Perf ≥95 / A11y 100 / BP 100 / SEO 100 — re-verified 2026-06-06). Filters: multi-skill (AND intersection), year-range dual-thumb slider 2007–2026 (WAI-ARIA APG), 8 category chips, reset. Floating bilingual ExperienceCard on skill-select: role=dialog + focus trap + tech chips + lang-aware CV CTA download; desktop = node-anchored popover, mobile = bottom-sheet. Persisted game/dev toggle (`cam-viewmode` localStorage + `?mode=` deep-link). Vitest + RTL test infrastructure introduced (test-infra debt deferred since v3.0 — 253 tests GREEN across 19 files). 8/8 v3.8 requirements delivered (GAME-01..07 + TEST-01). UAT 9/9 pass on Phase 17 close. See [`milestones/v3.8-ROADMAP.md`](milestones/v3.8-ROADMAP.md), [`milestones/v3.8-REQUIREMENTS.md`](milestones/v3.8-REQUIREMENTS.md).
 - v3.6 (closed 2026-05-20 — **code shipped; production deploy still deferred**): brand palette refresh (blue-500 + emerald-500), Tailwind CSS-var refactor, cinematic full-bleed hero photo, bilingual sales-pitch Claude Code section. 5/5 active requirements satisfied. Phase 10 UAT closed partial; Phase 11 (DIAGRAMS-01) de-scoped. See [`milestones/v3.6-ROADMAP.md`](milestones/v3.6-ROADMAP.md), [`milestones/v3.6-MILESTONE-AUDIT.md`](milestones/v3.6-MILESTONE-AUDIT.md).
 - v3.5 (2026-05-12 — **partial**): Themes & Projects delivered, deploy deferred. See [`milestones/v3.5-ROADMAP.md`](milestones/v3.5-ROADMAP.md).
 - v3.4 (2026-05-07): Brownfield redesign baseline — Vite 6 + React 18 + Tailwind v3.4, bilingual nav, char-reveal Hero, vertical Experience timeline, email-hero Contact, branded Open Graph, Lighthouse 98/100/100/100 mobile. See [`milestones/v3.4-ROADMAP.md`](milestones/v3.4-ROADMAP.md).
 
-## Current Milestone: v3.9 Game Mode Polish
+## Next Milestone
 
-**Goal:** Eliminate the 2 UX issues that first real post-v3.8 session surfaced — visitor should not have to scroll to see the constellation, and the constellation should feel alive at all times (not just inside the WebGL-capable desktop window).
+**v3.10 — TBD.** Candidates surfaced during v3.9 close:
 
-**Target features:**
-- **POLISH-01** Constellation visible above the fold without scroll on standard viewports (desktop ≥1024px, tablet ~768px, mobile ~390px). Filters do NOT push the constellation below the fold.
-- **POLISH-02** Constellation never reads as static — ambient motion (or a visually equivalent affordance) perceptible in every render path including SVG (currently Phase 17 ambient drift/pulse is WebGL-only; SVG users see a fully static rendering).
+- **SEED-3D-CONSTELLATION** (dormant) — Genuine 3D perspective + rotation on the constellation as a wow upgrade. Parked intentionally for v3.10+ scope.
+- **Resume v3.7 deploy** — Plan 11-05 deployed-`*.vercel.app` Lighthouse verdict, DEPLOY-02 custom domain (`andresmontoyat.co` + DNS), DEPLOY-03 PR previews. Site already live; missing custom domain + formal production-URL verdict.
+- **Manual UAT debt** — visual confirm POLISH-01 above-fold + POLISH-02 twinkle on real devices (deferred at v3.9 close).
 
-**Scope discipline:**
-- Micro-milestone (~2 phases). NOT a feature expansion — pure polish/parity tightening of v3.8.
-- Carry-forward deferred items (v3.7 deploy work, VIS-05, DIAGRAMS-01) stay deferred — NOT in v3.9.
+Run `/gsd:new-milestone` to scope.
 
 ## Deferred (carried from prior milestones)
 
@@ -109,16 +108,21 @@ The hero section and overall first impression must stop recruiters mid-scroll an
 - [x] **AI-01** Bilingual sales-pitch Claude Code section between Projects and Contact — 9.95 KB lazy chunk; PitchHero + 4 ValueCard + ProofBlock (7 counters) + 5 ServiceCard + 3 FeaturedAppCard (GSD, spring-ai-qdrant-mcp, ci-templates) + StackStrip (17 chips); scroll-spy in Desktop + Mobile nav; CTAs → #contact / #projects — v3.6 Phase 9 (note: shipped with 3 of original 5 featured-app cards; claude-kanban + caveman moved to backlog as VIS-05)
 - [x] **AI-01-CICD** `soldife/ci-templates` surfaced as DevOps evidence in AI section — app card with `OPEN SOURCE / DEVOPS` badge + 10 tech chips, DevOps automation service card, +2 proof counters (47 workflows / 15 templates), bilingual EN+ES — v3.6 Phase 9
 
-### Active (v3.8)
+- [x] **GAME-01** Adaptive constellation render — WebGL desktop / SVG-DOM mobile — v3.8
+- [x] **GAME-02** Skill graph — nodes=skill, edges=co-occurrence, category clustering — v3.8
+- [x] **GAME-03** Filters — multi-skill + year/timeline + categories + reset — v3.8 Phase 16
+- [x] **GAME-04** Floating bilingual ExperienceCard on skill select + CV CTA — v3.8 Phase 16
+- [x] **GAME-05** Game/dev toggle — default game, persisted localStorage + `?mode=` — v3.8 Phase 14
+- [x] **GAME-06** A11y (keyboard nodes, dialog cards, sr-only fallback, reduced-motion) + SEO — v3.8 Phase 15
+- [x] **GAME-07** Hold Lighthouse mobile HARD gate + perf budget — v3.8 Phase 17
+- [x] **TEST-01** Vitest + RTL test infrastructure (test-infra debt paid down after 9 deferred milestones) — v3.8 Phase 14
 
-- [ ] **GAME-01** Adaptive constellation render — WebGL desktop / SVG-DOM mobile
-- [ ] **GAME-02** Skill graph — nodes=skill, edges=co-occurrence, category clustering
-- [ ] **GAME-03** Filters — multi-skill + year/timeline + categories + reset
-- [ ] **GAME-04** Floating bilingual ExperienceCard on skill select + CV CTA
-- [ ] **GAME-05** Game/dev toggle — default game, persisted localStorage + `?mode=`
-- [ ] **GAME-06** A11y (keyboard nodes, dialog cards, sr-only fallback, reduced-motion) + SEO
-- [ ] **GAME-07** Hold Lighthouse mobile HARD gate + perf budget
-- [ ] **TEST-01** Vitest + RTL test infrastructure
+- [x] **POLISH-01** Constellation visible above the fold without scroll on desktop/tablet/mobile — v3.9 Phase 18 (SkillFilters → fixed bottom-0 z-30; H1 compact; renderer slot flex-1)
+- [x] **POLISH-02** Never-static constellation — SVG ambient twinkle on every render path; prefers-reduced-motion preserved — v3.9 Phase 19 (motion-safe:animate-svg-twinkle, deterministic per-node phase offset)
+
+### Active
+
+(None — awaiting v3.10 scoping. See "Next Milestone" section above.)
 
 ### Deferred (carried from v3.7 — site live on `*.vercel.app`, auto-deploy verified)
 
@@ -196,6 +200,12 @@ The hero section and overall first impression must stop recruiters mid-scroll an
 | Phase 11 (DIAGRAMS-01) de-scoped from v3.6 | Bandwidth focus on closure — diagrams are nice-to-have, not blocker | ⚠ Re-roadmap in future milestone |
 | Phase 10 UAT closed early (9/11 skip → v3.7 pre-deploy gate) | Same Lighthouse / visual sweep needed for v3.7 deploy anyway; better executed against production build | ⚠ Conscious deferral — tracked in audit + STATE.md |
 | No git tag at v3.6 close | Consistent with v3.5; tag deferred until production site is live (v3.7) | — Pending v3.7 deploy |
+| v3.9 micro-milestone scope (POLISH-01/02 only, no feature expansion) | Pure parity tightening of v3.8 surfaced in first real session; not a feature line | ✓ Good — same-day delivery, zero regression |
+| Phase 19 shipped inline as single feat commit (no PLAN.md/SUMMARY.md) | Micro-feature (single tailwind keyframe + 2 tests); formal plan overhead unwarranted | ✓ Accepted — REQ coverage verified via commit + ROADMAP |
+| SVG opacity-only animation over scale/translate (v3.9 Phase 19) | GPU-composited, no layout thrash, sidesteps SVG transform-origin quirks on path circles | ✓ Good — 8.87 kB gz unchanged |
+| Deterministic per-node phase offset via `-(sortIndex * 137) % 4000`ms (v3.9 Phase 19) | Golden-ratio-inspired spacing prevents synchronized pulsing (mechanical read); reuses existing sortIndex | ✓ Good — perceptually organic, zero new state |
+| v3.9 tagged inline during Phase 19 close (vs at milestone ceremony) | Single-day micro-milestone; tagging at code-complete kept ROADMAP and git history aligned | ✓ Accepted — tag v3.9 on 4e9c2b3 |
+| Manual UAT deferred at v3.9 close (pending v3.10 deploy verify) | Visual confirm needs real devices + deployed URL; conflates with deferred DEPLOY work | ⚠ Tracked in STATE.md Deferred Items |
 
 ## Evolution
 
@@ -215,4 +225,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-06-08 — milestone v3.9 STARTED (Game Mode Polish: above-the-fold layout + never-static constellation, 2 REQs POLISH-01/02). v3.8 shipped 2026-06-06. v3.7 deploy work (Plan 11-05, DEPLOY-02/03), VIS-05, DIAGRAMS-01 carried as deferred — not in v3.9 scope.*
+*Last updated: 2026-06-08 — milestone v3.9 SHIPPED (Game Mode Polish: POLISH-01 above-the-fold + POLISH-02 SVG twinkle; 2/2 REQs delivered, 261/261 tests GREEN, tagged v3.9 on commit 4e9c2b3). v3.7 deploy work (Plan 11-05, DEPLOY-02/03), VIS-05, DIAGRAMS-01, SEED-3D-CONSTELLATION, manual UAT verification carried as deferred — candidates for v3.10.*

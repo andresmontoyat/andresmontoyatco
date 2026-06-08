@@ -1,5 +1,32 @@
 # Milestones
 
+## v3.9 Game Mode Polish (Shipped: 2026-06-08)
+
+**Status:** ✅ Shipped — micro-milestone, same-day delivery
+**Phases delivered:** 2 of 2 (Phase 18 ✓, Phase 19 ✓)
+**Plans completed:** 1 PLAN.md (Phase 18-01); Phase 19 shipped inline as single feat commit
+**Requirements satisfied:** 2 of 2 (POLISH-01, POLISH-02)
+**Stats:** 9 commits (892c922 → cafe92c) | 15 files | +920 / -20 LOC | timeline single-day 2026-06-08
+**Tests:** 261/261 GREEN (259 pre-Phase 19 + 2 POLISH-02)
+**Tag:** v3.9 (commit 4e9c2b3)
+
+**Key accomplishments:**
+
+- **POLISH-01 (Phase 18)** — Above-the-fold layout restructure: compact H1, sub-copy → sr-only, SkillFilters → fixed bottom-0 z-30 bar, renderer slot flex-1 min-h-0 pb-20/24. Constellation visible without scroll on desktop ≥1024px / tablet ~768px / mobile ~390px. 259/259 tests GREEN.
+- **POLISH-02 (Phase 19)** — SVG ambient twinkle animation (motion-safe:animate-svg-twinkle, 4s ease-in-out infinite opacity 1.0→0.7→1.0, GPU-composited). Deterministic per-node phase offset via `-(sortIndex * 137) % 4000`ms (golden-ratio-inspired spacing prevents synchronized pulsing). prefers-reduced-motion users keep fully static a11y path. 261/261 tests GREEN.
+- **Lighthouse HARD gate held** — GameMode bundle 8.87 kB gz (under v3.8 ceiling 38.82 kB); zero perf regression from polish work.
+- **Constraint discipline** — Zero new heavy deps (no npm install); pure layout + animation work; no new translation keys; WCAG AA preserved.
+
+**Known deferred items at close:** 4 (see STATE.md Deferred Items)
+
+- Phase 10/11/15 UAT files marked `unknown`/`passed` with 0 pending scenarios (carryover from v3.6/v3.7/v3.8 — not v3.9 scope)
+- SEED-3D-CONSTELLATION dormant — intentionally parked for v3.10+ wow milestone
+- No v3.9 MILESTONE-AUDIT.md generated — micro-milestone, REQ coverage verified via SUMMARY + commits
+
+**Decision:** Tagged v3.9 inline during Phase 19 close. Manual UAT (visual confirm above-fold + twinkle perceptibility) flagged but deferred — pending v3.10 deploy verification.
+
+---
+
 ## v3.6 AI Practice & Brand Refresh (Closed: 2026-05-20 — code shipped, deploy + UAT closure deferred to v3.7)
 
 **Status:** ✅ Code shipped — production deploy still pending v3.7
