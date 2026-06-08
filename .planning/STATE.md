@@ -1,11 +1,10 @@
 ---
 gsd_state_version: 1.0
-milestone: none
-milestone_name: (between milestones)
-status: ready_for_new_milestone
-stopped_at: v3.8 Game Mode closed (4/4 phases, 16/16 plans, 253 tests GREEN, UAT 9/9 pass) — ready for /gsd:new-milestone
-last_updated: "2026-06-06T23:40:00.000Z"
-last_activity: 2026-06-06 -- v3.8 milestone archived (milestones/v3.8-ROADMAP.md + v3.8-REQUIREMENTS.md)
+milestone: v3.9
+milestone_name: Game Mode Polish
+status: planning
+last_updated: "2026-06-08T14:47:27.270Z"
+last_activity: 2026-06-08
 progress:
   total_phases: 0
   completed_phases: 0
@@ -26,12 +25,15 @@ See: .planning/PROJECT.md (updated 2026-06-06 — v3.8 SHIPPED)
 
 ## Current Position
 
-No active milestone. v3.8 Game Mode closed 2026-06-06.
-Last activity: 2026-06-06 -- v3.8 milestone archived
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements
+Last activity: 2026-06-08 — Milestone v3.9 started
 
 ## Next milestone candidates
 
 Carried forward / deferred work:
+
 - **Resume v3.7 deploy** — Plan 11-05 (Lighthouse against deployed `*.vercel.app`), Phase 12 (custom domain andresmontoyat.co + DNS), Phase 13 (PR previews). Site auto-deploys but lacks custom domain + formal production-URL Lighthouse verdict.
 - **VIS-05** — claude-kanban + caveman cards back into AI section
 - **DIAGRAMS-01** — cross-repo architecture diagrams

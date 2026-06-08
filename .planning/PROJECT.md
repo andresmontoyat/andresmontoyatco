@@ -9,14 +9,23 @@
 - v3.5 (2026-05-12 — **partial**): Themes & Projects delivered, deploy deferred. See [`milestones/v3.5-ROADMAP.md`](milestones/v3.5-ROADMAP.md).
 - v3.4 (2026-05-07): Brownfield redesign baseline — Vite 6 + React 18 + Tailwind v3.4, bilingual nav, char-reveal Hero, vertical Experience timeline, email-hero Contact, branded Open Graph, Lighthouse 98/100/100/100 mobile. See [`milestones/v3.4-ROADMAP.md`](milestones/v3.4-ROADMAP.md).
 
-## Next Milestone
+## Current Milestone: v3.9 Game Mode Polish
 
-Not yet defined. Likely candidates:
-- **Resume v3.7 deploy work** — Plan 11-05 (Lighthouse against deployed `*.vercel.app`), Phase 12 (custom domain `andresmontoyat.co` + DNS), Phase 13 (PR preview deploys). Site is already auto-deploying from `main` to `*.vercel.app` — the missing piece is the custom domain + formal Lighthouse verdict against the production URL.
-- **VIS-05** — claude-kanban + caveman cards back into AI section (currently 3 of original 5 featured-app cards). Carries from v3.6.
+**Goal:** Eliminate the 2 UX issues that first real post-v3.8 session surfaced — visitor should not have to scroll to see the constellation, and the constellation should feel alive at all times (not just inside the WebGL-capable desktop window).
+
+**Target features:**
+- **POLISH-01** Constellation visible above the fold without scroll on standard viewports (desktop ≥1024px, tablet ~768px, mobile ~390px). Filters do NOT push the constellation below the fold.
+- **POLISH-02** Constellation never reads as static — ambient motion (or a visually equivalent affordance) perceptible in every render path including SVG (currently Phase 17 ambient drift/pulse is WebGL-only; SVG users see a fully static rendering).
+
+**Scope discipline:**
+- Micro-milestone (~2 phases). NOT a feature expansion — pure polish/parity tightening of v3.8.
+- Carry-forward deferred items (v3.7 deploy work, VIS-05, DIAGRAMS-01) stay deferred — NOT in v3.9.
+
+## Deferred (carried from prior milestones)
+
+- **Resume v3.7 deploy work** — Plan 11-05 (Lighthouse against deployed `*.vercel.app`), Phase 12 (custom domain `andresmontoyat.co` + DNS), Phase 13 (PR preview deploys). Site auto-deploys from `main` to `*.vercel.app`; missing custom domain + formal production-URL Lighthouse verdict.
+- **VIS-05** — claude-kanban + caveman cards back into AI section (3 of original 5 featured-app cards present). Carries from v3.6.
 - **DIAGRAMS-01** — cross-repo architecture diagrams. Carries from v3.6.
-
-Run `/gsd:new-milestone` to scope and roadmap the next milestone.
 
 <details>
 <summary>v3.8 Game Mode — original milestone goal (for historical reference)</summary>
@@ -206,4 +215,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-06-06 — milestone v3.8 SHIPPED (Game Mode: skill-constellation landing, 8/8 REQs delivered, 253 tests GREEN, Lighthouse mobile HARD gate cleared, UAT 9/9 pass). v3.7 deploy work (Plan 11-05, DEPLOY-02/03) still deferred — next milestone candidate. Run `/gsd:new-milestone` to scope next.*
+*Last updated: 2026-06-08 — milestone v3.9 STARTED (Game Mode Polish: above-the-fold layout + never-static constellation, 2 REQs POLISH-01/02). v3.8 shipped 2026-06-06. v3.7 deploy work (Plan 11-05, DEPLOY-02/03), VIS-05, DIAGRAMS-01 carried as deferred — not in v3.9 scope.*

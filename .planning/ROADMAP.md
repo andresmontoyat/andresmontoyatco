@@ -7,10 +7,16 @@
 - ✅ **v3.6 — AI Practice & Brand Refresh** — Code shipped: brand palette swap, theme toggle root-cause fix, hero photo, sales-pitch Claude Code section. 5/5 active REQs satisfied. UAT visual+Lighthouse + DEPLOY-01/02/03 + DIAGRAMS-01 carry to v3.7. Closed without git tag (production not yet live). See [`milestones/v3.6-ROADMAP.md`](milestones/v3.6-ROADMAP.md) and [`milestones/v3.6-MILESTONE-AUDIT.md`](milestones/v3.6-MILESTONE-AUDIT.md).
 - ⏸ **v3.7 — Production Deploy** *(PAUSED, opened 2026-05-20 — deferred 2026-05-29)* — Vercel auto-deploy done (site live on `*.vercel.app`); Phase 11 Plan 11-05 Lighthouse mobile gate verdict, custom domain (Phase 12), and PR previews (Phase 13) **carried as deferred**. Resumes in a future milestone. Phases 11–13 reserved — NOT renumbered.
 - ✅ **v3.8 — Game Mode** *(SHIPPED 2026-06-06)* — Interactive skill-constellation landing (node=skill, edges=co-occurrence), floating bilingual experience cards, multi-skill/year/category filters, persisted game/dev toggle. Adaptive render (WebGL desktop / SVG-DOM mobile) holds the Lighthouse mobile HARD gate (cleared Perf ≥95 / A11y 100 / BP 100 / SEO 100). Vitest + RTL test infra introduced (253 tests GREEN). 8/8 REQs delivered (GAME-01..07 + TEST-01). Phases 14–17. See [`milestones/v3.8-ROADMAP.md`](milestones/v3.8-ROADMAP.md).
+- 🚧 **v3.9 — Game Mode Polish** *(ACTIVE, opened 2026-06-08)* — Micro-milestone. Two UX fixes from first real post-v3.8 session: above-the-fold layout (filters not pushing constellation below fold), and never-static constellation (Phase 17 ambient motion is WebGL-only — SVG users see fully static). 2 REQs (POLISH-01, POLISH-02). Phases 18–19.
 
 ---
 
 ## Phases
+
+### v3.9 Game Mode Polish (Phases 18–19) — ACTIVE
+
+- [ ] **Phase 18: Above-the-fold layout** — Constellation visible without scroll on desktop/tablet/mobile. Filters bar redesigned or repositioned so it does not push the constellation below the first viewport.
+- [ ] **Phase 19: Never-static constellation** — Ambient motion (or visually equivalent affordance) perceptible on every render path including SVG. `prefers-reduced-motion: reduce` users keep the static path (a11y locked); every other path animates.
 
 ### v3.7 Production Deploy (Phases 11–13) — ⏸ DEFERRED
 
@@ -19,6 +25,38 @@
 - [~] **Phase 11: Vercel auto-deploy + UAT pre-deploy gate** (DEPLOY-01) — auto-deploy live; Plan 11-05 Lighthouse gate verdict deferred
 - [ ] **Phase 12: Custom domain andresmontoyat.co + DNS** (DEPLOY-02) — deferred
 - [ ] **Phase 13: PR preview deploys + OG card validation** (DEPLOY-03) — deferred
+
+---
+
+## Phase Details (v3.9 — ACTIVE)
+
+### Phase 18: Above-the-fold layout
+**Goal**: A visitor landing on game mode sees the constellation immediately, without scrolling, on every standard viewport (desktop ≥1024px, tablet ~768px, mobile ~390px). Filters bar (SkillFilters chips + year slider + reset) repositioned or restructured so it does not consume above-the-fold vertical space.
+**Mode:** mvp
+**Depends on**: v3.8 codebase (Phase 16 SkillFilters, Phase 15 SvgConstellation slot inside GameMode)
+**Requirements**: POLISH-01
+**Success Criteria** (what must be TRUE):
+  1. At default landing on desktop ≥1024px (1024×768 viewport), the SVG/WebGL constellation has ≥1 visible node within the first viewport without any scroll input
+  2. At tablet viewport (~768×1024 portrait), same: constellation visible above the fold
+  3. At mobile viewport (~390×844, iPhone 14), same: constellation visible above the fold — filters bar repositioned for this constraint
+  4. Filters bar remains discoverable and operable on all 3 viewports (not hidden behind a toggle that loses affordance)
+  5. No regression in Lighthouse mobile HARD gate (Perf ≥95 / A11y 100 / BP 100 / SEO 100) or any of the 253 existing tests
+**Plans**: TBD
+**UI hint**: yes
+
+### Phase 19: Never-static constellation
+**Goal**: The constellation never reads as fully static on any render path. Phase 17 ambient drift / glow pulse / halo brighten currently fires WebGL-only — every SVG client (reduced-motion, save-data, <1024px, no-WebGL) sees a frozen rendering. SVG renderer gets perceptible ambient motion (or visually equivalent affordance like an idle hint pill animation, gentle node-twinkle, etc.) while `prefers-reduced-motion: reduce` users continue to get the fully static a11y-safe path.
+**Mode:** mvp
+**Depends on**: Phase 18 (constellation visible above fold) + v3.8 SvgConstellation (Phase 15)
+**Requirements**: POLISH-02
+**Success Criteria** (what must be TRUE):
+  1. On default landing with motion-safe, a visitor staring at the SVG-rendered constellation for ≥5 seconds perceives motion of some kind (ambient drift, twinkle, halo brighten, etc.) — not a static image
+  2. `prefers-reduced-motion: reduce` users continue to see the fully static path (no motion injected) — a11y contract preserved
+  3. Motion implementation does NOT regress mobile chunk gz budget (≤38.82 kB ceiling; current 8.91 kB)
+  4. Motion implementation does NOT regress Lighthouse mobile HARD gate
+  5. Motion behavior consistent enough across SVG + WebGL paths that toggling `?renderer=svg|webgl` doesn't feel like two different apps (the user perceives "same thing, different fidelity" — not "active vs dead")
+**Plans**: TBD
+**UI hint**: yes
 
 ---
 
@@ -142,6 +180,8 @@ See [`milestones/v3.8-ROADMAP.md`](milestones/v3.8-ROADMAP.md) and [`milestones/
 | 15. Accessible Constellation & SEO | v3.8 | 3/3 | ✓ Complete | 2026-06-01 |
 | 16. Filters & Floating ExperienceCard | v3.8 | 6/6 | ✓ Complete | 2026-06-03 |
 | 17. WebGL Desktop + Lighthouse Gate | v3.8 | 5/5 | ✓ Complete | 2026-06-06 |
+| 18. Above-the-fold layout | v3.9 | 0/TBD | Not started | — |
+| 19. Never-static constellation | v3.9 | 0/TBD | Not started | — |
 
 ---
 
