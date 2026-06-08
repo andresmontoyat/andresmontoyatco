@@ -204,7 +204,7 @@ export default function SkillFilters({
       role="group"
       aria-label={t.game.filterBarLabel}
       data-game-interactive
-      className="w-full max-w-3xl bg-ink-900/80 backdrop-blur-sm border-t border-ink-600 px-4 py-4 flex flex-wrap items-center gap-4 rounded-b-xl"
+      className="fixed bottom-0 left-0 right-0 bg-ink-900/95 backdrop-blur-sm border-t border-ink-600 px-4 py-3 flex flex-wrap items-center gap-3 z-30"
     >
       <SkillChips
         nodes={nodes}

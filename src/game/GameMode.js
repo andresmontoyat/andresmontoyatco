@@ -92,11 +92,10 @@ export default function GameMode() {
   // sees a broken screen — SvgConstellation seamlessly takes over.
   return (
     <section id="game-mode" className="min-h-screen flex flex-col items-center px-6 pt-12 pb-8">
-      <div className="text-center mb-8 md:mb-12 max-w-2xl">
-        <h1 className="text-2xl md:text-4xl font-bold text-text-primary leading-tight mb-3">
+      <div className="text-center mb-4 max-w-2xl">
+        <h1 className="text-xl md:text-2xl font-bold text-text-primary leading-tight mb-1">
           {h1Text}
         </h1>
-        <p className="text-base text-text-secondary leading-relaxed">{t.game.subCopy}</p>
       </div>
 
       <SkillFilters
@@ -117,7 +116,7 @@ export default function GameMode() {
       <RendererErrorBoundary fallback={<SvgConstellation {...rendererProps} />}>
         <div
           data-game-interactive
-          className="w-full max-w-3xl relative"
+          className="w-full max-w-3xl relative flex-1 min-h-0 pb-20 md:pb-24"
           data-testid="renderer-slot"
           data-theme={theme}
           data-renderer={capability}

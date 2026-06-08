@@ -6,6 +6,7 @@ export default function ConstellationFallback({ experiences, lang, t }) {
   return (
     <section aria-labelledby="constellation-fallback-heading" className="sr-only">
       <h2 id="constellation-fallback-heading">{t.game.fallbackHeading}</h2>
+      <p>{t.game.subCopy}</p>
       <ol>
         {experiences.map((exp, i) => (
           <li key={`${exp.company}-${i}`}>
