@@ -288,3 +288,63 @@ describe('GameMode - Phase 17 SC-5 capability-based renderer selection', () => {
     consoleErrorSpy.mockRestore()
   })
 })
+
+// ─── Phase 18 POLISH-01: above-the-fold layout-positioning assertions ───────
+// D-18-BAR-POS / D-18-H1-SIZE / D-18-SUBCOPY-RELOC / D-18-SLOT-H / D-18-STACKING.
+// These six tests lock the layout contract for the constellation-above-the-fold
+// restructure. Five are RED before Task 2's GREEN edits; one (Test 1) is a
+// regression guard that passes today and continues to pass after the change.
+
+describe('GameMode - Phase 18 above-the-fold layout (RED)', () => {
+  it('Test 1: section root retains min-h-screen + flex + flex-col (regression guard)', () => {
+    const { container } = renderWithProviders(<GameMode />, { lang: 'en' })
+    const section = container.querySelector('section#game-mode')
+    expect(section).toBeInTheDocument()
+    expect(section).toHaveClass('min-h-screen', 'flex', 'flex-col')
+  })
+
+  it('Test 2: renderer-slot wrapper has flex-1 + min-h-0 so it fills remaining viewport', () => {
+    const { container } = renderWithProviders(<GameMode />, { lang: 'en' })
+    const slot = container.querySelector('[data-testid="renderer-slot"]')
+    expect(slot).toBeInTheDocument()
+    expect(slot).toHaveClass('flex-1', 'min-h-0')
+  })
+
+  it('Test 3: H1 uses compact text-xl md:text-2xl sizing (not text-2xl/md:text-4xl)', () => {
+    renderWithProviders(<GameMode />, { lang: 'en' })
+    const h1 = screen.getByRole('heading', { level: 1 })
+    expect(h1).toHaveClass('text-xl', 'md:text-2xl')
+    expect(h1).not.toHaveClass('md:text-4xl')
+  })
+
+  it('Test 4: SkillFilters root is fixed bottom-0 left-0 right-0 z-30 (no rounded-b-xl)', () => {
+    renderWithProviders(<GameMode />, { lang: 'en' })
+    const t = translations.en
+    const filterBar = screen.getByRole('group', { name: t.game.filterBarLabel })
+    expect(filterBar).toHaveClass('fixed', 'bottom-0', 'left-0', 'right-0', 'z-30')
+    expect(filterBar).not.toHaveClass('rounded-b-xl')
+  })
+
+  it('Test 5: ConstellationFallback sr-only section contains a <p> with subCopy text', () => {
+    const { container } = renderWithProviders(<GameMode />, { lang: 'en' })
+    const fallback = container.querySelector('section[aria-labelledby="constellation-fallback-heading"]')
+    expect(fallback).toBeInTheDocument()
+    expect(fallback).toHaveClass('sr-only')
+    const paragraphs = fallback.querySelectorAll('p')
+    const subCopyText = translations.en.game.subCopy
+    const found = Array.from(paragraphs).some((p) => p.textContent === subCopyText)
+    expect(found).toBe(true)
+  })
+
+  it('Test 6: visible region (section excluding sr-only fallback) does NOT contain subCopy text', () => {
+    const { container } = renderWithProviders(<GameMode />, { lang: 'en' })
+    const section = container.querySelector('section#game-mode')
+    const fallback = section.querySelector('section[aria-labelledby="constellation-fallback-heading"]')
+    const sectionClone = section.cloneNode(true)
+    const fallbackClone = sectionClone.querySelector('section[aria-labelledby="constellation-fallback-heading"]')
+    if (fallbackClone) fallbackClone.remove()
+    expect(fallback).toBeInTheDocument()
+    const subCopyText = translations.en.game.subCopy
+    expect(sectionClone.textContent).not.toContain(subCopyText)
+  })
+})
