@@ -8,10 +8,15 @@
 - ⏸ **v3.7 — Production Deploy** *(PAUSED, opened 2026-05-20 — deferred 2026-05-29)* — Vercel auto-deploy done (site live on `*.vercel.app`); Phase 11 Plan 11-05 Lighthouse mobile gate verdict, custom domain (Phase 12), and PR previews (Phase 13) **carried as deferred**. Resumes in a future milestone. Phases 11–13 reserved — NOT renumbered.
 - ✅ **v3.8 — Game Mode** *(SHIPPED 2026-06-06)* — Interactive skill-constellation landing (node=skill, edges=co-occurrence), floating bilingual experience cards, multi-skill/year/category filters, persisted game/dev toggle. Adaptive render (WebGL desktop / SVG-DOM mobile) holds the Lighthouse mobile HARD gate (cleared Perf ≥95 / A11y 100 / BP 100 / SEO 100). Vitest + RTL test infra introduced (253 tests GREEN). 8/8 REQs delivered (GAME-01..07 + TEST-01). Phases 14–17. See [`milestones/v3.8-ROADMAP.md`](milestones/v3.8-ROADMAP.md).
 - ✅ **v3.9 — Game Mode Polish** *(SHIPPED 2026-06-08)* — Micro-milestone. Two UX fixes shipped same-day: above-the-fold layout (SkillFilters → fixed bottom-0 z-30; H1 compact; renderer slot flex-1) and never-static constellation (SVG ambient twinkle, prefers-reduced-motion gated). 2/2 REQs delivered (POLISH-01, POLISH-02). 261/261 tests GREEN. Phases 18–19.
+- 🟢 **v3.10 — 3D Constellation** *(ACTIVE, opened 2026-06-08)* — Genuine 3D upgrade on existing desktop WebGL renderer: PerspectiveCamera(fov=55) + OrbitControls drag-to-rotate + category-z layout. Activates SEED-3D-CONSTELLATION. 1 REQ (DEPTH-01) / 1 phase (Phase 20) / 3 plans / 3–5 days. Mobile SVG path UNCHANGED — Lighthouse mobile HARD gate intact. Zero new deps (already-installed `three@0.169.0` ships both new imports). See [`v3.10-REQUIREMENTS.md`](REQUIREMENTS.md) and [`research/SUMMARY.md`](research/SUMMARY.md).
 
 ---
 
 ## Phases
+
+### v3.10 3D Constellation (Phase 20) — 🟢 ACTIVE
+
+- [ ] **Phase 20: 3D Constellation** (DEPTH-01) — genuine 3D + drag-to-rotate on desktop WebGL; SVG mobile path untouched
 
 ### v3.7 Production Deploy (Phases 11–13) — ⏸ DEFERRED
 
@@ -23,9 +28,42 @@
 
 ---
 
+## Phase Details (v3.10 — 🟢 ACTIVE)
+
+### Phase 20: 3D Constellation
+**Goal**: Recruiter on a capable desktop sees a genuine 3D skill constellation with drag-to-rotate that they cannot get from any other personal portfolio — the existing 117 kB gz three.js lazy chunk finally earns its bundle cost, while mobile SVG path stays untouched and Lighthouse mobile HARD gate stays cleared.
+**Depends on**: v3.9 milestone close (✓ shipped 2026-06-08); Phase 17 WebGL renderer architecture (`GameMode → useConstellation → adaptive renderer`) — LOCKED, not modified.
+**Requirements**: DEPTH-01
+**Status**: Planning (3 plans queued: 20-01 data layer, 20-02 WebGL renderer, 20-03 useClickVsDrag hook + UAT close)
+**Success Criteria** (what must be TRUE):
+  1. Recruiter on a capable desktop (≥ Phase 17 capability tier) sees a genuine 3D constellation with visible perspective foreshortening — front nodes larger, back nodes smaller — clearly different from the prior flat 2D-in-3D ortho aesthetic; SVG mobile path renders identical pixels to v3.9.
+  2. Drag-rotates with damping (`dampingFactor=0.06`) and polar-angle clamp (`minPolarAngle ≈ π × 0.15`, `maxPolarAngle ≈ π × 0.85`); cursor flips `grab` → `grabbing` during drag; releases at any angle within the clamp without snap-back.
+  3. Auto-rotate idle spin (`autoRotateSpeed=0.5`, ~30 s/orbit) telegraphs interactivity on first paint; pauses on `controls 'start'` (first user interaction); pauses while hovering or with an ExperienceCard open; defensive in-renderer `prefers-reduced-motion` gate is wired even though `useRendererCapability` already routes RM users to SVG.
+  4. Click on a node still opens the ExperienceCard (GAME-04 preserved); drag does NOT trigger selection. Threshold = 5 px screen-space + 250 ms time on mouse/pen; bumps to 8 px when `pointerType === 'touch'`. Implementation lives in NEW `useClickVsDrag` hook with 5–8 pure jsdom unit tests.
+  5. `prefers-reduced-motion: reduce` users continue to see the static SVG constellation (no rotation injected, no WebGL mount); WCAG 2.1 AA contrast preserved; Lighthouse a11y = 100 unchanged.
+  6. Mobile SVG renderer is UNCHANGED — Lighthouse mobile HARD gate cleared at v3.10 close (Performance ≥ 95 / Accessibility 100 / Best Practices 100 / SEO 100), at or above Phase 17 baseline. Mobile chunk gz stays at 8.91 kB (no three.js leak); desktop WebGL lazy chunk stays under ~130 kB gz WARN ceiling (Phase 17 117 kB + measured 6.85 kB gz OrbitControls = ~123 kB projected).
+  7. All 261 existing tests stay GREEN; ≥ 8 new tests added (3 layout `z` tests in `constellation.layout.test.js` for z-present + clustered + deterministic + range; 5–8 `useClickVsDrag.test.js` jsdom tests for threshold math + touch branch). Bundle-gate regex bug at `scripts/check-bundle-gate.mjs:12` is fixed in Plan 20-01 BEFORE the OrbitControls import lands in Plan 20-02 — so "no three.js leak to mobile chunk" stays a continuously enforced invariant.
+**Plans**:
+  - [ ] 20-01-PLAN.md — Data layer (layout + tests + bundle-gate regex fix) — ~1 day. Extend `computeLayout()` in `src/game/constellation.layout.js` to return `{x, y, z}` with deterministic `CATEGORY_Z` constants (8 categories mapped front-to-back as architecture stack, z ∈ [−150, +150]); add 3 layout tests (z present + clustered + deterministic + range); fix `THREE_JS_PATTERN` regex in `scripts/check-bundle-gate.mjs:12` to catch `three/addons/*` and `three/examples/*` imports BEFORE OrbitControls import lands. GATE: 261 existing tests stay GREEN + 3 new pass + dev server shows SVG path unchanged (layout `.z` silently ignored).
+  - [ ] 20-02-PLAN.md — WebGL renderer (PerspectiveCamera + OrbitControls + shader size-attenuation) — ~2 days. In `src/game/renderers/WebGLConstellation.js`: swap `OrthographicCamera` → `PerspectiveCamera(fov=55, aspect, near=10, far=2000)`; add `OrbitControls` from `three/addons/controls/OrbitControls.js` with `enableDamping=true`, `dampingFactor=0.06`, `rotateSpeed=0.6`, `enableZoom=false`, `enablePan=false`, `enableKeys=false`, polar clamp, `autoRotate=true`, `autoRotateSpeed=0.5`, pause-on-`'start'` + pause-on-hover/select + defensive RM gate; add `controls.update()` as FIRST line of existing `tick()` (single rAF preserved — D-17-FRAMELOOP); update VERTEX_SHADER with size-attenuation by depth (`gl_PointSize *= perspectiveScale / -mvPosition.z`, clamp ∈ [1, 64]); rewrite pointer-pick with `Vector3.project(camera)` + depth-scaled pick radius; `controls.dispose()` FIRST in cleanup (MOD-05 StrictMode double-mount); defensive `webglcontextlost`/`restored` handlers (D-20-CONTEXT-LOSS); `touch-action: none` on canvas; integrate `useClickVsDrag` hook from Plan 20-03. GATE: dev server shows rotating 3D + manual visual UAT smoke (rotate 360° no node disappears; click selects; hover registers on near AND far nodes).
+  - [ ] 20-03-PLAN.md — useClickVsDrag hook + UAT + bundle gate close — ~1 day. NEW `src/game/useClickVsDrag.js` (~30 LOC) exposing `{ onPointerDown, onPointerUp, isDrag }`; NEW `src/game/useClickVsDrag.test.js` with 5–8 pure jsdom unit tests (threshold math, `pointerType`-aware bumping to 8 px on touch, time-only-fail, distance-only-fail, both-pass). Scaffold `.planning/phases/20-3d-constellation/20-UAT.md` checklist (8 items: rotation feel, click reliability, mobile SVG unchanged, RM still SVG path, ErrorBoundary still catches synthetic shader error, `webglcontextlost`/`restored` survives 5-min tab switch, Lighthouse mobile gate re-verified ≥ Phase 17 baseline, desktop WebGL chunk ≤ 130 kB gz WARN band). Bundle-gate WARN band check; final dist/stats.html visualizer review. GATE: UAT 8/8 pass + bundle gate green + Lighthouse mobile re-verified ≥ Phase 17 baseline + tag candidate `v3.10` queued for milestone ceremony.
+**UI hint**: yes — Phase 20 ships visible interactive 3D in the existing constellation renderer; recruiter UAT validates rotation feel + click reliability + perspective depth read. `/gsd:ui-phase` suggested between Plan 20-01 (data-only) and Plan 20-02 (renderer changes) to confirm UI-SPEC for the perspective swap, OrbitControls gesture behavior, autorotate cadence, and click-vs-drag threshold UX before code lands.
+**Decisions to log during Phase 20**:
+  - **D-20-VISUAL-3D** (PerspectiveCamera fov=55, OrbitControls, category-z layout) — supersedes D-17-VISUAL (flat 2D-in-3D ortho); genuine 3D + drag-to-rotate is the milestone goal.
+  - **D-20-CLICK-DRAG-THRESHOLD** (5 px + 250 ms; 8 px on `pointerType === 'touch'`) — NEW; preserves GAME-04 under OrbitControls gesture state.
+  - **D-20-PROPS-CONTRACT** (layout `{x, y, z}` consumed by both renderers — SVG ignores `z` silently; WebGL projects) — reframes GAME-01 as "single props contract, adaptive visual fidelity"; pixels diverge by design, props identical.
+  - **D-20-CONTEXT-LOSS** (`webglcontextlost`/`restored` handlers swap to SVG via existing capability hook) — NEW defensive; Phase 17 did not address tab-return black-box failure mode.
+**Standing alerts (carry into Phase 20 plan-PR reviews)**:
+  - Re-read `PITFALLS.md §"Decision Violations to Flag"` before approving any Plan 20-0X PR — 9 pre-rejected decisions (`use r3f`, `use d3-force-3d`, `use Line2`, `show WebGL to RM users with autoRotate off`, `add 2D/3D user preference toggle`, `move WebGL out of lazy chunk`, `perspective swap only (no layout z)`, `add Stats.js / dat.gui`, `introduce headless-gl test infra for one phase`).
+  - Bundle-gate regex fix at `scripts/check-bundle-gate.mjs:12` MUST land in Plan 20-01, NOT Plan 20-02 (must precede the first `three/addons/*` import so "no leak to mobile chunk" stays continuously enforced).
+  - three.js stays pinned at `0.169.0` — DO NOT bump to `0.184.0` during v3.10 (Phase 17 Lighthouse gate cleared against current pin).
+  - Manual UAT debt from v3.9 (above-fold + twinkle real-device confirm) bundles with the Phase 20 UAT checklist — single real-device sweep covers both.
+
+---
+
 ## Phase Details (v3.7 — ⏸ DEFERRED, reserved)
 
-> Carried as deferred 2026-05-29. Site is live + auto-deploys from `main` on `*.vercel.app`. Full detail retained for resume; not in v3.8 scope.
+> Carried as deferred 2026-05-29. Site is live + auto-deploys from `main` on `*.vercel.app`. Full detail retained for resume; not in v3.8/v3.9/v3.10 scope.
 
 ### Phase 11: Vercel auto-deploy + UAT pre-deploy gate
 **Goal**: Portfolio is live at a stable `*.vercel.app` URL, auto-deploys on every push to `main`, and the v3.6 UAT visual+Lighthouse debt is paid (Phase 10 Tests 3-11) before the deploy config merges.
@@ -157,6 +195,7 @@ See [`milestones/v3.9-ROADMAP.md`](milestones/v3.9-ROADMAP.md) and [`milestones/
 | 17. WebGL Desktop + Lighthouse Gate | v3.8 | 5/5 | ✓ Complete | 2026-06-06 |
 | 18. Above-the-fold layout | v3.9 | 1/1 | ✓ Complete | 2026-06-08 |
 | 19. Never-static constellation | v3.9 | inline | ✓ Complete | 2026-06-08 |
+| 20. 3D Constellation | v3.10 | 0/3 | 🟢 Planning | — |
 
 ---
 
