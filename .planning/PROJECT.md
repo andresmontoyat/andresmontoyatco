@@ -15,7 +15,7 @@
 **Goal:** Convert flat 2D-in-3D WebGL constellation to a genuine 3D experience with drag-to-rotate, differentiating desktop wow from SVG mobile path. Activates SEED-3D-CONSTELLATION (planted 2026-06-08 during v3.9). Stops recruiter mid-scroll via interactive depth — the desktop lazy chunk's 117 kB gz of three.js finally earns its bundle cost.
 
 **Target features:**
-- **DEPTH-01** Constelación 3D genuina en WebGL desktop — `PerspectiveCamera` (fov=60), per-node `z` via category-z clusters (backend/frontend/cloud/etc. layered along z-axis to visually communicate architecture stack), `OrbitControls` drag-to-rotate + auto-rotate idle, click-vs-drag threshold (≥5px before suppressing click-to-select node). Mobile SVG path UNCHANGED — Lighthouse mobile gate stays cleared. `prefers-reduced-motion` users keep static path. GAME-01 SVG↔WebGL divergence accepted as adaptive-fidelity feature.
+- **DEPTH-01** Constelación 3D genuina en WebGL desktop — `PerspectiveCamera` (fov=55, reconciled from 60 per research SUMMARY.md §Conflicts — recruiter-conversion convention, avoids widescreen fisheye), per-node `z` via category-z clusters (8 categories mapped front-to-back as architecture stack, z ∈ [−150, +150], deterministic constants in `src/game/constellation.layout.js`), `OrbitControls` drag-to-rotate + autoRotate=0.5 (~30 s/orbit) pause-on-interaction, click-vs-drag threshold (5px + 250ms; 8px on touch). Mobile SVG path UNCHANGED — Lighthouse mobile gate stays cleared. `prefers-reduced-motion` users keep static path. GAME-01 reframed as "single props contract, adaptive visual fidelity" (D-20-PROPS-CONTRACT).
 
 **Scope discipline:**
 - Single REQ (DEPTH-01) / 1 phase (Phase 20) / 3 plans / 3-5 days
