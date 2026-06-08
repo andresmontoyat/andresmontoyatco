@@ -334,9 +334,14 @@ export default function SvgConstellation({
                   fillOpacity={fillOpacity}
                   stroke={lightStroke}
                   strokeWidth={lightStrokeWidth}
+                  className={prefersReducedMotion ? '' : 'motion-safe:animate-svg-twinkle'}
                   style={{
                     filter: haloFilter,
                     transition: prefersReducedMotion ? 'none' : 'fill-opacity 200ms ease-out',
+                    // Phase 19 POLISH-02 — deterministic per-node phase offset so nodes twinkle out of sync.
+                    // sortIndex already exists per-node (used by node-reveal stagger). Multiply by 137ms (golden-ratio-ish)
+                    // to distribute phases across the 4s cycle without obvious patterns. Reduced-motion = no animation.
+                    animationDelay: prefersReducedMotion ? undefined : `-${(sortIndex * 137) % 4000}ms`,
                   }}
                 />
                 <circle

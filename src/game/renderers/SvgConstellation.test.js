@@ -400,4 +400,23 @@ describe('SvgConstellation', () => {
     const javaCircle = container.querySelector('g[data-node-id="Java"] circle:first-child')
     expect(javaCircle.style.transition).toBe('none')
   })
+
+  // Phase 19 (v3.9 POLISH-02) — SVG ambient twinkle so SVG-path users perceive motion
+  it('Phase 19 POLISH-02: motion-safe SVG nodes carry animate-svg-twinkle class with deterministic per-node delay', () => {
+    window.matchMedia = makeMockMatchMedia(false)
+    const { container } = renderRenderer({})
+    const javaCircle = container.querySelector('g[data-node-id="Java"] circle:first-child')
+    const cls = javaCircle.getAttribute('class') || ''
+    expect(cls).toContain('motion-safe:animate-svg-twinkle')
+    expect(javaCircle.style.animationDelay).toMatch(/^-\d+ms$/)
+  })
+
+  it('Phase 19 POLISH-02: reduced-motion SVG nodes DO NOT carry animate-svg-twinkle class', () => {
+    window.matchMedia = makeMockMatchMedia(true)
+    const { container } = renderRenderer({})
+    const javaCircle = container.querySelector('g[data-node-id="Java"] circle:first-child')
+    const cls = javaCircle.getAttribute('class') || ''
+    expect(cls).not.toContain('animate-svg-twinkle')
+    expect(javaCircle.style.animationDelay).toBeFalsy()
+  })
 })

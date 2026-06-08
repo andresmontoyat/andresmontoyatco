@@ -106,6 +106,10 @@ module.exports = {
         'card-swap-out': 'cardSwapOut 75ms ease-in both',
         'card-swap-in':  'cardSwapIn 75ms ease-out both',
         'chip-flash':    'chipFlash 100ms ease-out both',
+        // Phase 19 (v3.9 POLISH-02) — SVG node ambient twinkle for the never-static-constellation requirement.
+        // Per-node delay/duration randomized via inline style in SvgConstellation (deterministic per node.id hash).
+        // MUST be applied with motion-safe: prefix — reduced-motion users keep static path (a11y locked).
+        'svg-twinkle':   'svgTwinkle 4s ease-in-out infinite',
       },
       keyframes: {
         fadeIn: {
@@ -160,6 +164,14 @@ module.exports = {
           '0%':   { opacity: '1' },
           '50%':  { opacity: '0.5', transform: 'scale(0.94)' },
           '100%': { opacity: '1', transform: 'scale(1.0)' },
+        },
+        // Phase 19 (v3.9 POLISH-02) — gentle opacity twinkle for SVG-path nodes
+        // so reduced-motion-OFF SVG users perceive motion (parity with WebGL ambient drift).
+        // Opacity-only animation = GPU-composited, no layout thrash, no SVG transform-origin quirks.
+        // Amplitude small (1.0 → 0.7) — perceptible without distraction.
+        svgTwinkle: {
+          '0%,100%': { opacity: '1' },
+          '50%':     { opacity: '0.7' },
         },
       },
     },
