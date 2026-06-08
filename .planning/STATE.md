@@ -1,17 +1,16 @@
 ---
 gsd_state_version: 1.0
-milestone: v3.9
-milestone_name: Game Mode Polish
-status: Awaiting next milestone
-stopped_at: Closing v3.9 milestone — archive ceremony in progress
-last_updated: "2026-06-08T21:30:14.101Z"
-last_activity: 2026-06-08 — Milestone v3.9 completed and archived
+milestone: v3.10
+milestone_name: 3D Constellation
+status: planning
+last_updated: "2026-06-08T22:00:43.256Z"
+last_activity: 2026-06-08
 progress:
-  total_phases: 16
-  completed_phases: 1
-  total_plans: 6
-  completed_plans: 5
-  percent: 6
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 # Project State
@@ -26,10 +25,10 @@ See: .planning/PROJECT.md (updated 2026-06-06 — v3.8 SHIPPED)
 
 ## Current Position
 
-Phase: Milestone v3.9 complete
+Phase: Not started (defining requirements)
 Plan: —
-Status: Awaiting next milestone
-Last activity: 2026-06-08 — Milestone v3.9 completed and archived
+Status: Defining requirements
+Last activity: 2026-06-08 — Milestone v3.10 started
 
 ## Next milestone candidates
 

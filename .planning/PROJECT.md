@@ -10,15 +10,24 @@
 - v3.5 (2026-05-12 — **partial**): Themes & Projects delivered, deploy deferred. See [`milestones/v3.5-ROADMAP.md`](milestones/v3.5-ROADMAP.md).
 - v3.4 (2026-05-07): Brownfield redesign baseline — Vite 6 + React 18 + Tailwind v3.4, bilingual nav, char-reveal Hero, vertical Experience timeline, email-hero Contact, branded Open Graph, Lighthouse 98/100/100/100 mobile. See [`milestones/v3.4-ROADMAP.md`](milestones/v3.4-ROADMAP.md).
 
-## Next Milestone
+## Current Milestone: v3.10 3D Constellation
 
-**v3.10 — TBD.** Candidates surfaced during v3.9 close:
+**Goal:** Convert flat 2D-in-3D WebGL constellation to a genuine 3D experience with drag-to-rotate, differentiating desktop wow from SVG mobile path. Activates SEED-3D-CONSTELLATION (planted 2026-06-08 during v3.9). Stops recruiter mid-scroll via interactive depth — the desktop lazy chunk's 117 kB gz of three.js finally earns its bundle cost.
 
-- **SEED-3D-CONSTELLATION** (dormant) — Genuine 3D perspective + rotation on the constellation as a wow upgrade. Parked intentionally for v3.10+ scope.
-- **Resume v3.7 deploy** — Plan 11-05 deployed-`*.vercel.app` Lighthouse verdict, DEPLOY-02 custom domain (`andresmontoyat.co` + DNS), DEPLOY-03 PR previews. Site already live; missing custom domain + formal production-URL verdict.
-- **Manual UAT debt** — visual confirm POLISH-01 above-fold + POLISH-02 twinkle on real devices (deferred at v3.9 close).
+**Target features:**
+- **DEPTH-01** Constelación 3D genuina en WebGL desktop — `PerspectiveCamera` (fov=60), per-node `z` via category-z clusters (backend/frontend/cloud/etc. layered along z-axis to visually communicate architecture stack), `OrbitControls` drag-to-rotate + auto-rotate idle, click-vs-drag threshold (≥5px before suppressing click-to-select node). Mobile SVG path UNCHANGED — Lighthouse mobile gate stays cleared. `prefers-reduced-motion` users keep static path. GAME-01 SVG↔WebGL divergence accepted as adaptive-fidelity feature.
 
-Run `/gsd:new-milestone` to scope.
+**Scope discipline:**
+- Single REQ (DEPTH-01) / 1 phase (Phase 20) / 3 plans / 3-5 days
+- Activates seed SEED-3D-CONSTELLATION
+- Pure desktop WebGL enhancement — mobile/SVG path untouched
+- Carry-forward deferred (v3.7 deploy, VIS-05, DIAGRAMS-01, manual UAT debt v3.9) stays deferred — NOT in v3.10.
+
+**Decisions to revisit at planning:**
+- **D-14-01-LAYOUT** (deterministic 2D radial, zero d3-force) — extend to 3D with category-z; reject d3-force-3d to keep zero new deps
+- **D-17-VISUAL** (flat 2D-in-3D ortho) — replace with genuine 3D contract via PerspectiveCamera
+- **D-17-PRIMITIVES** — shader needs size-attenuation by depth update
+- **GAME-01** "identical props contract" SVG ↔ WebGL — visually diverges with 3D; reframe as adaptive-fidelity feature or add caveat to contract
 
 ## Deferred (carried from prior milestones)
 
