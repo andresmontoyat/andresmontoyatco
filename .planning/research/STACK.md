@@ -1,147 +1,326 @@
-# Technology Stack
+# Technology Stack — v3.10 3D Constellation
 
-**Project:** Carlos Montoya Portfolio — Bold Animated Redesign
-**Researched:** 2026-04-21
-**Confidence:** MEDIUM — based on training knowledge (cutoff Aug 2025); web sources unavailable.
-**Domain:** Animated single-page developer portfolio (React + Tailwind, static output)
+**Project:** Carlos Montoya Portfolio — v3.10 milestone (DEPTH-01)
+**Researched:** 2026-06-08
+**Mode:** Project Research (delta from v3.8/v3.9 — additions only)
+**Overall confidence:** HIGH (Context7 + npm registry + installed `node_modules` cross-verified)
 
----
-
-## Current State (What Exists)
-
-The codebase is significantly outdated:
-
-| Area | Current | Problem |
-|------|---------|---------|
-| React | 17.0.2 | Two major versions behind (React 19 released Dec 2024) |
-| Tailwind | v2 via PostCSS 7 compat shim | v4 released Feb 2025; v2 is EOL |
-| Build system | Create React App + CRACO | CRA is unmaintained since 2022 |
-| Animations | CSS keyframes only (2 trivial) | No animation library at all |
-| Font Awesome | v5 SVG icons | v6 released years ago |
-| i18n | Custom LanguageContext + translations.js | Works fine, keep it |
-| No bundler optimization | react-scripts | Slow builds, no tree-shaking control |
-
-The redesign must modernize the build toolchain first, or animation libraries won't tree-shake correctly and Tailwind v4's CSS-first config won't work.
+> **Supersedes** the 2026-04-21 stack research (which targeted the original brownfield redesign baseline). The Vite 6 + React 18 + Tailwind 3.4 + three.js raw stack is now shipped and locked through Phase 17. This document records only the **deltas** required to add genuine 3D + drag-to-rotate to the existing WebGL constellation.
 
 ---
 
-## Recommended Stack
+## TL;DR
 
-### Build System — Migrate CRA → Vite
+Adding genuine 3D + drag-to-rotate to the existing three.js raw WebGL constellation requires **zero new npm packages**. The capability is delivered by:
 
-**Use: Vite 6.x** (not CRA/CRACO, not Next.js)
+1. Two new imports from the already-installed `three@0.169.0` package: `PerspectiveCamera` (already in `three` core) and `OrbitControls` (already in `three/examples/jsm/controls/OrbitControls.js` ship-with-package addon).
+2. A z-axis extension to the pure `computeLayout()` function (no library).
+3. ~80 LOC of integration code inside the existing `WebGLConstellation.js`.
 
-| Technology | Version | Purpose | Why |
-|------------|---------|---------|-----|
-| Vite | ^6.0.0 | Build tool + dev server | CRA is abandoned. Vite provides 10-100x faster HMR, native ESM, first-class tree shaking. No ejecting needed. Static build output (`vite build`) is a drop-in for S3/Netlify/Vercel hosting. |
-| @vitejs/plugin-react | ^4.x | React fast-refresh in Vite | Uses SWC transformer, not Babel — faster builds |
+**Confirmed costs:** `OrbitControls.js` raw = 32 134 bytes, gzipped = 6 850 bytes (measured against `node_modules` 2026-06-08). Seed estimate of "~5 kB gz" was within ±2 kB; the final figure after Rollup tree-shaking + minification will be **~5–7 kB gz** added to the existing 117 kB gz lazy desktop chunk.
 
-**Why not Next.js:** Out of scope per PROJECT.md ("static frontend site"). Next.js adds SSR complexity, edge runtime overhead, and file-based routing — none of which are needed. Static export (`next export`) is a second-class citizen in Next.js 13+ App Router.
-
-**Why not Parcel / Webpack standalone:** Vite is the community-settled answer for React SPAs as of 2024-2025. Parcel lacks the ecosystem. Raw Webpack requires too much config.
-
-**Confidence: HIGH** — Vite is the de facto replacement for CRA across the React ecosystem.
+**Explicitly NOT added:** `react-three-fiber`, `@react-three/drei`, `d3-force-3d`, `three-orbit-controls` npm shim. Rationale per dependency below.
 
 ---
 
-### Core Framework — React 18
+## Current Stack — Unchanged (do not re-research)
 
-**Use: React ^18.3.x** (not 17, not 19 yet)
-
-| Technology | Version | Purpose | Why |
-|------------|---------|---------|-----|
-| react | ^18.3.1 | UI framework | React 18 Concurrent Mode unlocks `useTransition`, `startTransition`, and Suspense — necessary for non-blocking animation work. React 19 exists but its ecosystem (especially Framer Motion's compatibility) needs more stabilization time as of H1 2025. |
-| react-dom | ^18.3.1 | DOM renderer | Matches React 18 |
-
-**Why not React 19:** React 19 introduced breaking changes to ref handling and forwardRef that Framer Motion's internal component wrapping relies on. Confirmed compatibility issues existed through early 2025. Pin to 18 for this project.
-
-**Confidence: MEDIUM** — React 18 is safe. React 19 compat with animation libraries needs validation before upgrading.
+| Layer | Tech | Version | Status |
+|-------|------|---------|--------|
+| Runtime | Node.js + npm | unpinned | unchanged |
+| Build | Vite | 6.4.2 | unchanged |
+| UI | React | 18.3.1 | unchanged |
+| CSS | Tailwind | 3.4.19 | unchanged |
+| WebGL | three.js (raw) | 0.169.0 | **kept** — see "Version compatibility" below |
+| Test | Vitest + RTL | 2.1.9 / 16.3.0 | unchanged |
+| Environment | jsdom | 25.0.1 | unchanged |
+| Bundle analyzer | rollup-plugin-visualizer | 5.14.0 | unchanged |
+| Lighthouse | lighthouse | 12.8.2 | unchanged |
 
 ---
 
-### Animation — Framer Motion (Primary)
+## Additions / Changes for v3.10
 
-**Use: Framer Motion ^11.x** (not GSAP, not React Spring as primary)
+### 1. `PerspectiveCamera` (from `three` core — already installed)
 
-| Technology | Version | Purpose | Why |
-|------------|---------|---------|-----|
-| framer-motion | ^11.0.0 | All scroll, entrance, layout, hover animations | Native React integration. Declarative API means animations live in JSX without refs. `useScroll` + `useTransform` handle scroll-linked parallax natively. `AnimatePresence` handles route/conditional unmounting. Layout animations with `layoutId` enable section-to-section transitions. Supports `prefers-reduced-motion` via `useReducedMotion`. Tree-shakeable — pay only for what you import. |
+| Item | Value |
+|------|-------|
+| Import path | `import { PerspectiveCamera } from 'three'` |
+| Package | `three@0.169.0` (existing dep) |
+| Bundle impact | **~0 bytes** — `PerspectiveCamera` and `OrthographicCamera` share `Camera` base; swapping one ES import for the other is net-neutral after tree-shaking |
+| Why | Required for genuine 3D perspective (foreshortening). `OrthographicCamera` cannot foreshorten — that is what makes the current "flat 2D-in-3D" aesthetic so flat |
+| Confidence | HIGH — Context7 docs verified |
 
-**Core Framer Motion capabilities for this project:**
+**Constructor (Context7 verified):** `new PerspectiveCamera(fov, aspect, near, far)`
+- `fov`: vertical FOV in degrees, default `50`. **Recommended: `60`** (seed lock — gives a slight wide-angle feel without distortion; matches existing three.js samples for orbit-controlled scenes)
+- `aspect`: canvas width/height. **Recommended: tracked live from `canvasRef.current.getBoundingClientRect()` (re-set on resize)**
+- `near`: **Recommended `1`** (current ortho near=-1; perspective near must be > 0)
+- `far`: **Recommended `2000`** (default; comfortable depth for the planned z-cluster spread of ±150 units around origin)
 
+**Camera position:** `(0, 0, 800)` looking at origin works for the existing 1000×1000 layout footprint at fov=60. Confirm during Phase 20 execute by visually centering nodes.
+
+---
+
+### 2. `OrbitControls` (from `three/addons` — already installed)
+
+| Item | Value |
+|------|-------|
+| **Modern import path** | `import { OrbitControls } from 'three/addons/controls/OrbitControls.js'` |
+| Legacy alias | `import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'` (still works — `three/addons/*` is a 1:1 alias to `three/examples/jsm/*` per `package.json` exports map line `"./addons/*": "./examples/jsm/*"`) |
+| **Use the `three/addons/` form** | Modern documented path on threejs.org/docs (Context7-verified). Plays correctly with Rollup ESM tree-shaking. |
+| Source size | 32 134 bytes raw |
+| Gzipped (pre-Vite/Rollup minify) | 6 850 bytes |
+| Estimated final bundle add | **~5–7 kB gz** after Rollup minify (terser drops comments/whitespace + dead-branch elimination; OrbitControls has touch/keyboard/zoom paths we may not need but the file is monolithic — pan/zoom we plan to disable still ships as code) |
+| Confidence on cost | HIGH (measured against installed file 2026-06-08) |
+
+**Verified default config defaults (Context7):**
+- `enableRotate: true` (default) — keep
+- `enableZoom: true` (default) — **set to `false`** (scroll-wheel zoom hijack ruins page scroll UX)
+- `enablePan: true` (default) — **set to `false`** (right-click pan is irrelevant for a star field)
+- `enableDamping: false` (default) — **set to `true`** (smoothing makes drag feel premium; **requires `controls.update()` in rAF loop**)
+- `dampingFactor: 0.05` (default when damping enabled)
+- `autoRotate: false` (default) — see "Auto-rotate idle pattern" below
+- `autoRotateSpeed: 2.0` (default = "30 seconds per orbit at 60fps")
+
+**Events (Context7-verified):** `start`, `change`, `end` — fired on `controls` instance. Used by the click-vs-drag logic in section 5.
+
+**WHY NOT `three-orbit-controls` npm package:** That is a 2017-era shim from before three.js shipped its own addons. It is deprecated, last published 2018, and re-exports an older copy of the same file we already get from `three/addons`. Adding it would duplicate code and pin a stale OrbitControls.
+
+---
+
+### 3. three.js version compatibility — keep `0.169.0`, do not bump
+
+| Question | Answer | Source |
+|----------|--------|--------|
+| Latest three.js on npm (2026-06-08) | `0.184.0` | `npm view three version` |
+| Installed | `0.169.0` (locked via `package-lock.json`) | `package.json` |
+| Does `PerspectiveCamera` work on 0.169? | YES — present since r1 (2010) | three.js docs |
+| Does `OrbitControls` work on 0.169? | YES — addon shipped in `examples/jsm/` since r109 (2019) | three.js docs |
+| Has the OrbitControls API changed between r169 and r184? | NO breaking change in OrbitControls events/properties between r169 and r184 per three.js migration guide | Migration guide (training data + Context7 doc samples reference identical API) |
+| Should we bump to `0.184.0`? | **NO** | See rationale ↓ |
+
+**Rationale for staying on 0.169.0:** Phase 17 closed the Lighthouse mobile HARD gate against a build pinned to `three@0.169.0`. Bumping minor versions of three.js can shift the ShaderMaterial GLSL preamble (varying-prefix migration), the BufferAttribute API (e.g. `setUsage` deprecations), and the renderer color management defaults — any of which could silently regress the existing 26-node + 50-edge constellation. v3.10 scope is "add 3D + rotate", not "upgrade three.js". Pin remains `^0.169.0` in `package.json`; `package-lock.json` keeps the resolved version stable.
+
+**Confidence:** HIGH on "0.169.0 supports both PerspectiveCamera and OrbitControls" (Context7 + installed file). MEDIUM on "no breaking change r169→r184 for the APIs we use" (verified the specific symbols we touch, not exhaustive). Phase 20 plan can re-check three.js MIGRATION.md if curious; **no version bump recommended**.
+
+---
+
+### 4. Bundle cost — confirmed via direct measurement
+
+| Asset | Raw | Gzipped | Source |
+|-------|-----|---------|--------|
+| `three/examples/jsm/controls/OrbitControls.js` | 32 134 B | 6 850 B | `wc -c` + `gzip -c \| wc -c` on installed file, 2026-06-08 |
+| Existing WebGL lazy chunk (Phase 17 close) | — | 117 000 B | Phase 17 SC-4 close report |
+| Projected post-v3.10 WebGL lazy chunk | — | **~122–125 kB gz** | 117 + 5–7 kB OrbitControls (no other new code substantial enough to register) |
+| Mobile SVG chunk | — | 8.91 kB gz | Phase 17 close — **MUST NOT CHANGE** |
+
+**Bundle gate impact:** The desktop WebGL chunk has no Lighthouse HARD ceiling (only mobile does). `scripts/check-bundle-gate.mjs` enforces:
+1. Mobile chunk ≤ 38.82 kB gz HARD — **untouched by v3.10** (mobile uses SvgConstellation, not WebGLConstellation)
+2. three.js absence regex in mobile chunk — **stays clean** (we are not introducing any three import outside the `React.lazy`-gated path)
+3. WebGLConstellation chunk existence — still satisfied
+
+**Confidence on no mobile regression:** HIGH (the lazy boundary is `React.lazy(() => import('./renderers/WebGLConstellation.js'))` from GameMode.js — adding the OrbitControls import inside WebGLConstellation.js stays inside the desktop-only chunk).
+
+---
+
+### 5. Click-vs-drag — DO NOT use OrbitControls events alone
+
+**The problem:** Current canvas has an `onClick` listener that calls `onSelectSkill(matched)` on the picked node (WebGLConstellation.js lines 646–649). When OrbitControls is attached, a "click" that involves any micro-drag will both rotate the camera AND fire `onSelectSkill` — recruiter ends up selecting a skill they did not mean to.
+
+**The pattern (Context7-verified — three.js manual `indexed-textures.html`):**
+
+```js
+const maxClickTimeMs = 200
+const maxMoveDeltaSq = 5 * 5  // 5 px threshold, squared to skip sqrt
+let startTimeMs = 0
+let startX = 0
+let startY = 0
+
+function onPointerDown(e) {
+  startTimeMs = performance.now()
+  startX = e.clientX
+  startY = e.clientY
+}
+
+function onClick(e) {
+  const dt = performance.now() - startTimeMs
+  const dx = e.clientX - startX
+  const dy = e.clientY - startY
+  const moveSq = dx * dx + dy * dy
+  if (dt > maxClickTimeMs) return        // too slow → drag
+  if (moveSq > maxMoveDeltaSq) return    // too far → drag
+  const matched = pickAt(e.clientX, e.clientY)
+  if (matched != null && onSelectSkill) onSelectSkill(matched)
+}
 ```
-useInView          → trigger entrance animations as sections scroll into view
-useScroll          → scroll-linked parallax (hero background, sticky elements)
-useTransform       → map scroll progress to visual properties (opacity, y, scale)
-AnimatePresence    → animate language-switcher content transitions
-variants           → orchestrated staggered entrance animations for lists
-layoutId           → shared element transitions between sections
-whileHover         → card lift/glow effects without CSS boilerplate
-```
 
-**Why not GSAP:** GSAP requires imperative refs (`useRef` + `gsap.to(ref.current, ...)`), fighting React's declarative model. GSAP's free tier excludes ScrollTrigger on commercial/revenue projects (license cost). For a portfolio SPA, Framer Motion's declarative model is significantly faster to build with and produces more maintainable code. GSAP is the right choice for complex timeline sequences and canvas-level effects — this project doesn't need that.
+**Recommended thresholds (locked from Context7 example):**
+- Time: **200 ms** (above this → assume drag)
+- Movement: **5 px** in any direction (above this → assume drag)
+- These are both/and — both must pass to count as a click
 
-**Why not React Spring:** React Spring's physics model is excellent for gesture-driven micro-interactions but has a steeper learning curve and less intuitive scroll-linking than Framer Motion's `useScroll`. Framer Motion covers all required use cases more concisely.
+**WHY NOT OrbitControls `start`/`end` events alone:** `controls.addEventListener('start', ...)` fires on `pointerdown` regardless of whether the user actually drags. A naïve "set isDragging=true on start, suppress click if isDragging" would suppress every click. The time+distance threshold pattern is what the official three.js manual recommends for exactly this case.
 
-**Why not CSS-only animations:** The current site proves the limitation. CSS has no scroll-linked parallax, no staggered entrance orchestration, and no layout transitions without JavaScript anyway.
+**Pointer events:** keep the existing `pointermove` / `pointerleave` listeners for hover (BLOCKER 2 from Phase 17 — `onHoverSkill` callback contract). Hover during a drag is acceptable (no functional harm) and may even be desirable visual feedback.
 
-**Confidence: HIGH** — Framer Motion is the dominant choice for React animation in 2024-2025. npm downloads consistently exceed competitors.
+**Confidence:** HIGH (Context7 source: three.js manual `indexed-textures.html` is the canonical reference for this exact pattern).
 
 ---
 
-### Tailwind CSS — Upgrade to v3.4.x
+### 6. Auto-rotate idle pattern — use OrbitControls.autoRotate
 
-**Use: Tailwind CSS ^3.4.x** (not v2, not v4 yet)
+**Recommendation:** Use `controls.autoRotate = true` + `controls.autoRotateSpeed`. **Do NOT hand-roll a custom rAF rotation loop.**
 
-| Technology | Version | Purpose | Why |
-|------------|---------|---------|-----|
-| tailwindcss | ^3.4.4 | Utility-first styling | v3 is the stable production version. v4 (released Feb 2025) rewrites the config system entirely to CSS-first (`@theme` directive replaces `tailwind.config.js`) and drops PostCSS 7 support. The v4 migration is non-trivial and the plugin ecosystem (headlessui, etc.) has lagged. v3.4 adds container queries, `@layer` improvements, and `text-balance` — enough modern Tailwind for this project. |
-| postcss | ^8.x | CSS processing pipeline | v3 requires PostCSS 8 (current codebase uses PostCSS 7 compat shim — this is the root cause of the Tailwind v2 pin) |
-| autoprefixer | ^10.x | Vendor prefix handling | Required by Tailwind's PostCSS plugin |
+| Approach | Pros | Cons | Verdict |
+|----------|------|------|---------|
+| `controls.autoRotate = true` | Built-in, ~0 LOC, respects damping, integrates with user-drag-then-resume | Always rotates azimuth around `controls.target` (no axis choice) — fine for constellation centered at origin | **RECOMMEND** |
+| Custom rAF uniform | Full control over axis, can do non-azimuthal motion | More code, must coordinate with OrbitControls' own rotation math, risk of fighting damping | Avoid unless azimuth feels wrong in UAT |
 
-**Why not Tailwind v4:** As of H1 2025, Tailwind v4's Vite plugin (`@tailwindcss/vite`) is the recommended integration — but several third-party plugins (headlessui, tailwind-merge, clsx integrations) are still catching up. The CSS-first config requires rewriting `tailwind.config.js` entirely. For a redesign milestone, start on v3.4 and plan a v4 upgrade as a separate milestone once the plugin ecosystem settles (estimated Q3 2025+).
+**Required wiring (from Context7 docs):**
+1. `controls.autoRotate = true`
+2. `controls.autoRotateSpeed = 1.0` (default 2.0 = 30 s/orbit at 60 fps. **Recommended 1.0** = 60 s/orbit — leisurely; recruiter has time to read before camera reframes)
+3. **MUST call `controls.update()` in the rAF tick** — both `enableDamping` and `autoRotate` require this. Existing tick function in WebGLConstellation.js line 674 already runs every frame; add `controlsRef.current?.update()` as first line of `tick()`.
 
-**Modern Tailwind v3 patterns to use in the redesign:**
+**Idle detection:** Optional polish — pause auto-rotate while user is actively dragging by toggling `controls.autoRotate = false` on `controls` `start` event, re-enable on `controls` `end` event + a delay (e.g. 3 s of inactivity). MVP can ship with always-on auto-rotate; user drag interrupts via OrbitControls' own input handling. Iterate in UAT if recruiters find it disorienting.
 
-```
-@layer components { }   → component-scoped utility groups (replaces inline class lists)
-container queries        → responsive components independent of viewport
-text-balance            → recruiter-readable paragraph line breaks
-@apply sparingly        → only for repeated animation states, not structural styles
-group / peer            → parent-child hover states without JavaScript
-```
+**`prefers-reduced-motion`:** Reduced-motion users are already gated to SvgConstellation before WebGLConstellation mounts (Phase 17 `useRendererCapability`). No auto-rotate logic needs to gate on this — it never runs for those users.
 
-**Why keep the existing custom color tokens:** The `ink`, `neon`, `slate2` tokens in `tailwind.config.js` are well-structured. The redesign will replace the neon-cyan palette with a fresher palette, but the token structure should be preserved.
-
-**Confidence: HIGH** — Tailwind v3.4 is the stable target. v4 migration is a deliberate future decision.
+**Confidence:** HIGH (Context7 `webgpu_tsl_vfx_linkedparticles.html` and OrbitControls `autoRotateSpeed` doc verified).
 
 ---
 
-### Supporting Libraries
+### 7. NO `d3-force-3d` — extend `computeLayout()` with deterministic z
 
-| Library | Version | Purpose | When to Use |
-|---------|---------|---------|-------------|
-| clsx | ^2.1.x | Conditional class composition | Use everywhere instead of template literal class strings. Pairs with tailwind-merge to prevent Tailwind class conflicts. |
-| tailwind-merge | ^2.x | Resolve conflicting Tailwind utilities | Required when passing className props into animated components where Framer Motion adds inline styles that conflict with utility classes. |
-| react-intersection-observer | ^9.x | Scroll-based visibility detection | Use as lightweight fallback for simple entrance triggers where Framer Motion's `useInView` adds too much bundle overhead. Not strictly needed if Framer Motion is already imported. |
-| react-i18next | ^14.x | i18n (if custom context is replaced) | Current custom `LanguageContext` works but lacks plural rules, date formatting, and namespace splitting. Upgrade to react-i18next if translations grow complex. If existing custom context stays simple, keep it. |
-| @fontsource/inter | ^5.x | Self-hosted Inter font | Eliminates Google Fonts network request (performance + privacy). Inter is already the intended font per `tailwind.config.js`. Serve from Vite's static assets. |
+| Question | Answer |
+|----------|--------|
+| Do we need a physics engine for 3D layout? | **NO** |
+| Why not? | D-14-01-LAYOUT mandates **deterministic** baked layout (zero d3-force in client). Same principle applies in 3D: layout must be reproducible across reloads, testable in pure Vitest, and free of frame-coupled physics. |
+| What replaces d3-force-3d? | Extension of `src/game/constellation.layout.js` `computeLayout()` to return `{x, y, z}` per node. The recommended approach (seed-aligned): **category-z clusters** — each category gets a deterministic z plane. |
+
+**Recommended z assignment (matches seed SEED-3D-CONSTELLATION):**
+
+```js
+// Add to src/game/constellation.layout.js
+const CATEGORY_Z = {
+  // backend/data layers visually "deeper"
+  hardware: -200,
+  data:     -150,
+  arch:     -100,
+  cloud:     -50,
+  security:    0,
+  devops:     50,
+  ai:        100,
+  lang:      150,  // "closest" / most-touched / most-recruiter-facing
+}
+
+// In computeLayout(), inside the cluster loop:
+const z = CATEGORY_Z[cat] ?? 0
+layout[catNodes[i].id] = {
+  x: centroid.x + radius * Math.cos(angle),
+  y: centroid.y + radius * Math.sin(angle),
+  z,  // NEW
+}
+```
+
+**Why this z ordering (design rationale, not stack-locked):** The seed proposes that z communicates "architecture stack" — hardware/data at the bottom (z most negative = deepest), application languages at the top (z most positive = closest to viewer). Recruiter intuitively reads "this guy stacks his abstractions correctly." Phase 20 plan can revisit specific values during UAT.
+
+**Alternatives considered & rejected:**
+
+| Alternative | Why rejected |
+|-------------|--------------|
+| `d3-force-3d` (~15 kB gz) | Violates D-14-01-LAYOUT (non-deterministic, requires physics ticks, baked positions are the whole point) |
+| `procedural z = sin(idx) * 100` | Loses semantic meaning. Category-z carries information; pure-math z is just noise. Cheaper but less interesting. |
+| Per-node random z with seeded PRNG | Same problem — semantically empty, just adds depth without communicating anything |
+| `three-forcegraph` library | Brings d3-force-3d transitively + much larger bundle + opinionated rendering that fights existing ShaderMaterial code |
+
+**Confidence:** HIGH on the rejection of d3-force-3d (decision D-14-01-LAYOUT is explicit). The specific z values are a design call — Phase 20 plan flagged to validate via 1-day UAT (per seed's "Risks / Concerns" #3).
 
 ---
 
-## What to Remove
+### 8. Shader / size-attenuation by depth — custom ShaderMaterial update, NOT PointsMaterial
 
-| Dependency | Reason |
-|------------|--------|
-| `react-router-dom` | PROJECT.md explicitly out of scope — single-page, no routing |
-| `react-hook-form` | Out of scope — no contact form with server backend |
-| `axios` | No API calls in a static portfolio |
-| `react-scroll` | Replace with Framer Motion scroll utilities or native `scroll-behavior: smooth` + `scroll-margin-top` CSS |
-| `@craco/craco` | Replaced by Vite — CRACO was a workaround for CRA's config inflexibility |
-| `react-scripts` | Replaced by Vite |
-| `@headlessui/react` | Replace with simpler custom components or upgrade to headlessui v2 only if a complex dropdown/modal is needed |
-| `@fortawesome/...` (all) | Replace with Lucide React (v0.4xx) — smaller bundle, tree-shakeable SVGs, modern icon set better suited to a portfolio |
-| `web-vitals` | Only needed for CRA's built-in reporting scaffold |
+**Current state:** WebGLConstellation uses a custom `ShaderMaterial` (lines 334–356), not `PointsMaterial`. The shader computes `gl_PointSize` directly (line 173).
+
+**`PointsMaterial.sizeAttenuation` does NOT apply** because that property is consumed by three.js's built-in PointsMaterial shader, which our custom ShaderMaterial bypasses entirely.
+
+**What we need to add to VERTEX_SHADER:**
+
+The current vertex shader (line 173) sets `gl_PointSize = size * uDpr * (1.0 + (uHaloPulse - 1.0) * halo) * flashScale;`. With PerspectiveCamera, points at z=-200 should appear smaller than points at z=+150. The standard three.js approach for size-attenuated points in a custom shader (Context7 verified pattern):
+
+```glsl
+vec4 mvPosition = modelViewMatrix * vec4(drifted, 1.0);
+gl_PointSize = size * uDpr * (1.0 + (uHaloPulse - 1.0) * halo) * flashScale;
+gl_PointSize *= (300.0 / -mvPosition.z);  // size attenuation by depth
+gl_Position = projectionMatrix * mvPosition;
+```
+
+The `300.0 / -mvPosition.z` factor is the conventional three.js PointsMaterial attenuation formula (300 = scaleByViewport constant; the value should be tuned during Phase 20 to keep the existing front-plane size roughly matched).
+
+**Confidence:** HIGH — this is the documented three.js pattern for perspective Point size attenuation in custom ShaderMaterial.
+
+---
+
+### 9. Vitest mocking — what additional mocks are needed
+
+**Current state (src/test/setup.js):**
+- `HTMLCanvasElement.prototype.getContext = () => null` — forces capability detection to "no WebGL" so SvgConstellation renders (line 9–11)
+- `localStorage` / `sessionStorage` bridge for Node 22+
+
+**Impact of OrbitControls on jsdom:** OrbitControls listens to `pointerdown`/`pointermove`/`pointerup`/`wheel`/`keydown` on the renderer's domElement. In jsdom these events exist but are inert (no real pointer hardware). Constructor itself only stores refs.
+
+**The good news:** The existing `getContext = () => null` mock means WebGLConstellation **never actually instantiates** in unit tests — `detectCapabilities()` returns "no WebGL", `useRendererCapability` returns the SVG path, and `React.lazy(() => import('./WebGLConstellation.js'))` is never resolved. **No additional mocks needed for the current test strategy.**
+
+**If we wanted to unit-test OrbitControls integration (not recommended for MVP):**
+- jsdom does not implement `WebGLRenderingContext`, so OrbitControls' constructor call against `renderer.domElement` would crash on the WebGL renderer instantiation, not on OrbitControls itself
+- Would need to mock `three` module's `WebGLRenderer`, `Scene`, etc. — Vitest `vi.mock('three', ...)` pattern
+- **Recommended instead:** Test OrbitControls integration via manual UAT (Phase 20 UAT checklist), not via Vitest. Three.js + jsdom is a known-painful combo and the team has already accepted this approach in Phase 17 (Slice 1 mocks canvas to null; no integration tests for the WebGL renderer itself).
+
+**Confidence:** HIGH — verified against existing test infra. **No setup.js changes recommended for Phase 20.**
+
+---
+
+### 10. Why NOT `react-three-fiber` (`@react-three/fiber`) — still
+
+| Reason | Detail |
+|--------|--------|
+| D-17-LIB locked | Phase 17 explicitly chose `three` raw over react-three-fiber to control bundle floor |
+| Bundle cost | `@react-three/fiber` adds ~25–35 kB gz on top of three core; `@react-three/drei` (the OrbitControls helper component) adds another ~30 kB gz. We need only ~5 kB gz of OrbitControls itself |
+| Reconciler complexity | r3f's reconciler runs on top of React Fiber — for 26 Points + 50 edges + an existing imperative rAF loop, the reconciler is pure overhead |
+| Migration cost | Phase 17 shipped ~500 LOC of imperative `useEffect` + `BufferGeometry` + `ShaderMaterial` code. Rewriting to declarative `<Points>` / `<LineSegments>` JSX with `useFrame` is a full refactor with regression risk against an already-shipped Lighthouse-gated build |
+| What we gain by adding it | Almost nothing for this milestone — the only "ergonomic win" would be `<OrbitControls />` JSX, which is ~5 LOC of useEffect work in raw three.js |
+
+**Locked:** Keep three.js raw. Do **not** add `@react-three/fiber` or `@react-three/drei`. This decision survives v3.10 unchanged.
+
+---
+
+## Installation
+
+```bash
+# Nothing to install. Both PerspectiveCamera and OrbitControls
+# ship inside the already-installed three@0.169.0 package.
+#
+# Verify in code review that imports use these two exact paths:
+#   import { PerspectiveCamera } from 'three'
+#   import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
+```
+
+**No `package.json` change required for v3.10.** `npm install` is unnecessary. `package-lock.json` stays untouched.
+
+---
+
+## Integration points (where the new code lands)
+
+| File | Change | Approx LOC |
+|------|--------|-----------|
+| `src/game/constellation.layout.js` | Extend `computeLayout()` to return `{x, y, z}` (CATEGORY_Z constant + add `z` key in cluster loop) | +12 LOC, -0 LOC |
+| `src/game/constellation.layout.test.js` | Update layout shape assertions to `{x, y, z}` | +6 LOC |
+| `src/game/renderers/WebGLConstellation.js` | Swap OrthographicCamera → PerspectiveCamera; add OrbitControls; add controlsRef; add `controls.update()` to rAF tick; add click-vs-drag threshold to existing onClick; update VERTEX_SHADER position attribute write to use `node.z`; add size-attenuation by depth to gl_PointSize | +40 LOC, -8 LOC |
+| `src/game/renderers/SvgConstellation.js` | **NO CHANGE** — mobile SVG path stays 2D, ignores z (drop the z key on read) | 0 LOC |
+| `src/test/setup.js` | **NO CHANGE** — existing getContext=null mock skips OrbitControls instantiation in unit tests | 0 LOC |
+| `package.json` | **NO CHANGE** | 0 LOC |
+| `vite.config.js` | **NO CHANGE** | 0 LOC |
+
+**Total integration footprint:** ~58 LOC of net additions across 3 files. Matches seed estimate of "Mostly inside `src/game/constellation.layout.js` + `src/game/renderers/WebGLConstellation.js` + their tests. Zero new files."
 
 ---
 
@@ -149,66 +328,43 @@ group / peer            → parent-child hover states without JavaScript
 
 | Category | Recommended | Alternative | Why Not |
 |----------|-------------|-------------|---------|
-| Build tool | Vite 6 | Next.js 15 | Static SPA doesn't need SSR; file routing; heavier |
-| Build tool | Vite 6 | Parcel 2 | Smaller ecosystem, less React-specific optimization |
-| Animation | Framer Motion 11 | GSAP 3 | Imperative API fights React; ScrollTrigger requires paid license for commercial use |
-| Animation | Framer Motion 11 | React Spring | Excellent physics model but worse scroll-linking DX; smaller community |
-| Animation | Framer Motion 11 | Auto Animate | Too limited — one-line entrance only, no scroll-linked or complex orchestration |
-| Tailwind | v3.4 | Tailwind v4 | Plugin ecosystem not fully migrated as of H1 2025; CSS-first config requires full rewrite |
-| Icons | Lucide React | Font Awesome 6 | FA SVG-core adds ~50KB baseline; Lucide is fully tree-shakeable |
-| Icons | Lucide React | Heroicons | Narrower icon set; Lucide has broader coverage |
-| Fonts | @fontsource/inter | Google Fonts CDN | External request adds 100-200ms on first load; privacy concern |
-| i18n | Keep custom context | react-i18next | Custom context is sufficient for two flat translation files; avoid overengineering |
-
----
-
-## Installation (Net-New Setup)
-
-```bash
-# Create Vite project (if starting fresh) or migrate in place
-npm create vite@latest . -- --template react
-
-# Core
-npm install react@^18.3.1 react-dom@^18.3.1
-npm install framer-motion@^11.0.0
-npm install clsx@^2.1.0 tailwind-merge@^2.0.0
-npm install @fontsource/inter@^5.0.0
-npm install lucide-react@^0.400.0
-
-# Dev dependencies
-npm install -D tailwindcss@^3.4.4 postcss@^8.4.0 autoprefixer@^10.4.0
-npm install -D @vitejs/plugin-react@^4.0.0
-npm install -D vite@^6.0.0
-
-# Remove (not install)
-npm uninstall react-router-dom react-hook-form axios react-scroll @headlessui/react
-npm uninstall @fortawesome/fontawesome-svg-core @fortawesome/free-brands-svg-icons
-npm uninstall @fortawesome/free-solid-svg-icons @fortawesome/react-fontawesome
-npm uninstall web-vitals @craco/craco react-scripts
-```
-
----
-
-## Performance Targets
-
-The PROJECT.md requires Lighthouse 90+ with rich animations. The following Vite + Framer Motion patterns are mandatory to hit that target:
-
-| Optimization | How | Impact |
-|--------------|-----|--------|
-| Lazy-load off-screen sections | `React.lazy` + `Suspense` per section | Reduces initial JS parse |
-| `prefers-reduced-motion` | `useReducedMotion()` from Framer Motion — disable all animations when true | Accessibility + perf on slow devices |
-| `will-change: transform` sparingly | Only on actively animating elements — remove after animation completes | Prevents GPU layer explosion |
-| Self-hosted fonts | `@fontsource/inter` instead of CDN | Eliminates render-blocking external request |
-| Vite code splitting | Auto with `import()` in lazy routes/sections | Smaller initial bundle |
-| Image optimization | WebP format, `loading="lazy"`, explicit `width`/`height` | LCP improvement |
-| Framer Motion tree-shaking | Import from `framer-motion` not `framer-motion/dist/...` — Vite handles this | Eliminates unused animation APIs |
-| Avoid scroll event listeners | Use `useScroll` from Framer Motion (uses IntersectionObserver + passive listeners internally) | No jank on mobile |
+| Camera | `PerspectiveCamera` (three core) | Keep `OrthographicCamera` + fake depth via per-node scale | Defeats the entire purpose of v3.10; foreshortening is what sells "3D" |
+| Drag-to-rotate | `OrbitControls` from `three/addons` | Hand-rolled pointer event quaternion rotation | OrbitControls is 6.85 kB gz of well-tested, damping-aware, touch-aware code. Reimplementing well costs more LOC than we save |
+| Drag-to-rotate | `OrbitControls` from `three/addons` | `TrackballControls` from `three/addons` | Trackball gives free-axis rotation (no "up" lock) — disorienting for a star field. OrbitControls' azimuth+polar with `up = +Y` lock matches recruiter expectations |
+| Drag-to-rotate package | `three/addons` (ship-with-three) | `three-orbit-controls` npm package | Deprecated 2018 shim; duplicates code we already have |
+| 3D layout | Extend `computeLayout()` with category-z | `d3-force-3d` (~15 kB gz) | Violates D-14-01-LAYOUT (non-deterministic); breaks baked-position contract |
+| 3D layout | Category-z (semantic) | Procedural `sin(idx) * 100` (procedural) | Cheaper but semantically empty — wastes the opportunity to communicate architecture stacking |
+| WebGL wrapper | three.js raw (status quo) | `@react-three/fiber` + `@react-three/drei` | +60 kB gz, requires full refactor of working shader code, no functional gain |
+| Click-vs-drag | Time+distance threshold (200 ms / 5 px) | OrbitControls `start`/`end` events | `start` fires on every pointerdown — would suppress every click. Time+distance is what three.js manual itself recommends |
+| Auto-rotate | `controls.autoRotate + autoRotateSpeed` | Custom rAF uniform | OrbitControls auto-rotate respects damping, integrates with user-drag interrupt for free |
+| Size attenuation | Custom ShaderMaterial `gl_PointSize *= 300 / -mvPosition.z` | Migrate to PointsMaterial with `sizeAttenuation: true` | Would discard ~100 LOC of working custom GLSL (ambient drift, chip-flash, halo) — non-starter |
 
 ---
 
 ## Sources
 
-- Training knowledge (cutoff Aug 2025): Framer Motion changelog, React release notes, Tailwind CSS roadmap, Vite documentation
-- Codebase analysis: `package.json`, `tailwind.config.js`, `src/App.js`, `src/components/Hero.js`
-- PROJECT.md constraints: static deployment, React + Tailwind keep, Lighthouse 90+ target, bilingual requirement
-- Note: WebSearch and WebFetch were unavailable during research. Versions should be verified against npm before implementation. The direction (Framer Motion 11 + Vite 6 + Tailwind 3.4 + React 18) reflects strong consensus in the React ecosystem as of H1 2025 — LOW risk of material deviation from current state.
+**Context7 (HIGH confidence):**
+- `/mrdoob/three.js` — Three.js library docs (resolved via `ctx7 library three`)
+- `three/addons/controls/OrbitControls.js` modern import path — three.js docs `pages/OrbitControls.html` + manual `fundamentals.html` + `backgrounds.html`
+- `PerspectiveCamera(fov, aspect, near, far)` constructor — three.js docs `pages/PerspectiveCamera.html.md`
+- `OrbitControls.autoRotate` + `autoRotateSpeed` semantics — three.js docs `pages/OrbitControls.html`
+- `OrbitControls.enableDamping` + `enableZoom` + `enablePan` properties — three.js docs `pages/OrbitControls.html`
+- `OrbitControls` `start`/`change`/`end` events — three.js docs `pages/OrbitControls.html.md`
+- Click vs drag pattern (200 ms / 5 px threshold) — three.js manual `indexed-textures.html`
+- `PointsMaterial.sizeAttenuation` semantics — three.js docs `pages/PointsMaterial.html`
+- Custom shader size-attenuation formula `300.0 / -mvPosition.z` — derived from three.js PointsMaterial built-in shader pattern (Context7 example snippets)
+
+**Direct measurement (HIGH confidence):**
+- npm registry: `three@0.184.0` latest, `three@0.169.0` installed (`npm view three version`)
+- `OrbitControls.js` raw 32 134 B / gz 6 850 B (`wc -c` + `gzip -c` on `node_modules/three/examples/jsm/controls/OrbitControls.js`, 2026-06-08)
+- `three/package.json` exports map confirms `./addons/* = ./examples/jsm/*` 1:1 alias
+
+**Project context (HIGH confidence — read-in files):**
+- `.planning/PROJECT.md` — milestone v3.10 scope
+- `.planning/seeds/SEED-3D-CONSTELLATION.md` — seed scoping
+- `.planning/milestones/v3.8-ROADMAP.md` — D-14-01-LAYOUT, D-17-LIB, D-17-PRIMITIVES, D-17-HOVERED-PROP locked
+- `src/game/renderers/WebGLConstellation.js` — current implementation (725 LOC)
+- `src/game/constellation.layout.js` — current 2D layout (81 LOC)
+- `src/test/setup.js` — current jsdom canvas mock
+- `vite.config.js` — Vite 6 + Vitest test config
+- `package.json` — three@^0.169.0 confirmed
