@@ -54,6 +54,51 @@
 
 ---
 
+## Milestone: v3.9 — Game Mode Polish
+
+**Shipped:** 2026-06-08 (same-day micro-milestone)
+**Phases:** 2 (18, 19) | **Plans:** 1 PLAN.md (Phase 18-01) + 1 inline feat (Phase 19) | **Sessions:** 1 calendar day
+
+### What Was Built
+
+- **POLISH-01 (Phase 18)** — Above-the-fold layout restructure. Compact H1, sub-copy → sr-only, SkillFilters → fixed `bottom-0 z-30` bar, renderer slot `flex-1 min-h-0 pb-20/24`. Constellation visible without scroll on desktop ≥1024px / tablet ~768px / mobile ~390px. 259/259 tests GREEN.
+- **POLISH-02 (Phase 19)** — SVG ambient twinkle animation. `motion-safe:animate-svg-twinkle` 4s ease-in-out infinite opacity 1.0→0.7→1.0 (GPU-composited). Deterministic per-node phase offset via `-(sortIndex * 137) % 4000`ms (golden-ratio spacing prevents synchronized pulsing). `prefers-reduced-motion: reduce` users keep fully static a11y path. 261/261 tests GREEN.
+
+### What Worked
+
+- **Real-session-driven scoping** — both REQs surfaced from first post-v3.8 usage session. Specific, observable, not speculative. Same-day delivery possible because scope was tight.
+- **Zero new deps** — pure tailwind keyframe + JSX class string change. No npm install, no bundle bloat, no audit churn.
+- **Phase 19 as inline feat commit** — formal PLAN.md unwarranted for single-keyframe + 2-test feature; commit message + ROADMAP carried the trace. Kept overhead proportional to scope.
+- **Deterministic phase offset reused existing `sortIndex`** — no new state, no new computation cost, perceptually organic spacing.
+- **Bundle gate held** — 8.87 kB gz GameMode (under v3.8 ceiling 38.82 kB); polish work added zero perf cost.
+
+### What Was Inefficient
+
+- **STATE.md drift** — state header still said "Phase 18 executing" after both phases shipped; not refreshed until milestone close session resumed. Suggests need for auto-sync hook on phase completion.
+- **REQUIREMENTS.md traceability stale** — POLISH-01/02 stayed `Pending` after delivery; corrected only at archive time. Same root cause as STATE.md drift — manual mark needed on commit-complete.
+- **Manual UAT deferred** — visual confirm (real device + deployed URL) never ran; conflated with deferred DEPLOY work. Risk: regression in above-fold layout on untested viewport could ship undetected until next session.
+- **No v3.8 retro entry** — pre-existing gap. v3.8 closed without RETROSPECTIVE.md append; v3.9 fills only the v3.9 slot.
+
+### Patterns Established
+
+- **Micro-milestone shape** — 2 REQs, 1–2 phases, same-day delivery, single tag. Pattern reusable for parity/polish fixes surfacing in v3.10+ usage.
+- **Inline-feat phase** — when scope is single-file + 2 tests, skip PLAN.md/SUMMARY.md; commit message + ROADMAP carry the trace. Caveat: only safe when REQ coverage is unambiguous.
+- **SVG-only animation in motion-safe gate** — opacity-only animations via tailwind motion-safe: prefix are the cheap parity-tightener for renderer-divergent ambient motion.
+
+### Key Lessons
+
+- **Drift between living docs and reality compounds when sessions skip ceremony.** Phase 18 shipped, Phase 19 shipped, milestone tagged — but STATE.md, REQUIREMENTS.md, and missing v3.8 retro all surfaced as gaps at v3.9 archive time. Cheaper to mark-complete on phase ship than to reconcile at milestone close.
+- **Polish milestones don't need audit overhead.** Skipping `/gsd:audit-milestone` here was safe because REQ coverage was 1:1 with phases and verifiable via commit + ROADMAP. Audit pays off when phases drift from REQs, not when they map straight.
+- **Real-device UAT deferral is recurring debt.** v3.6 (Phase 10 partial), v3.7 (deferred), v3.9 (deferred again). v3.10 should bundle deploy + UAT to break the pattern.
+
+### Cost Observations
+
+- Model mix: Opus 4.7 — single session for archival ceremony; Phase 19 implementation likely ran on Opus during prior session
+- Sessions: 1 day of feature work + 1 session for milestone close
+- Notable: 261/261 tests GREEN throughout — no test churn. Zero npm install — zero CVE/audit cost. Cheapest milestone close in project history.
+
+---
+
 ## Cross-Milestone Trends
 
 ### Process Evolution
@@ -63,6 +108,8 @@
 | v3.4 | unknown | 4 | Greenfield brownfield rewrite — baseline |
 | v3.5 | unknown | 3 (1 deferred) | Themes + Projects shipped; deploy slipped → introduced "shipped partial" pattern |
 | v3.6 | ~9 | 4 (1 de-scoped) | Doc-drift patches inline at close; integration-checker agent at audit; visual UAT debt explicitly carried, not lost |
+| v3.8 | (retro not appended) | 4 | Game Mode feature milestone — Vitest+RTL infra debt paid down; adaptive renderer pattern; Lighthouse HARD gate held |
+| v3.9 | 1+1 | 2 | First micro-milestone — same-day delivery; inline-feat phase pattern (no PLAN.md when scope is single keyframe + 2 tests) |
 
 ### Cumulative Quality
 
@@ -71,6 +118,8 @@
 | v3.4 | None | 98/100/100/100 (baseline) | Low (smaller surface) |
 | v3.5 | None (deferred 6) | unmeasured post-shipping | Medium (theme + projects) |
 | v3.6 | None (deferred 7) | deferred to v3.7 | High (5 hero + 6 AI + 9 UAT items) |
+| v3.8 | Vitest+RTL (NEW; 253 GREEN) | ≥95/100/100/100 cleared (Phase 17 close) | Medium (Phase 17 UAT 9/9) |
+| v3.9 | 261 GREEN (+8 from v3.8) | not re-run (no perf-impacting change) | Deferred (manual visual UAT → v3.10 deploy) |
 
 ### Top Lessons (Verified Across Milestones)
 
