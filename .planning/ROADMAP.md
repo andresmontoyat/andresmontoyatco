@@ -7,7 +7,7 @@
 - ✅ **v3.6 — AI Practice & Brand Refresh** — Code shipped: brand palette swap, theme toggle root-cause fix, hero photo, sales-pitch Claude Code section. 5/5 active REQs satisfied. UAT visual+Lighthouse + DEPLOY-01/02/03 + DIAGRAMS-01 carry to v3.7. Closed without git tag (production not yet live). See [`milestones/v3.6-ROADMAP.md`](milestones/v3.6-ROADMAP.md) and [`milestones/v3.6-MILESTONE-AUDIT.md`](milestones/v3.6-MILESTONE-AUDIT.md).
 - ⏸ **v3.7 — Production Deploy** *(PAUSED, opened 2026-05-20 — deferred 2026-05-29)* — Vercel auto-deploy done (site live on `*.vercel.app`); Phase 11 Plan 11-05 Lighthouse mobile gate verdict, custom domain (Phase 12), and PR previews (Phase 13) **carried as deferred**. Resumes in a future milestone. Phases 11–13 reserved — NOT renumbered.
 - ✅ **v3.8 — Game Mode** *(SHIPPED 2026-06-06)* — Interactive skill-constellation landing (node=skill, edges=co-occurrence), floating bilingual experience cards, multi-skill/year/category filters, persisted game/dev toggle. Adaptive render (WebGL desktop / SVG-DOM mobile) holds the Lighthouse mobile HARD gate (cleared Perf ≥95 / A11y 100 / BP 100 / SEO 100). Vitest + RTL test infra introduced (253 tests GREEN). 8/8 REQs delivered (GAME-01..07 + TEST-01). Phases 14–17. See [`milestones/v3.8-ROADMAP.md`](milestones/v3.8-ROADMAP.md).
-- 🚧 **v3.9 — Game Mode Polish** *(ACTIVE, opened 2026-06-08)* — Micro-milestone. Two UX fixes from first real post-v3.8 session: above-the-fold layout (filters not pushing constellation below fold), and never-static constellation (Phase 17 ambient motion is WebGL-only — SVG users see fully static). 2 REQs (POLISH-01, POLISH-02). Phases 18–19.
+- ✅ **v3.9 — Game Mode Polish** *(SHIPPED 2026-06-08)* — Micro-milestone. Two UX fixes shipped same-day: above-the-fold layout (SkillFilters → fixed bottom-0 z-30; H1 compact; renderer slot flex-1) and never-static constellation (SVG ambient twinkle, prefers-reduced-motion gated). 2/2 REQs delivered (POLISH-01, POLISH-02). 261/261 tests GREEN. Phases 18–19.
 
 ---
 
@@ -15,8 +15,8 @@
 
 ### v3.9 Game Mode Polish (Phases 18–19) — ACTIVE
 
-- [ ] **Phase 18: Above-the-fold layout** — Constellation visible without scroll on desktop/tablet/mobile. Filters bar redesigned or repositioned so it does not push the constellation below the first viewport.
-- [ ] **Phase 19: Never-static constellation** — Ambient motion (or visually equivalent affordance) perceptible on every render path including SVG. `prefers-reduced-motion: reduce` users keep the static path (a11y locked); every other path animates.
+- [x] **Phase 18: Above-the-fold layout** *(complete 2026-06-08)* — Constellation visible without scroll. SkillFilters → fixed bottom-0 z-30; H1 compact; renderer slot flex-1. 259/259 tests GREEN.
+- [x] **Phase 19: Never-static constellation** *(complete 2026-06-08)* — SVG ambient twinkle (motion-safe:animate-svg-twinkle, 4s ease-in-out infinite, deterministic per-node phase offset). prefers-reduced-motion users keep static path. 261/261 tests GREEN. **v3.9 COMPLETE.**
 
 ### v3.7 Production Deploy (Phases 11–13) — ⏸ DEFERRED
 
