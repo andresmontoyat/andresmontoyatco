@@ -71,8 +71,14 @@ const FIXTURE_NODES = Array.from({ length: 26 }, (_, i) => {
     years: [2018, 2024],
   }
 })
+// Phase 20 — skill-0 anchored at world origin (0,0,0) so it projects to canvas
+// screen-center under the PerspectiveCamera + OrbitControls setup (camera at
+// ~500 units from origin, looking at (0,0,0)). Other nodes keep their fixture
+// positions for geometry attribute-length tests; z=0 is the SVG/legacy plane.
 const FIXTURE_LAYOUT = FIXTURE_NODES.reduce((acc, n, i) => {
-  acc[n.id] = { x: 100 + i * 30, y: 100 + (i % 5) * 50 }
+  acc[n.id] = i === 0
+    ? { x: 0, y: 0, z: 0 }
+    : { x: 100 + i * 30, y: 100 + (i % 5) * 50, z: 0 }
   return acc
 }, {})
 // 50 edges: each connects skill-i to skill-(i+1)%26 (weight 1 for first 30,
@@ -685,14 +691,14 @@ describe('WebGLConstellation Slice 4 — chip-flash + weight-1 edge reveal + poi
       onHoverSkill={onHoverSkill}
     />)
     const canvas = container.querySelector('canvas[data-testid="webgl-canvas"]')
-    // Override getBoundingClientRect so projected coords are deterministic.
-    // Fixture: layout[skill-0] = { x: 100, y: 100 } in 0..1000 ortho space.
-    // With rect width=1000, height=1000 → projected x=100, y=100 in pixels.
+    // Phase 20 — PerspectiveCamera at (~129, ~87, ~483) looking at world origin.
+    // FIXTURE_LAYOUT[skill-0] = (0, 0, 0) projects to NDC (0, 0) → canvas center
+    // (500, 500) at rect 1000×1000.
     canvas.getBoundingClientRect = () => ({
       left: 0, top: 0, width: 1000, height: 1000, right: 1000, bottom: 1000,
     })
     const evt = new MouseEvent('pointermove', {
-      bubbles: true, clientX: 100, clientY: 100,
+      bubbles: true, clientX: 500, clientY: 500,
     })
     canvas.dispatchEvent(evt)
     expect(onHoverSkill).toHaveBeenCalledWith('skill-0')
@@ -735,8 +741,10 @@ describe('WebGLConstellation Slice 4 — chip-flash + weight-1 edge reveal + poi
     canvas.getBoundingClientRect = () => ({
       left: 0, top: 0, width: 1000, height: 1000, right: 1000, bottom: 1000,
     })
+    // Phase 20 — skill-0 at world origin projects to canvas center (500, 500)
+    // under PerspectiveCamera. See pointermove test above for derivation.
     const evt = new MouseEvent('click', {
-      bubbles: true, clientX: 100, clientY: 100,
+      bubbles: true, clientX: 500, clientY: 500,
     })
     canvas.dispatchEvent(evt)
     expect(onSelectSkill).toHaveBeenCalledWith('skill-0')

@@ -1,4 +1,4 @@
-import React, { useMemo, Suspense } from 'react'
+import React, { useMemo, Suspense, useState, useCallback } from 'react'
 import { useLanguage } from '../i18n/LanguageContext'
 import { useTheme } from '../i18n/ThemeContext'
 import EXPERIENCE from '../data/experience'
@@ -40,6 +40,26 @@ export default function GameMode() {
   // Replaces the inline detectCapabilities() + useState(...) pattern from Phase 16.
   const capability = useRendererCapability()
   const cons = useConstellation(GRAPH_NODES)
+
+  // Phase 20 D-20-CONTEXT-LOSS — silent SVG fallback when the WebGL context
+  // is lost (GPU revoke under memory pressure). WebGLConstellation calls
+  // onContextLost; we flip local state so the renderer-slot conditional
+  // routes to SvgConstellation. No error banner, no aria-live shout.
+  const [forceSvgFallback, setForceSvgFallback] = useState(false)
+  const effectiveCapability = forceSvgFallback ? 'svg' : capability
+
+  // Phase 20 D-20-CONTEXT-AUTOROTATE-RESUME defensive flag. Plan 20-02b's
+  // hint pill reads cam-3d-hint-seen at mount; writing it from the first-drag
+  // callback here means prior drags in the 20-02a interim correctly suppress
+  // the pill once 20-02b lands.
+  const onFirstDrag = useCallback(() => {
+    try {
+      if (typeof window !== 'undefined') {
+        window.localStorage.setItem('cam-3d-hint-seen', 'true')
+      }
+    } catch (e) { /* blocked — Safari private mode */ }
+  }, [])
+  const onContextLost = useCallback(() => setForceSvgFallback(true), [])
 
   const h1Text = `${yearsActive} ${t.game.h1Years}. ${skillCount} ${t.game.h1Skills}. ${t.game.h1Tagline}`
 
@@ -119,11 +139,15 @@ export default function GameMode() {
           className="w-full max-w-3xl relative flex-1 min-h-0 pb-20 md:pb-24"
           data-testid="renderer-slot"
           data-theme={theme}
-          data-renderer={capability}
+          data-renderer={effectiveCapability}
         >
-          {capability === 'webgl' ? (
+          {effectiveCapability === 'webgl' ? (
             <Suspense fallback={<SvgConstellation {...rendererProps} />}>
-              <WebGLConstellation {...rendererProps} />
+              <WebGLConstellation
+                {...rendererProps}
+                onFirstDrag={onFirstDrag}
+                onContextLost={onContextLost}
+              />
             </Suspense>
           ) : (
             <SvgConstellation {...rendererProps} />
@@ -149,7 +173,7 @@ export default function GameMode() {
       {/* Dev-only FPS counter overlays the canvas when WebGL renderer is active.
           Vite's import.meta.env.DEV is statically replaced as `false` in production,
           so the entire conditional + FpsCounter import tree-shakes from the prod bundle. */}
-      {import.meta.env.DEV && capability === 'webgl' && <FpsCounter />}
+      {import.meta.env.DEV && effectiveCapability === 'webgl' && <FpsCounter />}
     </section>
   )
 }

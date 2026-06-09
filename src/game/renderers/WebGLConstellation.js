@@ -1,16 +1,17 @@
 import React, { useRef, useEffect } from 'react'
 import {
   Scene,
-  OrthographicCamera,
+  PerspectiveCamera,
   WebGLRenderer,
   BufferGeometry,
   BufferAttribute,
   ShaderMaterial,
-  LineBasicMaterial,
   Points,
   LineSegments,
   Color,
+  Vector3,
 } from 'three'
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 
 // Phase 17 WebGLConstellation — Slice 4 chip-flash + weight-1 edge reveal +
 // pointer-pick onHoverSkill callback (BLOCKER 2 — hoveredSkillId is a PROP
@@ -154,6 +155,8 @@ const VERTEX_SHADER = `
   uniform float uDriftAmp;
   uniform float uFlashNodeId;
   uniform float uFlashStartTime;
+  uniform float uCanvasHeight;
+  uniform float uFovRad;
   void main() {
     vColor = color;
     vHalo = halo;
@@ -170,8 +173,47 @@ const VERTEX_SHADER = `
       uDriftAmp * sin(6.2831853 * uTime / periodY + phaseY),
       0.0
     );
-    gl_PointSize = size * uDpr * (1.0 + (uHaloPulse - 1.0) * halo) * flashScale;
-    gl_Position = projectionMatrix * modelViewMatrix * vec4(drifted, 1.0);
+    vec4 mvPosition = modelViewMatrix * vec4(drifted, 1.0);
+    // CRIT-05 perspective size-attenuation. perspectiveScale ≈ canvas-height /
+    // (2 tan(fov/2)) — divide by -mvPosition.z so near nodes grow, far nodes
+    // shrink. clamp [1, 64] defends against canvas-sized blob fragments under
+    // aggressive near-clip rotation (Alert A5).
+    float perspectiveScale = uCanvasHeight / (2.0 * tan(uFovRad / 2.0));
+    float depthFactor = perspectiveScale / max(-mvPosition.z, 0.001);
+    gl_PointSize = clamp(
+      size * uDpr * (1.0 + (uHaloPulse - 1.0) * halo) * flashScale * depthFactor,
+      1.0,
+      64.0
+    );
+    gl_Position = projectionMatrix * mvPosition;
+  }
+`
+
+// Phase 20 edge shaders (MOD-04 Option A) — per-vertex view-space angle
+// falloff fades edges that point into the screen. vColor is the per-vertex
+// RGBA the JS layer writes (weight-based alpha already applied). vViewPosition
+// passes mvPosition.xyz to the fragment shader so per-pixel viewDir.z drives
+// the fade. ShaderMaterial replaces LineBasicMaterial — keeps edge cost low
+// (no Line2 / LineGeometry — would push WebGL chunk over 130 kB gz ceiling).
+const EDGE_VERTEX_SHADER = `
+  attribute vec4 color;
+  varying vec4 vColor;
+  varying vec3 vViewPosition;
+  void main() {
+    vColor = color;
+    vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+    vViewPosition = mvPosition.xyz;
+    gl_Position = projectionMatrix * mvPosition;
+  }
+`
+
+const EDGE_FRAGMENT_SHADER = `
+  varying vec4 vColor;
+  varying vec3 vViewPosition;
+  void main() {
+    vec3 viewDir = normalize(vViewPosition);
+    float fade = clamp(1.2 - abs(viewDir.z), 0.0, 1.0);
+    gl_FragColor = vec4(vColor.rgb, vColor.a * fade);
   }
 `
 
@@ -226,6 +268,8 @@ export default function WebGLConstellation({
   t, // eslint-disable-line no-unused-vars
   onSelectSkill,
   onHoverSkill,
+  onFirstDrag,
+  onContextLost: onContextLostProp,
 }) {
   const canvasRef = useRef(null)
   const sceneRef = useRef(null)
@@ -238,6 +282,11 @@ export default function WebGLConstellation({
   // Slice 4 — refs for sizing data used by pointer-pick (avoids stale closures
   // when the pointermove listener is re-attached on every prop change).
   const maxCountRef = useRef(1)
+  // Phase 20 — OrbitControls + first-drag latch (D-20-VISUAL-3D,
+  // D-20-CONTEXT-AUTOROTATE-RESUME). dragHappenedRef is permanent for the
+  // session; reload restores autoRotate = true.
+  const controlsRef = useRef(null)
+  const dragHappenedRef = useRef(false)
 
   // Main scene setup: 26 Points + 50 LineSegments, attributes built once per
   // (nodes, edges, layout) tuple. Dim/halo/strokeColor/edge-RGBA are
@@ -247,11 +296,32 @@ export default function WebGLConstellation({
 
     const scene = new Scene()
     sceneRef.current = scene
-    const camera = new OrthographicCamera(0, 1000, 0, 1000, -1, 1)
+    const canvas = canvasRef.current
+    // Fallback to renderer's intrinsic 800×600 when CSS layout hasn't run
+    // (SSR / jsdom). ResizeObserver below resyncs on first paint.
+    const initW = canvas.clientWidth || 800
+    const initH = Math.max(canvas.clientHeight || 600, 1)
+    const aspect = initW / initH
+    const camera = new PerspectiveCamera(55, aspect, 10, 2000)
+    // D-20-CONTEXT-INITIAL-ANGLE: tilted ~15° azimuth, ~10° polar so 3D depth
+    // is obvious frame 0 without requiring drag. (UAT-tunable ±5° within
+    // OrbitControls polar clamp.)
+    const ORBIT_RADIUS = 500
+    camera.position.set(
+      Math.sin((15 * Math.PI) / 180) * ORBIT_RADIUS,
+      Math.sin((10 * Math.PI) / 180) * ORBIT_RADIUS,
+      Math.cos((15 * Math.PI) / 180) * ORBIT_RADIUS,
+    )
+    camera.lookAt(0, 0, 0)
+    // PerspectiveCamera matrices only sync inside renderer.render(). Pointer-
+    // pick uses Vector3.project(camera) BEFORE the first paint completes, so
+    // force matrixWorldInverse + projectionMatrix to be valid up-front.
+    camera.updateMatrixWorld(true)
+    camera.updateProjectionMatrix()
     cameraRef.current = camera
 
     const renderer = new WebGLRenderer({
-      canvas: canvasRef.current,
+      canvas,
       alpha: true,
       antialias: true,
     })
@@ -261,6 +331,73 @@ export default function WebGLConstellation({
       : 1
     renderer.setPixelRatio(dpr)
     renderer.setSize(800, 600, false)
+
+    // OrbitControls (D-20-VISUAL-3D). enableKeys=false preserves Phase 15
+    // D-15-KB-ACTIVATE arrow-key node-focus walk (MIN-02). Defensive
+    // prefers-reduced-motion gate inside renderer (CRIT-06 / Alert A9) —
+    // useRendererCapability already routes RM to SVG, this is belt-and-braces.
+    const controls = new OrbitControls(camera, canvas)
+    controls.enableDamping = true
+    controls.dampingFactor = 0.06
+    controls.rotateSpeed = 0.6
+    controls.enableZoom = false
+    controls.enablePan = false
+    controls.enableKeys = false
+    controls.minPolarAngle = Math.PI * 0.15
+    controls.maxPolarAngle = Math.PI * 0.85
+    controls.autoRotateSpeed = 0.5
+    controls.target.set(0, 0, 0)
+    const prefersRM = typeof window !== 'undefined'
+      && typeof window.matchMedia === 'function'
+      && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    controls.autoRotate = !prefersRM
+    controlsRef.current = controls
+
+    // D-20-CONTEXT-AUTOROTATE-RESUME — first drag permanently disables
+    // auto-rotate for the page session AND fires onFirstDrag (Plan 20-02b
+    // OnboardingHint dismiss flow reads cam-3d-hint-seen written by GameMode).
+    const onControlsStart = () => {
+      controls.autoRotate = false
+      dragHappenedRef.current = true
+      if (typeof onFirstDrag === 'function') onFirstDrag()
+    }
+    controls.addEventListener('start', onControlsStart)
+
+    // D-20-CONTEXT-LOSS — context-loss handlers (Alert A10). e.preventDefault()
+    // signals "we will recover" to three.js, but we silently swap to SVG via
+    // the onContextLost prop callback (GameMode flips forceSvgFallback state).
+    // No error banner, no aria-live announcement.
+    const onContextLost = (e) => {
+      e.preventDefault()
+      if (typeof onContextLostProp === 'function') onContextLostProp()
+    }
+    const onContextRestored = () => {
+      // Defensive no-op — stay on SVG once swapped (MOD-06 prevention).
+    }
+    canvas.addEventListener('webglcontextlost', onContextLost)
+    canvas.addEventListener('webglcontextrestored', onContextRestored)
+
+    // Phase 20 — ResizeObserver keeps PerspectiveCamera.aspect and the shader
+    // uCanvasHeight uniform synced to the canvas DOM box on viewport resize.
+    let resizeObserver = null
+    if (typeof ResizeObserver !== 'undefined') {
+      resizeObserver = new ResizeObserver(() => {
+        const w = canvas.clientWidth
+        const h = Math.max(canvas.clientHeight, 1)
+        camera.aspect = w / h
+        camera.updateProjectionMatrix()
+        if (materialRef.current) {
+          materialRef.current.uniforms.uCanvasHeight.value = h
+        }
+      })
+      resizeObserver.observe(canvas)
+    }
+
+    // Cursor states (UI-SPEC §Cursor state map) — touch-action: none (MIN-03)
+    // is applied as Tailwind utility on the canvas; cursor 'grab' is the idle
+    // default; pointermove flips to 'grabbing' during drag and 'pointer' on
+    // hovered node via the existing pointer event handlers below.
+    canvas.style.cursor = 'grab'
 
     // ── Node geometry ── single draw, 26 Points
     const N = nodes.length
@@ -289,10 +426,10 @@ export default function WebGLConstellation({
       : null
 
     nodes.forEach((node, i) => {
-      const pos = layout[node.id] || { x: 0, y: 0 }
+      const pos = layout[node.id] || { x: 0, y: 0, z: 0 }
       positions[i * 3] = pos.x
       positions[i * 3 + 1] = pos.y
-      positions[i * 3 + 2] = 0
+      positions[i * 3 + 2] = pos.z ?? 0
       const fill = parseCSSColor(node.color)
       colors[i * 3] = fill.r
       colors[i * 3 + 1] = fill.g
@@ -352,6 +489,9 @@ export default function WebGLConstellation({
         uFlashNodeId: { value: -1 },
         uFlashStartTime: { value: -Infinity },
         uActiveNodeId: { value: -1 },
+        // Phase 20 — perspective size-attenuation uniforms (CRIT-05).
+        uCanvasHeight: { value: canvas.clientHeight || 600 },
+        uFovRad: { value: (55 * Math.PI) / 180 },
       },
     })
     materialRef.current = material
@@ -379,10 +519,10 @@ export default function WebGLConstellation({
         if (!src || !tgt) return
         edgePositions[i * 6] = src.x
         edgePositions[i * 6 + 1] = src.y
-        edgePositions[i * 6 + 2] = 0
+        edgePositions[i * 6 + 2] = src.z ?? 0
         edgePositions[i * 6 + 3] = tgt.x
         edgePositions[i * 6 + 4] = tgt.y
-        edgePositions[i * 6 + 5] = 0
+        edgePositions[i * 6 + 5] = tgt.z ?? 0
         const heavy = edge.weight >= 2
         const col = heavy ? heavyCol : lightCol
         // Weight-1 edges start hidden (alpha=0) — Slice 4 reveals them on hover/select
@@ -403,9 +543,12 @@ export default function WebGLConstellation({
     edgeGeometryRef.current = edgeGeometry
     edgeGeometry.setAttribute('position', new BufferAttribute(edgePositions, 3))
     edgeGeometry.setAttribute('color', new BufferAttribute(edgeColors, 4))
-    const edgeMaterial = new LineBasicMaterial({
+    const edgeMaterial = new ShaderMaterial({
+      vertexShader: EDGE_VERTEX_SHADER,
+      fragmentShader: EDGE_FRAGMENT_SHADER,
       vertexColors: true,
       transparent: true,
+      depthWrite: false, // MOD-02 — prevent z-fighting against Points
     })
     edgeMaterialRef.current = edgeMaterial
     const lineSegments = new LineSegments(edgeGeometry, edgeMaterial)
@@ -414,6 +557,17 @@ export default function WebGLConstellation({
     renderer.render(scene, camera)
 
     return () => {
+      // Phase 20 Alert A4 / MOD-05 — controls dispose FIRST; otherwise
+      // OrbitControls' internal pointer listeners outlive React StrictMode
+      // double-mount and leak handlers on the canvas DOM node.
+      if (controlsRef.current) {
+        controlsRef.current.removeEventListener('start', onControlsStart)
+        controlsRef.current.dispose()
+        controlsRef.current = null
+      }
+      canvas.removeEventListener('webglcontextlost', onContextLost)
+      canvas.removeEventListener('webglcontextrestored', onContextRestored)
+      if (resizeObserver) resizeObserver.disconnect()
       // Pitfall 8: dispose GPU resources to prevent leak on renderer swap.
       geometry.dispose()
       material.dispose()
@@ -591,6 +745,20 @@ export default function WebGLConstellation({
     }
   }, [selectedSkillId, hoveredSkillId, highlightedSkillIds, yearRange, edges, nodes, theme])
 
+  // ── Phase 20 (MIN-01) — pause auto-rotate on hover OR select (re-enable on
+  // release ONLY if no drag has happened yet; first drag is permanent per
+  // D-20-CONTEXT-AUTOROTATE-RESUME). Defensive prefers-reduced-motion gate
+  // re-applied here so SSR → CSR hydration races cannot un-pause RM users.
+  useEffect(() => {
+    const c = controlsRef.current
+    if (!c) return
+    if (dragHappenedRef.current) return
+    const prefersRM = typeof window !== 'undefined'
+      && typeof window.matchMedia === 'function'
+      && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    c.autoRotate = !prefersRM && hoveredSkillId == null && selectedSkillId == null
+  }, [hoveredSkillId, selectedSkillId])
+
   // ── Slice 4 — Canvas pointer-pick (pointermove → onHoverSkill CALLBACK,
   // pointerleave → onHoverSkill(null), click → onSelectSkill). BLOCKER 2:
   // these are callback-OUT to props.onHoverSkill / props.onSelectSkill. The
@@ -610,16 +778,24 @@ export default function WebGLConstellation({
       const px = clientX - rect.left
       const py = clientY - rect.top
       const maxCount = maxCountRef.current
+      const camera = cameraRef.current
+      if (!camera) return null
       let bestId = null
       let bestDist = Infinity
+      const v = new Vector3()
       for (let i = 0; i < nodes.length; i += 1) {
         const node = nodes[i]
         const pos = layout && layout[node.id]
         if (!pos) continue // eslint-disable-line no-continue
-        const projX = (pos.x / 1000) * rect.width
-        const projY = (pos.y / 1000) * rect.height
+        // MOD-08 — perspective-aware pick. v.project(camera) → NDC [-1, +1].
+        // depthScale floor 0.4 keeps far-clipped nodes pickable.
+        v.set(pos.x, pos.y, pos.z ?? 0)
+        v.project(camera)
+        const projX = (v.x * 0.5 + 0.5) * rect.width
+        const projY = (-v.y * 0.5 + 0.5) * rect.height
+        const depthScale = Math.max(0.4, 1.0 - v.z * 0.3)
         const dist = Math.hypot(px - projX, py - projY)
-        const radius = computeRadius(node.count, maxCount, 'desktop')
+        const radius = computeRadius(node.count, maxCount, 'desktop') * depthScale
         const pickRadius = radius + 8
         if (dist <= pickRadius && dist < bestDist) {
           bestId = node.id
@@ -629,18 +805,40 @@ export default function WebGLConstellation({
       return bestId
     }
 
+    let isDragging = false
+
     function onPointerMove(e) {
       const matched = pickAt(e.clientX, e.clientY)
       // BLOCKER 2: callback-out only. hoveredSkillId flows back via parent
       // re-render. We always emit so the hook is the single source of truth
       // for hover-clear timing (no risk of a stale compare against props).
       if (onHoverSkill) onHoverSkill(matched)
+      // UI-SPEC §Cursor state map — pointer on node, grabbing during drag,
+      // grab idle.
+      if (isDragging) {
+        canvas.style.cursor = 'grabbing'
+      } else if (matched != null) {
+        canvas.style.cursor = 'pointer'
+      } else {
+        canvas.style.cursor = 'grab'
+      }
     }
 
     function onPointerLeave() {
       // Always emit null on leave so a hover state seeded by pointermove
       // gets cleared by the hook (BLOCKER 2 — no internal state to gate on).
       if (onHoverSkill) onHoverSkill(null)
+      canvas.style.cursor = 'grab'
+    }
+
+    function onPointerDown() {
+      isDragging = true
+      canvas.style.cursor = 'grabbing'
+    }
+
+    function onPointerUp() {
+      isDragging = false
+      canvas.style.cursor = 'grab'
     }
 
     function onClick(e) {
@@ -650,10 +848,14 @@ export default function WebGLConstellation({
 
     canvas.addEventListener('pointermove', onPointerMove)
     canvas.addEventListener('pointerleave', onPointerLeave)
+    canvas.addEventListener('pointerdown', onPointerDown)
+    canvas.addEventListener('pointerup', onPointerUp)
     canvas.addEventListener('click', onClick)
     return () => {
       canvas.removeEventListener('pointermove', onPointerMove)
       canvas.removeEventListener('pointerleave', onPointerLeave)
+      canvas.removeEventListener('pointerdown', onPointerDown)
+      canvas.removeEventListener('pointerup', onPointerUp)
       canvas.removeEventListener('click', onClick)
     }
   }, [nodes, layout, onHoverSkill, onSelectSkill])
@@ -672,6 +874,10 @@ export default function WebGLConstellation({
     let lastT = performance.now()
 
     function tick(t) {
+      // CRIT-01 / D-17-FRAMELOOP — controls.update() is the FIRST line of the
+      // single rAF loop. Do NOT couple OrbitControls 'change' to renderer.render;
+      // that would double-render and burn CPU.
+      if (controlsRef.current) controlsRef.current.update()
       const dt = (t - lastT) / 1000
       lastT = t
       const material = materialRef.current
@@ -718,7 +924,7 @@ export default function WebGLConstellation({
       aria-hidden="true"
       tabIndex={-1}
       data-testid="webgl-canvas"
-      className="webgl-canvas block w-full"
+      className="webgl-canvas block w-full touch-none"
     />
   )
 }
