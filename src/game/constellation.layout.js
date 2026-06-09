@@ -16,11 +16,26 @@ const CANVAS_CENTER = { x: 500, y: 500 }
 const CATEGORY_RING_RADIUS = 320 // radius of the ring on which category centroids sit
 const NODE_CLUSTER_RADIUS = 80   // radius within which nodes spread around their centroid
 
+// CATEGORY_Z values are starting points — UAT-tunable. Consult v3.10-UAT.md
+// before adjusting after milestone close. (D-20-CONTEXT-ZMAP, Alert A14)
+// Architecture-stack narrative: AI/lang at surface (recruiter-facing), hardware/security
+// at depth (foundation). Defends CRIT-04 z=0 trap via ≥2 distinct values + range ≥100.
+const CATEGORY_Z = {
+  ai: 150,
+  lang: 75,
+  arch: 0,
+  data: -25,
+  cloud: -75,
+  devops: -100,
+  security: -125,
+  hardware: -150,
+}
+
 /**
  * Compute deterministic baked positions for a set of nodes, clustered by category.
  *
  * @param {Array} nodes - Array of node objects with { id, category }
- * @returns {Object} Map of node.id → { x, y }
+ * @returns {Object} Map of node.id → { x, y, z }
  */
 export function computeLayout(nodes) {
   if (!nodes || nodes.length === 0) return {}
@@ -60,7 +75,7 @@ export function computeLayout(nodes) {
 
     if (n === 1) {
       // Single node: place at centroid
-      layout[catNodes[0].id] = { x: centroid.x, y: centroid.y }
+      layout[catNodes[0].id] = { x: centroid.x, y: centroid.y, z: CATEGORY_Z[cat] ?? 0 }
     } else {
       // Multiple nodes: evenly distribute on a sub-ring
       for (let i = 0; i < n; i++) {
@@ -72,6 +87,7 @@ export function computeLayout(nodes) {
         layout[catNodes[i].id] = {
           x: centroid.x + radius * Math.cos(angle),
           y: centroid.y + radius * Math.sin(angle),
+          z: CATEGORY_Z[cat] ?? 0,
         }
       }
     }
