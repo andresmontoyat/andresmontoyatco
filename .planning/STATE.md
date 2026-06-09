@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v3.10
 milestone_name: 3D Constellation
 status: planning
-stopped_at: Phase 20 context gathered
-last_updated: "2026-06-08T23:29:46.088Z"
+stopped_at: Phase 20 UI-SPEC approved
+last_updated: "2026-06-09T00:03:36.821Z"
 last_activity: 2026-06-08 — v3.10 ROADMAP.md authored; Phase 20 success criteria + decisions queued
 progress:
   total_phases: 15
@@ -133,9 +133,9 @@ Tag v3.9 on commit 4e9c2b3.
 
 ## Session Continuity
 
-Last session: 2026-06-08T23:29:46.082Z
-Stopped at: Phase 20 context gathered
-Resume file: .planning/phases/20-3d-constellation/20-CONTEXT.md
+Last session: 2026-06-09T00:03:36.815Z
+Stopped at: Phase 20 UI-SPEC approved
+Resume file: .planning/phases/20-3d-constellation/20-UI-SPEC.md
 
 ## Deferred Items
 
