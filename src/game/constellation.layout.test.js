@@ -101,3 +101,57 @@ describe('computeLayout - category clustering', () => {
     expect(uniquePositions.size).toBe(nodes.length)
   })
 })
+
+describe('computeLayout - z storytelling (D-20-CONTEXT-ZMAP)', () => {
+  it('should assign a numeric z to every node', () => {
+    const nodes = buildTestNodes()
+    const layout = computeLayout(nodes)
+    for (const node of nodes) {
+      const pos = layout[node.id]
+      expect(typeof pos.z, `missing or non-numeric z for node ${node.id}`).toBe('number')
+    }
+  })
+
+  it('should cluster nodes by category in z (lang=75, ai=150, hardware=-150)', () => {
+    const nodes = buildTestNodes()
+    const layout = computeLayout(nodes)
+    const expected = { lang: 75, ai: 150, hardware: -150 }
+    for (const node of nodes) {
+      if (expected[node.category] !== undefined) {
+        expect(
+          layout[node.id].z,
+          `node ${node.id} (cat:${node.category}) has wrong z`
+        ).toBe(expected[node.category])
+      }
+    }
+  })
+
+  it('should produce >=2 distinct z values and range >=100 across the constellation (CRIT-04)', () => {
+    const nodes = buildTestNodes()
+    const layout = computeLayout(nodes)
+    const zValues = nodes.map((n) => layout[n.id].z)
+    const uniqueZ = new Set(zValues)
+    expect(uniqueZ.size).toBeGreaterThanOrEqual(2)
+    const range = Math.max(...zValues) - Math.min(...zValues)
+    expect(range).toBeGreaterThanOrEqual(100)
+  })
+
+  it('should keep every z in range [-200, 200] (MOD-01)', () => {
+    const nodes = buildTestNodes()
+    const layout = computeLayout(nodes)
+    for (const node of nodes) {
+      const z = layout[node.id].z
+      expect(z, `node ${node.id} z out of range`).toBeGreaterThanOrEqual(-200)
+      expect(z, `node ${node.id} z out of range`).toBeLessThanOrEqual(200)
+    }
+  })
+
+  it('should be deterministic across calls (z values identical)', () => {
+    const nodes = buildTestNodes()
+    const layoutA = computeLayout(nodes)
+    const layoutB = computeLayout(nodes)
+    for (const node of nodes) {
+      expect(layoutA[node.id].z).toBe(layoutB[node.id].z)
+    }
+  })
+})
