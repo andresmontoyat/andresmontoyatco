@@ -6,10 +6,10 @@ import { fileURLToPath } from 'node:url'
 // Named constants (acceptance: rg must find ≥4 matches)
 const MOBILE_CHUNK_PATTERN = /^GameMode-.*\.js$/
 const WEBGL_CHUNK_PATTERN = /^WebGLConstellation-.*\.js$/
-// WARNING 6 unified regex — broader than narrow Phase 17-01..04 prior versions.
-// Matches `THREE.` namespace access AND `from 'three'` / `from"three"` import sources
-// (Vite minified output drops the space after `from`).
-const THREE_JS_PATTERN = /THREE\.|from\s*['"]three['"]/
+// Pitfall CRIT-03 mitigation: widened to catch three/addons/* and three/examples/jsm/* leaks. Phase 20 Plan 01.
+// Matches `THREE.` namespace access AND `from 'three'` / `from 'three/addons/...'` / `from 'three/examples/jsm/...'`
+// (optional `(\/[^'"]+)?` capture group after literal `three`).
+export const THREE_JS_PATTERN = /THREE\.|from\s*['"]three(\/[^'"]+)?['"]/
 const HARD_FAIL_KB = 38.82
 const WARN_LOWER_KB = 14
 const WEBGL_TTI_WARN_KB = 60
