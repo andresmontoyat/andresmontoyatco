@@ -18,6 +18,7 @@ Single-REQ milestone activating `SEED-3D-CONSTELLATION` (planted 2026-06-08 duri
   - Click-vs-drag threshold (5 px screen-space + 250 ms time; 8 px on `pointerType === 'touch'`) — preserves GAME-04 click-to-select under OrbitControls gesture state
   - VERTEX_SHADER size-attenuation by depth: `gl_PointSize *= perspectiveScale / -mvPosition.z`, clamp ∈ [1, 64]
   - Cursor `grab`/`grabbing` CSS feedback during drag
+  - **Onboarding hint pill** bilingual (`t.game.hint.drag.{en,es}` = "drag to rotate" / "arrastra para rotar") with motion-safe fade-in, 5s auto-dismiss, click-to-dismiss, dismiss-on-first-drag, localStorage `cam-3d-hint-seen` flag (suppresses on subsequent visits); RM users see NO pill (static SVG path) — D-20-CONTEXT-HINT (locked via /gsd:discuss-phase 2026-06-08)
   - `webglcontextlost`/`restored` handlers swap to SVG via existing capability hook (D-20-CONTEXT-LOSS)
   - Layout props contract `{x, y, z}` consumed by both renderers — SVG ignores `z` silently, WebGL projects; **props contract identical, visual rendering EXPLICITLY DIVERGES** (D-20-PROPS-CONTRACT — GAME-01 reframed as "single props contract, adaptive visual fidelity")
   - Mobile SVG path UNCHANGED — Lighthouse mobile HARD gate intact
@@ -49,7 +50,6 @@ Single-REQ milestone activating `SEED-3D-CONSTELLATION` (planted 2026-06-08 duri
 | Scroll-to-zoom / pinch-to-zoom | OrbitControls `enableZoom=false` — page scroll preserved |
 | Post-processing bloom / fog | Custom ShaderMaterial doesn't auto-pick up `scene.fog`; defer to v3.10.1 micro-milestone if visible UAT need |
 | Per-category depth color shift | Defer to v3.10.1 — out of MVP scope |
-| Onboarding hint ("drag to rotate" pill) | P2 — ship if Plan 20-02 stays under 2 days; defer to v3.10.1 otherwise |
 | Bundle-gate change to enforce desktop chunk HARD ceiling | Soft ceiling + WARN band sufficient for v3.10; HARD ceiling waits for empirical data |
 | Custom domain andresmontoyat.co + DNS (DEPLOY-02) | Carried as deferred from v3.7 |
 | Plan 11-05 deployed-URL Lighthouse verdict | Carried as deferred from v3.7 |
