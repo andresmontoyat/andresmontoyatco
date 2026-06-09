@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v3.10
 milestone_name: 3D Constellation
-status: planning
+status: executing
 stopped_at: Phase 20 UI-SPEC approved
-last_updated: "2026-06-09T00:03:36.821Z"
-last_activity: 2026-06-08 — v3.10 ROADMAP.md authored; Phase 20 success criteria + decisions queued
+last_updated: "2026-06-09T01:21:30.331Z"
+last_activity: 2026-06-09 -- Phase 20 execution started
 progress:
   total_phases: 15
   completed_phases: 0
-  total_plans: 5
+  total_plans: 9
   completed_plans: 4
   percent: 0
 ---
@@ -21,15 +21,15 @@ progress:
 See: .planning/PROJECT.md (updated 2026-06-08 — v3.9 SHIPPED, v3.10 OPENED)
 
 **Core value:** The hero section and overall first impression must stop recruiters mid-scroll and make them want to learn more about Carlos — and convert visits into engineering conversations.
-**Current focus:** Phase 20 — 3D Constellation (planning)
+**Current focus:** Phase 20 — 3d-constellation
 **Last shipped:** v3.9 Game Mode Polish (2026-06-08) — above-the-fold layout + SVG ambient twinkle; 261/261 tests GREEN; tag v3.9 on 4e9c2b3
 
 ## Current Position
 
-Phase: 20 — 3D Constellation
-Plan: — (3 plans queued: 20-01 data layer, 20-02 WebGL renderer, 20-03 useClickVsDrag + UAT)
-Status: Planning (ROADMAP.md authored 2026-06-08; awaiting `/gsd:plan-phase 20`)
-Last activity: 2026-06-08 — v3.10 ROADMAP.md authored; Phase 20 success criteria + decisions queued
+Phase: 20 (3d-constellation) — EXECUTING
+Plan: 1 of 4
+Status: Executing Phase 20
+Last activity: 2026-06-09 -- Phase 20 execution started
 Progress bar: `[░░░░░░░░░░] 0/3 plans`
 
 ## v3.10 Milestone Scope
