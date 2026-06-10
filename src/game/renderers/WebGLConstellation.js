@@ -200,8 +200,9 @@ const VERTEX_SHADER = `
 // passes mvPosition.xyz to the fragment shader so per-pixel viewDir.z drives
 // the fade. ShaderMaterial replaces LineBasicMaterial — keeps edge cost low
 // (no Line2 / LineGeometry — would push WebGL chunk over 130 kB gz ceiling).
+// `color` attribute is injected by three.js when `vertexColors: true` —
+// declaring it again in the user shader triggers GLSL redefinition error.
 const EDGE_VERTEX_SHADER = `
-  attribute vec4 color;
   varying vec4 vColor;
   varying vec3 vViewPosition;
   void main() {
