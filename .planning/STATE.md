@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v3.10
 milestone_name: 3D Constellation
-status: executing
-stopped_at: Plan 20-02b Tasks 1+2 complete (OnboardingHint pill + planets-tier); Plan 20-02a+02b human visual checkpoints bundled (24 items pending operator real-GPU sweep). Plan 20-03 next.
-last_updated: "2026-06-10T15:30:00.000Z"
-last_activity: 2026-06-10 -- Plan 20-02b GREEN, 285/285 tests, mobile 9.45 kB gz / WebGL 122.37 kB gz
+status: checkpoint-human-verify
+stopped_at: Plan 20-03 Tasks 1+2 GREEN — useClickVsDrag wired into WebGLConstellation pick path (CRIT-02), 3-tier bundle-gate ladder (125/130 kB), 20-UAT.md scaffold (8 items + Lighthouse mobile row + v3.9 carried debt). Task 3 = operator real-browser UAT sweep + `npm run lighthouse:mobile && npm run lighthouse:check` HARD gate. 293/293 tests GREEN, mobile 9.46 kB gz PASS, WebGL 122.63 kB gz INFO baseline.
+last_updated: "2026-06-10T18:26:00.000Z"
+last_activity: 2026-06-10 -- Plan 20-03 Tasks 1+2 merged (14c2adf + 043e39a + 920f482 + c0a9c3a SUMMARY); 293/293 GREEN
 progress:
   total_phases: 15
   completed_phases: 0
   total_plans: 9
-  completed_plans: 7
+  completed_plans: 8
   percent: 0
 ---
 
@@ -26,11 +26,11 @@ See: .planning/PROJECT.md (updated 2026-06-08 — v3.9 SHIPPED, v3.10 OPENED)
 
 ## Current Position
 
-Phase: 20 (3d-constellation) — EXECUTING
-Plan: 4 of 4 (Plan 20-03 useClickVsDrag hook + UAT close + bundle gate verdict — next up)
-Status: Plan 20-02b Tasks 1+2 COMPLETE — pill + planets-tier shipped; Task 3 (14-item human visual checkpoint) BUNDLED with Plan 20-02a Task 2 (10 items) → 24-item single operator real-GPU sweep pending
-Last activity: 2026-06-10 -- Plan 20-02b closed (285/285 tests, mobile 9.45 kB gz PASS, WebGL 122.37 kB gz WARN)
-Progress bar: `[█████████░] 3/3 plans`
+Phase: 20 (3d-constellation) — CHECKPOINT (human-verify)
+Plan: 4 of 4 — Plan 20-03 Tasks 1+2 GREEN, Task 3 = operator UAT sweep
+Status: Plan 20-03 Tasks 1+2 COMPLETE (useClickVsDrag wired into renderer pick path, 3-tier bundle-gate ladder, 20-UAT.md scaffold); Task 3 (8-item UAT + Lighthouse mobile re-verify + v3.9 carried debt) PENDING operator sweep. 20-UAT.md SUBSUMES the bundled 24-item v3.10 operator real-GPU sweep (covers OrbitControls + planets-tier + OnboardingHint + click-vs-drag + context-loss + Lighthouse + v3.9 above-fold + twinkle real-device confirms).
+Last activity: 2026-06-10 -- Plan 20-03 Tasks 1+2 merged (14c2adf + 043e39a + 920f482 + c0a9c3a SUMMARY); 293/293 GREEN, WebGL 122.63 kB gz INFO baseline
+Progress bar: `[██████████] 4/4 plans (Task 3 operator-blocked)`
 
 ## v3.10 Milestone Scope
 
@@ -134,9 +134,18 @@ Tag v3.9 on commit 4e9c2b3.
 
 ## Session Continuity
 
-Last session: 2026-06-10T15:30:00.000Z
-Stopped at: Plan 20-02b Tasks 1+2 GREEN — OnboardingHint pill + planets-tier (D-20-PLANETS-TIER) shipped + SUMMARY committed. 285/285 tests. Mobile 9.45 kB gz PASS, WebGL 122.37 kB gz WARN. Plan 20-02a Task 2 (10-item) + Plan 20-02b Task 3 (14-item) human visual checkpoints BUNDLED → 24-item single operator real-GPU sweep pending. Plan 20-03 next.
-Resume file: .planning/phases/20-3d-constellation/20-03-PLAN.md
+Last session: 2026-06-10T18:26:00.000Z (Plan 20-03 Tasks 1+2 merged via worktree executor)
+Stopped at: CHECKPOINT — Plan 20-03 Tasks 1+2 GREEN + merged to main (14c2adf renderer integration, 043e39a bundle-gate ladder, 920f482 UAT scaffold, c0a9c3a SUMMARY, merge 39330cd). 293/293 tests GREEN, mobile chunk 9.46 kB gz PASS, WebGL chunk 122.63 kB gz INFO baseline. Task 3 = operator-blocked human-verify checkpoint.
+Resume file: .planning/phases/20-3d-constellation/20-UAT.md (operator fills `## Notes / Findings` per 8 items + Lighthouse + v3.9 carried debt)
+Operator runbook:
+  1. npm run build && npm run preview (production preview)
+  2. npm run lighthouse:mobile && npm run lighthouse:check (HARD gate Perf ≥95 / A11y 100 / BP 100 / SEO 100; D-17-LIGHTHOUSE-FLOW)
+  3. Real-browser sweep 20-UAT.md items 1-8 (Chrome stable, macOS 14+, iPhone/Android real device for mobile rows)
+  4. v3.9 carried confirms (above-fold layout + SVG twinkle on real device)
+  5. Synthetic HARD FAIL test on bundle gate (set WEBGL_HARD_KB=10 locally, exit non-zero, revert — do NOT commit)
+  6. Fill 20-UAT.md `## Notes / Findings` + per-item PASS/FAIL + Lighthouse scores + bundle sizes + final test count
+  7. Type `approved` (UAT 8/8 PASS + Lighthouse exit 0) → orchestrator runs phase verifier + ROADMAP close + PROJECT.md evolve, then milestone v3.10 ready for `git tag v3.10`
+  OR itemized FAIL list → route to v3.10.1 gap closure
 
 ## Deferred Items
 
