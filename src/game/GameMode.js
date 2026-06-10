@@ -14,6 +14,7 @@ import { composeFilters } from './filters'
 import RendererErrorBoundary from './RendererErrorBoundary'
 import useRendererCapability from './useRendererCapability'
 import FpsCounter from './FpsCounter'
+import OnboardingHint from './OnboardingHint'
 
 // D-15-LAND-COPY: derive at module load from live data — never hardcode
 const maxYear = Math.max(...EXPERIENCE.map((e) => e.period.end ?? CURRENT_YEAR))
@@ -152,6 +153,7 @@ export default function GameMode() {
           ) : (
             <SvgConstellation {...rendererProps} />
           )}
+          {effectiveCapability === 'webgl' && <OnboardingHint t={t} />}
         </div>
       </RendererErrorBoundary>
 
