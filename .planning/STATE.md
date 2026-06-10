@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v3.10
 milestone_name: 3D Constellation
 status: executing
-stopped_at: Plan 20-02a Task 1 complete (renderer + GameMode shipped); Task 2 human visual checkpoint pending
-last_updated: "2026-06-10T15:15:00.000Z"
-last_activity: 2026-06-10 -- Plan 20-02a Task 1 GREEN, 271/271 tests, mobile 9.01 kB gz / WebGL 122.33 kB gz
+stopped_at: Plan 20-02b Tasks 1+2 complete (OnboardingHint pill + planets-tier); Plan 20-02a+02b human visual checkpoints bundled (24 items pending operator real-GPU sweep). Plan 20-03 next.
+last_updated: "2026-06-10T15:30:00.000Z"
+last_activity: 2026-06-10 -- Plan 20-02b GREEN, 285/285 tests, mobile 9.45 kB gz / WebGL 122.37 kB gz
 progress:
   total_phases: 15
   completed_phases: 0
   total_plans: 9
-  completed_plans: 6
+  completed_plans: 7
   percent: 0
 ---
 
@@ -27,10 +27,10 @@ See: .planning/PROJECT.md (updated 2026-06-08 — v3.9 SHIPPED, v3.10 OPENED)
 ## Current Position
 
 Phase: 20 (3d-constellation) — EXECUTING
-Plan: 3 of 4 (Plan 20-02b OnboardingHint + i18n — next up)
-Status: Plan 20-02a Task 1 COMPLETE — renderer + GameMode shipped; Task 2 (human visual checkpoint) pending real-GPU operator
-Last activity: 2026-06-10 -- Plan 20-02a Task 1 closed (271/271 tests, mobile 9.01 kB gz PASS, WebGL 122.33 kB gz WARN)
-Progress bar: `[██████░░░░] 2/3 plans`
+Plan: 4 of 4 (Plan 20-03 useClickVsDrag hook + UAT close + bundle gate verdict — next up)
+Status: Plan 20-02b Tasks 1+2 COMPLETE — pill + planets-tier shipped; Task 3 (14-item human visual checkpoint) BUNDLED with Plan 20-02a Task 2 (10 items) → 24-item single operator real-GPU sweep pending
+Last activity: 2026-06-10 -- Plan 20-02b closed (285/285 tests, mobile 9.45 kB gz PASS, WebGL 122.37 kB gz WARN)
+Progress bar: `[█████████░] 3/3 plans`
 
 ## v3.10 Milestone Scope
 
@@ -134,9 +134,9 @@ Tag v3.9 on commit 4e9c2b3.
 
 ## Session Continuity
 
-Last session: 2026-06-10T15:15:00.000Z
-Stopped at: Plan 20-02b scope bundled — OnboardingHint + planets-tier (D-20-PLANETS-TIER, Destiny-2 Director vibe) in one wave. Task 1 hint pill + Task 2 planets-tier (top-K=6 by count, isPlanet flag, larger size + always-on halo in both renderers) + Task 3 human UAT (14 items: 10 pill + 4 planet). Task 2 (20-02a human visual smoke checkpoint) still DEFERRED — needs real GPU.
-Resume file: .planning/phases/20-3d-constellation/20-02b-PLAN.md
+Last session: 2026-06-10T15:30:00.000Z
+Stopped at: Plan 20-02b Tasks 1+2 GREEN — OnboardingHint pill + planets-tier (D-20-PLANETS-TIER) shipped + SUMMARY committed. 285/285 tests. Mobile 9.45 kB gz PASS, WebGL 122.37 kB gz WARN. Plan 20-02a Task 2 (10-item) + Plan 20-02b Task 3 (14-item) human visual checkpoints BUNDLED → 24-item single operator real-GPU sweep pending. Plan 20-03 next.
+Resume file: .planning/phases/20-3d-constellation/20-03-PLAN.md
 
 ## Deferred Items
 
