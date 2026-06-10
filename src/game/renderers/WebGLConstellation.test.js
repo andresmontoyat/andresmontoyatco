@@ -731,7 +731,7 @@ describe('WebGLConstellation Slice 4 — chip-flash + weight-1 edge reveal + poi
     expect(WEBGL_SOURCE).not.toMatch(banned)
   })
 
-  it('canvas click over a node calls props.onSelectSkill(id) — CALLBACK-OUT to the hook toggle-off semantic', () => {
+  it('canvas pointerdown + pointerup over a node within click threshold calls props.onSelectSkill(id) — Plan 20-03 useClickVsDrag path (D-20-CLICK-DRAG-THRESHOLD)', () => {
     const onSelectSkill = vi.fn()
     const { container } = render(<WebGLConstellation
       {...fullProps}
@@ -741,13 +741,64 @@ describe('WebGLConstellation Slice 4 — chip-flash + weight-1 edge reveal + poi
     canvas.getBoundingClientRect = () => ({
       left: 0, top: 0, width: 1000, height: 1000, right: 1000, bottom: 1000,
     })
+    // jsdom does not implement Element.setPointerCapture; OrbitControls'
+    // pointerdown listener (attached first per CRIT-02 ordering) calls it
+    // unconditionally. Stub as no-op so the gesture flows through to the
+    // useClickVsDrag-driven pointerup listener.
+    canvas.setPointerCapture = () => {}
+    canvas.releasePointerCapture = () => {}
+    canvas.hasPointerCapture = () => false
     // Phase 20 — skill-0 at world origin projects to canvas center (500, 500)
     // under PerspectiveCamera. See pointermove test above for derivation.
-    const evt = new MouseEvent('click', {
+    // Plan 20-03: legacy `'click'` listener removed — pointerup-via-hook is
+    // now the sole click path. Δ=0px, dt≈0ms → within 5px / 250ms mouse
+    // threshold → onClick → pickAt → onSelectSkill('skill-0').
+    const down = new MouseEvent('pointerdown', {
       bubbles: true, clientX: 500, clientY: 500,
     })
-    canvas.dispatchEvent(evt)
+    const up = new MouseEvent('pointerup', {
+      bubbles: true, clientX: 500, clientY: 500,
+    })
+    canvas.dispatchEvent(down)
+    canvas.dispatchEvent(up)
     expect(onSelectSkill).toHaveBeenCalledWith('skill-0')
+  })
+
+  it('canvas pointerdown + pointerup past 5px drag threshold does NOT call onSelectSkill — CRIT-02 mitigation (Plan 20-03)', () => {
+    const onSelectSkill = vi.fn()
+    const { container } = render(<WebGLConstellation
+      {...fullProps}
+      onSelectSkill={onSelectSkill}
+    />)
+    const canvas = container.querySelector('canvas[data-testid="webgl-canvas"]')
+    canvas.getBoundingClientRect = () => ({
+      left: 0, top: 0, width: 1000, height: 1000, right: 1000, bottom: 1000,
+    })
+    // See setPointerCapture rationale in previous test.
+    canvas.setPointerCapture = () => {}
+    canvas.releasePointerCapture = () => {}
+    canvas.hasPointerCapture = () => false
+    // Down at canvas center over skill-0; up 10px to the right — past 5px
+    // mouse threshold → useClickVsDrag suppresses onClick → onSelectSkill
+    // never fires. Defends GAME-04 under OrbitControls gesture state.
+    const down = new MouseEvent('pointerdown', {
+      bubbles: true, clientX: 500, clientY: 500,
+    })
+    const up = new MouseEvent('pointerup', {
+      bubbles: true, clientX: 510, clientY: 500,
+    })
+    canvas.dispatchEvent(down)
+    canvas.dispatchEvent(up)
+    expect(onSelectSkill).not.toHaveBeenCalled()
+  })
+
+  it('source code contains NO addEventListener("click", ...) — Plan 20-03 removed legacy click path in favor of useClickVsDrag pointerup arbitration', () => {
+    // Static negative assertion: pointerup-via-hook is now the sole click
+    // path. Any reintroduction of a raw 'click' listener defeats CRIT-02
+    // mitigation because OrbitControls can swallow the click when a gesture
+    // crosses its internal drag threshold.
+    const banned = /addEventListener\(\s*['"]click['"]/
+    expect(WEBGL_SOURCE).not.toMatch(banned)
   })
 
   it('planet nodes get halos[i] = 1.0 unconditionally (D-20-PLANETS-TIER)', () => {

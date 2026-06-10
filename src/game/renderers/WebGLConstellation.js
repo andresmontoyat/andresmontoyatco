@@ -12,6 +12,7 @@ import {
   Vector3,
 } from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
+import useClickVsDrag from '../useClickVsDrag'
 
 // Phase 17 WebGLConstellation — Slice 4 chip-flash + weight-1 edge reveal +
 // pointer-pick onHoverSkill callback (BLOCKER 2 — hoveredSkillId is a PROP
@@ -291,6 +292,31 @@ export default function WebGLConstellation({
   // session; reload restores autoRotate = true.
   const controlsRef = useRef(null)
   const dragHappenedRef = useRef(false)
+  // Plan 20-03 — pointer-pick ref populated by the pick-handler useEffect.
+  // useClickVsDrag's onClick callback reads from this ref so the hook's
+  // useCallback stays stable across pickAt re-creations (each effect re-run
+  // re-assigns .current; no listener re-attach needed). CRIT-02 mitigation:
+  // OrbitControls attaches its pointer listeners FIRST inside the scene setup
+  // useEffect; useClickVsDrag arbitrates click vs drag SECOND inside the pick
+  // useEffect; onSelectSkill fires only when threshold passes.
+  const pickAtRef = useRef(null)
+  const onSelectSkillRef = useRef(onSelectSkill)
+  useEffect(() => {
+    onSelectSkillRef.current = onSelectSkill
+  }, [onSelectSkill])
+
+  const {
+    onPointerDown: hookOnPointerDown,
+    onPointerUp: hookOnPointerUp,
+  } = useClickVsDrag({
+    onClick: (e) => {
+      const fn = pickAtRef.current
+      if (!fn) return
+      const matched = fn(e.clientX, e.clientY)
+      const handler = onSelectSkillRef.current
+      if (matched != null && handler) handler(matched)
+    },
+  })
 
   // Main scene setup: 26 Points + 50 LineSegments, attributes built once per
   // (nodes, edges, layout) tuple. Dim/halo/strokeColor/edge-RGBA are
@@ -811,6 +837,13 @@ export default function WebGLConstellation({
       return bestId
     }
 
+    // Plan 20-03 — publish pickAt to the body-level ref so useClickVsDrag's
+    // onClick callback (defined at component-body scope) can invoke it.
+    // CRIT-02 mitigation: OrbitControls (instantiated FIRST in the scene-setup
+    // effect) owns drag gesture; pointerup is arbitrated by useClickVsDrag
+    // SECOND; onSelectSkill fires only when threshold passes.
+    pickAtRef.current = pickAt
+
     let isDragging = false
 
     function onPointerMove(e) {
@@ -837,34 +870,35 @@ export default function WebGLConstellation({
       canvas.style.cursor = 'grab'
     }
 
-    function onPointerDown() {
+    function onPointerDown(e) {
       isDragging = true
       canvas.style.cursor = 'grabbing'
+      // useClickVsDrag arbitrates click vs drag (D-20-CLICK-DRAG-THRESHOLD).
+      hookOnPointerDown(e)
     }
 
-    function onPointerUp() {
+    function onPointerUp(e) {
       isDragging = false
       canvas.style.cursor = 'grab'
-    }
-
-    function onClick(e) {
-      const matched = pickAt(e.clientX, e.clientY)
-      if (matched != null && onSelectSkill) onSelectSkill(matched)
+      // useClickVsDrag's onPointerUp fires onClick → pickAt → onSelectSkill
+      // only when distance < 5px (mouse) / 8px (touch) AND dt < 250ms.
+      // The legacy `'click'` listener was removed — pointerup-via-hook is now
+      // the sole click path. CRIT-02 mitigation completion.
+      hookOnPointerUp(e)
     }
 
     canvas.addEventListener('pointermove', onPointerMove)
     canvas.addEventListener('pointerleave', onPointerLeave)
     canvas.addEventListener('pointerdown', onPointerDown)
     canvas.addEventListener('pointerup', onPointerUp)
-    canvas.addEventListener('click', onClick)
     return () => {
       canvas.removeEventListener('pointermove', onPointerMove)
       canvas.removeEventListener('pointerleave', onPointerLeave)
       canvas.removeEventListener('pointerdown', onPointerDown)
       canvas.removeEventListener('pointerup', onPointerUp)
-      canvas.removeEventListener('click', onClick)
+      pickAtRef.current = null
     }
-  }, [nodes, layout, onHoverSkill, onSelectSkill])
+  }, [nodes, layout, onHoverSkill, hookOnPointerDown, hookOnPointerUp])
 
   // ── Slice 3 rAF loop + visibilitychange pause ── always-running animation
   // loop per D-17-FRAMELOOP. Drives uTime accumulation + uHaloPulse cos curve
