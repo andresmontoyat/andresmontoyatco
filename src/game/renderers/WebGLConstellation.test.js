@@ -71,13 +71,15 @@ const FIXTURE_NODES = Array.from({ length: 26 }, (_, i) => {
     years: [2018, 2024],
   }
 })
-// Phase 20 — skill-0 anchored at world origin (0,0,0) so it projects to canvas
-// screen-center under the PerspectiveCamera + OrbitControls setup (camera at
-// ~500 units from origin, looking at (0,0,0)). Other nodes keep their fixture
-// positions for geometry attribute-length tests; z=0 is the SVG/legacy plane.
+// Phase 20 hotfix — skill-0 anchored at CONSTELLATION_CENTER (500,500,0) which
+// is the canvas/SVG viewBox center under the layout coord system. Camera +
+// OrbitControls were updated to frame this offset (not world origin). skill-0
+// projects to canvas screen-center under the PerspectiveCamera lookAt.
+// Other nodes keep their fixture positions for geometry attribute-length
+// tests; z=0 is the SVG/legacy plane.
 const FIXTURE_LAYOUT = FIXTURE_NODES.reduce((acc, n, i) => {
   acc[n.id] = i === 0
-    ? { x: 0, y: 0, z: 0 }
+    ? { x: 500, y: 500, z: 0 }
     : { x: 100 + i * 30, y: 100 + (i % 5) * 50, z: 0 }
   return acc
 }, {})
@@ -691,9 +693,9 @@ describe('WebGLConstellation Slice 4 — chip-flash + weight-1 edge reveal + poi
       onHoverSkill={onHoverSkill}
     />)
     const canvas = container.querySelector('canvas[data-testid="webgl-canvas"]')
-    // Phase 20 — PerspectiveCamera at (~129, ~87, ~483) looking at world origin.
-    // FIXTURE_LAYOUT[skill-0] = (0, 0, 0) projects to NDC (0, 0) → canvas center
-    // (500, 500) at rect 1000×1000.
+    // Phase 20 hotfix — PerspectiveCamera framed on CONSTELLATION_CENTER
+    // (500, 500, 0). FIXTURE_LAYOUT[skill-0] = (500, 500, 0) projects to NDC
+    // (0, 0) → canvas center (500, 500) at rect 1000×1000.
     canvas.getBoundingClientRect = () => ({
       left: 0, top: 0, width: 1000, height: 1000, right: 1000, bottom: 1000,
     })
@@ -748,8 +750,9 @@ describe('WebGLConstellation Slice 4 — chip-flash + weight-1 edge reveal + poi
     canvas.setPointerCapture = () => {}
     canvas.releasePointerCapture = () => {}
     canvas.hasPointerCapture = () => false
-    // Phase 20 — skill-0 at world origin projects to canvas center (500, 500)
-    // under PerspectiveCamera. See pointermove test above for derivation.
+    // Phase 20 hotfix — skill-0 at CONSTELLATION_CENTER (500,500,0) projects
+    // to canvas center (500, 500) under PerspectiveCamera. See pointermove
+    // test above for derivation.
     // Plan 20-03: legacy `'click'` listener removed — pointerup-via-hook is
     // now the sole click path. Δ=0px, dt≈0ms → within 5px / 250ms mouse
     // threshold → onClick → pickAt → onSelectSkill('skill-0').

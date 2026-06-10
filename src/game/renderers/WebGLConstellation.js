@@ -337,13 +337,18 @@ export default function WebGLConstellation({
     // D-20-CONTEXT-INITIAL-ANGLE: tilted ~15° azimuth, ~10° polar so 3D depth
     // is obvious frame 0 without requiring drag. (UAT-tunable ±5° within
     // OrbitControls polar clamp.)
+    // CONSTELLATION_CENTER mirrors CANVAS_CENTER in constellation.layout.js
+    // (x: 500, y: 500) — layout writes node positions in canvas/SVG viewBox
+    // space, NOT centered at origin. Camera + controls must frame this offset
+    // or only nodes that happen to land near (0,0,0) render in view.
+    const CONSTELLATION_CENTER = { x: 500, y: 500, z: 0 }
     const ORBIT_RADIUS = 500
     camera.position.set(
-      Math.sin((15 * Math.PI) / 180) * ORBIT_RADIUS,
-      Math.sin((10 * Math.PI) / 180) * ORBIT_RADIUS,
-      Math.cos((15 * Math.PI) / 180) * ORBIT_RADIUS,
+      CONSTELLATION_CENTER.x + Math.sin((15 * Math.PI) / 180) * ORBIT_RADIUS,
+      CONSTELLATION_CENTER.y + Math.sin((10 * Math.PI) / 180) * ORBIT_RADIUS,
+      CONSTELLATION_CENTER.z + Math.cos((15 * Math.PI) / 180) * ORBIT_RADIUS,
     )
-    camera.lookAt(0, 0, 0)
+    camera.lookAt(CONSTELLATION_CENTER.x, CONSTELLATION_CENTER.y, CONSTELLATION_CENTER.z)
     // PerspectiveCamera matrices only sync inside renderer.render(). Pointer-
     // pick uses Vector3.project(camera) BEFORE the first paint completes, so
     // force matrixWorldInverse + projectionMatrix to be valid up-front.
@@ -377,7 +382,7 @@ export default function WebGLConstellation({
     controls.minPolarAngle = Math.PI * 0.15
     controls.maxPolarAngle = Math.PI * 0.85
     controls.autoRotateSpeed = 0.5
-    controls.target.set(0, 0, 0)
+    controls.target.set(CONSTELLATION_CENTER.x, CONSTELLATION_CENTER.y, CONSTELLATION_CENTER.z)
     const prefersRM = typeof window !== 'undefined'
       && typeof window.matchMedia === 'function'
       && window.matchMedia('(prefers-reduced-motion: reduce)').matches

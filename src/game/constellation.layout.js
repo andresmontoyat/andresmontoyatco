@@ -12,7 +12,7 @@
 // Canonical category order for stable centroid placement
 const CATEGORY_ORDER = ['lang', 'ai', 'arch', 'cloud', 'devops', 'security', 'data', 'hardware']
 
-const CANVAS_CENTER = { x: 500, y: 500 }
+export const CANVAS_CENTER = { x: 500, y: 500 }
 const CATEGORY_RING_RADIUS = 320 // radius of the ring on which category centroids sit
 const NODE_CLUSTER_RADIUS = 80   // radius within which nodes spread around their centroid
 
