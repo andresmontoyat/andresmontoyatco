@@ -192,20 +192,19 @@ describe('buildConstellationGraph - planets-tier (D-20-PLANETS-TIER)', () => {
     expect(PLANETS_K).toBe(6)
   })
 
-  it('marks top-K nodes by count as isPlanet=true', () => {
+  it('marks all featured skills as isPlanet=true (featured-set IS the planets-tier)', () => {
     const { nodes } = buildConstellationGraph(EXPERIENCE, SKILLS)
     const planets = nodes.filter((n) => n.isPlanet === true)
-    expect(planets.length).toBe(Math.min(PLANETS_K, nodes.length))
-    // Top-K must be the K nodes with the largest counts
-    const topKCounts = [...nodes].sort((a, b) => b.count - a.count).slice(0, PLANETS_K).map((n) => n.count)
-    const planetCounts = [...planets].sort((a, b) => b.count - a.count).map((n) => n.count)
-    expect(planetCounts).toEqual(topKCounts)
+    const featuredIds = Object.entries(SKILLS).filter(([, s]) => s.featured).map(([k]) => k).sort()
+    const planetIds = planets.map((n) => n.id).sort()
+    expect(planetIds).toEqual(featuredIds)
   })
 
   it('rest of nodes have isPlanet=false (boolean, not undefined)', () => {
     const { nodes } = buildConstellationGraph(EXPERIENCE, SKILLS)
+    const featuredCount = Object.values(SKILLS).filter((s) => s.featured).length
     const nonPlanets = nodes.filter((n) => n.isPlanet === false)
-    expect(nonPlanets.length).toBe(nodes.length - Math.min(PLANETS_K, nodes.length))
+    expect(nonPlanets.length).toBe(nodes.length - featuredCount)
     for (const n of nodes) {
       expect(typeof n.isPlanet).toBe('boolean')
     }
@@ -217,22 +216,30 @@ describe('buildConstellationGraph - planets-tier (D-20-PLANETS-TIER)', () => {
     expect(a).toEqual(b)
   })
 
-  it('breaks count ties by id ascending — verified against the real sorted output', () => {
-    const { nodes } = buildConstellationGraph(EXPERIENCE, SKILLS)
-    // Build the expected planet set by sorting all nodes by (count desc, id asc) and slicing top-K
+  it('falls back to top-K by count when no skill is featured', () => {
+    // Strip featured flag from a clone of SKILLS — fallback path activates.
+    const unfeaturedSkills = Object.fromEntries(
+      Object.entries(SKILLS).map(([k, v]) => [k, { ...v, featured: false }]),
+    )
+    const { nodes } = buildConstellationGraph(EXPERIENCE, unfeaturedSkills)
+    const planets = nodes.filter((n) => n.isPlanet === true)
+    expect(planets.length).toBe(Math.min(PLANETS_K, nodes.length))
+    // Top-K by count (id ascending tiebreak)
     const expected = [...nodes]
       .sort((a, b) => b.count - a.count || (a.id < b.id ? -1 : 1))
       .slice(0, PLANETS_K)
       .map((n) => n.id)
       .sort()
-    const actual = nodes.filter((n) => n.isPlanet).map((n) => n.id).sort()
-    expect(actual).toEqual(expected)
+    expect(planets.map((n) => n.id).sort()).toEqual(expected)
   })
 
-  it('never marks more than PLANETS_K nodes as planets even with many nodes', () => {
+  it('featured skills with count=0 still render as nodes (curator override)', () => {
     const { nodes } = buildConstellationGraph(EXPERIENCE, SKILLS)
-    expect(nodes.length).toBeGreaterThan(PLANETS_K)
-    const planets = nodes.filter((n) => n.isPlanet)
-    expect(planets.length).toBe(PLANETS_K)
+    const featuredIds = Object.entries(SKILLS).filter(([, s]) => s.featured).map(([k]) => k)
+    for (const id of featuredIds) {
+      const node = nodes.find((n) => n.id === id)
+      expect(node, `featured skill '${id}' should be present as node`).toBeDefined()
+      expect(node.isPlanet).toBe(true)
+    }
   })
 })

@@ -111,9 +111,18 @@ describe('GameMode - rendered component', () => {
     expect(slot.querySelector('svg')).toBeTruthy()
   })
 
-  it('renders 26 node <g> elements', () => {
+  it('renders one <g> per constellation node (experience + featured-only)', () => {
+    // Post-hotfix curation: skillCount H1 metric counts only experience-backed
+    // nodes (count>0), but the constellation renders ALL graph nodes including
+    // featured-only injections (e.g. React, Architecture, Azure with count=0).
+    // Asserting against derived skillCount would only verify the experience-
+    // backed subset — assert against the full graph length instead.
     const { container } = renderWithProviders(<GameMode />, { lang: 'en' })
-    expect(container.querySelectorAll('g.nodes > g').length).toBe(26)
+    const expected = require('./constellation.graph.js').buildConstellationGraph(
+      require('../data/experience.js').default,
+      require('../data/skills.js').default,
+    ).nodes.length
+    expect(container.querySelectorAll('g.nodes > g').length).toBe(expected)
   })
 
   it('passes theme prop through to SvgConstellation', () => {

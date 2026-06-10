@@ -8,11 +8,14 @@ import { SKILL_CATEGORIES, resolveCanonical } from '../data/skills.js'
 // Update all three together to keep the displayed [min, max] range honest.
 export const CURRENT_YEAR = 2026
 
-// D-20-PLANETS-TIER — top-K skills by count render as "planets" (larger size +
-// always-on halo) in both renderers, evoking the Destiny-2 Director inner-
-// planets visual hierarchy. K is UAT-tunable; consult v3.10-UAT.md before
-// adjusting after milestone close. Deterministic tiebreak by id ascending so
-// node order stays stable across builds.
+// D-20-PLANETS-TIER — planets-tier (larger size + always-on halo) renders the
+// "main expertise" set, evoking the Destiny-2 Director inner-planets visual
+// hierarchy. Selection rule (hotfix v3.10.1):
+//   1. If at least one SKILLS entry has `featured: true`, those skills ARE the
+//      planets-tier (curator-driven; ignores PLANETS_K).
+//   2. Otherwise fall back to top-K skills by count (PLANETS_K=6, deterministic
+//      tiebreak by id ascending).
+// K is UAT-tunable; consult v3.10-UAT.md before adjusting after milestone close.
 export const PLANETS_K = 6
 
 /**
@@ -60,19 +63,48 @@ export function buildConstellationGraph(experience, skills) {
     }
   }
 
+  // Hotfix v3.10.1 — inject featured skills that have no experience reference.
+  // Featured skills represent recruiter-facing "main expertise" — they must
+  // render even when no experience.tech[] entry mentions them yet (e.g. new
+  // canonical skills like React/Architecture/SQL added post-shipping).
+  for (const [label, skillEntry] of Object.entries(skills)) {
+    if (!skillEntry.featured || nodeMap[label]) continue
+    nodeMap[label] = {
+      id: label,
+      label,
+      category: skillEntry.category,
+      color: SKILL_CATEGORIES[skillEntry.category].color,
+      count: 0,
+      _minYear: CURRENT_YEAR,
+      _maxYear: CURRENT_YEAR,
+      experienceIdx: [],
+    }
+  }
+
   // Finalise nodes: convert _minYear/_maxYear → years tuple, remove temp fields
   const rawNodes = Object.values(nodeMap).map(({ _minYear, _maxYear, ...rest }) => ({
     ...rest,
     years: [_minYear, _maxYear],
   }))
 
-  // D-20-PLANETS-TIER — derive isPlanet flag on top-K by count.
-  // Deterministic tiebreak: id ascending so the same set of skills always
-  // resolves to the same planet bucket across builds.
-  const sortedByCount = [...rawNodes].sort(
-    (a, b) => b.count - a.count || (a.id < b.id ? -1 : 1),
-  )
-  const planetIds = new Set(sortedByCount.slice(0, PLANETS_K).map((n) => n.id))
+  // D-20-PLANETS-TIER — featured-set takes precedence over count-based top-K.
+  // When at least one skill is curator-flagged `featured: true` in SKILLS, that
+  // set IS the planets-tier. Falls back to top-K by count only when no skill
+  // is featured (preserves pre-hotfix behavior for downstream consumers).
+  const featuredIds = Object.entries(skills)
+    .filter(([, s]) => s.featured)
+    .map(([label]) => label)
+  let planetIds
+  if (featuredIds.length > 0) {
+    planetIds = new Set(featuredIds.filter((id) => nodeMap[id]))
+  } else {
+    // Deterministic tiebreak: id ascending so the same set of skills always
+    // resolves to the same planet bucket across builds.
+    const sortedByCount = [...rawNodes].sort(
+      (a, b) => b.count - a.count || (a.id < b.id ? -1 : 1),
+    )
+    planetIds = new Set(sortedByCount.slice(0, PLANETS_K).map((n) => n.id))
+  }
   const nodes = rawNodes.map((n) => ({ ...n, isPlanet: planetIds.has(n.id) }))
 
   // Step 2: derive co-occurrence edges

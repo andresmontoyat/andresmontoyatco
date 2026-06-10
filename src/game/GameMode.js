@@ -25,8 +25,12 @@ export const yearsActive = maxYear - minYear
 const { nodes: GRAPH_NODES, edges: GRAPH_EDGES } = buildConstellationGraph(EXPERIENCE, SKILLS)
 const LAYOUT = computeLayout(GRAPH_NODES)
 
-// D-15-LAND-COPY: graph node count (alias-normalized canonical count)
-export const skillCount = GRAPH_NODES.length
+// D-15-LAND-COPY: experience-backed canonical skill count (H1 metric).
+// Excludes featured skills injected with count=0 (no experience reference) —
+// the H1 honesty claim "N skills" must reflect resume-backed expertise, not
+// curator-flagged "main expertise" tier. Featured-only nodes still render in
+// the constellation as planets; they just don't inflate the headline metric.
+export const skillCount = GRAPH_NODES.filter((n) => n.count > 0).length
 
 // Pattern G: React.lazy() MUST live at module scope. If placed inside the
 // component body, React would recreate the lazy boundary on every render

@@ -29,22 +29,31 @@ export const SKILL_CATEGORIES = {
   hardware: { en: 'IoT & Hardware',             es: 'IoT & Hardware',             color: SKILL_CATEGORY_COLORS.hardware },
 }
 
-// Canonical skill id → { category, aliases }
+// Canonical skill id → { category, aliases, featured? }
 // aliases: alternate strings found in experience.js tech[] that map to this canonical id
+// featured: marks recruiter-facing "main expertise" skills — buildConstellationGraph
+//   reads this to drive the planets-tier (D-20-PLANETS-TIER) instead of top-K by count.
+//   When at least one featured skill exists, the featured set IS the planets-tier;
+//   featured skills also render as nodes even with count=0 (no experience reference).
 const SKILLS = {
-  Java: { category: 'lang', aliases: [] },
+  Java: { category: 'lang', aliases: [], featured: true },
+  'Spring Framework': { category: 'lang', aliases: ['Spring'], featured: true },
   'Spring Boot': { category: 'lang', aliases: [] },
+  React: { category: 'lang', aliases: ['React.js', 'ReactJS'], featured: true },
   'JEE 5': { category: 'lang', aliases: [] },
-  'Claude Code': { category: 'ai', aliases: [] },
+  'Claude Code': { category: 'ai', aliases: [], featured: true },
   'GitHub Copilot': { category: 'ai', aliases: [] },
   'JetBrains Junie': { category: 'ai', aliases: [] },
+  Architecture: { category: 'arch', aliases: ['Arquitectura'], featured: true },
   Microservices: { category: 'arch', aliases: [] },
   'Oracle Service Bus': { category: 'arch', aliases: [] },
   WebSphere: { category: 'arch', aliases: [] },
   KrakenD: { category: 'arch', aliases: [] },
-  AWS: { category: 'cloud', aliases: [] },
-  'Google Cloud': { category: 'cloud', aliases: ['GCP'] },
+  AWS: { category: 'cloud', aliases: [], featured: true },
+  Azure: { category: 'cloud', aliases: ['Microsoft Azure'], featured: true },
+  'Google Cloud': { category: 'cloud', aliases: ['GCP'], featured: true },
   GKE: { category: 'cloud', aliases: [] },
+  DevOps: { category: 'devops', aliases: [], featured: true },
   Kubernetes: { category: 'devops', aliases: [] },
   Docker: { category: 'devops', aliases: [] },
   Jenkins: { category: 'devops', aliases: [] },
@@ -52,6 +61,7 @@ const SKILLS = {
   Nexus: { category: 'devops', aliases: [] },
   Keycloak: { category: 'security', aliases: [] },
   'Spring Security': { category: 'security', aliases: [] },
+  SQL: { category: 'data', aliases: [], featured: true },
   'Oracle SQL': { category: 'data', aliases: [] },
   'SQL Server': { category: 'data', aliases: [] },
   MySQL: { category: 'data', aliases: [] },
