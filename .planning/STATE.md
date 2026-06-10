@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v3.10
 milestone_name: 3D Constellation
 status: executing
-stopped_at: Plan 20-01 complete; Plan 20-02a queued
-last_updated: "2026-06-09T16:31:00.000Z"
-last_activity: 2026-06-09 -- Plan 20-01 (Data Layer + Bundle-Gate) GREEN, 271/271 tests pass
+stopped_at: Plan 20-02a Task 1 complete (renderer + GameMode shipped); Task 2 human visual checkpoint pending
+last_updated: "2026-06-10T15:15:00.000Z"
+last_activity: 2026-06-10 -- Plan 20-02a Task 1 GREEN, 271/271 tests, mobile 9.01 kB gz / WebGL 122.33 kB gz
 progress:
   total_phases: 15
   completed_phases: 0
   total_plans: 9
-  completed_plans: 5
+  completed_plans: 6
   percent: 0
 ---
 
@@ -27,10 +27,10 @@ See: .planning/PROJECT.md (updated 2026-06-08 — v3.9 SHIPPED, v3.10 OPENED)
 ## Current Position
 
 Phase: 20 (3d-constellation) — EXECUTING
-Plan: 2 of 4 (Plan 20-02a WebGL renderer core — next up)
-Status: Plan 20-01 COMPLETE — Data Layer + Bundle-Gate foundation GREEN
-Last activity: 2026-06-09 -- Plan 20-01 closed (271/271 tests, GameMode chunk 8.92 kB gz unchanged)
-Progress bar: `[███░░░░░░░] 1/3 plans`
+Plan: 3 of 4 (Plan 20-02b OnboardingHint + i18n — next up)
+Status: Plan 20-02a Task 1 COMPLETE — renderer + GameMode shipped; Task 2 (human visual checkpoint) pending real-GPU operator
+Last activity: 2026-06-10 -- Plan 20-02a Task 1 closed (271/271 tests, mobile 9.01 kB gz PASS, WebGL 122.33 kB gz WARN)
+Progress bar: `[██████░░░░] 2/3 plans`
 
 ## v3.10 Milestone Scope
 
@@ -133,9 +133,9 @@ Tag v3.9 on commit 4e9c2b3.
 
 ## Session Continuity
 
-Last session: 2026-06-09T16:31:00.000Z
-Stopped at: Plan 20-01 SUMMARY committed; ready to begin Plan 20-02a (WebGL renderer core)
-Resume file: .planning/phases/20-3d-constellation/20-02a-PLAN.md
+Last session: 2026-06-10T15:15:00.000Z
+Stopped at: Plan 20-02a Task 1 SUMMARY committed; ready to begin Plan 20-02b (OnboardingHint + i18n). Task 2 (human visual smoke checkpoint) DEFERRED — needs real GPU; operator runs npx serve dist + 10-item checklist per 20-02a-PLAN.md.
+Resume file: .planning/phases/20-3d-constellation/20-02b-PLAN.md
 
 ## Deferred Items
 
