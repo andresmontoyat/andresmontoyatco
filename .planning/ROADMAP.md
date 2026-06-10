@@ -196,7 +196,7 @@ See [`milestones/v3.9-ROADMAP.md`](milestones/v3.9-ROADMAP.md) and [`milestones/
 | 17. WebGL Desktop + Lighthouse Gate | v3.8 | 5/5 | ✓ Complete | 2026-06-06 |
 | 18. Above-the-fold layout | v3.9 | 1/1 | ✓ Complete | 2026-06-08 |
 | 19. Never-static constellation | v3.9 | inline | ✓ Complete | 2026-06-08 |
-| 20. 3D Constellation | v3.10 | 4/4 | Complete   | 2026-06-10 |
+| 20. 3D Constellation | v3.10 | 4/4 | Complete    | 2026-06-10 |
 
 ---
 

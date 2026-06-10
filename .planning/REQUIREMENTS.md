@@ -10,7 +10,7 @@ Single-REQ milestone activating `SEED-3D-CONSTELLATION` (planted 2026-06-08 duri
 
 ### 3D Constellation Upgrade
 
-- [ ] **DEPTH-01** Genuine 3D constellation on WebGL desktop renderer:
+- [x] **DEPTH-01** Genuine 3D constellation on WebGL desktop renderer:
   - `OrthographicCamera` → `PerspectiveCamera(fov=55, aspect, near=10, far=2000)` — fov=55 chosen over 60 to avoid widescreen fisheye risk per research SUMMARY.md §Conflicts
   - Per-node `z` coordinate via deterministic `CATEGORY_Z` constants in `src/game/constellation.layout.js` (NOT in `src/data/skills.js`); 8 categories mapped front-to-back as architecture stack, z ∈ [−150, +150]
   - `OrbitControls` (from `three/addons/controls/OrbitControls.js`) drag-to-rotate with `enableDamping=true`, `dampingFactor=0.06`, `rotateSpeed=0.6`, `enableZoom=false`, `enablePan=false`, `enableKeys=false`, polar-angle clamp (`minPolarAngle ≈ π × 0.15`, `maxPolarAngle ≈ π × 0.85`)
@@ -98,6 +98,6 @@ Resume file: `.planning/phases/11-vercel-deploy-uat-gate/11-05-PLAN.md`
 
 | REQ-ID | Phase(s) | Status |
 |--------|----------|--------|
-| DEPTH-01 | Phase 20 | Pending |
+| DEPTH-01 | Phase 20 | Complete |
 
 **Coverage:** 1/1 v3.10 requirement mapped. Single REQ per phase. No orphans.

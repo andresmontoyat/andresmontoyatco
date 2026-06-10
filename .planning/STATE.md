@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v3.10
 milestone_name: 3D Constellation
-status: checkpoint-human-verify
-stopped_at: Plan 20-03 Tasks 1+2 GREEN — useClickVsDrag wired into WebGLConstellation pick path (CRIT-02), 3-tier bundle-gate ladder (125/130 kB), 20-UAT.md scaffold (8 items + Lighthouse mobile row + v3.9 carried debt). Task 3 = operator real-browser UAT sweep + `npm run lighthouse:mobile && npm run lighthouse:check` HARD gate. 293/293 tests GREEN, mobile 9.46 kB gz PASS, WebGL 122.63 kB gz INFO baseline.
-last_updated: "2026-06-10T18:26:00.000Z"
+status: ready_to_plan
+stopped_at: Phase 20 complete (4/4) — ready to discuss Phase 999.4
+last_updated: 2026-06-10T19:23:00.259Z
 last_activity: 2026-06-10 -- Plan 20-03 Tasks 1+2 merged (14c2adf + 043e39a + 920f482 + c0a9c3a SUMMARY); 293/293 GREEN
 progress:
   total_phases: 15
   completed_phases: 0
   total_plans: 9
-  completed_plans: 8
+  completed_plans: 57
   percent: 0
 ---
 
@@ -21,15 +21,15 @@ progress:
 See: .planning/PROJECT.md (updated 2026-06-08 — v3.9 SHIPPED, v3.10 OPENED)
 
 **Core value:** The hero section and overall first impression must stop recruiters mid-scroll and make them want to learn more about Carlos — and convert visits into engineering conversations.
-**Current focus:** Phase 20 — 3d-constellation
+**Current focus:** Phase 999.4 — vis company logos
 **Last shipped:** v3.9 Game Mode Polish (2026-06-08) — above-the-fold layout + SVG ambient twinkle; 261/261 tests GREEN; tag v3.9 on 4e9c2b3
 
 ## Current Position
 
-Phase: 20 (3d-constellation) — CHECKPOINT (human-verify)
-Plan: 4 of 4 — Plan 20-03 Tasks 1+2 GREEN, Task 3 = operator UAT sweep
-Status: Plan 20-03 Tasks 1+2 COMPLETE (useClickVsDrag wired into renderer pick path, 3-tier bundle-gate ladder, 20-UAT.md scaffold); Task 3 (8-item UAT + Lighthouse mobile re-verify + v3.9 carried debt) PENDING operator sweep. 20-UAT.md SUBSUMES the bundled 24-item v3.10 operator real-GPU sweep (covers OrbitControls + planets-tier + OnboardingHint + click-vs-drag + context-loss + Lighthouse + v3.9 above-fold + twinkle real-device confirms).
-Last activity: 2026-06-10 -- Plan 20-03 Tasks 1+2 merged (14c2adf + 043e39a + 920f482 + c0a9c3a SUMMARY); 293/293 GREEN, WebGL 122.63 kB gz INFO baseline
+Phase: 999.4
+Plan: Not started
+Status: Ready to plan
+Last activity: 2026-06-10
 Progress bar: `[██████████] 4/4 plans (Task 3 operator-blocked)`
 
 ## v3.10 Milestone Scope
