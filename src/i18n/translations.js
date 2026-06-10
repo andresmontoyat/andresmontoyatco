@@ -30,6 +30,9 @@ const translations = {
       constellationRoleDesc: 'skill constellation',
       subCopy: 'Click a star to explore where Carlos used it.',
       hintPill: 'Click a star · Toca una estrella',
+      hint: {
+        drag: 'drag to rotate',
+      },
       skillSelected: '{name} selected — {n} experience{s}. Press Esc to clear.',
       selectionCleared: 'Selection cleared.',
       nodeJobSingular: 'job',
@@ -246,6 +249,9 @@ const translations = {
       constellationRoleDesc: 'constelación de habilidades',
       subCopy: 'Haz clic en una estrella para explorar dónde la usó Carlos.',
       hintPill: 'Toca una estrella · Click a star',
+      hint: {
+        drag: 'arrastra para rotar',
+      },
       skillSelected: '{name} seleccionado — {n} experiencia{s}. Presiona Esc para limpiar.',
       selectionCleared: 'Selección limpiada.',
       nodeJobSingular: 'trabajo',
