@@ -54,12 +54,14 @@ describe('useClickVsDrag — D-20-CLICK-DRAG-THRESHOLD', () => {
   })
 
   it('long-press past 250ms with no movement does NOT call onClick', () => {
+    const onClick = vi.fn()
+    const { result } = renderHook(() => useClickVsDrag({ onClick }))
+    // Stage time AFTER renderHook so React internals don't consume the
+    // mockReturnValueOnce queue.
     nowSpy.mockRestore()
     nowSpy = vi.spyOn(performance, 'now')
       .mockReturnValueOnce(0)    // pointerdown startT
       .mockReturnValueOnce(300)  // pointerup now
-    const onClick = vi.fn()
-    const { result } = renderHook(() => useClickVsDrag({ onClick }))
     act(() => result.current.onPointerDown(pointerEvent(100, 100, 'mouse')))
     act(() => result.current.onPointerUp(pointerEvent(100, 100, 'mouse')))
     expect(onClick).not.toHaveBeenCalled()
