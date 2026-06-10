@@ -419,4 +419,32 @@ describe('SvgConstellation', () => {
     expect(cls).not.toContain('animate-svg-twinkle')
     expect(javaCircle.style.animationDelay).toBeFalsy()
   })
+
+  it('D-20-PLANETS-TIER: planet node renders larger r + always-on halo filter (idle, not selected)', () => {
+    // Mark Java as planet via prop fixture. Without selection, planet must
+    // STILL show halo filter (drop-shadow) AND its radius must be >= 24
+    // (planet band floor). Star Docker stays in regular band (<= 23).
+    const planetNodes = [
+      { ...FIXTURE_NODES[0], isPlanet: true },     // Java planet
+      { ...FIXTURE_NODES[1], isPlanet: false },    // Docker star
+      { ...FIXTURE_NODES[2], isPlanet: false },    // AWS star
+    ]
+    const { container } = renderRenderer({ nodes: planetNodes, selectedSkillId: null })
+    const javaCircle = container.querySelector('g[data-node-id="Java"] circle:first-child')
+    const dockerCircle = container.querySelector('g[data-node-id="Docker"] circle:first-child')
+    expect(javaCircle).not.toBeNull()
+    expect(dockerCircle).not.toBeNull()
+    // Planet r >= 24 (desktop_planet floor)
+    const javaR = parseFloat(javaCircle.getAttribute('r'))
+    expect(javaR).toBeGreaterThanOrEqual(24)
+    // Star r <= 23 (desktop ceil)
+    const dockerR = parseFloat(dockerCircle.getAttribute('r'))
+    expect(dockerR).toBeLessThanOrEqual(23)
+    // Planet halo filter applied idle (not just on select)
+    const javaFilter = javaCircle.style.filter || ''
+    expect(javaFilter).toContain('drop-shadow')
+    // Star NO halo idle
+    const dockerFilter = dockerCircle.style.filter || ''
+    expect(dockerFilter).not.toContain('drop-shadow')
+  })
 })

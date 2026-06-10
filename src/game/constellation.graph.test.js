@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { buildConstellationGraph } from './constellation.graph.js'
+import { buildConstellationGraph, PLANETS_K } from './constellation.graph.js'
 import EXPERIENCE from '../data/experience.js'
 import { SKILL_CATEGORIES, SKILLS } from '../data/skills.js'
 
@@ -184,5 +184,80 @@ describe('buildConstellationGraph - edges', () => {
       expect(labels.has(e.source), `edge source '${e.source}' is not a node label`).toBe(true)
       expect(labels.has(e.target), `edge target '${e.target}' is not a node label`).toBe(true)
     }
+  })
+})
+
+describe('buildConstellationGraph - planets-tier (D-20-PLANETS-TIER)', () => {
+  it('exports PLANETS_K constant equal to 6 (Destiny-2 inner-planets reference)', () => {
+    expect(PLANETS_K).toBe(6)
+  })
+
+  it('marks top-K nodes by count as isPlanet=true', () => {
+    const { nodes } = buildConstellationGraph(EXPERIENCE, SKILLS)
+    const planets = nodes.filter((n) => n.isPlanet === true)
+    expect(planets.length).toBe(Math.min(PLANETS_K, nodes.length))
+    // Top-K must be the K nodes with the largest counts
+    const topKCounts = [...nodes].sort((a, b) => b.count - a.count).slice(0, PLANETS_K).map((n) => n.count)
+    const planetCounts = [...planets].sort((a, b) => b.count - a.count).map((n) => n.count)
+    expect(planetCounts).toEqual(topKCounts)
+  })
+
+  it('rest of nodes have isPlanet=false (boolean, not undefined)', () => {
+    const { nodes } = buildConstellationGraph(EXPERIENCE, SKILLS)
+    const nonPlanets = nodes.filter((n) => n.isPlanet === false)
+    expect(nonPlanets.length).toBe(nodes.length - Math.min(PLANETS_K, nodes.length))
+    for (const n of nodes) {
+      expect(typeof n.isPlanet).toBe('boolean')
+    }
+  })
+
+  it('breaks ties deterministically by id ascending', () => {
+    // Build synthetic data where 3 skills share the same count — tiebreak
+    // must select the id-ascending ones first.
+    const FAKE_SKILLS = {
+      zzz: { category: 'lang' },
+      aaa: { category: 'lang' },
+      mmm: { category: 'lang' },
+      bbb: { category: 'lang' },
+    }
+    const FAKE_EXPERIENCE = [
+      { tech: ['zzz', 'aaa', 'mmm', 'bbb'], period: { start: 2020, end: 2021 } },
+    ]
+    // Stub SKILL_CATEGORIES default color (lang)
+    const stubCategoriesByMonkeyPatch = SKILL_CATEGORIES.lang
+    expect(stubCategoriesByMonkeyPatch).toBeDefined()
+    const { nodes } = buildConstellationGraph(FAKE_EXPERIENCE, FAKE_SKILLS)
+    // All 4 have count=1 → top-3 by id ascending = aaa, bbb, mmm
+    // (use K=3 emulation by counting result vs sorted top-3 from PLANETS_K)
+    const planetIds = nodes.filter((n) => n.isPlanet).map((n) => n.id).sort()
+    // With K=6 and only 4 nodes, all 4 should be planets
+    expect(planetIds).toEqual(['aaa', 'bbb', 'mmm', 'zzz'])
+
+    // With a 7th node tying — ensure id ascending wins for tiebreak
+    const FAKE_SKILLS_7 = {
+      a1: { category: 'lang' },
+      a2: { category: 'lang' },
+      a3: { category: 'lang' },
+      a4: { category: 'lang' },
+      a5: { category: 'lang' },
+      a6: { category: 'lang' },
+      a7: { category: 'lang' },
+    }
+    const FAKE_EXP_7 = [
+      { tech: ['a1', 'a2', 'a3', 'a4', 'a5', 'a6', 'a7'], period: { start: 2020, end: 2021 } },
+    ]
+    const { nodes: nodes7 } = buildConstellationGraph(FAKE_EXP_7, FAKE_SKILLS_7)
+    // All tie at count=1 → top-6 by id ascending = a1..a6; a7 excluded
+    const planet7 = nodes7.filter((n) => n.isPlanet).map((n) => n.id).sort()
+    expect(planet7).toEqual(['a1', 'a2', 'a3', 'a4', 'a5', 'a6'])
+    const star7 = nodes7.find((n) => n.id === 'a7')
+    expect(star7.isPlanet).toBe(false)
+  })
+
+  it('never marks more than PLANETS_K nodes as planets even with many nodes', () => {
+    const { nodes } = buildConstellationGraph(EXPERIENCE, SKILLS)
+    expect(nodes.length).toBeGreaterThan(PLANETS_K)
+    const planets = nodes.filter((n) => n.isPlanet)
+    expect(planets.length).toBe(PLANETS_K)
   })
 })

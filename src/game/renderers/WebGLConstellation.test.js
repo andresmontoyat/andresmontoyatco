@@ -749,4 +749,20 @@ describe('WebGLConstellation Slice 4 — chip-flash + weight-1 edge reveal + poi
     canvas.dispatchEvent(evt)
     expect(onSelectSkill).toHaveBeenCalledWith('skill-0')
   })
+
+  it('planet nodes get halos[i] = 1.0 unconditionally (D-20-PLANETS-TIER)', () => {
+    // Mark skill-0 as planet via prop fixture. WebGL must apply always-on
+    // halo even with selectedSkillId=null. Star nodes (default) still halo=0.
+    const planetNodes = FIXTURE_NODES.map((n, i) => (i === 0 ? { ...n, isPlanet: true } : { ...n, isPlanet: false }))
+    render(<WebGLConstellation
+      {...fullProps}
+      nodes={planetNodes}
+      selectedSkillId={null}
+    />)
+    const points = added.find((o) => o && o.material && o.material.uniforms && o.geometry && o.geometry.getAttribute('halo'))
+    expect(points).toBeDefined()
+    const halo = points.geometry.getAttribute('halo').array
+    expect(halo[0]).toBe(1.0) // planet always-on
+    expect(halo[1]).toBe(0.0) // star idle
+  })
 })
