@@ -51,6 +51,10 @@ Convert the existing flat 2D-in-3D `OrthographicCamera` WebGL constellation into
 
 - **D-20-CONTEXT-HINT:** Ship bilingual hint pill in v3.10.0 (NOT deferred). Pill shows "drag to rotate" / "arrastra para rotar" with motion-safe fade-in, auto-dismiss after 5s, AND localStorage `cam-3d-hint-seen` flag (suppress on subsequent visits). New i18n keys `t.game.hint.drag.{en,es}`. Estimated +~30 LOC + 1 test + ~3h to Plan 20-02 (~2.5d → ~3d). Justification: without hint, recruiter sees auto-rotate continuing forever without realizing the constellation is grabbable; cursor `grab` CSS feedback is insufficient at the desktop scroll-past distance.
 
+### Visual Hierarchy — Planets vs Stars (Destiny-2 Director vibe)
+
+- **D-20-PLANETS-TIER:** Top-K skills by `count` (K=6) get `isPlanet: true` on the graph node — derived deterministically in `buildConstellationGraph` final pass via `[...nodes].sort((a,b) => b.count - a.count).slice(0, 6)`. Auto-rebalances when new experience lands; zero manual curation. Planet nodes render LARGER (computeRadius floor 24 / ceil 40 vs star floor 10 / ceil 23) AND with always-on halo (per-vertex `halo` attribute set to 1.0 unconditionally vs star-only-on-select). Both renderers consume the flag (GAME-01 props-contract preserved): WebGL via `isPlanet` attribute + size attribute boost + halo=1.0; SVG via larger `r` + visible halo circle class. Rationale: recruiter glance instantly maps to "this engineer's heavy hitters are X, Y, Z" without parsing every node. Visual differentiation = "planet" (durable, atmospheric, focal) vs "star" (background, ambient). Bundle delta < 200 B gz total (1 attribute + 1 const). Composes cleanly with D-20-CONTEXT-ZMAP — planet heredan z from category; with D-14-01-LAYOUT — planet stays at its category centroid sub-ring position. Does NOT compose with PITFALLS Decision Violations (no 2D/3D toggle, no per-tier color shift in this iteration). Bloom/ring/label refinements DEFERRED to v3.11+ if recruiter UAT demands.
+
 ### Keyboard Navigation
 
 - **D-20-CONTEXT-KB-NOORBIT:** Phase 15 `D-15-KB-ACTIVATE` arrow-key node-focus walk stays UNCHANGED. NO keyboard rotation gate (no `Shift+Arrows` for orbit). Keyboard users see constellation from the fixed tilted initial angle and walk node focus along `sortIndex` order. `controls.enableKeys=false` in OrbitControls config (already in research). Rationale: (a) WCAG/motion-induced-disorder spirit — vestibular trigger risk even outside `prefers-reduced-motion`; (b) preserves locked Phase 15 contract; (c) avoids the "rotate-vs-walk" modal ambiguity.
@@ -60,6 +64,9 @@ Convert the existing flat 2D-in-3D `OrthographicCamera` WebGL constellation into
 - **CATEGORY_Z exact values** — proposed values are UAT-tunable; expect to adjust ±25 per band after first visual UAT.
 - **Tilted initial angle exact degrees** — `15°` and `10°` are starting points; can shift during Plan 20-02 dev-server iteration as long as polar-clamp constraints are honored and perspective is obvious.
 - **Hint pill exact styling** — Tailwind motion-safe fade-in cadence + dismiss interaction; not gating decisions.
+- **PLANETS-TIER K value** — `K=6` is the starting point (matches Destiny 2 Director inner planets). UAT-tunable to K=4..8 if visual reads cluttered or sparse.
+- **Planet size band** — `floor 24 / ceil 40` device px is starting point; tune ±4 if planet overpowers neighbor stars or reads too similar.
+- **Planet always-on halo opacity** — uHaloAlpha boost band; tune so halo feels "atmospheric" not "selected-state".
 
 </decisions>
 

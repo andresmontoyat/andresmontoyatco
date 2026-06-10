@@ -9,9 +9,15 @@ files_modified:
   - src/game/OnboardingHint.test.js
   - src/game/GameMode.js
   - src/i18n/translations.js
+  - src/game/constellation.graph.js
+  - src/game/constellation.graph.test.js
+  - src/game/renderers/WebGLConstellation.js
+  - src/game/renderers/WebGLConstellation.test.js
+  - src/game/renderers/SvgConstellation.js
+  - src/game/renderers/SvgConstellation.test.js
 autonomous: false
 requirements: [DEPTH-01]
-tags: [onboarding-hint, i18n, bilingual, a11y]
+tags: [onboarding-hint, i18n, bilingual, a11y, planets-tier, visual-hierarchy]
 
 must_haves:
   truths:
@@ -23,7 +29,12 @@ must_haves:
     - "Nested i18n key t.game.hint.drag (EN: 'drag to rotate' / ES: 'arrastra para rotar') — NOT flat hintDrag per Alert A13"
     - "tailwind.config.js diff is empty — animate-fade-in (line 94) and animate-hint-fade-out (line 100) are CONSUMED, NOT redefined per Alert A7"
     - "GameMode renders <OnboardingHint t={t} /> conditionally when effectiveCapability === 'webgl' (forceSvgFallback from 20-02a defers)"
-    - "All 271+ existing tests stay GREEN; ≥5 new OnboardingHint tests added; bundle-gate exits 0"
+    - "buildConstellationGraph derives isPlanet boolean on top-K (K=6) skill nodes by count (D-20-PLANETS-TIER) — deterministic, auto-rebalances with new experience"
+    - "Planet nodes render LARGER (computeRadius floor 24 / ceil 40 vs star floor 10 / ceil 23) AND with always-on halo in BOTH WebGL and SVG renderers (GAME-01 props-contract preserved)"
+    - "WebGL: isPlanet flows through scene-build → halos[i] = 1.0 forced + sizes[i] uses planet band; size-attenuation shader formula unchanged"
+    - "SVG: isPlanet adds visible halo <circle> + uses planet radius band; theme reactivity unchanged"
+    - "PLANETS_K constant = 6 in src/game/constellation.graph.js with UAT-tunable comment block (matches Destiny-2 Director inner-planets reference)"
+    - "All 271+ existing tests stay GREEN; ≥5 new OnboardingHint tests + ≥3 graph isPlanet tests + ≥2 renderer planet-visual tests added; bundle-gate exits 0; mobile chunk delta <500 B gz; WebGL chunk delta <500 B gz"
   artifacts:
     - path: "src/game/OnboardingHint.js"
       provides: "Bilingual <button> hint pill with fade-in delay + 5s auto-dismiss + click dismiss + localStorage cam-3d-hint-seen flag + RM defensive gate + 44x44 touch target"
@@ -37,6 +48,18 @@ must_haves:
     - path: "src/i18n/translations.js"
       provides: "Nested t.game.hint.drag EN and ES keys (NOT flat — Alert A13)"
       contains: "hint:"
+    - path: "src/game/constellation.graph.js"
+      provides: "PLANETS_K constant + isPlanet derivation in buildConstellationGraph final pass (top-K by count, deterministic sort tiebreak by id ascending)"
+      contains: "PLANETS_K"
+    - path: "src/game/constellation.graph.test.js"
+      provides: "≥3 isPlanet tests: top-K marked, others false, deterministic tiebreak, K bound respected"
+      contains: "isPlanet"
+    - path: "src/game/renderers/WebGLConstellation.js"
+      provides: "isPlanet flows into scene-build — halos[i] = node.isPlanet ? 1.0 : (node.id === selectedSkillId ? 1.0 : 0.0); sizes[i] uses planet band when isPlanet"
+      contains: "isPlanet"
+    - path: "src/game/renderers/SvgConstellation.js"
+      provides: "Planet nodes render with visible halo <circle> + larger r band; star path unchanged"
+      contains: "isPlanet"
   key_links:
     - from: "OnboardingHint pill"
       to: "t.game.hint.drag i18n key (nested namespace per Alert A13)"
@@ -50,12 +73,24 @@ must_haves:
       to: "OnboardingHint render conditional"
       via: "effectiveCapability !== 'webgl' → no pill (context-loss path also suppresses pill correctly)"
       pattern: "effectiveCapability === ['\"]webgl['\"]|forceSvgFallback"
+    - from: "buildConstellationGraph isPlanet flag"
+      to: "Both renderers (WebGL halos+sizes attribute writes / SVG <circle> render path)"
+      via: "Node property propagates as part of GRAPH_NODES; renderers read via node.isPlanet — GAME-01 props-contract preserved"
+      pattern: "isPlanet"
+    - from: "PLANETS_K constant"
+      to: "Top-K sort in buildConstellationGraph"
+      via: "[...nodes].sort((a,b) => b.count - a.count || (a.id < b.id ? -1 : 1)).slice(0, PLANETS_K).forEach(n => n.isPlanet = true)"
+      pattern: "PLANETS_K"
 ---
 
 <objective>
-Land the bilingual onboarding hint pill (D-20-CONTEXT-HINT, Alerts A8 + A13) on top of the renderer scaffolding shipped in Plan 20-02a: NEW `src/game/OnboardingHint.js` (~50 LOC `<button>` component with motion-safe fade-in + 5s auto-dismiss + click-to-dismiss + dismiss-on-first-drag + localStorage suppression + defensive RM gate); NEW `src/game/OnboardingHint.test.js` (≥5 Vitest + RTL tests using `vi.useFakeTimers()`); nested `t.game.hint.drag.{en,es}` i18n keys (EN: "drag to rotate" / ES: "arrastra para rotar") added to `src/i18n/translations.js`; `src/game/GameMode.js` imports + renders the pill conditionally on `effectiveCapability === 'webgl'`.
+Land TWO bundled features on top of the renderer scaffolding shipped in Plan 20-02a:
 
-This plan was split out of the original Plan 20-02 (per checker Blocker #2) to keep each plan within the 2-3 task / ~50% context budget. Plan 20-02a delivered the renderer core (PerspectiveCamera + OrbitControls + shader + pick + context-loss + GameMode `forceSvgFallback` state + `onFirstDrag` callback writing the localStorage flag). This plan completes the user-facing hint affordance.
+**Feature A — Bilingual onboarding hint pill** (D-20-CONTEXT-HINT, Alerts A8 + A13): NEW `src/game/OnboardingHint.js` (~50 LOC `<button>` component with motion-safe fade-in + 5s auto-dismiss + click-to-dismiss + dismiss-on-first-drag + localStorage suppression + defensive RM gate); NEW `src/game/OnboardingHint.test.js` (≥5 Vitest + RTL tests using `vi.useFakeTimers()`); nested `t.game.hint.drag.{en,es}` i18n keys (EN: "drag to rotate" / ES: "arrastra para rotar") added to `src/i18n/translations.js`; `src/game/GameMode.js` imports + renders the pill conditionally on `effectiveCapability === 'webgl'`.
+
+**Feature B — Planets-tier visual hierarchy** (D-20-PLANETS-TIER, Destiny-2 Director vibe): Top-K skills by `count` (K=6) get `isPlanet: true` derived in `buildConstellationGraph` final pass. Planet nodes render LARGER (computeRadius floor 24 / ceil 40 vs star floor 10 / ceil 23) AND with always-on halo in BOTH WebGL and SVG renderers. GAME-01 props-contract preserved — both renderers consume the same `isPlanet` flag. Deterministic tiebreak by id ascending so node order is stable across builds. PLANETS_K constant lives in `constellation.graph.js` (UAT-tunable).
+
+This plan was split out of the original Plan 20-02 (per checker Blocker #2) to keep each plan within the 2-3 task / ~50% context budget. Plan 20-02a delivered the renderer core. This plan completes the user-facing hint affordance AND the planet-tier visual hierarchy in a single wave — both features share the same UAT pass (real-GPU human checkpoint), and the planet-tier graph derivation is a 2-line `sort + slice + forEach` that fits well inside the wave's context budget.
 
 Purpose:
 - Lands D-20-CONTEXT-HINT (locked decision: ship bilingual pill in v3.10.0, NOT defer — recruiter-conversion lever).
@@ -363,16 +398,111 @@ Simpler alternative (acceptable for v3.10.0): unmount immediately on dismiss via
   </done>
 </task>
 
+<task type="auto" tdd="true">
+  <name>Task 2: Planets-tier — isPlanet derivation in graph + size/halo paths in both renderers (D-20-PLANETS-TIER)</name>
+  <files>src/game/constellation.graph.js, src/game/constellation.graph.test.js, src/game/renderers/WebGLConstellation.js, src/game/renderers/WebGLConstellation.test.js, src/game/renderers/SvgConstellation.js, src/game/renderers/SvgConstellation.test.js</files>
+  <read_first>
+    - src/game/constellation.graph.js (FULL FILE — buildConstellationGraph final-nodes mapping at lines ~56-60)
+    - src/game/constellation.graph.test.js (existing test conventions)
+    - src/game/renderers/WebGLConstellation.js §SIZING + §computeRadius (lines 43-51) + §scene-setup useEffect halos/sizes attribute writes (lines ~272 sizes, ~303 halos)
+    - src/game/renderers/SvgConstellation.js §node render path (radius + halo circle, theme-aware classes)
+    - .planning/phases/20-3d-constellation/20-CONTEXT.md §"Visual Hierarchy — Planets vs Stars"
+  </read_first>
+  <behavior>
+    - **isPlanet derivation:** `buildConstellationGraph` final pass adds `isPlanet: boolean` to every node. Top-K (K=`PLANETS_K=6`) by `count` (deterministic tiebreak: id ascending) get `isPlanet: true`; rest get `isPlanet: false`. Stable across builds.
+    - **Bounds:** `PLANETS_K=6` capped; if fewer than K nodes exist, all are planets.
+    - **WebGL path:** `sizes[i]` uses planet band when `node.isPlanet`; `halos[i]` is `node.isPlanet || node.id === selectedSkillId ? 1.0 : 0.0` (planet always-on; star only on select). Existing size-attenuation shader unchanged — depthFactor still applies; clamp [1, 64] preserved.
+    - **SVG path:** Planet `<circle>` uses planet radius band; planet halo `<circle>` rendered unconditionally (vs star-only-on-select). Theme color logic unchanged.
+    - **GAME-01 preserved:** Both renderers consume the same `node.isPlanet` prop; pixels diverge as designed but contract is identical.
+    - **No new dependencies. No tailwind keyframe edits. No shader uniform additions.**
+  </behavior>
+  <action>
+    **Step 1 — RED graph tests.** Append to `src/game/constellation.graph.test.js` a new describe block:
+    ```
+    describe('buildConstellationGraph - planets-tier (D-20-PLANETS-TIER)', () => {
+      it('marks top-6 nodes by count as isPlanet=true')
+      it('rest of nodes have isPlanet=false')
+      it('breaks ties deterministically by id ascending')
+      it('respects PLANETS_K bound — never marks more than K')
+    })
+    ```
+    Run `npm test -- constellation.graph` → all FAIL (no isPlanet yet).
+
+    **Step 2 — GREEN graph derivation.** Edit `src/game/constellation.graph.js`:
+    - Append at top (after CURRENT_YEAR): `// D-20-PLANETS-TIER — UAT-tunable; consult v3.10-UAT.md before adjusting. export const PLANETS_K = 6`
+    - In `buildConstellationGraph` final pass (where nodes array materializes), AFTER the `.map(({ _minYear, ... }) => ({ ...rest, years: [_minYear, _maxYear] }))` step, add:
+      ```
+      const sortedByCount = [...nodes].sort((a, b) => b.count - a.count || (a.id < b.id ? -1 : 1))
+      const planetIds = new Set(sortedByCount.slice(0, PLANETS_K).map((n) => n.id))
+      const finalNodes = nodes.map((n) => ({ ...n, isPlanet: planetIds.has(n.id) }))
+      ```
+    - Return `{ nodes: finalNodes, edges }` instead of `{ nodes, edges }`.
+
+    Run `npm test -- constellation.graph` → all 4 new pass.
+
+    **Step 3 — RED + GREEN WebGL planet rendering.** Append a single test to `src/game/renderers/WebGLConstellation.test.js`:
+    ```
+    it('planet nodes get halos[i] = 1.0 unconditionally (D-20-PLANETS-TIER)', () => { ... })
+    ```
+    Fixture: mark `FIXTURE_NODES[0].isPlanet = true`. After render, find Points object, read `halo` attribute, assert `array[0] === 1.0` even with `selectedSkillId=null`.
+
+    In `WebGLConstellation.js` scene-setup useEffect:
+    - In SIZING constant block, add planet band: `desktop_planet: { floor: 24, ceil: 40 }` (and `mobile_planet: { floor: 14, ceil: 22 }` for future SVG-on-mobile parity).
+    - At sizes write: replace `sizes[i] = computeRadius(node.count, maxCount, 'desktop')` with `sizes[i] = computeRadius(node.count, maxCount, node.isPlanet ? 'desktop_planet' : 'desktop')`.
+    - At halos write: `halos[i] = (node.isPlanet || node.id === selectedSkillId) ? 1.0 : 0.0`.
+
+    Run `npm test -- WebGLConstellation` → all pass including the new planet test.
+
+    **Step 4 — RED + GREEN SVG planet rendering.** Append a single test to `src/game/renderers/SvgConstellation.test.js`:
+    ```
+    it('planet nodes render with visible halo circle (D-20-PLANETS-TIER)', () => { ... })
+    ```
+    Mock SKILLS/EXPERIENCE so top-K result is deterministic; render component; query halo `<circle>` for a known planet id; assert it exists AND its `r` attribute is in the planet band.
+
+    In `SvgConstellation.js`:
+    - Halo circle conditional: change `selectedSkillId === node.id` to `node.isPlanet || selectedSkillId === node.id`.
+    - Radius lookup: planet uses larger SIZING band (mirror WebGL's planet floor/ceil).
+
+    Run `npm test -- SvgConstellation` → all pass.
+
+    **Step 5 — Full verification.** Run `npm test` → all GREEN (Plan 20-02a baseline 271 + Task 1 +6 OnboardingHint + Task 2 +6 planet tests ≈ 283 GREEN). Run `npm run build && node scripts/check-bundle-gate.mjs`. Mobile chunk delta <500 B gz expected (one Set + sort + map = ~80 B minified gz; WebGL chunk delta < 200 B; SVG path bundled with mobile chunk has marginal increase from `node.isPlanet || ...` ternary additions).
+  </action>
+  <verify>
+    <automated>npm test -- "(constellation.graph|WebGLConstellation|SvgConstellation)"</automated>
+  </verify>
+  <acceptance_criteria>
+    - `rg "^export const PLANETS_K" src/game/constellation.graph.js` returns 1 hit (= 6).
+    - `rg "isPlanet" src/game/constellation.graph.js` returns ≥2 hits (derivation + final node spread).
+    - `rg "UAT-tunable" src/game/constellation.graph.js` returns ≥1 hit (PLANETS_K comment block).
+    - `rg "planets-tier" src/game/constellation.graph.test.js` returns ≥1 hit (new describe block).
+    - `rg "isPlanet" src/game/renderers/WebGLConstellation.js` returns ≥2 hits (halos + sizes write paths).
+    - `rg "desktop_planet" src/game/renderers/WebGLConstellation.js` returns ≥1 hit.
+    - `rg "isPlanet" src/game/renderers/SvgConstellation.js` returns ≥1 hit (halo conditional + size path).
+    - `npm test -- constellation.graph` exits 0; ≥4 new graph tests pass.
+    - `npm test -- WebGLConstellation` exits 0 with +1 planet test passing.
+    - `npm test -- SvgConstellation` exits 0 with +1 planet test passing.
+    - `npm test` exits 0; total GREEN bumped by ≥6 (+4 graph + 1 WebGL + 1 SVG).
+    - `npm run build && node scripts/check-bundle-gate.mjs` exits 0; mobile chunk delta < 500 B gz; WebGL chunk delta < 500 B gz.
+    - `git log --oneline -1` shows `feat(20-02b): planets-tier — top-K isPlanet flag + halos/sizes paths in both renderers (D-20-PLANETS-TIER)`.
+  </acceptance_criteria>
+  <done>
+    Top-6 by count are planet-rendered in both WebGL and SVG; bundle stays within budget; tests cover derivation + bound + tiebreak + both renderer paths. GAME-01 props-contract preserved. PLANETS_K is UAT-tunable. No new dependencies.
+  </done>
+</task>
+
 <task type="checkpoint:human-verify" gate="blocking">
-  <name>Task 2: Manual UAT — bilingual pill renders, dismisses correctly, suppressed on second visit, RM path no pill</name>
+  <name>Task 3: Manual UAT — pill behavior + planets-tier visual distinction (single real-GPU pass covers Task 1 + Task 2)</name>
   <what-built>
-    Plan 20-02b Task 1 just landed:
+    Plan 20-02b Task 1 + Task 2 just landed:
     - `src/game/OnboardingHint.js` — `<button>` pill with 800ms fade-in delay, 5s auto-dismiss, click-to-dismiss, localStorage `cam-3d-hint-seen` flag, defensive RM gate.
     - `src/game/OnboardingHint.test.js` — 6 Vitest + RTL tests using `vi.useFakeTimers()`.
     - `src/i18n/translations.js` — nested `t.game.hint.drag` keys: EN "drag to rotate", ES "arrastra para rotar".
     - `src/game/GameMode.js` — import + JSX slot `{effectiveCapability === 'webgl' && <OnboardingHint t={t} />}` inside the renderer-slot wrapper.
+    - `src/game/constellation.graph.js` — PLANETS_K=6 + isPlanet boolean on final nodes.
+    - `src/game/renderers/WebGLConstellation.js` — planet size band + always-on halo.
+    - `src/game/renderers/SvgConstellation.js` — planet halo circle + planet radius band.
 
-    Plan 20-02a's `forceSvgFallback` state + `onFirstDrag` callback (writes `cam-3d-hint-seen`) are already in place. This checkpoint validates the user-facing behavior of the pill against a real browser.
+    Plan 20-02a's `forceSvgFallback` state + `onFirstDrag` callback (writes `cam-3d-hint-seen`) are already in place. This checkpoint validates BOTH the user-facing pill behavior AND the planet-tier visual hierarchy against a real browser.
   </what-built>
   <how-to-verify>
     Run the dev server (or production preview) and execute the visual + interaction checklist below on a real capable-desktop browser. jsdom unit tests already validated the gating logic; this checkpoint validates Tailwind class rendering, motion-safe animation, real localStorage persistence across reloads, and DevTools RM emulation.
@@ -409,9 +539,22 @@ Simpler alternative (acceptable for v3.10.0): unmount immediately on dismiss via
 
     10. **Context-loss path — pill unmounts cleanly** — Reload + clear localStorage. Wait for pill fade-in. Trigger context loss: DevTools console run `document.querySelector('canvas').getContext('webgl2').getExtension('WEBGL_lose_context').loseContext()`. Plan 20-02a's `onContextLost` callback flips `forceSvgFallback` → effectiveCapability becomes `svg` → OnboardingHint's render conditional fails → pill unmounts without warning/error. SVG path now renders in the canvas slot. No zombie pill over SVG.
 
-    Document any deviations. Screenshots optional but helpful for items 2, 8, 9.
+    **Planet-tier visual checks (D-20-PLANETS-TIER):**
+
+    11. **6 planets visually distinct** — Reload (RM off). Identify the 6 largest nodes in the constellation — they are the "planets". Confirm:
+        - Each planet is visibly larger than neighbor stars (~1.6-1.8x diameter at depth z=0).
+        - Each planet has an always-on halo glow ring (visible WITHOUT clicking).
+        - Stars have NO halo idle (still pulse from chip-flash and selection).
+
+    12. **Top-6 are the expected heavy hitters** — Compare planet ids against `[...nodes].sort((a,b) => b.count - a.count).slice(0, 6)` from the DevTools console. Should be skills like Java / Spring Boot / Kotlin / AWS / Docker / Kubernetes (or whatever the experience data yields — auto-derived).
+
+    13. **Planet vs star at depth** — Rotate constellation. Front planets (z=+150 ai/lang categories) still read as planets vs front stars; back planets (z=-150 hardware) still read as planets vs back stars. Size-attenuation + always-on halo composes correctly with depth band.
+
+    14. **SVG path parity** — Force SVG via `?renderer=svg` or RM emulation → SVG mounts. Same 6 ids render as planets with visible halo circle + larger radius. Theme toggle (dark↔light) preserves planet/star distinction.
+
+    Document any deviations. Screenshots optional but helpful for items 2, 8, 9, 11, 13.
   </how-to-verify>
-  <resume-signal>Type "approved" if 10/10 visual checks pass. Otherwise list FAIL items with browser version + screenshot path so the next iteration can address them.</resume-signal>
+  <resume-signal>Type "approved" if 14/14 visual checks pass. Otherwise list FAIL items with browser version + screenshot path so the next iteration can address them.</resume-signal>
 </task>
 
 </tasks>
@@ -442,13 +585,13 @@ Simpler alternative (acceptable for v3.10.0): unmount immediately on dismiss via
 </threat_model>
 
 <verification>
-1. `npm test` exits 0; total GREEN net +6 over Plan 20-02a baseline.
+1. `npm test` exits 0; total GREEN net ≥ +12 over Plan 20-02a baseline (Task 1 +6 OnboardingHint + Task 2 +≥6 planets-tier).
 2. `npm run build` succeeds.
-3. `node scripts/check-bundle-gate.mjs` exits 0; mobile chunk ≤38.82 kB gz (OnboardingHint adds <500 bytes to the eager bundle); WebGL chunk unchanged from Plan 20-02a.
-4. Grep matrix from acceptance criteria — every regex must produce the expected hit counts.
+3. `node scripts/check-bundle-gate.mjs` exits 0; mobile chunk ≤38.82 kB gz (OnboardingHint adds <500 B + planets-tier graph derivation <500 B); WebGL chunk delta <500 B gz over Plan 20-02a baseline.
+4. Grep matrix from BOTH Task 1 and Task 2 acceptance criteria — every regex must produce the expected hit counts.
 5. `git diff tailwind.config.js` empty (Alert A7).
-6. Manual UAT checkpoint (Task 2) confirms 10/10 visual + interaction items.
-7. `git log --oneline -1` shows the Task 1 commit.
+6. Manual UAT checkpoint (Task 3) confirms 14/14 visual + interaction items (10 pill + 4 planet-tier).
+7. `git log --oneline -2` shows both Task 1 and Task 2 commits — atomic per feature.
 </verification>
 
 <success_criteria>
@@ -458,10 +601,16 @@ Simpler alternative (acceptable for v3.10.0): unmount immediately on dismiss via
 - [ ] `src/game/GameMode.js` imports `OnboardingHint` and renders `{effectiveCapability === 'webgl' && <OnboardingHint t={t} />}` inside the renderer-slot wrapper.
 - [ ] `tailwind.config.js` diff is empty (Alert A7).
 - [ ] `npm test -- OnboardingHint` exits 0 with all 6 cases passing.
-- [ ] `npm test` exits 0; ≥277 GREEN.
-- [ ] `npm run build && node scripts/check-bundle-gate.mjs` exits 0; mobile chunk unchanged.
-- [ ] Manual UAT checkpoint (Task 2) confirms 10/10 visual + interaction items pass on a real browser.
-- [ ] One atomic commit lands: `feat(20-02b): OnboardingHint bilingual pill + tests + nested t.game.hint.drag + GameMode slot (D-20-CONTEXT-HINT, Alerts A7+A8+A13)`.
+- [ ] `src/game/constellation.graph.js` has `export const PLANETS_K = 6` with UAT-tunable comment + isPlanet derivation in final pass (deterministic sort + tiebreak by id ascending).
+- [ ] `src/game/constellation.graph.test.js` has ≥4 new tests under describe `'buildConstellationGraph - planets-tier'` covering top-K marked, rest false, tiebreak determinism, K bound.
+- [ ] `src/game/renderers/WebGLConstellation.js` consumes `node.isPlanet` for sizes (planet band) AND halos (always-on); +1 test in WebGLConstellation.test.js asserts halos[i]=1.0 when isPlanet.
+- [ ] `src/game/renderers/SvgConstellation.js` consumes `node.isPlanet` for radius band + halo circle visibility; +1 test in SvgConstellation.test.js asserts halo circle rendered for planet.
+- [ ] `npm test` exits 0; ≥283 GREEN (Plan 20-02a 271 + Task 1 +6 + Task 2 +≥6 = ≥283).
+- [ ] `npm run build && node scripts/check-bundle-gate.mjs` exits 0; mobile chunk delta <500 B gz; WebGL chunk delta <500 B gz.
+- [ ] Manual UAT checkpoint (Task 3) confirms 14/14 visual + interaction items pass on a real browser.
+- [ ] Two atomic commits land:
+    - `feat(20-02b): OnboardingHint bilingual pill + tests + nested t.game.hint.drag + GameMode slot (D-20-CONTEXT-HINT, Alerts A7+A8+A13)`
+    - `feat(20-02b): planets-tier — top-K isPlanet flag + halos/sizes paths in both renderers (D-20-PLANETS-TIER)`
 </success_criteria>
 
 <output>

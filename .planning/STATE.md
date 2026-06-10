@@ -55,6 +55,7 @@ Per research SUMMARY.md, Phase 20 must log 4 new decisions:
 - **D-20-CLICK-DRAG-THRESHOLD** — NEW. 5 px screen-space + 250 ms time; 8 px on `pointerType === 'touch'`. Preserves GAME-04 click-to-select under OrbitControls gesture state.
 - **D-20-PROPS-CONTRACT** — reframes GAME-01 (not broken). Layout `{x, y, z}` consumed by both renderers — SVG ignores `z` silently; WebGL projects. Props identical, pixels diverge by design.
 - **D-20-CONTEXT-LOSS** — NEW defensive. `webglcontextlost`/`restored` handlers swap to SVG via existing capability hook. Phase 17 didn't address this.
+- **D-20-PLANETS-TIER** — NEW (Destiny-2 Director vibe). Top-K=6 skills by `count` get `isPlanet: true` in `buildConstellationGraph` final pass; planets render LARGER (computeRadius floor 24 / ceil 40 vs star floor 10 / ceil 23) AND always-on halo in BOTH WebGL and SVG renderers. Deterministic tiebreak by id ascending. GAME-01 props-contract preserved. K is UAT-tunable. Bundled into Plan 20-02b wave (alongside OnboardingHint).
 
 ## v3.10 Standing Alerts (carry into plan-PR reviews)
 
@@ -134,7 +135,7 @@ Tag v3.9 on commit 4e9c2b3.
 ## Session Continuity
 
 Last session: 2026-06-10T15:15:00.000Z
-Stopped at: Plan 20-02a Task 1 SUMMARY committed; ready to begin Plan 20-02b (OnboardingHint + i18n). Task 2 (human visual smoke checkpoint) DEFERRED — needs real GPU; operator runs npx serve dist + 10-item checklist per 20-02a-PLAN.md.
+Stopped at: Plan 20-02b scope bundled — OnboardingHint + planets-tier (D-20-PLANETS-TIER, Destiny-2 Director vibe) in one wave. Task 1 hint pill + Task 2 planets-tier (top-K=6 by count, isPlanet flag, larger size + always-on halo in both renderers) + Task 3 human UAT (14 items: 10 pill + 4 planet). Task 2 (20-02a human visual smoke checkpoint) still DEFERRED — needs real GPU.
 Resume file: .planning/phases/20-3d-constellation/20-02b-PLAN.md
 
 ## Deferred Items
