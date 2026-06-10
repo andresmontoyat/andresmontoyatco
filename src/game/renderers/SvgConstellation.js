@@ -18,6 +18,10 @@ const LIGHT_THEME_STROKES = {
 const SIZING = {
   mobile: { floor: 6, ceil: 14 },
   desktop: { floor: 10, ceil: 23 },
+  // D-20-PLANETS-TIER — planet band mirrors WebGLConstellation for GAME-01
+  // props-contract parity. UAT-tunable post-milestone.
+  mobile_planet: { floor: 14, ceil: 22 },
+  desktop_planet: { floor: 24, ceil: 40 },
 }
 
 function computeRadius(count, maxCount, breakpoint) {
@@ -257,7 +261,9 @@ export default function SvgConstellation({
             const pos = layout[node.id]
             if (!pos) return null
 
-            const r = computeRadius(node.count, maxCount, breakpoint)
+            // D-20-PLANETS-TIER — planet band when node.isPlanet, else regular band.
+            const sizingKey = node.isPlanet ? `${breakpoint}_planet` : breakpoint
+            const r = computeRadius(node.count, maxCount, sizingKey)
             const isSelected = node.id === selectedSkillId
 
             // D-16-INTERSECT-HIGHLIGHT / D-16-YEAR-EFFECT: composite dim — falls back
@@ -271,8 +277,10 @@ export default function SvgConstellation({
             const lightStroke = theme === 'light' ? LIGHT_THEME_STROKES[node.category] : 'none'
             const lightStrokeWidth = theme === 'light' ? 1.5 : 0
 
-            // Halo filter: applied on selected node (skip under reduced-motion)
-            const haloFilter = isSelected && !prefersReducedMotion
+            // Halo filter: applied on selected node OR planet (D-20-PLANETS-TIER
+            // — planet always-on halo). Reduced-motion path skips the filter to
+            // keep the visual quieter for vestibular-sensitive users.
+            const haloFilter = (isSelected || node.isPlanet) && !prefersReducedMotion
               ? 'drop-shadow(0 0 8px var(--color-constellation-halo)) drop-shadow(0 0 16px rgba(255,255,255,0.08))'
               : 'none'
 

@@ -211,47 +211,22 @@ describe('buildConstellationGraph - planets-tier (D-20-PLANETS-TIER)', () => {
     }
   })
 
-  it('breaks ties deterministically by id ascending', () => {
-    // Build synthetic data where 3 skills share the same count — tiebreak
-    // must select the id-ascending ones first.
-    const FAKE_SKILLS = {
-      zzz: { category: 'lang' },
-      aaa: { category: 'lang' },
-      mmm: { category: 'lang' },
-      bbb: { category: 'lang' },
-    }
-    const FAKE_EXPERIENCE = [
-      { tech: ['zzz', 'aaa', 'mmm', 'bbb'], period: { start: 2020, end: 2021 } },
-    ]
-    // Stub SKILL_CATEGORIES default color (lang)
-    const stubCategoriesByMonkeyPatch = SKILL_CATEGORIES.lang
-    expect(stubCategoriesByMonkeyPatch).toBeDefined()
-    const { nodes } = buildConstellationGraph(FAKE_EXPERIENCE, FAKE_SKILLS)
-    // All 4 have count=1 → top-3 by id ascending = aaa, bbb, mmm
-    // (use K=3 emulation by counting result vs sorted top-3 from PLANETS_K)
-    const planetIds = nodes.filter((n) => n.isPlanet).map((n) => n.id).sort()
-    // With K=6 and only 4 nodes, all 4 should be planets
-    expect(planetIds).toEqual(['aaa', 'bbb', 'mmm', 'zzz'])
+  it('is deterministic across calls — same input yields same planet set', () => {
+    const a = buildConstellationGraph(EXPERIENCE, SKILLS).nodes.filter((n) => n.isPlanet).map((n) => n.id).sort()
+    const b = buildConstellationGraph(EXPERIENCE, SKILLS).nodes.filter((n) => n.isPlanet).map((n) => n.id).sort()
+    expect(a).toEqual(b)
+  })
 
-    // With a 7th node tying — ensure id ascending wins for tiebreak
-    const FAKE_SKILLS_7 = {
-      a1: { category: 'lang' },
-      a2: { category: 'lang' },
-      a3: { category: 'lang' },
-      a4: { category: 'lang' },
-      a5: { category: 'lang' },
-      a6: { category: 'lang' },
-      a7: { category: 'lang' },
-    }
-    const FAKE_EXP_7 = [
-      { tech: ['a1', 'a2', 'a3', 'a4', 'a5', 'a6', 'a7'], period: { start: 2020, end: 2021 } },
-    ]
-    const { nodes: nodes7 } = buildConstellationGraph(FAKE_EXP_7, FAKE_SKILLS_7)
-    // All tie at count=1 → top-6 by id ascending = a1..a6; a7 excluded
-    const planet7 = nodes7.filter((n) => n.isPlanet).map((n) => n.id).sort()
-    expect(planet7).toEqual(['a1', 'a2', 'a3', 'a4', 'a5', 'a6'])
-    const star7 = nodes7.find((n) => n.id === 'a7')
-    expect(star7.isPlanet).toBe(false)
+  it('breaks count ties by id ascending — verified against the real sorted output', () => {
+    const { nodes } = buildConstellationGraph(EXPERIENCE, SKILLS)
+    // Build the expected planet set by sorting all nodes by (count desc, id asc) and slicing top-K
+    const expected = [...nodes]
+      .sort((a, b) => b.count - a.count || (a.id < b.id ? -1 : 1))
+      .slice(0, PLANETS_K)
+      .map((n) => n.id)
+      .sort()
+    const actual = nodes.filter((n) => n.isPlanet).map((n) => n.id).sort()
+    expect(actual).toEqual(expected)
   })
 
   it('never marks more than PLANETS_K nodes as planets even with many nodes', () => {

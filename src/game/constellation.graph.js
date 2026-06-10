@@ -8,6 +8,13 @@ import { SKILL_CATEGORIES, resolveCanonical } from '../data/skills.js'
 // Update all three together to keep the displayed [min, max] range honest.
 export const CURRENT_YEAR = 2026
 
+// D-20-PLANETS-TIER — top-K skills by count render as "planets" (larger size +
+// always-on halo) in both renderers, evoking the Destiny-2 Director inner-
+// planets visual hierarchy. K is UAT-tunable; consult v3.10-UAT.md before
+// adjusting after milestone close. Deterministic tiebreak by id ascending so
+// node order stays stable across builds.
+export const PLANETS_K = 6
+
 /**
  * Build the constellation skill graph from experience + skills data.
  *
@@ -54,10 +61,19 @@ export function buildConstellationGraph(experience, skills) {
   }
 
   // Finalise nodes: convert _minYear/_maxYear → years tuple, remove temp fields
-  const nodes = Object.values(nodeMap).map(({ _minYear, _maxYear, ...rest }) => ({
+  const rawNodes = Object.values(nodeMap).map(({ _minYear, _maxYear, ...rest }) => ({
     ...rest,
     years: [_minYear, _maxYear],
   }))
+
+  // D-20-PLANETS-TIER — derive isPlanet flag on top-K by count.
+  // Deterministic tiebreak: id ascending so the same set of skills always
+  // resolves to the same planet bucket across builds.
+  const sortedByCount = [...rawNodes].sort(
+    (a, b) => b.count - a.count || (a.id < b.id ? -1 : 1),
+  )
+  const planetIds = new Set(sortedByCount.slice(0, PLANETS_K).map((n) => n.id))
+  const nodes = rawNodes.map((n) => ({ ...n, isPlanet: planetIds.has(n.id) }))
 
   // Step 2: derive co-occurrence edges
   // WR-03: key the edge map with JSON.stringify([a,b]) (collision-proof) instead

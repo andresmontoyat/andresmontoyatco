@@ -44,6 +44,10 @@ const LIGHT_THEME_STROKES = {
 const SIZING = {
   mobile: { floor: 6, ceil: 14 },
   desktop: { floor: 10, ceil: 23 },
+  // D-20-PLANETS-TIER — planet band (top-K skills by count). UAT-tunable;
+  // matches SvgConstellation SIZING for GAME-01 props-contract parity.
+  mobile_planet: { floor: 14, ceil: 22 },
+  desktop_planet: { floor: 24, ceil: 40 },
 }
 
 function computeRadius(count, maxCount, breakpoint) {
@@ -434,10 +438,11 @@ export default function WebGLConstellation({
       colors[i * 3] = fill.r
       colors[i * 3 + 1] = fill.g
       colors[i * 3 + 2] = fill.b
-      sizes[i] = computeRadius(node.count, maxCount, 'desktop')
+      sizes[i] = computeRadius(node.count, maxCount, node.isPlanet ? 'desktop_planet' : 'desktop')
       const dimmed = shouldDimNode(node, { selectedSkillId, highlightedSkillIds, yearRange })
       dims[i] = dimmed ? 0.35 : 1.0
-      halos[i] = node.id === selectedSkillId ? 1.0 : 0.0
+      // D-20-PLANETS-TIER — planet always-on halo; star halo only on select.
+      halos[i] = (node.isPlanet || node.id === selectedSkillId) ? 1.0 : 0.0
       const strokeRaw = theme === 'light' ? LIGHT_THEME_STROKES[node.category] : null
       const stroke = strokeRaw ? parseCSSColor(strokeRaw) : new Color(0, 0, 0)
       strokeColors[i * 3] = stroke.r
@@ -629,7 +634,8 @@ export default function WebGLConstellation({
     if (!geometryRef.current) return
     const haloAttr = geometryRef.current.getAttribute('halo')
     if (!haloAttr) return
-    nodes.forEach((node, i) => haloAttr.setX(i, node.id === selectedSkillId ? 1.0 : 0.0))
+    // D-20-PLANETS-TIER — planet always-on halo; star halo only on select.
+    nodes.forEach((node, i) => haloAttr.setX(i, (node.isPlanet || node.id === selectedSkillId) ? 1.0 : 0.0))
     haloAttr.needsUpdate = true
     if (rendererRef.current && sceneRef.current && cameraRef.current) {
       rendererRef.current.render(sceneRef.current, cameraRef.current)
