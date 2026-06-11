@@ -8,15 +8,23 @@
 - ⏸ **v3.7 — Production Deploy** *(PAUSED, opened 2026-05-20 — deferred 2026-05-29)* — Vercel auto-deploy done (site live on `*.vercel.app`); Phase 11 Plan 11-05 Lighthouse mobile gate verdict, custom domain (Phase 12), and PR previews (Phase 13) **carried as deferred**. Resumes in a future milestone. Phases 11–13 reserved — NOT renumbered.
 - ✅ **v3.8 — Game Mode** *(SHIPPED 2026-06-06)* — Interactive skill-constellation landing (node=skill, edges=co-occurrence), floating bilingual experience cards, multi-skill/year/category filters, persisted game/dev toggle. Adaptive render (WebGL desktop / SVG-DOM mobile) holds the Lighthouse mobile HARD gate (cleared Perf ≥95 / A11y 100 / BP 100 / SEO 100). Vitest + RTL test infra introduced (253 tests GREEN). 8/8 REQs delivered (GAME-01..07 + TEST-01). Phases 14–17. See [`milestones/v3.8-ROADMAP.md`](milestones/v3.8-ROADMAP.md).
 - ✅ **v3.9 — Game Mode Polish** *(SHIPPED 2026-06-08)* — Micro-milestone. Two UX fixes shipped same-day: above-the-fold layout (SkillFilters → fixed bottom-0 z-30; H1 compact; renderer slot flex-1) and never-static constellation (SVG ambient twinkle, prefers-reduced-motion gated). 2/2 REQs delivered (POLISH-01, POLISH-02). 261/261 tests GREEN. Phases 18–19.
-- 🟢 **v3.10 — 3D Constellation** *(ACTIVE, opened 2026-06-08)* — Genuine 3D upgrade on existing desktop WebGL renderer: PerspectiveCamera(fov=55) + OrbitControls drag-to-rotate + category-z layout. Activates SEED-3D-CONSTELLATION. 1 REQ (DEPTH-01) / 1 phase (Phase 20) / 4 plans / 3–5 days. Mobile SVG path UNCHANGED — Lighthouse mobile HARD gate intact. Zero new deps (already-installed `three@0.169.0` ships both new imports). See [`v3.10-REQUIREMENTS.md`](REQUIREMENTS.md) and [`research/SUMMARY.md`](research/SUMMARY.md).
+- ✅ **v3.10 — 3D Constellation** *(SHIPPED 2026-06-10)* — Genuine 3D upgrade on existing desktop WebGL renderer: PerspectiveCamera(fov=55) + OrbitControls drag-to-rotate + category-z layout + featured-tier planet curation. 1 REQ (DEPTH-01) delivered. Phase 20 / 4 plans. Mobile SVG path untouched — Lighthouse mobile HARD gate cleared. Operator UAT 12/12 PASS. Tag candidate `v3.10` queued.
+- 🟡 **v3.11 — Mario-World Experience Map** *(LOCAL-DONE 2026-06-11; pending operator UAT)* — Replaces 3D constellation with Mario-Bros-inspired 2D world-map landing: companies = worlds, roles = levels, 5 era×stack biomes (Pradera/Desierto/Selva/Cyber/Castillo), pixel-art Carlos avatar with arrow-key walk + drag pan, 600/400ms cinematic zoom into per-world overlays, terminal-style typed commands unlock hidden worlds. Hero gate routes Game vs Dev at first paint. Adaptive renderer (WebGL three.js / SvgWorldMap fallback for RM + SVG tier). 4 phases (21–24) / 33 tasks. 150/150 tests GREEN. Bundle gate exit 0 (index 66.49 kB gz / WebGLWorldMap 116.50 kB gz). Lighthouse mobile HARD gate cleared (Perf 0.97 / A11y 1.0 / BP 1.0 / SEO 1.0). Branch `v3.11-mario-world` (33 commits) awaiting operator UAT sweep + tag `v3.11.0` + merge to main. See [`docs/superpowers/specs/2026-06-10-mario-world-experience-map-design.md`](../docs/superpowers/specs/2026-06-10-mario-world-experience-map-design.md) and [`docs/superpowers/plans/2026-06-10-mario-world-experience-map.md`](../docs/superpowers/plans/2026-06-10-mario-world-experience-map.md). UAT checklist at [`phases/v3.11-mario-world-UAT.md`](phases/v3.11-mario-world-UAT.md).
 
 ---
 
 ## Phases
 
-### v3.10 3D Constellation (Phase 20) — 🟢 ACTIVE
+### v3.11 Mario-World Experience Map (Phases 21–24) — 🟡 LOCAL-DONE (pending operator UAT)
 
-- [ ] **Phase 20: 3D Constellation** (DEPTH-01) — genuine 3D + drag-to-rotate on desktop WebGL; SVG mobile path untouched
+- [x] **Phase 21: Foundation** — data layer (biomes + worlds derive + sections) + ViewMode null state + HeroGameGate + DevView + MarioWorld orchestrator + App.js wire-in (Tasks 21.01–21.13)
+- [x] **Phase 22: Renderers** — WorldErrorBoundary + SvgWorldMap + WorldDetailOverlay + sprite placeholders + WebGLWorldMap (three.js static scene) + WorldMap capability wrapper + bundle-gate re-baseline (Tasks 22.01–22.09)
+- [x] **Phase 23: Feel** — useWorldNav (arrow + drag) + useCinematicZoom (600/400ms state machine) + rAF tick wiring (camera lerp + zoom anim + avatar follow) (Tasks 23.01–23.05)
+- [x] **Phase 24: Secrets + Cleanup + Gates** — secret-worlds.js catalog + useSecretCommand + SecretCommandHint + legacy `src/game/` deletion + orphan component cleanup + Lighthouse mobile PASS + UAT scaffold (Tasks 24.01–24.06)
+
+### v3.10 3D Constellation (Phase 20) — ✅ SHIPPED
+
+- [x] **Phase 20: 3D Constellation** (DEPTH-01) — shipped 2026-06-10; superseded visually by v3.11 Mario-World
 
 ### v3.7 Production Deploy (Phases 11–13) — ⏸ DEFERRED
 
