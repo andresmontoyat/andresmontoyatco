@@ -64,6 +64,9 @@ const translations = {
       yearsChipLabel: 'Years',
       skillActiveAndLocked: '{skill} (currently selected — click another node to change)',
     },
+    world: {
+      secretHint: 'Try typing a command…',
+    },
     meta: {
       title: 'Carlos Andrés Montoya Tobón · Solutions Architect & Senior Backend Engineer',
       description: 'Carlos Andrés Montoya Tobón — Solutions Architect and Senior Backend Engineer with 18+ years of experience in Java, Spring, microservices and cloud.',
@@ -284,6 +287,9 @@ const translations = {
       techChipsLabel: 'Tecnologías usadas',
       yearsChipLabel: 'Años',
       skillActiveAndLocked: '{skill} (seleccionado actualmente — haz clic en otro nodo para cambiar)',
+    },
+    world: {
+      secretHint: 'Intenta escribir un comando…',
     },
     meta: {
       title: 'Carlos Andrés Montoya Tobón · Arquitecto de Soluciones e Ingeniero Backend Senior',

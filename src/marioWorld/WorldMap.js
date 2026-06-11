@@ -14,13 +14,16 @@
 // at the avatar's last position (avatar position is preserved across the
 // zoom — never reset).
 
-import React, { useState, lazy, Suspense } from 'react'
+import React, { useState, useMemo, lazy, Suspense } from 'react'
 import WorldErrorBoundary from './WorldErrorBoundary.js'
 import SvgWorldMap from './renderers/SvgWorldMap.js'
 import WorldDetailOverlay from './overlays/WorldDetailOverlay.js'
+import SecretCommandHint from './overlays/SecretCommandHint.js'
 import useRendererCapability from '../game/useRendererCapability.js'
 import useWorldNav from './hooks/useWorldNav.js'
 import useCinematicZoom from './hooks/useCinematicZoom.js'
+import useSecretCommand from './hooks/useSecretCommand.js'
+import { SECRET_WORLDS } from './data/secret-worlds.js'
 
 const WebGLWorldMap = lazy(() => import('./renderers/WebGLWorldMap.js'))
 
@@ -29,9 +32,19 @@ const WORLD_BBOX = { minX: -1000, maxX: 1000, minY: -800, maxY: 800 }
 export default function WorldMap({ worldsData }) {
   const capability = useRendererCapability()
   const [forceSvg, setForceSvg] = useState(false)
-  const [unlockedSecrets] = useState([])
+  const [unlockedSecrets, setUnlockedSecrets] = useState([])
   const nav = useWorldNav({ bbox: WORLD_BBOX })
   const zoom = useCinematicZoom()
+
+  const commands = useMemo(() => SECRET_WORLDS.map((s) => s.command), [])
+  useSecretCommand({
+    commands,
+    onUnlock: (cmd) => {
+      const entry = SECRET_WORLDS.find((s) => s.command === cmd)
+      if (!entry) return
+      setUnlockedSecrets((prev) => (prev.includes(entry.id) ? prev : [...prev, entry.id]))
+    },
+  })
 
   const useGl = capability === 'webgl' && !forceSvg
 
@@ -75,6 +88,7 @@ export default function WorldMap({ worldsData }) {
       {openWorld && (
         <WorldDetailOverlay world={openWorld} onClose={handleOverlayClose} />
       )}
+      <SecretCommandHint />
     </>
   )
 }

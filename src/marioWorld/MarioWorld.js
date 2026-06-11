@@ -18,8 +18,7 @@ import SECTIONS from '../data/sections.js'
 import HeroGameGate from './HeroGameGate.js'
 import DevView from './DevView.js'
 import WorldMap from './WorldMap.js'
-
-const SECRET_WORLDS = []
+import { SECRET_WORLDS } from './data/secret-worlds.js'
 
 export default function MarioWorld() {
   const { viewMode, setViewMode } = useViewMode()
