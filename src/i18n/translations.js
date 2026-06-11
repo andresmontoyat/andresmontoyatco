@@ -75,6 +75,8 @@ const translations = {
       h1c: 'that matter.',
       lead: 'Solutions Architect and Senior Backend Engineer with 18+ years designing Java and Spring-based platforms across fintech, retail, telecom and transportation.',
       cta1: 'Get in touch',
+      enterGame: 'Enter the World',
+      skipToCV: 'Skip to CV',
     },
     stats: {
       years: 'Years',
@@ -294,6 +296,8 @@ const translations = {
       h1c: 'que importan.',
       lead: 'Arquitecto de Soluciones e Ingeniero Backend Senior con +18 años diseñando plataformas en Java y Spring para fintech, retail, telecomunicaciones y transporte.',
       cta1: 'Contáctame',
+      enterGame: 'Entrar al mundo',
+      skipToCV: 'Saltar al CV',
     },
     stats: {
       years: 'Años',
