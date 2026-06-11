@@ -3,15 +3,26 @@ import path from 'node:path'
 import { gzipSync } from 'node:zlib'
 import { fileURLToPath } from 'node:url'
 
-// Named constants (acceptance: rg must find ≥4 matches)
-const MOBILE_CHUNK_PATTERN = /^GameMode-.*\.js$/
-const WEBGL_CHUNK_PATTERN = /^WebGLConstellation-.*\.js$/
+// v3.11 Phase 22 Task 22.9 — chunk-pattern rename:
+//   • old MOBILE_CHUNK (`GameMode-*.js`) became the main entry bundle after
+//     Phase 21 wired MarioWorld directly into App.js (no lazy GameMode).
+//   • old WEBGL_CHUNK (`WebGLConstellation-*.js`) was replaced by the new
+//     Phase 22 lazy boundary at `WebGLWorldMap-*.js`. SvgWorldMap stays in
+//     the main bundle (small DOM-only fallback for the SVG / RM tier).
+// Variable names preserved to minimize ripple; semantics shifted per above.
+const MOBILE_CHUNK_PATTERN = /^index-.*\.js$/
+const WEBGL_CHUNK_PATTERN = /^WebGLWorldMap-.*\.js$/
 // Pitfall CRIT-03 mitigation: widened to catch three/addons/* and three/examples/jsm/* leaks. Phase 20 Plan 01.
 // Matches `THREE.` namespace access AND `from 'three'` / `from 'three/addons/...'` / `from 'three/examples/jsm/...'`
 // (optional `(\/[^'"]+)?` capture group after literal `three`).
 export const THREE_JS_PATTERN = /THREE\.|from\s*['"]three(\/[^'"]+)?['"]/
-const HARD_FAIL_KB = 38.82
-const WARN_LOWER_KB = 14
+// Main-bundle ceiling re-baselined for Phase 22 — was 38.82 kB for the old
+// GameMode lazy chunk; the main entry bundle now carries App + Mario-world
+// orchestrator + DevView + Hero gate + SvgWorldMap + overlay + i18n. Current
+// post-Phase-22 baseline = ~67 kB gz; HARD ceiling at 90 kB leaves room for
+// Phase 23 (zoom + nav + walk anim) without hiding regressions.
+const HARD_FAIL_KB = 90
+const WARN_LOWER_KB = 50
 // v3.10 Plan 20-03 — 3-tier WebGL chunk ladder (checker Warning #4 fix).
 // Tier 1: ≤60 kB → silent (no log emitted).
 // Tier 2: 60 < x ≤ 125 → INFO log (Phase 17 baseline + below REQUIREMENTS soft ceiling).
@@ -33,15 +44,15 @@ export default async function checkBundleGate(distDir = 'dist/assets') {
   const webglChunk = files.find((f) => WEBGL_CHUNK_PATTERN.test(f))
 
   if (!mobileChunk) {
-    throw new Error(`HARD FAIL: GameMode chunk not found in ${absDir}`)
+    throw new Error(`HARD FAIL: main entry chunk (index-*.js) not found in ${absDir}`)
   }
   if (!webglChunk) {
-    console.warn('WARN: WebGLConstellation chunk not found — three.js may be in mobile bundle')
+    console.warn('WARN: WebGLWorldMap chunk not found — three.js may be in main bundle')
   }
 
   const mobileBuf = fs.readFileSync(path.join(absDir, mobileChunk))
   if (THREE_JS_PATTERN.test(mobileBuf.toString())) {
-    throw new Error(`HARD FAIL: ${mobileChunk} contains three.js — Lighthouse mobile gate at risk`)
+    throw new Error(`HARD FAIL: ${mobileChunk} contains three.js — Lighthouse mobile gate at risk (Phase 22: three.js must stay in WebGLWorldMap-*.js lazy chunk)`)
   }
 
   const mobileGz = gzipSync(mobileBuf).length

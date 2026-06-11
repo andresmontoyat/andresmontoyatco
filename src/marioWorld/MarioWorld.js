@@ -17,22 +17,7 @@ import SKILLS from '../data/skills.js'
 import SECTIONS from '../data/sections.js'
 import HeroGameGate from './HeroGameGate.js'
 import DevView from './DevView.js'
-
-// Placeholder until Phase 22 lands. Renders a "world map loading" message;
-// allows phase-21 ship without renderer dependency.
-function WorldMapPlaceholder() {
-  return (
-    <main
-      data-testid="world-map-placeholder"
-      className="container mx-auto p-12 text-center"
-    >
-      <h1 className="text-3xl font-bold">World map loading…</h1>
-      <p className="mt-4">
-        Hero gate took you here. The renderer arrives in Phase 22.
-      </p>
-    </main>
-  )
-}
+import WorldMap from './WorldMap.js'
 
 const SECRET_WORLDS = []
 
@@ -45,5 +30,5 @@ export default function MarioWorld() {
 
   if (viewMode === null) return <HeroGameGate onPick={setViewMode} />
   if (viewMode === 'dev') return <DevView worldsData={worldsData} />
-  return <WorldMapPlaceholder />
+  return <WorldMap worldsData={worldsData} />
 }
