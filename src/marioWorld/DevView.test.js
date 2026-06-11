@@ -30,16 +30,14 @@ describe('DevView', () => {
   it('renders each section from SECTIONS in order', () => {
     render(<LanguageProvider><DevView worldsData={FIXTURE_WORLDS} /></LanguageProvider>)
     for (const s of SECTIONS) {
-      // each section renders as a <section aria-label=...> or has a heading containing its label.en
       const label = typeof s.label === 'string' ? s.label : s.label.en
-      // DevView renders the experience section separately (id='experience'), so we don't expect
-      // a 'Skills' or 'Experience' region matching from SECTIONS — but About/Projects/Claude/Contact
-      // SHOULD render as regions. Skills SHOULD also render as its own region (separate from experience).
-      // Assert each SECTION has SOME identifiable text on the page (heading match or region).
-      expect(
-        screen.queryByText(new RegExp(label, 'i'))
-          || screen.queryByRole('region', { name: new RegExp(label, 'i') }),
-      ).toBeTruthy()
+      // Scope to the section's <h2> to avoid collisions with natural-language
+      // occurrences of the label word in other sections' body content
+      // (e.g. "skills" appears in Claude Code copy describing GSD toolkit).
+      const escaped = label.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+      const heading = screen.queryByRole('heading', { level: 2, name: new RegExp(`^${escaped}$`, 'i') })
+      const region = screen.queryByRole('region', { name: new RegExp(`^${escaped}$`, 'i') })
+      expect(heading || region).toBeTruthy()
     }
   })
 
