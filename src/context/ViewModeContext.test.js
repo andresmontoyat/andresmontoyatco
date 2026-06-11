@@ -40,9 +40,9 @@ afterEach(() => {
 })
 
 describe('ViewModeContext — default and storage', () => {
-  test('default viewMode is "game" when localStorage is empty and no query param', () => {
+  test('default viewMode is null when localStorage is empty and no query param (Hero gate prereq)', () => {
     const ref = renderWithProvider()
-    expect(ref.current.viewMode).toBe('game')
+    expect(ref.current.viewMode).toBe(null)
   })
 
   test('setViewMode("dev") persists "dev" to localStorage under cam-viewmode', () => {
@@ -61,6 +61,7 @@ describe('ViewModeContext — default and storage', () => {
   })
 
   test('toggleViewMode flips game → dev', () => {
+    window.localStorage.setItem('cam-viewmode', 'game')
     const ref = renderWithProvider()
     expect(ref.current.viewMode).toBe('game')
     act(() => {
@@ -80,6 +81,7 @@ describe('ViewModeContext — default and storage', () => {
   })
 
   test('setViewMode with invalid value "bogus" is ignored — state unchanged', () => {
+    window.localStorage.setItem('cam-viewmode', 'game')
     const ref = renderWithProvider()
     expect(ref.current.viewMode).toBe('game')
     act(() => {
@@ -116,22 +118,22 @@ describe('ViewModeContext — ?mode= query param', () => {
     expect(ref.current.viewMode).toBe('dev')
   })
 
-  test('invalid ?mode=hacker with no storage falls back to default "game"', () => {
+  test('invalid ?mode=hacker with no storage falls back to null (Hero gate prereq)', () => {
     setLocationSearch('?mode=hacker')
     const ref = renderWithProvider()
-    expect(ref.current.viewMode).toBe('game')
+    expect(ref.current.viewMode).toBe(null)
   })
 
   test('raw ?mode= param is never assigned directly — only allowlisted value used', () => {
     // Case-sensitive: 'Game' is not in the allowlist ['game','dev']
     setLocationSearch('?mode=Game')
     const ref = renderWithProvider()
-    expect(ref.current.viewMode).toBe('game') // falls back to default, not 'Game'
+    expect(ref.current.viewMode).toBe(null) // falls back to null, not 'Game'
   })
 })
 
 describe('ViewModeContext — localStorage throw safety', () => {
-  test('when localStorage.getItem throws, falls back to default "game" without crashing', () => {
+  test('when localStorage.getItem throws, falls back to null without crashing', () => {
     // WR-04: restoration MUST live in finally — Storage.prototype is
     // process-wide; if a future assertion regression throws before the
     // restore line, every later test inherits the throwing getItem.
@@ -142,7 +144,7 @@ describe('ViewModeContext — localStorage throw safety', () => {
       expect(() => {
         ref = renderWithProvider()
       }).not.toThrow()
-      expect(ref.current.viewMode).toBe('game')
+      expect(ref.current.viewMode).toBe(null)
     } finally {
       Storage.prototype.getItem = originalGetItem
     }

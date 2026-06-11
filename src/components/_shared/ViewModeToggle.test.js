@@ -41,7 +41,8 @@ describe('ViewModeToggle — rendering', () => {
     expect(devBtn).toHaveAttribute('type', 'button')
   })
 
-  test('Game segment shows aria-pressed="true" when viewMode is "game" (default)', () => {
+  test('Game segment shows aria-pressed="true" when viewMode is "game"', () => {
+    window.localStorage.setItem('cam-viewmode', 'game')
     render(<ViewModeToggle />, { wrapper: Providers })
     const gameBtn = screen.getByRole('button', { name: /game/i })
     const devBtn = screen.getByRole('button', { name: /dev/i })

@@ -1,11 +1,10 @@
-import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import React, { createContext, useCallback, useContext, useMemo, useState } from 'react'
 
 const STORAGE_KEY = 'cam-viewmode'
-const DEFAULT_MODE = 'game'
 const VALID_MODES = ['game', 'dev']
 
 function readInitialMode() {
-  if (typeof window === 'undefined') return DEFAULT_MODE
+  if (typeof window === 'undefined') return null
   try {
     // ?mode= deep-link wins over stored choice (D5 — query param precedence)
     const url = new URLSearchParams(window.location.search).get('mode')
@@ -13,40 +12,57 @@ function readInitialMode() {
     const stored = window.localStorage.getItem(STORAGE_KEY)
     if (stored && VALID_MODES.includes(stored)) return stored
   } catch (e) {
-    // localStorage / URL blocked — fall through to default
+    // localStorage / URL blocked — fall through to null
   }
-  return DEFAULT_MODE
+  return null
 }
 
 const ViewModeContext = createContext({
-  viewMode: DEFAULT_MODE,
+  viewMode: null,
   setViewMode: () => {},
+  clearViewMode: () => {},
   toggleViewMode: () => {},
 })
 
 export function ViewModeProvider({ children }) {
   const [viewMode, setViewModeState] = useState(readInitialMode)
 
-  useEffect(() => {
-    try {
-      window.localStorage.setItem(STORAGE_KEY, viewMode)
-    } catch (e) {
-      // localStorage blocked — ignore
-    }
-  }, [viewMode])
-
   const setViewMode = useCallback((next) => {
     if (!VALID_MODES.includes(next)) return
     setViewModeState(next)
+    try {
+      window.localStorage.setItem(STORAGE_KEY, next)
+    } catch (e) {
+      // localStorage blocked — ignore
+    }
+  }, [])
+
+  const clearViewMode = useCallback(() => {
+    setViewModeState(null)
+    try {
+      window.localStorage.removeItem(STORAGE_KEY)
+    } catch (e) {
+      // localStorage blocked — ignore
+    }
   }, [])
 
   const toggleViewMode = useCallback(() => {
-    setViewModeState((prev) => (prev === 'game' ? 'dev' : 'game'))
+    setViewModeState((prev) => {
+      const next = prev === 'game' ? 'dev' : 'game'
+      try {
+        window.localStorage.setItem(STORAGE_KEY, next)
+      } catch (e) {
+        // localStorage blocked — ignore
+      }
+      return next
+    })
   }, [])
 
   const value = useMemo(
-    () => ({ viewMode, setViewMode, toggleViewMode }),
-    [viewMode, setViewMode, toggleViewMode]
+    () => ({
+      viewMode, setViewMode, clearViewMode, toggleViewMode,
+    }),
+    [viewMode, setViewMode, clearViewMode, toggleViewMode]
   )
 
   return <ViewModeContext.Provider value={value}>{children}</ViewModeContext.Provider>
