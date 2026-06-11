@@ -24,7 +24,7 @@ import {
   PerspectiveCamera, Scene, WebGLRenderer, Sprite, SpriteMaterial,
   TextureLoader, Vector3, Mesh, PlaneGeometry, MeshBasicMaterial,
 } from 'three'
-import useClickVsDrag from '../../game/useClickVsDrag.js'
+import useClickVsDrag from '../hooks/useClickVsDrag.js'
 import { BIOMES } from '../data/biomes.js'
 
 const CAMERA_FOV = 55
