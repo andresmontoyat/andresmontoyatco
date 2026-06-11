@@ -138,7 +138,7 @@ const FIXTURE = {
       type: 'section',
       label: { en: 'About', es: 'Sobre' },
       biome: 'pradera',
-      position: { x: 500, y: 500 },
+      position: { x: 100, y: 100 },
       content: { en: 'a', es: 'a' },
     },
     {
@@ -182,13 +182,16 @@ describe('WebGLWorldMap Phase 22 — Task 22.7 contract', () => {
     expect(container.querySelector('canvas')).toBeTruthy()
   })
 
-  it('creates PerspectiveCamera with fov=55, near=10, far=2000', () => {
+  it('creates PerspectiveCamera with fov=55, near=10, far=5000', () => {
     render(<WebGLWorldMap worldsData={FIXTURE} />)
     expect(cameraInstances.length).toBeGreaterThanOrEqual(1)
     const [fov, , near, far] = cameraInstances[0].args
     expect(fov).toBe(55)
     expect(near).toBe(10)
-    expect(far).toBe(2000)
+    // far re-baselined 2000 → 5000 alongside the dynamic camera-z fit pass —
+    // wider layouts (e.g. 17 worlds spanning 1830 units) now push camera-z
+    // past 1500, so the old 2000 far plane clipped the back biome row.
+    expect(far).toBe(5000)
   })
 
   it('creates one biome plane mesh per BIOMES entry (5 biomes)', () => {
@@ -220,9 +223,10 @@ describe('WebGLWorldMap Phase 22 — Task 22.7 contract', () => {
     })
     canvas.setPointerCapture = () => {}
     canvas.releasePointerCapture = () => {}
-    // section:about sits at world position (500,500) = CANVAS_CENTER, so
-    // its scene position is (0,0,0) → projects to NDC origin under the
-    // camera at (0,0,600) lookAt (0,0,0) — center click lands on it.
+    // Both visible worlds share position (100,100); WebGLWorldMap now derives
+    // the world-center dynamically from the visible-worlds bbox, so the bbox
+    // collapses to that single point → both sprites sit at scene origin →
+    // center click projects to NDC (0,0) and picks one of them.
     // jsdom 25 PointerEvent drops clientX/Y on the synthetic init payload, so
     // dispatch as a MouseEvent typed 'pointerdown'/'pointerup' — React listens
     // by event type, not class, and MouseEvent honors clientX/Y in init.
