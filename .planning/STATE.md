@@ -1,171 +1,121 @@
 ---
 gsd_state_version: 1.0
-milestone: v3.10
-milestone_name: 3D Constellation
-status: ready_to_plan
-stopped_at: Phase 20 complete (4/4) — ready to discuss Phase 999.4
-last_updated: 2026-06-10T19:23:00.259Z
-last_activity: 2026-06-10 -- Plan 20-03 Tasks 1+2 merged (14c2adf + 043e39a + 920f482 + c0a9c3a SUMMARY); 293/293 GREEN
+milestone: v3.11
+milestone_name: Mario-World Experience Map
+status: milestone_local_done_pending_uat
+stopped_at: Phase 24 closed; awaiting operator UAT + tag v3.11.0 + push to main
+last_updated: 2026-06-11T00:58:00.000Z
+last_activity: 2026-06-11 -- v3.11 Mario-World implementation complete (32 commits ahead of main); 150/150 GREEN; Lighthouse mobile PASS (Perf 97/A11y 100/BP 100/SEO 100); branch unpushed, tag pending UAT sign-off
 progress:
-  total_phases: 15
-  completed_phases: 0
-  total_plans: 9
-  completed_plans: 57
-  percent: 0
+  total_phases: 4
+  completed_phases: 4
+  total_plans: 33
+  completed_plans: 33
+  percent: 100
 ---
 
 # Project State
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-06-08 — v3.9 SHIPPED, v3.10 OPENED)
+See: .planning/PROJECT.md (updated 2026-06-10 — v3.10 SHIPPED with DEPTH-01).
 
-**Core value:** The hero section and overall first impression must stop recruiters mid-scroll and make them want to learn more about Carlos — and convert visits into engineering conversations.
-**Current focus:** Phase 999.4 — vis company logos
-**Last shipped:** v3.9 Game Mode Polish (2026-06-08) — above-the-fold layout + SVG ambient twinkle; 261/261 tests GREEN; tag v3.9 on 4e9c2b3
+**Core value:** Recruiter-facing portfolio. Stop-the-scroll Hero, dual-view game/dev experience, bilingual (EN/ES), Lighthouse mobile HARD gate intact.
+**Current focus:** v3.11 Mario-World Experience Map — local-done; awaiting operator real-browser UAT before tag + push.
+**Last shipped:** v3.10 3D Constellation (2026-06-10) — tag candidate queued.
+**Local-done (unpushed):** v3.11 Mario-World — branch `v3.11-mario-world`, 32 commits ahead of `main`.
 
 ## Current Position
 
-Phase: 999.4
-Plan: Not started
-Status: Ready to plan
-Last activity: 2026-06-10
-Progress bar: `[██████████] 4/4 plans (Task 3 operator-blocked)`
+Branch: `v3.11-mario-world` (NOT pushed; NOT tagged)
+Milestone: v3.11 Mario-World Experience Map
+Phases: 21, 22, 23, 24 — ALL LOCKED
+Status: `milestone_local_done_pending_uat`
+Last activity: 2026-06-11 00:58
+Progress: `[██████████] 33/33 tasks across 4 phases`
 
-## v3.10 Milestone Scope
+## v3.11 Milestone Scope
 
-1 REQ — single-phase milestone activating SEED-3D-CONSTELLATION (planted 2026-06-08 during v3.9 Phase 18 between Phase 18 GREEN and Phase 19 discuss).
+Replace 3D skill-constellation (v3.8–v3.10) with Mario-Bros-inspired world-map landing experience. Decisions Q1–Q19 locked in `docs/superpowers/specs/2026-06-10-mario-world-experience-map-design.md`. Full plan at `docs/superpowers/plans/2026-06-10-mario-world-experience-map.md` (canonical — not in `.planning/phases/`).
 
-- **DEPTH-01** — Genuine 3D constellation on WebGL desktop renderer: `PerspectiveCamera(fov=55, aspect, near=10, far=2000)` (reconciled from research SUMMARY.md §Conflicts — fov 60 → 55 to avoid widescreen fisheye), per-node `z` via deterministic `CATEGORY_Z` constants in `src/game/constellation.layout.js` (8 categories mapped front-to-back as architecture stack, z ∈ [−150, +150]), `OrbitControls` drag-to-rotate with damping + polar clamp + autoRotate=0.5 (~30 s/orbit) pause-on-interaction, click-vs-drag threshold (5 px + 250 ms; 8 px on touch), VERTEX_SHADER size-attenuation by depth, `webglcontextlost`/`restored` handlers swap to SVG. Mobile SVG path UNCHANGED — Lighthouse mobile HARD gate intact. `prefers-reduced-motion` users continue on static SVG path.
+- Worlds = companies; levels = roles per company; section/secret worlds for non-experience content.
+- 5 biomes (era × stack): Pradera 2007–2012 Java/JEE, Desierto 2013–2017 SOA, Selva 2018–2021 µservices, Cyber 2022–2024 Cloud/K8s, Castillo 2025–2026 Claude/AI.
+- Adaptive renderer: WebGL (three.js) desktop / SvgWorldMap fallback for SVG-tier + RM users.
+- Pixel-art Carlos avatar; arrow keys + drag pan; click world → 600 ms cinematic zoom → overlay; Esc → 400 ms zoom-out.
+- Terminal-style typed commands unlock hidden worlds (dynamic catalog).
+- Hero gate at first paint routes Game vs Dev (classic CV scroll).
 
-## v3.10 Phase Structure
+## v3.11 Phase Structure (all SHIPPED locally)
 
-Single phase / 3 sequential plans / 3–5 days (coarse granularity — single REQ, do NOT split).
+- **Phase 21 — Foundation** (Tasks 21.01–21.13) — biomes + worlds derive + sections data + ViewMode null-state + HeroGameGate + DevView + MarioWorld orchestrator + App.js wire-in
+- **Phase 22 — Renderers** (Tasks 22.01–22.09) — WorldErrorBoundary port + SvgWorldMap + WorldDetailOverlay + sprite placeholders + WebGLWorldMap (three.js) + WorldMap capability wrapper + bundle-gate re-baseline
+- **Phase 23 — Feel** (Tasks 23.01–23.05) — useWorldNav + useCinematicZoom + rAF tick wiring (camera lerp + zoom transitions + avatar follow)
+- **Phase 24 — Secrets + Cleanup + Gates** (Tasks 24.01–24.06) — secret-worlds.js + useSecretCommand + SecretCommandHint + legacy src/game/ deletion + orphan component cleanup + Lighthouse PASS + UAT scaffold
 
-- **Phase 20 — 3D Constellation** → DEPTH-01
-  - **Plan 20-01** Data layer (layout + tests + bundle-gate regex fix) — ~1 day
-  - **Plan 20-02** WebGL renderer (PerspectiveCamera + OrbitControls + shader size-attenuation) — ~2 days
-  - **Plan 20-03** useClickVsDrag hook + UAT + bundle gate close — ~1 day
+## v3.11 Automated Gates (all PASS)
 
-## v3.10 Decisions to Log During Phase 20
+- **Tests:** 150/150 GREEN (`npm test -- --run`); -229 vs Phase 22 peak (legacy `src/game/*.test.js` removed alongside impl)
+- **Bundle gate:** `node scripts/check-bundle-gate.mjs` exit 0
+  - `index-*.js` = 66.49 kB gz (WARN band 50–90 kB; under Phase 22 re-baselined 90 kB HARD)
+  - `WebGLWorldMap-*.js` = 116.50 kB gz (INFO band; under 125 soft / 130 HARD)
+- **Lighthouse mobile HARD gate:** PASS
+  - Performance 0.97 (≥ 0.95)
+  - Accessibility 1.00 (= 1.00)
+  - Best Practices 1.00 (= 1.00)
+  - SEO 1.00 (= 1.00)
+  - Target-size audit 1 (= 1)
 
-Per research SUMMARY.md, Phase 20 must log 4 new decisions:
+## v3.11 Decisions Logged (during implementation)
 
-- **D-20-VISUAL-3D** — supersedes D-17-VISUAL (flat 2D-in-3D ortho). PerspectiveCamera(fov=55) + OrbitControls + category-z layout.
-- **D-20-CLICK-DRAG-THRESHOLD** — NEW. 5 px screen-space + 250 ms time; 8 px on `pointerType === 'touch'`. Preserves GAME-04 click-to-select under OrbitControls gesture state.
-- **D-20-PROPS-CONTRACT** — reframes GAME-01 (not broken). Layout `{x, y, z}` consumed by both renderers — SVG ignores `z` silently; WebGL projects. Props identical, pixels diverge by design.
-- **D-20-CONTEXT-LOSS** — NEW defensive. `webglcontextlost`/`restored` handlers swap to SVG via existing capability hook. Phase 17 didn't address this.
-- **D-20-PLANETS-TIER** — NEW (Destiny-2 Director vibe). Top-K=6 skills by `count` get `isPlanet: true` in `buildConstellationGraph` final pass; planets render LARGER (computeRadius floor 24 / ceil 40 vs star floor 10 / ceil 23) AND always-on halo in BOTH WebGL and SVG renderers. Deterministic tiebreak by id ascending. GAME-01 props-contract preserved. K is UAT-tunable. Bundled into Plan 20-02b wave (alongside OnboardingHint).
+- **D-22-CHUNK-RENAME** — bundle-gate `MOBILE_CHUNK_PATTERN` rebaselined from `GameMode-*.js` → `index-*.js`; `WEBGL_CHUNK_PATTERN` rebaselined from `WebGLConstellation-*.js` → `WebGLWorldMap-*.js`. Variable names preserved; semantics shifted. HARD ceiling 38.82 kB → 90 kB (main bundle now carries App + orchestrator + DevView + Hero gate + SvgWorldMap + overlay + i18n).
+- **D-22-POINTER-INIT** — jsdom 25 PointerEvent strips clientX/Y from init payload. Tests dispatch native `MouseEvent('pointerdown'/'pointerup', ...)` instead — React listens by event type, not class.
+- **D-22-WEBGL-MATRIX** — `WebGLWorldMap` must call `camera.updateProjectionMatrix()` + `camera.updateMatrixWorld(true)` BEFORE first `Vector3.project()` (pick path) — `lookAt` alone doesn't update `matrixWorldInverse`.
+- **D-23-LERP-FACTORS** — Avatar position + camera lerp factor 0.12 / camera-z lerp 0.10 — produces smooth chase + zoom without snap or sluggish drag.
+- **D-23-OVERLAY-GATED** — Overlay mounts only when `zoom.state === 'inWorld'`; click → `zoom.start()` not direct `setOpenWorldId`; close → `zoom.stop()` (plays 400 ms zoom-out first).
+- **D-24-LISTENER-STABLE** — `useSecretCommand` keeps `commands` + `onUnlock` in refs so identity churn from parent re-renders doesn't re-attach the listener (which would drop the rolling buffer mid-typing).
+- **D-24-SHARED-HOOKS-RELOC** — `useRendererCapability` + `useClickVsDrag` + tests moved (git mv) from `src/game/` → `src/marioWorld/hooks/`. Survives Phase 24 deletion.
 
-## v3.10 Standing Alerts (carry into plan-PR reviews)
+## Blockers / Concerns Entering v3.11 Close
 
-- **9 pre-rejected decision violations** (see `.planning/research/PITFALLS.md §"Decision Violations to Flag"`) — flag immediately if any appear in plan PR: `use r3f`, `use d3-force-3d`, `use Line2`, `show WebGL to RM users with autoRotate off`, `add 2D/3D user preference toggle`, `move WebGL out of lazy chunk`, `perspective swap only (no layout z)`, `add Stats.js / dat.gui`, `introduce headless-gl test infra for one phase`.
-- **Bundle-gate regex bug** at `scripts/check-bundle-gate.mjs:12` (current `THREE_JS_PATTERN = /THREE\.|from\s*['"]three['"]/` doesn't catch `three/addons/*`) — fix MUST land in Plan 20-01, NOT Plan 20-02 (must precede the first OrbitControls import to keep "no leak to mobile chunk" continuously enforced).
-- **three.js stays pinned at 0.169.0** — DO NOT bump to 0.184.0 during v3.10 (Phase 17 Lighthouse gate cleared against current pin).
-- **D-17-FRAMELOOP single rAF** — do NOT add `controls.addEventListener('change', renderer.render)`; only `controls.update()` as first line of existing `tick()`.
-- **Manual UAT debt from v3.9** (above-fold + twinkle real-device confirm) bundles with Phase 20 UAT — single real-device sweep covers both.
+- **Manual UAT not yet run.** 12-item operator sweep at `.planning/phases/v3.11-mario-world-UAT.md`. Branch must NOT merge until UAT signed off.
+- **Tag v3.11.0 not cut.** Cut on signed-off commit after UAT closes.
+- **Branch unpushed.** `v3.11-mario-world` lives only locally — single-point-of-failure for 32 commits of work.
+- **Sprite art is placeholder.** Solid-color WebPs from `sharp`. High-fidelity art tracked under `.planning/seeds/SEED-MARIO-WORLD-ART.md` (OPEN-ART-1).
+- **SECRET_WORLDS catalog empty.** Operator adds entries when underlying narratives are written.
 
-## v3.10 Critical Pitfalls (must be addressed in Phase 20 — see PITFALLS.md)
-
-6 ship-blockers mapped to plan structure:
-
-1. **Bundle-gate regex bug** → Plan 20-01 (before OrbitControls import lands).
-2. **`z=0` trap** → Plan 20-01 layout test asserts ≥2 distinct z + range ≥100.
-3. **OrbitControls swallows click** → Plan 20-03 `useClickVsDrag` hook + Plan 20-02 integration.
-4. **Size-attenuation missing** → Plan 20-02 VERTEX_SHADER uniform update.
-5. **Double rAF** → Plan 20-02 preserves D-17-FRAMELOOP; only `controls.update()` added inside `tick()`.
-6. **Auto-rotate vs RM** → Plan 20-02 defensive in-renderer gate + auto-pause on interaction.
-
-Plus 9 moderate + 6 minor pitfalls (see PITFALLS.md).
-
-## Plan 17 Decisions (2026-06-03 — still constrains v3.10)
-
-- **D-17-EXTRACT**: Slice 1 LIFTS `ConstellationErrorBoundary` (GameMode.js:46-67) + `detectCapabilities` (GameMode.js:29-44) to standalone files. Does NOT re-author from scratch. Cleans inline versions + `data-prefers-reduced-motion` attr.
-- **D-17-HOVERED-PROP**: `hoveredSkillId` stays owned by `useConstellation` (already at lines 55, 73, 132). WebGL consumes via props (NOT internal useState). GameMode passes via shared `rendererProps` to BOTH SvgConstellation + WebGLConstellation — Phase 17 doesn't silently extend the contract for one renderer.
-- **D-17-EDGE-RGBA**: Edge geometry uses `BufferAttribute(arr, 4)` + `material.transparent=true` for per-vertex alpha. Avoids light-theme parity failure where pre-multiplied RGB fades to black against light bg.
-- **D-17-LIGHTHOUSE-FLOW**: Phase 17 close runs `npm run lighthouse:mobile` (self-contained, spins up vite preview on :4173) → `npm run lighthouse:check` (programmatic HARD gate, exit code IS verdict). Drops `npx serve dist` from initial plan. Phase 11-05 deployed-*.vercel.app gate stays deferred.
-- **D-17-SC5-TEST**: `src/game/GameMode.test.js` REQUIRED for SC-5 ("capability-based-selection component test"). Slice 1 creates it.
-- **D-17-FRAMELOOP**: single rAF loop — DO NOT add `controls.addEventListener('change', renderer.render)`; only `controls.update()` as first line of existing `tick()`.
-- **D-17-LIB**: three.js raw — NO `@react-three/fiber`, NO `@react-three/drei`.
-- **D-17-PRIMITIVES**: custom ShaderMaterial — `PointsMaterial.sizeAttenuation` does NOT apply; manual size-attenuation formula needed in VERTEX_SHADER.
-
-## v3.9 Phase Structure (closed 2026-06-08 — historical)
-
-- **Phase 18 — Above-the-fold layout** → POLISH-01 — completed 2026-06-08 (259/259 tests GREEN)
-- **Phase 19 — Never-static constellation (SVG ambient twinkle)** → POLISH-02 — completed 2026-06-08 inline (261/261 tests GREEN)
-
-Tag v3.9 on commit 4e9c2b3.
-
-## v3.8 Phase Structure (closed 2026-06-06 — historical)
-
-- **Phase 14 — Foundation: Data Layer, ViewMode Toggle & Test Infra** → GAME-02 (derivation), GAME-05, TEST-01
-- **Phase 15 — Accessible Constellation & SEO Fallback** → GAME-01 (contract + SVG path), GAME-02 (render), GAME-06
-- **Phase 16 — Filters & Floating ExperienceCard** → GAME-03, GAME-04
-- **Phase 17 — WebGL Desktop Renderer & Lighthouse Gate** → GAME-01 (WebGL adapter), GAME-07
-
-## Accumulated Decisions (historical, from v3.6/v3.7/v3.8 — still constrain the codebase)
-
-- **D-v3.6-CSS-VAR**: Tailwind config references `var(--color-*)` — theme system token-driven.
-- **D-v3.6-BRAND**: Blue-500 + emerald-500 palette in both modes; WCAG AA holds.
-- **D-v3.6-HERO-VARIANT-C**: `<picture>` + WebP 800w/1600w + sharp pipeline + theme-aware `--hero-*` CSS vars.
-- **D-v3.6-AI-SECTION**: Lazy-load + bilingual `t.*` namespace + scroll-spy pattern (reusable template).
-- **D-theme/lang Context pattern**: ThemeContext/LanguageContext = provider + hook + localStorage key. ViewModeContext (v3.8) mirrors this.
-- **D-14-01-LAYOUT**: Deterministic radial category-centroid layout chosen over d3-force — zero new dependencies, trivially deterministic, no d3-force in client bundle. v3.10 EXTENDS this to 3D with category-z; d3-force-3d REJECTED.
-- **D-16-CARD-POSITION**: Desktop ExperienceCard = node-anchored popover (offset +24x/-60y from LAYOUT[skillId] center); mobile = bottom-sheet.
-- **D-16-BUNDLE-GATE**: HARD FAIL > 16 kB, WARN 14–16 kB, PASS ≤ 14 kB on GameMode chunk.
-
-## Blockers/Concerns Entering v3.10
-
-- **Bundle-gate regex bug** at `scripts/check-bundle-gate.mjs:12` — fix MUST land in Plan 20-01 BEFORE OrbitControls import in Plan 20-02 to keep "no three.js leak to mobile chunk" continuously enforced. Already flagged in PITFALLS CRIT-03.
-- **`z=0` trap** — if `WebGLConstellation.js:295` keeps `positions[i*3+2] = 0` after layout returns z, all nodes sit on one plane, perspective foreshortens nothing. Plan 20-01 layout test catches this.
-- **OrbitControls swallows click** — needs `useClickVsDrag` hook (Plan 20-03) before pick handler. Existing GAME-04 click-to-select must keep working.
-- **GAME-01 contract reframe** — props stay identical, pixels diverge. Logged as D-20-PROPS-CONTRACT to make the divergence explicit.
-- **CATEGORY_Z design values** — proposals only; UAT-tunable. Plan 20-01 should comment-block "UAT-tunable; consult v3.10-UAT.md before adjusting after milestone close."
-- **fov=55 vs PROJECT.md historical fov=60** — RECONCILED 2026-06-08 (PROJECT.md updated to fov=55 per research SUMMARY.md §Conflicts).
-
-## Backlog / Out of Scope (for v3.10)
-
-- Mobile WebGL / 3D on mobile (mobile-Safari WebGL perf cliff + Lighthouse mobile gate risk)
-- WebXR / VR mode, scroll-to-zoom / pinch-to-zoom, free-look first-person camera
-- Camera-state persistence across viewmode toggle, "Reset view" button, 2D/3D user preference toggle (defer v3.11+ if recruiter UAT demands)
-- Post-processing bloom / fog, per-category depth color shift, onboarding hint pill (defer v3.10.1)
-- Bundle-gate change to enforce desktop chunk HARD ceiling (soft + WARN sufficient)
-- Carried deferred (NOT in v3.10): DEPLOY-01 (Plan 11-05), DEPLOY-02 (custom domain), DEPLOY-03 (PR previews), VIS-05, DIAGRAMS-01, manual UAT v3.9
-
-## Session Continuity
-
-Last session: 2026-06-10T18:26:00.000Z (Plan 20-03 Tasks 1+2 merged via worktree executor)
-Stopped at: CHECKPOINT — Plan 20-03 Tasks 1+2 GREEN + merged to main (14c2adf renderer integration, 043e39a bundle-gate ladder, 920f482 UAT scaffold, c0a9c3a SUMMARY, merge 39330cd). 293/293 tests GREEN, mobile chunk 9.46 kB gz PASS, WebGL chunk 122.63 kB gz INFO baseline. Task 3 = operator-blocked human-verify checkpoint.
-Resume file: .planning/phases/20-3d-constellation/20-UAT.md (operator fills `## Notes / Findings` per 8 items + Lighthouse + v3.9 carried debt)
-Operator runbook:
-  1. npm run build && npm run preview (production preview)
-  2. npm run lighthouse:mobile && npm run lighthouse:check (HARD gate Perf ≥95 / A11y 100 / BP 100 / SEO 100; D-17-LIGHTHOUSE-FLOW)
-  3. Real-browser sweep 20-UAT.md items 1-8 (Chrome stable, macOS 14+, iPhone/Android real device for mobile rows)
-  4. v3.9 carried confirms (above-fold layout + SVG twinkle on real device)
-  5. Synthetic HARD FAIL test on bundle gate (set WEBGL_HARD_KB=10 locally, exit non-zero, revert — do NOT commit)
-  6. Fill 20-UAT.md `## Notes / Findings` + per-item PASS/FAIL + Lighthouse scores + bundle sizes + final test count
-  7. Type `approved` (UAT 8/8 PASS + Lighthouse exit 0) → orchestrator runs phase verifier + ROADMAP close + PROJECT.md evolve, then milestone v3.10 ready for `git tag v3.10`
-  OR itemized FAIL list → route to v3.10.1 gap closure
-
-## Deferred Items
-
-Items acknowledged and deferred at v3.9 close on 2026-06-08, carrying into v3.10:
+## Carried Deferred (NOT in v3.11)
 
 | Category | Item | Status |
 |----------|------|--------|
 | uat_gap | Phase 10 (10-UAT.md) | unknown — 0 pending scenarios (v3.6 carryover) |
 | uat_gap | Phase 11 (11-UAT-LOCAL.md) | unknown — 0 pending scenarios (v3.7 carryover) |
-| uat_gap | Phase 15 (15-HUMAN-UAT.md) | passed — 0 pending scenarios (v3.8 carryover) |
-| uat_gap | v3.9 above-fold + twinkle real-device confirm | deferred — bundle with v3.10 UAT |
 | deploy | DEPLOY-01 Plan 11-05 Lighthouse against `*.vercel.app` | deferred (carries from v3.7) |
 | deploy | DEPLOY-02 custom domain andresmontoyat.co + DNS | deferred (carries from v3.7) |
 | deploy | DEPLOY-03 PR preview deploys | deferred (carries from v3.7) |
 | backlog | VIS-05 claude-kanban + caveman cards | deferred (carries from v3.6) |
 | backlog | DIAGRAMS-01 cross-repo architecture diagrams | deferred (carries from v3.6) |
-| seed | SEED-3D-CONSTELLATION | 🟢 ACTIVE — DEPTH-01 / Phase 20 / v3.10 |
+| seed | SEED-3D-CONSTELLATION | ✅ activated + shipped in v3.10 |
+| seed | SEED-DESTINY-DIRECTOR-AESTHETIC | ✅ activated + shipped in v3.11 |
+| seed | SEED-MARIO-WORLD-ART | 🟢 ACTIVE — OPEN-ART-1; placeholders shipping |
 
-## Operator Next Steps
+## Operator Next Steps (recommended order)
 
-- Run `/gsd:plan-phase 20` to enter Phase 20 planning — research SUMMARY.md flags "Phase 20 does NOT need `--research-phase`" (STACK + FEATURES + ARCHITECTURE + PITFALLS already cover the integration surface).
-- Consider `/gsd:ui-phase` between Plan 20-01 (data-only) and Plan 20-02 (renderer changes) to lock UI-SPEC for perspective swap, OrbitControls gesture behavior, autorotate cadence, and click-vs-drag UX before code lands.
-- At Phase 20 close: re-verify Lighthouse mobile HARD gate ≥ Phase 17 baseline; bundle gate WARN band ≤ 130 kB gz on desktop chunk; tag candidate `v3.10` queued for milestone ceremony.
+1. **Push branch + open PR** — share work; protect against local loss.
+2. **Run manual UAT sweep** — `.planning/phases/v3.11-mario-world-UAT.md` (12 items, real Chrome + iPhone/Android). Populate `Result` column inline.
+3. **Tag + merge** — on UAT 12/12 PASS:
+   ```bash
+   git tag -a v3.11.0 -m "v3.11.0 Mario-World Experience Map"
+   git push origin v3.11-mario-world v3.11.0
+   ```
+   Then squash-merge or fast-forward to `main`.
+4. **Update ROADMAP.md + PROJECT.md** — mark v3.11 SHIPPED, open v3.12 slot (deploy resume? new feature? backlog activation?).
+5. **Optional follow-ups:**
+   - Add real `SECRET_WORLDS` entries when narratives ready.
+   - Commission high-fidelity sprite art for OPEN-ART-1.
+
+## Session Continuity
+
+Last session: 2026-06-11T00:58:00.000Z (v3.11 Phase 24 close — Lighthouse PASS)
+Stopped at: ALL CODE DONE. 32 commits on `v3.11-mario-world` ahead of `main`. Awaiting operator UAT + tag + push.
+Resume file: `.planning/phases/v3.11-mario-world-UAT.md` (operator fills `Result` column per 12 items + sign-off section).
+Next /gsd-resume-work should: ask operator whether UAT has been run; if yes → guide tag + push; if no → present option to push branch first (UAT can happen against deployed preview).
