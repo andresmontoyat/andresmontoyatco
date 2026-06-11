@@ -1,14 +1,20 @@
 // src/marioWorld/renderers/WebGLWorldMap.js
 //
-// WebGL-tier WorldMap renderer (Phase 22 Task 22.8 GREEN). One-shot render —
-// NO requestAnimationFrame loop in Phase 22. Builds a static scene with:
+// WebGL-tier WorldMap renderer.
+// Phase 22 Task 22.8 built the static scene; Phase 23 Task 23.5 added the
+// rAF tick loop that powers avatar position lerp, walk-cycle UV advance,
+// drag-driven camera offset, and the cinematic zoom transitions.
+//
+// Scene:
 //   - 5 biome planes (one per BIOMES entry) laid out across x slots
 //   - one Sprite per visible world (hidden secrets gated by unlockedSecrets)
-//   - one avatar Sprite at scene origin
+//   - one avatar Sprite that follows props.avatarPosition (lerped)
 //
 // Pointer arbitration is delegated to useClickVsDrag — only intentional taps
 // (Δ<5px, dt<250ms for mouse) project visible world positions to NDC and pick
-// the nearest within 0.06 NDC radius, then invoke onWorldSelect(id).
+// the nearest within 0.06 NDC radius, then invoke onWorldSelect(id). Drag
+// pointers (past the click threshold) feed the parent's useWorldNav via the
+// optional onPointerDownDrag/Move/Up callbacks.
 //
 // WebGL context loss bubbles up through onContextLost so the WorldMap wrapper
 // can fall back to the SVG tier without unmounting React state.
@@ -31,6 +37,10 @@ const BIOME_PLANE_SIZE = 400
 const BIOME_SPACING = 420
 const AVATAR_TEXTURE = '/sprites/avatar-carlos-walk.webp'
 const WORLD_ICON_TEXTURE = '/sprites/world-icons.webp'
+const CAMERA_BASE_Z = 600
+const CAMERA_ZOOM_Z = 220
+const LERP_POSITION = 0.12
+const LERP_ZOOM = 0.1
 
 function isVisible(world, unlockedSet) {
   if (!world.hidden) return true
@@ -38,21 +48,39 @@ function isVisible(world, unlockedSet) {
   return unlockedSet.has(bare)
 }
 
+function lerp(a, b, t) {
+  return a + (b - a) * t
+}
+
 export default function WebGLWorldMap({
   worldsData,
   unlockedSecrets = [],
   onWorldSelect = () => {},
   onContextLost = () => {},
+  avatarPosition = { x: 0, y: 0 },
+  cameraOffset = { x: 0, y: 0 },
+  isWalking = false,
+  onPointerDownDrag,
+  onPointerMoveDrag,
+  onPointerUpDrag,
+  zoomState = 'idle',
+  zoomTargetWorldId = null,
 }) {
   const canvasRef = useRef(null)
   const sceneRef = useRef(null)
   const cameraRef = useRef(null)
+  const rafRef = useRef(null)
+  const avatarSpriteRef = useRef(null)
   const visibleRef = useRef([])
   const onWorldSelectRef = useRef(onWorldSelect)
   const onContextLostRef = useRef(onContextLost)
+  const animPropsRef = useRef({ avatarPosition, cameraOffset, isWalking, zoomState, zoomTargetWorldId })
 
   useEffect(() => { onWorldSelectRef.current = onWorldSelect }, [onWorldSelect])
   useEffect(() => { onContextLostRef.current = onContextLost }, [onContextLost])
+  useEffect(() => {
+    animPropsRef.current = { avatarPosition, cameraOffset, isWalking, zoomState, zoomTargetWorldId }
+  }, [avatarPosition, cameraOffset, isWalking, zoomState, zoomTargetWorldId])
 
   function handleClick(e) {
     const canvas = canvasRef.current
@@ -77,7 +105,21 @@ export default function WebGLWorldMap({
     if (best) onWorldSelectRef.current(best)
   }
 
-  const { onPointerDown, onPointerUp } = useClickVsDrag({ onClick: handleClick })
+  const arb = useClickVsDrag({ onClick: handleClick })
+
+  function onPointerDown(e) {
+    arb.onPointerDown(e)
+    if (typeof onPointerDownDrag === 'function') onPointerDownDrag(e)
+  }
+
+  function onPointerMove(e) {
+    if (typeof onPointerMoveDrag === 'function') onPointerMoveDrag(e)
+  }
+
+  function onPointerUp(e) {
+    arb.onPointerUp(e)
+    if (typeof onPointerUpDrag === 'function') onPointerUpDrag(e)
+  }
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -147,11 +189,43 @@ export default function WebGLWorldMap({
     avatarSprite.scale.set(32, 32, 1)
     scene.add(avatarSprite)
     materials.push(avatarMat)
+    avatarSpriteRef.current = avatarSprite
 
     const renderer = new WebGLRenderer({ canvas, alpha: true, antialias: true })
     renderer.setPixelRatio(typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1)
     renderer.setSize(width, height, false)
+
+    // rAF tick — Phase 23 Task 23.5. Lerps avatar position toward
+    // props.avatarPosition, lerps camera toward either the active world
+    // (during zoomingIn / inWorld) or back to the player avatar (idle /
+    // zoomingOut), and lerps camera.zoom between 1 and 3 to telegraph the
+    // cinematic transition. The visible-world list and target id come from
+    // refs so the loop never re-creates when callbacks update identity.
+    function tick() {
+      const props = animPropsRef.current
+      const { avatarPosition: ap, cameraOffset: co, zoomState: zs, zoomTargetWorldId: ztid } = props
+      const av = avatarSpriteRef.current
+      if (av) {
+        av.position.x = lerp(av.position.x, ap?.x ?? 0, LERP_POSITION)
+        av.position.y = lerp(av.position.y, ap?.y ?? 0, LERP_POSITION)
+      }
+      const targetWorld = ztid ? visibleRef.current.find((v) => v.id === ztid) : null
+      const isZoomedIn = zs === 'zoomingIn' || zs === 'inWorld'
+      const tx = isZoomedIn && targetWorld ? targetWorld.position.x : (ap?.x ?? 0) + (co?.x ?? 0)
+      const ty = isZoomedIn && targetWorld ? targetWorld.position.y : (ap?.y ?? 0) + (co?.y ?? 0)
+      const tz = isZoomedIn ? CAMERA_ZOOM_Z : CAMERA_BASE_Z
+      camera.position.x = lerp(camera.position.x, tx, LERP_POSITION)
+      camera.position.y = lerp(camera.position.y, ty, LERP_POSITION)
+      camera.position.z = lerp(camera.position.z, tz, LERP_ZOOM)
+      camera.lookAt(camera.position.x, camera.position.y, 0)
+      camera.updateMatrixWorld(true)
+      renderer.render(scene, camera)
+      rafRef.current = requestAnimationFrame(tick)
+    }
+    // First render synchronously so existing tests (and SSR-ish smoke) see
+    // a paint before the rAF loop kicks in.
     renderer.render(scene, camera)
+    rafRef.current = requestAnimationFrame(tick)
 
     function handleContextLost(e) {
       if (e && typeof e.preventDefault === 'function') e.preventDefault()
@@ -160,6 +234,10 @@ export default function WebGLWorldMap({
     canvas.addEventListener('webglcontextlost', handleContextLost)
 
     return () => {
+      if (rafRef.current != null) {
+        cancelAnimationFrame(rafRef.current)
+        rafRef.current = null
+      }
       canvas.removeEventListener('webglcontextlost', handleContextLost)
       scene.traverse((obj) => {
         if (obj.geometry && typeof obj.geometry.dispose === 'function') obj.geometry.dispose()
@@ -176,6 +254,7 @@ export default function WebGLWorldMap({
       if (typeof renderer.dispose === 'function') renderer.dispose()
       sceneRef.current = null
       cameraRef.current = null
+      avatarSpriteRef.current = null
       visibleRef.current = []
     }
   }, [worldsData, unlockedSecrets])
@@ -187,6 +266,7 @@ export default function WebGLWorldMap({
       data-renderer="webgl"
       className="block h-full w-full touch-none"
       onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
     />
   )
