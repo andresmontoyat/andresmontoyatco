@@ -17,6 +17,7 @@
 import React, { useState, useMemo, lazy, Suspense } from 'react'
 import WorldErrorBoundary from './WorldErrorBoundary.js'
 import SvgWorldMap from './renderers/SvgWorldMap.js'
+import IllustratedWorldMap from './renderers/IllustratedWorldMap.js'
 import WorldDetailOverlay from './overlays/WorldDetailOverlay.js'
 import SecretCommandHint from './overlays/SecretCommandHint.js'
 import useRendererCapability from './hooks/useRendererCapability.js'
@@ -25,9 +26,17 @@ import useCinematicZoom from './hooks/useCinematicZoom.js'
 import useSecretCommand from './hooks/useSecretCommand.js'
 import { SECRET_WORLDS } from './data/secret-worlds.js'
 
+// WebGL renderer kept as opt-in via ?renderer=webgl — default game-view
+// is now the IllustratedWorldMap (SVG-illustrated overworld, no three.js
+// in the critical path).
 const WebGLWorldMap = lazy(() => import('./renderers/WebGLWorldMap.js'))
 
-const WORLD_BBOX = { minX: -1000, maxX: 1000, minY: -800, maxY: 800 }
+function readRendererOverride() {
+  if (typeof window === 'undefined') return null
+  return new URLSearchParams(window.location.search).get('renderer')
+}
+
+const WORLD_BBOX = { minX: -200, maxX: 2000, minY: -200, maxY: 600 }
 
 export default function WorldMap({ worldsData }) {
   const capability = useRendererCapability()
@@ -46,7 +55,9 @@ export default function WorldMap({ worldsData }) {
     },
   })
 
-  const useGl = capability === 'webgl' && !forceSvg
+  const rendererOverride = readRendererOverride()
+  const useGl = rendererOverride === 'webgl' && !forceSvg
+  const useSvgList = rendererOverride === 'svg' || capability !== 'webgl'
 
   const handleWorldSelect = (id) => zoom.start(id)
   const handleOverlayClose = () => zoom.stop()
@@ -55,7 +66,7 @@ export default function WorldMap({ worldsData }) {
     ? (worldsData?.worlds ?? []).find((w) => w.id === zoom.activeWorldId)
     : null
 
-  const svgFallback = (
+  const svgListFallback = (
     <SvgWorldMap
       worldsData={worldsData}
       unlockedSecrets={unlockedSecrets}
@@ -63,27 +74,51 @@ export default function WorldMap({ worldsData }) {
     />
   )
 
+  const illustrated = (
+    <IllustratedWorldMap
+      worldsData={worldsData}
+      unlockedSecrets={unlockedSecrets}
+      onWorldSelect={handleWorldSelect}
+      avatarPosition={nav.position}
+      cameraOffset={nav.cameraOffset}
+      onPointerDownDrag={nav.onPointerDown}
+      onPointerMoveDrag={nav.onPointerMove}
+      onPointerUpDrag={nav.onPointerUp}
+      zoomState={zoom.state}
+      zoomTargetWorldId={zoom.activeWorldId}
+    />
+  )
+
+  let body
+  if (useGl) {
+    body = (
+      <Suspense fallback={illustrated}>
+        <WebGLWorldMap
+          worldsData={worldsData}
+          unlockedSecrets={unlockedSecrets}
+          onWorldSelect={handleWorldSelect}
+          onContextLost={() => setForceSvg(true)}
+          avatarPosition={nav.position}
+          cameraOffset={nav.cameraOffset}
+          isWalking={nav.isWalking}
+          onPointerDownDrag={nav.onPointerDown}
+          onPointerMoveDrag={nav.onPointerMove}
+          onPointerUpDrag={nav.onPointerUp}
+          zoomState={zoom.state}
+          zoomTargetWorldId={zoom.activeWorldId}
+        />
+      </Suspense>
+    )
+  } else if (useSvgList) {
+    body = svgListFallback
+  } else {
+    body = illustrated
+  }
+
   return (
     <>
-      <WorldErrorBoundary fallback={svgFallback}>
-        {useGl ? (
-          <Suspense fallback={svgFallback}>
-            <WebGLWorldMap
-              worldsData={worldsData}
-              unlockedSecrets={unlockedSecrets}
-              onWorldSelect={handleWorldSelect}
-              onContextLost={() => setForceSvg(true)}
-              avatarPosition={nav.position}
-              cameraOffset={nav.cameraOffset}
-              isWalking={nav.isWalking}
-              onPointerDownDrag={nav.onPointerDown}
-              onPointerMoveDrag={nav.onPointerMove}
-              onPointerUpDrag={nav.onPointerUp}
-              zoomState={zoom.state}
-              zoomTargetWorldId={zoom.activeWorldId}
-            />
-          </Suspense>
-        ) : svgFallback}
+      <WorldErrorBoundary fallback={svgListFallback}>
+        {body}
       </WorldErrorBoundary>
       {openWorld && (
         <WorldDetailOverlay world={openWorld} onClose={handleOverlayClose} />
