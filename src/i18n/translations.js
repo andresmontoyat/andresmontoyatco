@@ -30,7 +30,7 @@ const translations = {
       h1a: 'Building scalable',
       h1b: 'backend systems',
       h1c: 'that matter.',
-      lead: 'Solutions Architect and Senior Backend Engineer with 18+ years designing Java and Spring-based platforms across fintech, retail, telecom and transportation.',
+      lead: 'Started in 2007 as a Java full-stack developer, then grew through DevOps, Tech Lead and Solutions Architect roles. 18+ years shipping platforms across fintech, transport, retail, logistics, defense, blockchain, Keycloak-based identity, government and higher education.',
       cta1: 'Get in touch',
     },
     stats: {
@@ -206,7 +206,7 @@ const translations = {
       h1a: 'Construyendo sistemas',
       h1b: 'backend escalables',
       h1c: 'que importan.',
-      lead: 'Arquitecto de Soluciones e Ingeniero Backend Senior con +18 años diseñando plataformas en Java y Spring para fintech, retail, telecomunicaciones y transporte.',
+      lead: 'Empecé en 2007 como desarrollador Java full-stack y crecí pasando por roles de DevOps, Tech Lead y Arquitecto de Soluciones. +18 años entregando plataformas para fintech, transporte, retail, logística, defensa, blockchain, identidad con Keycloak, gobierno y educación superior.',
       cta1: 'Contáctame',
     },
     stats: {
