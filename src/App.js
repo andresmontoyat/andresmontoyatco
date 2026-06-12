@@ -4,6 +4,7 @@ import { LanguageProvider } from './i18n/LanguageContext'
 import { ThemeProvider } from './i18n/ThemeContext'
 import Nav from './components/Nav'
 import Hero from './components/Hero'
+import Contact from './components/Contact'
 import Footer from './components/Footer'
 
 export default function App() {
@@ -14,6 +15,7 @@ export default function App() {
           <Nav />
           <main>
             <Hero />
+            <Contact />
           </main>
           <Footer />
         </div>
