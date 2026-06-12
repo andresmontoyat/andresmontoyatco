@@ -64,7 +64,7 @@ function Logomark() {
       href="#hero"
       className="font-mono text-xs tracking-tight text-text-primary"
     >
-      &lt;<span className="text-brand">/</span>cam&gt;
+      &lt;<span className="text-brand">/</span>camt&gt;
     </a>
   )
 }
