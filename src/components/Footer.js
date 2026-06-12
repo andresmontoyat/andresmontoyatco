@@ -2,8 +2,8 @@ import React from 'react'
 import { useLanguage } from '../i18n/LanguageContext'
 
 const social = [
-  { name: 'LinkedIn', href: 'https://www.linkedin.com/in/carlos-andres-montoya-tobon-8b508033/', label: 'in' },
   { name: 'GitHub', href: 'https://github.com/andresmontoyat', label: 'gh' },
+  { name: 'LinkedIn', href: 'https://www.linkedin.com/in/carlos-andres-montoya-tobon-8b508033/', label: 'in' },
 ]
 
 export default function Footer() {
