@@ -1,0 +1,44 @@
+{
+  "label": { "en": "Contact", "es": "Contacto" },
+  "h2": { "en": "Let's build something", "es": "Construyamos algo juntos" },
+  "intro": { "en": "Open to senior backend, architecture and technical leadership roles. Feel free to reach out.", "es": "Abierto a roles senior de backend, arquitectura y liderazgo técnico. Escríbeme sin pena." },
+  "cards": [
+    {
+      "id": "email",
+      "icon": "✉",
+      "kLabel": { "en": "Email", "es": "Correo" },
+      "value": "andresmontoyat@gmail.com",
+      "href": "mailto:andresmontoyat@gmail.com"
+    },
+    {
+      "id": "phone",
+      "icon": "☎",
+      "kLabel": { "en": "Phone", "es": "Teléfono" },
+      "value": "+57 324 442 2196",
+      "href": "tel:+573244422196"
+    },
+    {
+      "id": "linkedin",
+      "icon": "in",
+      "kLabel": { "en": "LinkedIn", "es": "LinkedIn" },
+      "value": "carlos-andres-montoya-tobon",
+      "href": "https://www.linkedin.com/in/carlos-andres-montoya-tobon-8b508033",
+      "external": true
+    },
+    {
+      "id": "github",
+      "icon": "gh",
+      "kLabel": { "en": "GitHub", "es": "GitHub" },
+      "value": "andresmontoyat",
+      "href": "https://github.com/andresmontoyat",
+      "external": true
+    },
+    {
+      "id": "location",
+      "icon": "◆",
+      "kLabel": { "en": "Location", "es": "Ubicación" },
+      "value": "Medellín, Colombia",
+      "href": null
+    }
+  ]
+}
