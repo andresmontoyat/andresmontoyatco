@@ -100,7 +100,7 @@ Remove every key associated with game / mario / world / biome / secret / sprite 
 
 #### `src/i18n/ThemeContext.js`
 
-Audit for game-mode references; expected to be palette-only. Leave untouched if no refs found.
+Grep for game/mario/world/biome/secret references. Expected result: none — `ThemeContext` should be a pure light/dark toggle. If the grep is clean, leave the file untouched. If references exist, remove only the offending lines and note the diff in the commit message.
 
 #### `tailwind.config.js`
 
@@ -249,7 +249,7 @@ The `WorldErrorBoundary` is gone with the rest of `src/marioWorld/`. This slice 
 | `Nav.js` / `Hero.js` / `Footer.js` reference removed translation keys | medium | broken render | grep each component for `t.` / `translations.` keys before stripping `translations.js`; only remove keys not referenced anywhere |
 | Bundle re-baseline too tight; first edit blows it up | low | gate fails on next slice | set provisional 50 kB HARD then measure; commit the *measured* number as the new baseline in the same slice |
 | Lighthouse mobile gate regression | low | gate fails | the only change is *removing* code; performance should improve, but run the mobile audit before opening the PR |
-| Visual jarring on the live preview while page is bare | high | optics during review | acceptable — Slice 1 ships as a "construction site" snapshot; About slice fills the page within the same session if needed |
+| Visual jarring on the live preview while page is bare | high | optics during review | accepted — Slice 1 ships as a "construction site" snapshot. About and the rest follow in their own slices; no rush to bundle them in here |
 | Hidden coupling between `ThemeContext` and game mode | low | runtime crash | audit `ThemeContext.js` content before delete decisions |
 
 ## 9. Migration & Rollback
