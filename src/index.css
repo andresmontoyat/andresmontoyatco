@@ -4,19 +4,32 @@
 
 @layer base {
   :root {
-    /* Surface scale (ink) — canonical token-mirror names (dark defaults) */
-    --color-ink-950: #0D0D1A;
-    --color-ink-900: #12121F;
-    --color-ink-800: #1A1A2E;
-    --color-ink-700: #1F1F3A;
-    --color-ink-600: #252545;
-    --color-ink-500: #2D2D5A;
-    --color-ink-400: #3A3A6A;
+    /* === v4.0 base palette (target: website-new/index.html) === */
+    /* Spec token names (canonical) */
+    --bg:        #0B1020;
+    --bg-2:      #0F1530;
+    --bg-3:      #131A3A;
+    --surface:   #151C3D;
+    --border:    #1F2A55;
+    --text:      #E6ECFF;
+    --muted:     #8892B8;
+    --accent:    #00E5A8;
+    --accent-2:  #00C2FF;
+    --grad-accent: linear-gradient(135deg, #00E5A8 0%, #00C2FF 100%);
+    --radius:    14px;
+    --shadow-accent: 0 20px 40px -20px rgba(0, 229, 168, 0.25);
 
-    /* Pre-resolved alpha variants — Tailwind cannot splice /alpha into a
-       CSS-var-backed color (Phase 9 review WR-02). Provide rgba literals
-       here so arbitrary-value classes (bg-[var(--color-ink-500-60)]) work. */
-    --color-ink-500-60: rgba(45, 45, 90, 0.6);
+    /* Legacy token mirrors — point existing ink/brand/accent names to the new palette
+       so parked components (Nav/Hero/Footer) absorb the new look without a refactor.
+       Section slices will re-pick the canonical tokens above when each section is rebuilt. */
+    --color-ink-950: #07091A;
+    --color-ink-900: #0B1020;   /* = --bg */
+    --color-ink-800: #0F1530;   /* = --bg-2 */
+    --color-ink-700: #131A3A;   /* = --bg-3 */
+    --color-ink-600: #151C3D;   /* = --surface */
+    --color-ink-500: #1F2A55;   /* = --border */
+    --color-ink-400: #2A3870;
+    --color-ink-500-60: rgba(31, 42, 85, 0.6);
 
     /* Surface aliases — Phase 5 backward compat (raw CSS that references these still resolves) */
     --color-surface-deepest: var(--color-ink-950);
@@ -24,20 +37,18 @@
     --color-surface-mid:     var(--color-ink-800);
     --color-surface-raised:  var(--color-ink-700);
 
-    /* Brand — blue-500 (COLOR-01, Plan 07-02) */
-    --color-brand:        #3B82F6;  /* blue-500 */
-    --color-brand-light:  #60A5FA;  /* blue-400 */
-    --color-brand-dark:   #2563EB;  /* blue-600 */
-    --color-brand-muted:  rgba(59, 130, 246, 0.12);
+    --color-brand:        #00E5A8;            /* = --accent */
+    --color-brand-light:  #33EBBC;
+    --color-brand-dark:   #00B886;
+    --color-brand-muted:  rgba(0, 229, 168, 0.12);
 
-    /* Accent — emerald-500 (COLOR-01, Plan 07-02) */
-    --color-accent:        #10B981;  /* emerald-500 */
-    --color-accent-light:  #34D399;  /* emerald-400 */
-    --color-accent-dark:   #059669;  /* emerald-600 */
-    --color-accent-muted:  rgba(16, 185, 129, 0.12);
+    --color-accent:        #00C2FF;           /* = --accent-2 */
+    --color-accent-light:  #33CEFF;
+    --color-accent-dark:   #009BCC;
+    --color-accent-muted:  rgba(0, 194, 255, 0.12);
 
     /* Text */
-    --color-text-primary:   #F0F0FF;
+    --color-text-primary:   #E6ECFF;          /* = --text */
     --color-text-secondary: #A0A0C0;
     --color-text-muted:     #606080;
     --color-text-inverse:   #0D0D1A;
@@ -270,5 +281,33 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+}
+
+@layer base {
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', 'SF Pro Display', 'Segoe UI', system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.65;
+    overflow-x: hidden;
+  }
+  body::before {
+    content: ""; position: fixed; inset: 0; z-index: -2; pointer-events: none;
+    background:
+      radial-gradient(600px circle at 10% 0%, rgba(0, 229, 168, 0.08), transparent 50%),
+      radial-gradient(800px circle at 90% 20%, rgba(0, 194, 255, 0.06), transparent 55%),
+      linear-gradient(180deg, #0B1020 0%, #0A0F1E 100%);
+  }
+  body::after {
+    content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+    background-image:
+      linear-gradient(rgba(0, 229, 168, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 229, 168, 0.03) 1px, transparent 1px);
+    background-size: 44px 44px;
+    mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
+    -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
   }
 }

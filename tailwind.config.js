@@ -70,9 +70,18 @@ module.exports = {
           text:    'var(--color-cv-cta-text)',
           hoverBg: 'var(--color-cv-cta-hover-bg)',
         },
+        // v4.0 canonical spec tokens — direct CSS-var aliases
+        bg:        'var(--bg)',
+        'bg-2':    'var(--bg-2)',
+        'bg-3':    'var(--bg-3)',
+        surface:   'var(--surface)',
+        border:    'var(--border)',
+        text:      'var(--text)',
+        muted:     'var(--muted)',
+        'accent-2':'var(--accent-2)',
       },
       fontFamily: {
-        sans: ['Inter', 'SF Pro Display', 'Segoe UI', 'system-ui', 'sans-serif'],
+        sans: ['Inter', 'SF Pro Display', 'Segoe UI', 'system-ui', '-apple-system', 'sans-serif'],
         mono: ['JetBrains Mono', 'Fira Code', 'ui-monospace', 'monospace'],
         display: ['Inter', 'SF Pro Display', 'system-ui', 'sans-serif'],
       },
@@ -82,6 +91,8 @@ module.exports = {
         'hero-gradient': 'var(--bg-hero-gradient)',
         'brand-gradient': 'var(--bg-brand-gradient)',
         'card-gradient': 'var(--bg-card-gradient)',
+        // v4.0 spec gradient
+        'grad-accent': 'linear-gradient(135deg, #00E5A8 0%, #00C2FF 100%)',
       },
       boxShadow: {
         // Shadows resolve via CSS vars (theme-aware) — see src/index.css
