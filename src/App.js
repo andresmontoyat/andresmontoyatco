@@ -12,7 +12,7 @@ export default function App() {
       <LanguageProvider>
         <div className="min-h-screen bg-bg text-text font-sans antialiased">
           <Nav />
-          <main className="container mx-auto px-4">
+          <main>
             <Hero />
           </main>
           <Footer />
