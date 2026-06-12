@@ -163,13 +163,6 @@ const translations = {
         devops: 'DevOps automation',
       },
     },
-    contact: {
-      label: 'Contact',
-      h2: "Let's build something",
-      intro: 'Open to senior backend, architecture and technical leadership roles. Feel free to reach out.',
-      phone: 'Phone',
-      email: 'Email',
-    },
     footer: {
       rights: 'All rights reserved',
       tagline: 'I write code. Let\'s build something amazing together.',
@@ -338,13 +331,6 @@ const translations = {
         legacy: 'Legacy refactor',
         devops: 'DevOps automation',
       },
-    },
-    contact: {
-      label: 'Contacto',
-      h2: 'Construyamos algo juntos',
-      intro: 'Abierto a roles senior de backend, arquitectura y liderazgo técnico. Escríbeme sin pena.',
-      phone: 'Teléfono',
-      email: 'Correo',
     },
     footer: {
       rights: 'Todos los derechos reservados',
