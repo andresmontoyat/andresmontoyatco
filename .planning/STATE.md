@@ -1,171 +1,108 @@
 ---
 gsd_state_version: 1.0
-milestone: v3.10
-milestone_name: 3D Constellation
-status: ready_to_plan
-stopped_at: Phase 20 complete (4/4) — ready to discuss Phase 999.4
-last_updated: 2026-06-10T19:23:00.259Z
-last_activity: 2026-06-10 -- Plan 20-03 Tasks 1+2 merged (14c2adf + 043e39a + 920f482 + c0a9c3a SUMMARY); 293/293 GREEN
+milestone: v4.0
+milestone_name: Portfolio Redesign — JSON-Driven Section Refactor
+status: in_progress
+stopped_at: Slices 1-4 shipped to main; Slice 5 (Experience or Projects or Claude) next
+last_updated: 2026-06-13T23:53:00.000Z
+last_activity: 2026-06-13 -- PR #26 merged to main (a623ede squash carries Slices 1+2+3+4); 34/34 GREEN; 55.65 kB gz
 progress:
-  total_phases: 15
-  completed_phases: 0
-  total_plans: 9
-  completed_plans: 57
-  percent: 0
+  total_slices: 7
+  completed_slices: 4
+  remaining_slices: 3
+  percent: 57
 ---
 
 # Project State
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-06-08 — v3.9 SHIPPED, v3.10 OPENED)
+See: .planning/PROJECT.md (STALE — still references v3.10/v3.11 as latest shipped; not yet updated for v4.0 redesign milestone)
 
-**Core value:** The hero section and overall first impression must stop recruiters mid-scroll and make them want to learn more about Carlos — and convert visits into engineering conversations.
-**Current focus:** Phase 999.4 — vis company logos
-**Last shipped:** v3.9 Game Mode Polish (2026-06-08) — above-the-fold layout + SVG ambient twinkle; 261/261 tests GREEN; tag v3.9 on 4e9c2b3
+**Core value:** Hero + first impression must stop recruiters mid-scroll and convert visits into engineering conversations.
+**Current focus:** v4.0 — strip game-mode complexity, ship clean section-by-section portfolio with JSON-driven data layer per section.
+**Last shipped:** v4.0 baseline on main 2026-06-13 (PR #26 squash a623ede — Slices 1+2+3+4: purge + Contact + About + Skills).
+
+## v4.0 Strategy
+
+Strip every game-mode artifact (v3.8-v3.10 lineage: src/marioWorld, src/game, ViewMode context, WebGL constellation, planets-tier, OnboardingHint). Ship clean section-by-section slices, each one:
+
+1. New `src/data/<section>.json` — bilingual `{en, es}` data contract via uniform `pick(field, lang)` helper.
+2. New `<Section>.test.js` — 7 Vitest + RTL specs (section id, EN render, structured content, ES translation, schema sanity).
+3. Refactor parked `<Section>.js` → v4 JSON-driven (~50 LOC). Drops `useInView`, `SectionLabel` shared component, `dangerouslySetInnerHTML`, `t.<section>` reads.
+4. Strip `t.<section>` subtree from translations.js (preserve `t.nav.<section>` namespace).
+5. Wire `<Section />` into App.js in canonical order (Nav → Hero → About → Skill → Experience → Projects → Claude → Contact → Footer).
+6. Stacked PR onto `v4.0-slice-1-purge` integration branch (now squashed to main).
 
 ## Current Position
 
-Phase: 999.4
-Plan: Not started
-Status: Ready to plan
-Last activity: 2026-06-10
-Progress bar: `[██████████] 4/4 plans (Task 3 operator-blocked)`
+Slice: 4 of 7 shipped
+Status: Ready to start Slice 5
+Last activity: 2026-06-13T23:53Z
+Progress bar: `[████████░░░░░░] 4/7 slices on main`
 
-## v3.10 Milestone Scope
+## Shipped Slices (on main)
 
-1 REQ — single-phase milestone activating SEED-3D-CONSTELLATION (planted 2026-06-08 during v3.9 Phase 18 between Phase 18 GREEN and Phase 19 discuss).
+- **Slice 1 — Game Purge + Base Palette** (PR #26 a623ede) — Strips game-mode + Mario-world + ViewMode + WebGL constellation. Lands dark palette tokens (#0B1020 / accent #00E5A8 + #00C2FF). App.js = Nav + Hero + Footer. Bundle-gate re-baselined (no WebGL chunk; index-*.js WARN 60 / HARD 68).
+- **Slice 2 — Contact** (PR #27 79cb0eb → merged into slice-1-purge → main via #26) — 5-card grid from contact.json. v4 JSON-driven pattern established.
+- **Slice 3 — About** (PR #28 99c39e1 → merged into slice-1-purge → main via #26) — 3 paragraphs + 5 quick-fact rows from about.json. Bilingual fact values. Kills `dangerouslySetInnerHTML`.
+- **Slice 4 — Skills** (PR #29 f44fdc1 → merged into slice-1-purge → main via #26) — 4 categories × 29 chips from skills.json. Bilingual category titles + years suffix (`y` EN / `a` ES).
 
-- **DEPTH-01** — Genuine 3D constellation on WebGL desktop renderer: `PerspectiveCamera(fov=55, aspect, near=10, far=2000)` (reconciled from research SUMMARY.md §Conflicts — fov 60 → 55 to avoid widescreen fisheye), per-node `z` via deterministic `CATEGORY_Z` constants in `src/game/constellation.layout.js` (8 categories mapped front-to-back as architecture stack, z ∈ [−150, +150]), `OrbitControls` drag-to-rotate with damping + polar clamp + autoRotate=0.5 (~30 s/orbit) pause-on-interaction, click-vs-drag threshold (5 px + 250 ms; 8 px on touch), VERTEX_SHADER size-attenuation by depth, `webglcontextlost`/`restored` handlers swap to SVG. Mobile SVG path UNCHANGED — Lighthouse mobile HARD gate intact. `prefers-reduced-motion` users continue on static SVG path.
+Section render order on main: Nav → Hero → About → Skill → Contact → Footer.
+Final main metrics: 34/34 tests GREEN, build 55.65 kB gz.
 
-## v3.10 Phase Structure
+## Remaining Slices (parked, awaiting v4 refactor)
 
-Single phase / 3 sequential plans / 3–5 days (coarse granularity — single REQ, do NOT split).
+- **Slice 5 — Experience** — Parked `Experience.js` reads `EXPERIENCE` array (`src/data/experience.js`) + `t.exp` subtree. Heaviest remaining: vertical timeline with expand/collapse state. Needs `experience.json` schema redesign (per-entry bilingual fields already in legacy data file) + `useState` for expand/collapse + `t.exp.expand`/`collapse` ARIA labels.
+- **Slice 6 — Projects** — Parked `Projects.js` reads `t.projects` subtree. Smallest remaining: "Selected work" grid with live + GitHub CTAs.
+- **Slice 7 — Claude Code section** — Parked `Claude.js` reads `t.claude` subtree (biggest copy block: counters + values + services + CTAs). AI sales pitch. Largest JSON file expected.
 
-- **Phase 20 — 3D Constellation** → DEPTH-01
-  - **Plan 20-01** Data layer (layout + tests + bundle-gate regex fix) — ~1 day
-  - **Plan 20-02** WebGL renderer (PerspectiveCamera + OrbitControls + shader size-attenuation) — ~2 days
-  - **Plan 20-03** useClickVsDrag hook + UAT + bundle gate close — ~1 day
+Suggested ship order: 5 → 6 → 7 (canonical nav order). Each is one PR, stacked onto current main now that v4.0 baseline is live.
 
-## v3.10 Decisions to Log During Phase 20
+## Decisions Logged in v4.0
 
-Per research SUMMARY.md, Phase 20 must log 4 new decisions:
+- **D-v4.0-PURGE** — Game mode + Mario-world + WebGL constellation + ViewMode lineage REMOVED. v3.8-v3.10 work archived in git history; not carried into v4.0.
+- **D-v4.0-PALETTE** — Dark palette (#0B1020 bg, #00E5A8 accent, #00C2FF secondary accent) via CSS vars + Tailwind tokens (`bg-bg`, `text-text`, `text-muted`, `bg-surface`, `border-border`, `text-accent`). Theme toggle deferred — assume single dark theme until UAT pushback.
+- **D-v4.0-JSON-PER-SECTION** — Every section reads from `src/data/<section>.json`. Bilingual via `{en, es}` field shape + universal `pick(field, lang)` helper inlined per component. NO shared util module — duplicating `pick` keeps each section self-contained.
+- **D-v4.0-NO-HTML-IN-DATA** — JSON contains plain text only. `<strong>` and inline HTML markup eliminated (kills `dangerouslySetInnerHTML` XSS surface). Emphasis via component-level styling if needed.
+- **D-v4.0-NO-SCROLL-REVEAL** — `useInView` + `animate-on-scroll` patterns dropped. v3.x animation layer not carried into v4.
+- **D-v4.0-NO-SHARED-SECTIONLABEL** — `_shared/SectionLabel` component dropped. Each section inlines its own mono-accent label pattern (`font-mono text-xs uppercase tracking-[3px] text-accent` + 10px accent bar).
+- **D-v4.0-STACKED-PR-INTEGRATION** — Each slice opens a PR onto `v4.0-slice-1-purge` integration branch, not directly onto main. Final integration squash carries the full chain in one main commit. Integration branch retired post-merge; future slices base on main.
 
-- **D-20-VISUAL-3D** — supersedes D-17-VISUAL (flat 2D-in-3D ortho). PerspectiveCamera(fov=55) + OrbitControls + category-z layout.
-- **D-20-CLICK-DRAG-THRESHOLD** — NEW. 5 px screen-space + 250 ms time; 8 px on `pointerType === 'touch'`. Preserves GAME-04 click-to-select under OrbitControls gesture state.
-- **D-20-PROPS-CONTRACT** — reframes GAME-01 (not broken). Layout `{x, y, z}` consumed by both renderers — SVG ignores `z` silently; WebGL projects. Props identical, pixels diverge by design.
-- **D-20-CONTEXT-LOSS** — NEW defensive. `webglcontextlost`/`restored` handlers swap to SVG via existing capability hook. Phase 17 didn't address this.
-- **D-20-PLANETS-TIER** — NEW (Destiny-2 Director vibe). Top-K=6 skills by `count` get `isPlanet: true` in `buildConstellationGraph` final pass; planets render LARGER (computeRadius floor 24 / ceil 40 vs star floor 10 / ceil 23) AND always-on halo in BOTH WebGL and SVG renderers. Deterministic tiebreak by id ascending. GAME-01 props-contract preserved. K is UAT-tunable. Bundled into Plan 20-02b wave (alongside OnboardingHint).
+## Blockers / Concerns
 
-## v3.10 Standing Alerts (carry into plan-PR reviews)
+- **PROJECT.md stale** — Still describes v3.10 as latest shipped + "no next milestone." Needs evolve pass to reflect v4.0 strategy + shipped baseline. Schedule before Slice 5 or at v4.0 close.
+- **Theme toggle parked** — `ThemeContext` still wired but no UI toggle. Defer to post-v4.0 milestone OR drop entirely if dark-only stays.
+- **Vercel deploy verification pending** — `a623ede` triggered auto-deploy on push. Real-device UAT not yet run.
+- **18 stale dependabot PRs** open — None blocking; clean up at v4.0 close.
+- **Local mario-world v3.11 planning commits dropped** — `9e564d9` + `7e282db` hard-reset out of local main (2026-06-13). v3.11 mario-world strategy formally retired; v4.0 supersedes.
 
-- **9 pre-rejected decision violations** (see `.planning/research/PITFALLS.md §"Decision Violations to Flag"`) — flag immediately if any appear in plan PR: `use r3f`, `use d3-force-3d`, `use Line2`, `show WebGL to RM users with autoRotate off`, `add 2D/3D user preference toggle`, `move WebGL out of lazy chunk`, `perspective swap only (no layout z)`, `add Stats.js / dat.gui`, `introduce headless-gl test infra for one phase`.
-- **Bundle-gate regex bug** at `scripts/check-bundle-gate.mjs:12` (current `THREE_JS_PATTERN = /THREE\.|from\s*['"]three['"]/` doesn't catch `three/addons/*`) — fix MUST land in Plan 20-01, NOT Plan 20-02 (must precede the first OrbitControls import to keep "no leak to mobile chunk" continuously enforced).
-- **three.js stays pinned at 0.169.0** — DO NOT bump to 0.184.0 during v3.10 (Phase 17 Lighthouse gate cleared against current pin).
-- **D-17-FRAMELOOP single rAF** — do NOT add `controls.addEventListener('change', renderer.render)`; only `controls.update()` as first line of existing `tick()`.
-- **Manual UAT debt from v3.9** (above-fold + twinkle real-device confirm) bundles with Phase 20 UAT — single real-device sweep covers both.
-
-## v3.10 Critical Pitfalls (must be addressed in Phase 20 — see PITFALLS.md)
-
-6 ship-blockers mapped to plan structure:
-
-1. **Bundle-gate regex bug** → Plan 20-01 (before OrbitControls import lands).
-2. **`z=0` trap** → Plan 20-01 layout test asserts ≥2 distinct z + range ≥100.
-3. **OrbitControls swallows click** → Plan 20-03 `useClickVsDrag` hook + Plan 20-02 integration.
-4. **Size-attenuation missing** → Plan 20-02 VERTEX_SHADER uniform update.
-5. **Double rAF** → Plan 20-02 preserves D-17-FRAMELOOP; only `controls.update()` added inside `tick()`.
-6. **Auto-rotate vs RM** → Plan 20-02 defensive in-renderer gate + auto-pause on interaction.
-
-Plus 9 moderate + 6 minor pitfalls (see PITFALLS.md).
-
-## Plan 17 Decisions (2026-06-03 — still constrains v3.10)
-
-- **D-17-EXTRACT**: Slice 1 LIFTS `ConstellationErrorBoundary` (GameMode.js:46-67) + `detectCapabilities` (GameMode.js:29-44) to standalone files. Does NOT re-author from scratch. Cleans inline versions + `data-prefers-reduced-motion` attr.
-- **D-17-HOVERED-PROP**: `hoveredSkillId` stays owned by `useConstellation` (already at lines 55, 73, 132). WebGL consumes via props (NOT internal useState). GameMode passes via shared `rendererProps` to BOTH SvgConstellation + WebGLConstellation — Phase 17 doesn't silently extend the contract for one renderer.
-- **D-17-EDGE-RGBA**: Edge geometry uses `BufferAttribute(arr, 4)` + `material.transparent=true` for per-vertex alpha. Avoids light-theme parity failure where pre-multiplied RGB fades to black against light bg.
-- **D-17-LIGHTHOUSE-FLOW**: Phase 17 close runs `npm run lighthouse:mobile` (self-contained, spins up vite preview on :4173) → `npm run lighthouse:check` (programmatic HARD gate, exit code IS verdict). Drops `npx serve dist` from initial plan. Phase 11-05 deployed-*.vercel.app gate stays deferred.
-- **D-17-SC5-TEST**: `src/game/GameMode.test.js` REQUIRED for SC-5 ("capability-based-selection component test"). Slice 1 creates it.
-- **D-17-FRAMELOOP**: single rAF loop — DO NOT add `controls.addEventListener('change', renderer.render)`; only `controls.update()` as first line of existing `tick()`.
-- **D-17-LIB**: three.js raw — NO `@react-three/fiber`, NO `@react-three/drei`.
-- **D-17-PRIMITIVES**: custom ShaderMaterial — `PointsMaterial.sizeAttenuation` does NOT apply; manual size-attenuation formula needed in VERTEX_SHADER.
-
-## v3.9 Phase Structure (closed 2026-06-08 — historical)
-
-- **Phase 18 — Above-the-fold layout** → POLISH-01 — completed 2026-06-08 (259/259 tests GREEN)
-- **Phase 19 — Never-static constellation (SVG ambient twinkle)** → POLISH-02 — completed 2026-06-08 inline (261/261 tests GREEN)
-
-Tag v3.9 on commit 4e9c2b3.
-
-## v3.8 Phase Structure (closed 2026-06-06 — historical)
-
-- **Phase 14 — Foundation: Data Layer, ViewMode Toggle & Test Infra** → GAME-02 (derivation), GAME-05, TEST-01
-- **Phase 15 — Accessible Constellation & SEO Fallback** → GAME-01 (contract + SVG path), GAME-02 (render), GAME-06
-- **Phase 16 — Filters & Floating ExperienceCard** → GAME-03, GAME-04
-- **Phase 17 — WebGL Desktop Renderer & Lighthouse Gate** → GAME-01 (WebGL adapter), GAME-07
-
-## Accumulated Decisions (historical, from v3.6/v3.7/v3.8 — still constrain the codebase)
-
-- **D-v3.6-CSS-VAR**: Tailwind config references `var(--color-*)` — theme system token-driven.
-- **D-v3.6-BRAND**: Blue-500 + emerald-500 palette in both modes; WCAG AA holds.
-- **D-v3.6-HERO-VARIANT-C**: `<picture>` + WebP 800w/1600w + sharp pipeline + theme-aware `--hero-*` CSS vars.
-- **D-v3.6-AI-SECTION**: Lazy-load + bilingual `t.*` namespace + scroll-spy pattern (reusable template).
-- **D-theme/lang Context pattern**: ThemeContext/LanguageContext = provider + hook + localStorage key. ViewModeContext (v3.8) mirrors this.
-- **D-14-01-LAYOUT**: Deterministic radial category-centroid layout chosen over d3-force — zero new dependencies, trivially deterministic, no d3-force in client bundle. v3.10 EXTENDS this to 3D with category-z; d3-force-3d REJECTED.
-- **D-16-CARD-POSITION**: Desktop ExperienceCard = node-anchored popover (offset +24x/-60y from LAYOUT[skillId] center); mobile = bottom-sheet.
-- **D-16-BUNDLE-GATE**: HARD FAIL > 16 kB, WARN 14–16 kB, PASS ≤ 14 kB on GameMode chunk.
-
-## Blockers/Concerns Entering v3.10
-
-- **Bundle-gate regex bug** at `scripts/check-bundle-gate.mjs:12` — fix MUST land in Plan 20-01 BEFORE OrbitControls import in Plan 20-02 to keep "no three.js leak to mobile chunk" continuously enforced. Already flagged in PITFALLS CRIT-03.
-- **`z=0` trap** — if `WebGLConstellation.js:295` keeps `positions[i*3+2] = 0` after layout returns z, all nodes sit on one plane, perspective foreshortens nothing. Plan 20-01 layout test catches this.
-- **OrbitControls swallows click** — needs `useClickVsDrag` hook (Plan 20-03) before pick handler. Existing GAME-04 click-to-select must keep working.
-- **GAME-01 contract reframe** — props stay identical, pixels diverge. Logged as D-20-PROPS-CONTRACT to make the divergence explicit.
-- **CATEGORY_Z design values** — proposals only; UAT-tunable. Plan 20-01 should comment-block "UAT-tunable; consult v3.10-UAT.md before adjusting after milestone close."
-- **fov=55 vs PROJECT.md historical fov=60** — RECONCILED 2026-06-08 (PROJECT.md updated to fov=55 per research SUMMARY.md §Conflicts).
-
-## Backlog / Out of Scope (for v3.10)
-
-- Mobile WebGL / 3D on mobile (mobile-Safari WebGL perf cliff + Lighthouse mobile gate risk)
-- WebXR / VR mode, scroll-to-zoom / pinch-to-zoom, free-look first-person camera
-- Camera-state persistence across viewmode toggle, "Reset view" button, 2D/3D user preference toggle (defer v3.11+ if recruiter UAT demands)
-- Post-processing bloom / fog, per-category depth color shift, onboarding hint pill (defer v3.10.1)
-- Bundle-gate change to enforce desktop chunk HARD ceiling (soft + WARN sufficient)
-- Carried deferred (NOT in v3.10): DEPLOY-01 (Plan 11-05), DEPLOY-02 (custom domain), DEPLOY-03 (PR previews), VIS-05, DIAGRAMS-01, manual UAT v3.9
-
-## Session Continuity
-
-Last session: 2026-06-10T18:26:00.000Z (Plan 20-03 Tasks 1+2 merged via worktree executor)
-Stopped at: CHECKPOINT — Plan 20-03 Tasks 1+2 GREEN + merged to main (14c2adf renderer integration, 043e39a bundle-gate ladder, 920f482 UAT scaffold, c0a9c3a SUMMARY, merge 39330cd). 293/293 tests GREEN, mobile chunk 9.46 kB gz PASS, WebGL chunk 122.63 kB gz INFO baseline. Task 3 = operator-blocked human-verify checkpoint.
-Resume file: .planning/phases/20-3d-constellation/20-UAT.md (operator fills `## Notes / Findings` per 8 items + Lighthouse + v3.9 carried debt)
-Operator runbook:
-  1. npm run build && npm run preview (production preview)
-  2. npm run lighthouse:mobile && npm run lighthouse:check (HARD gate Perf ≥95 / A11y 100 / BP 100 / SEO 100; D-17-LIGHTHOUSE-FLOW)
-  3. Real-browser sweep 20-UAT.md items 1-8 (Chrome stable, macOS 14+, iPhone/Android real device for mobile rows)
-  4. v3.9 carried confirms (above-fold layout + SVG twinkle on real device)
-  5. Synthetic HARD FAIL test on bundle gate (set WEBGL_HARD_KB=10 locally, exit non-zero, revert — do NOT commit)
-  6. Fill 20-UAT.md `## Notes / Findings` + per-item PASS/FAIL + Lighthouse scores + bundle sizes + final test count
-  7. Type `approved` (UAT 8/8 PASS + Lighthouse exit 0) → orchestrator runs phase verifier + ROADMAP close + PROJECT.md evolve, then milestone v3.10 ready for `git tag v3.10`
-  OR itemized FAIL list → route to v3.10.1 gap closure
-
-## Deferred Items
-
-Items acknowledged and deferred at v3.9 close on 2026-06-08, carrying into v3.10:
+## Backlog / Deferred (v4.0+)
 
 | Category | Item | Status |
 |----------|------|--------|
-| uat_gap | Phase 10 (10-UAT.md) | unknown — 0 pending scenarios (v3.6 carryover) |
-| uat_gap | Phase 11 (11-UAT-LOCAL.md) | unknown — 0 pending scenarios (v3.7 carryover) |
-| uat_gap | Phase 15 (15-HUMAN-UAT.md) | passed — 0 pending scenarios (v3.8 carryover) |
-| uat_gap | v3.9 above-fold + twinkle real-device confirm | deferred — bundle with v3.10 UAT |
-| deploy | DEPLOY-01 Plan 11-05 Lighthouse against `*.vercel.app` | deferred (carries from v3.7) |
-| deploy | DEPLOY-02 custom domain andresmontoyat.co + DNS | deferred (carries from v3.7) |
-| deploy | DEPLOY-03 PR preview deploys | deferred (carries from v3.7) |
-| backlog | VIS-05 claude-kanban + caveman cards | deferred (carries from v3.6) |
-| backlog | DIAGRAMS-01 cross-repo architecture diagrams | deferred (carries from v3.6) |
-| seed | SEED-3D-CONSTELLATION | 🟢 ACTIVE — DEPTH-01 / Phase 20 / v3.10 |
+| section | Slice 5 Experience | parked Experience.js + experience.js data |
+| section | Slice 6 Projects | parked Projects.js |
+| section | Slice 7 Claude Code | parked Claude.js |
+| theme | Light theme toggle | deferred (assess at v4.0 close) |
+| copy | Hero CV download buttons | live; review at v4.0 close |
+| backlog | VIS-05 claude-kanban + caveman cards | deferred (v3.6 carryover) |
+| backlog | DIAGRAMS-01 cross-repo diagrams | deferred (v3.6 carryover) |
+| deploy | DEPLOY-02 custom domain andresmontoyat.co | deferred (v3.7 carryover) |
+| deploy | DEPLOY-03 PR preview deploys | deferred (v3.7 carryover) |
+| uat | v3.9 + v3.10 carried UAT | retired with game-mode purge |
 
-## Operator Next Steps
+## Session Continuity
 
-- Run `/gsd:plan-phase 20` to enter Phase 20 planning — research SUMMARY.md flags "Phase 20 does NOT need `--research-phase`" (STACK + FEATURES + ARCHITECTURE + PITFALLS already cover the integration surface).
-- Consider `/gsd:ui-phase` between Plan 20-01 (data-only) and Plan 20-02 (renderer changes) to lock UI-SPEC for perspective swap, OrbitControls gesture behavior, autorotate cadence, and click-vs-drag UX before code lands.
-- At Phase 20 close: re-verify Lighthouse mobile HARD gate ≥ Phase 17 baseline; bundle gate WARN band ≤ 130 kB gz on desktop chunk; tag candidate `v3.10` queued for milestone ceremony.
+Last session: 2026-06-13T23:53:00.000Z (v4.0 baseline ship to main)
+Stopped at: STATE.md refreshed to v4.0 milestone. Slices 1-4 on main. Slice 5 (Experience/Projects/Claude) NOT started.
+Resume file: none — clean checkpoint
+Operator next steps:
+  1. (optional) Vercel-prod real-device UAT pass on a623ede deploy.
+  2. (optional) Refresh PROJECT.md "Current State" + "Next Milestone" sections to reflect v4.0 milestone + Slice 1-4 ship.
+  3. Pick Slice 5: Experience (heaviest, expand/collapse state) OR Projects (lightest) OR Claude (largest copy block).
+  4. Cut `v4.0-slice-5-<section>` off main, follow v4.0 slice playbook (json + RED tests + v4 refactor + strip t.* + wire App.js + PR).
+
+## v3.10 Closure Reference (historical — for reverse lookup)
+
+v3.10 3D Constellation milestone SHIPPED 2026-06-10 with PR sequence ending at 5aae37a. Phase 20 (DEPTH-01 — WebGL PerspectiveCamera + OrbitControls + planets-tier) delivered then immediately superseded by v4.0 purge decision 2026-06-12. All v3.10 decisions (D-20-VISUAL-3D, D-20-CLICK-DRAG-THRESHOLD, D-20-PROPS-CONTRACT, D-20-CONTEXT-LOSS, D-20-PLANETS-TIER, D-20-CONTEXT-HINT) are now historical only — not load-bearing on main.
