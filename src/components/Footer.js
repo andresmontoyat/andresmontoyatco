@@ -2,8 +2,8 @@ import React from 'react'
 import { useLanguage } from '../i18n/LanguageContext'
 
 const social = [
-  { name: 'LinkedIn', href: 'https://www.linkedin.com/in/carlos-andres-montoya-tobon-8b508033/', label: 'in' },
   { name: 'GitHub', href: 'https://github.com/andresmontoyat', label: 'gh' },
+  { name: 'LinkedIn', href: 'https://www.linkedin.com/in/carlos-andres-montoya-tobon-8b508033/', label: 'in' },
 ]
 
 export default function Footer() {
@@ -13,7 +13,7 @@ export default function Footer() {
     <footer className="border-t border-ink-400 py-10 mt-10">
       <div className="max-w-6xl mx-auto px-6 text-center">
         <div className="font-mono font-extrabold text-xs text-text-primary mb-3">
-          &lt;<span className="text-brand">/</span>cam&gt;
+          &lt;<span className="text-brand">/</span>camt&gt;
         </div>
         <p className="text-text-secondary text-base mb-6">{t.footer.tagline}</p>
         <div className="flex justify-center gap-6 mb-6">
