@@ -5,6 +5,7 @@ import { ThemeProvider } from './i18n/ThemeContext'
 import Nav from './components/Nav'
 import Hero from './components/Hero'
 import About from './components/About'
+import Skill from './components/Skill'
 import Contact from './components/Contact'
 import Footer from './components/Footer'
 
@@ -17,6 +18,7 @@ export default function App() {
           <main>
             <Hero />
             <About />
+            <Skill />
             <Contact />
           </main>
           <Footer />
