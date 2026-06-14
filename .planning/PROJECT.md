@@ -2,51 +2,90 @@
 
 ## Current State
 
-**Shipped:** v3.10 3D Constellation (closed 2026-06-10) — DEPTH-01 delivered: genuine 3D WebGL constellation on desktop via `PerspectiveCamera(fov=55, aspect, 10, 2000)` + `OrbitControls` (damping=0.06, polar clamp π·0.15→π·0.85, autoRotateSpeed=0.5, permanent pause-on-first-drag), per-node `z` via deterministic `CATEGORY_Z` constants in `src/game/constellation.layout.js` (8 categories front-to-back as architecture stack, z ∈ [−150, +150]), VERTEX_SHADER size-attenuation by depth, `Vector3.project(camera)` + depth-scaled pick radius, `webglcontextlost`/`restored` silent SVG swap via `forceSvgFallback`. Click-vs-drag arbitration extracted into pure jsdom-testable `src/game/useClickVsDrag.js` hook (locked 5px mouse / 8px touch / 250ms thresholds, D-20-CLICK-DRAG-THRESHOLD) — defends CRIT-02 OrbitControls-swallows-click + MOD-03 capacitive jitter. Bundled features: Destiny-2 Director-vibe planets-tier (top-K=6 `isPlanet` flag → larger orbs + always-on halo in BOTH renderers, D-20-PLANETS-TIER), bilingual OnboardingHint pill (800ms fade-in / 5s auto-dismiss / localStorage `cam-3d-hint-seen`, nested `t.game.hint.drag`, D-20-CONTEXT-HINT). Bundle-gate widened (regex catches `three/addons/*`) + 3-tier WebGL ladder (`WEBGL_SOFT_CEIL_KB=125` / `WEBGL_WARN_KB=130` / HARD FAIL >130 via `process.exit(1)`). Mobile SVG path UNCHANGED — Lighthouse mobile HARD gate cleared (Perf ≥95 / A11y 100 / BP 100 / SEO 100); mobile chunk 9.46 kB gz / WebGL 122.63 kB gz INFO baseline. 293/293 tests GREEN. v3.9 carried debt (above-fold + SVG twinkle real-device confirms) resolved in same operator UAT sweep. 1/1 REQ delivered. Tag candidate `v3.10` queued. See [`milestones/v3.10-ROADMAP.md`](milestones/v3.10-ROADMAP.md), [`milestones/v3.10-REQUIREMENTS.md`](milestones/v3.10-REQUIREMENTS.md).
+**Active milestone:** **v4.0 Portfolio Redesign — JSON-Driven Section Refactor** (in progress, opened 2026-06-12).
+
+**Baseline shipped to main 2026-06-13** (PR #26 squash `a623ede` carries Slices 1+2+3+4): purge game-mode lineage (v3.8-v3.10 src/marioWorld + src/game + ViewMode + WebGL constellation + planets-tier + OnboardingHint REMOVED), dark palette tokens (#0B1020 bg / #00E5A8 accent / #00C2FF secondary accent) via CSS vars + Tailwind, and three JSON-driven sections (Contact, About, Skills). Section render order on main: Nav → Hero → About → Skill → Contact → Footer. 34/34 tests GREEN. Build 55.65 kB gz. Bundle-gate re-baselined (no WebGL chunk; index-*.js WARN 60 / HARD 68). 4/7 slices shipped; Slices 5 (Experience), 6 (Projects), 7 (Claude Code) remaining.
 
 **Previously shipped:**
-- v3.9 Game Mode Polish (closed 2026-06-08) — Micro-milestone, same-day delivery. Two UX polish fixes parity-tighten v3.8 Game Mode: (1) above-the-fold layout — SkillFilters → fixed `bottom-0 z-30` bar, compact H1, sub-copy → sr-only, renderer slot `flex-1 min-h-0 pb-20/24` — constellation visible without scroll on desktop ≥1024px / tablet ~768px / mobile ~390px (POLISH-01); (2) never-static constellation — SVG ambient twinkle (`motion-safe:animate-svg-twinkle`, 4s ease-in-out infinite opacity 1.0→0.7→1.0, GPU-composited, deterministic per-node phase offset `-(sortIndex * 137) % 4000`ms; `prefers-reduced-motion: reduce` users keep fully static a11y path) (POLISH-02). 261/261 tests GREEN. GameMode bundle 8.87 kB gz (under v3.8 ceiling). Zero new deps. Tag `v3.9` on commit `4e9c2b3`. 2/2 REQs delivered. See [`milestones/v3.9-ROADMAP.md`](milestones/v3.9-ROADMAP.md), [`milestones/v3.9-REQUIREMENTS.md`](milestones/v3.9-REQUIREMENTS.md).
-- v3.8 Game Mode (closed 2026-06-06) — Interactive skill-constellation landing replaces the static-timeline-only experience. Node = skill, edges = tech co-occurrence. Adaptive renderer: full WebGL on desktop (three.js raw via `React.lazy`, ~117 kB gz lazy chunk, ambient drift + glow pulse + halo brighten); lightweight SVG/DOM on mobile (8.91 kB gz, **stays under Lighthouse mobile HARD gate** Perf ≥95 / A11y 100 / BP 100 / SEO 100 — re-verified 2026-06-06). Filters: multi-skill (AND intersection), year-range dual-thumb slider 2007–2026 (WAI-ARIA APG), 8 category chips, reset. Floating bilingual ExperienceCard on skill-select: role=dialog + focus trap + tech chips + lang-aware CV CTA download; desktop = node-anchored popover, mobile = bottom-sheet. Persisted game/dev toggle (`cam-viewmode` localStorage + `?mode=` deep-link). Vitest + RTL test infrastructure introduced (test-infra debt deferred since v3.0 — 253 tests GREEN across 19 files). 8/8 v3.8 requirements delivered (GAME-01..07 + TEST-01). UAT 9/9 pass on Phase 17 close. See [`milestones/v3.8-ROADMAP.md`](milestones/v3.8-ROADMAP.md), [`milestones/v3.8-REQUIREMENTS.md`](milestones/v3.8-REQUIREMENTS.md).
-- v3.6 (closed 2026-05-20 — **code shipped; production deploy still deferred**): brand palette refresh (blue-500 + emerald-500), Tailwind CSS-var refactor, cinematic full-bleed hero photo, bilingual sales-pitch Claude Code section. 5/5 active requirements satisfied. Phase 10 UAT closed partial; Phase 11 (DIAGRAMS-01) de-scoped. See [`milestones/v3.6-ROADMAP.md`](milestones/v3.6-ROADMAP.md), [`milestones/v3.6-MILESTONE-AUDIT.md`](milestones/v3.6-MILESTONE-AUDIT.md).
-- v3.5 (2026-05-12 — **partial**): Themes & Projects delivered, deploy deferred. See [`milestones/v3.5-ROADMAP.md`](milestones/v3.5-ROADMAP.md).
-- v3.4 (2026-05-07): Brownfield redesign baseline — Vite 6 + React 18 + Tailwind v3.4, bilingual nav, char-reveal Hero, vertical Experience timeline, email-hero Contact, branded Open Graph, Lighthouse 98/100/100/100 mobile. See [`milestones/v3.4-ROADMAP.md`](milestones/v3.4-ROADMAP.md).
+- v3.10 3D Constellation (closed 2026-06-10) — DEPTH-01 genuine 3D WebGL constellation: PerspectiveCamera + OrbitControls + category-z layout + planets-tier + OnboardingHint. **Superseded by v4.0 purge 2026-06-12** — entire WebGL/game-mode lineage stripped from main. Historical only. See [`milestones/v3.10-ROADMAP.md`](milestones/v3.10-ROADMAP.md), [`milestones/v3.10-REQUIREMENTS.md`](milestones/v3.10-REQUIREMENTS.md).
+- v3.9 Game Mode Polish (closed 2026-06-08) — above-the-fold layout + SVG ambient twinkle. Superseded by v4.0 purge. See [`milestones/v3.9-ROADMAP.md`](milestones/v3.9-ROADMAP.md).
+- v3.8 Game Mode (closed 2026-06-06) — Interactive skill-constellation landing. Vitest + RTL infrastructure introduced (carried forward into v4.0). Game-mode behavior superseded by v4.0 purge. See [`milestones/v3.8-ROADMAP.md`](milestones/v3.8-ROADMAP.md).
+- v3.6 (closed 2026-05-20): brand palette refresh, Tailwind CSS-var refactor, hero photo, Claude Code section copy (carried into v4.0 Slice 7 work). See [`milestones/v3.6-ROADMAP.md`](milestones/v3.6-ROADMAP.md).
+- v3.5 (2026-05-12 — partial): Themes & Projects delivered. See [`milestones/v3.5-ROADMAP.md`](milestones/v3.5-ROADMAP.md).
+- v3.4 (2026-05-07): Brownfield redesign baseline — Vite 6 + React 18 + Tailwind v3.4. See [`milestones/v3.4-ROADMAP.md`](milestones/v3.4-ROADMAP.md).
 
 ## Next Milestone
 
-(None — v3.10 closed 2026-06-10. Awaiting next-milestone scoping. Consider: v3.11 deploy resume (DEPLOY-01/02/03 carried) OR backlog activation (VIS-05 claude-kanban + caveman cards, DIAGRAMS-01 cross-repo diagrams).)
+**v4.0 close** — Ship remaining Slices 5–7, run real-device + Lighthouse UAT on production, tag `v4.0`. Then consider:
+- v4.1 deploy completion (custom domain `andresmontoyat.co`, PR preview deploys, formal production-URL Lighthouse verdict — carried from v3.7)
+- v4.2 backlog activation (VIS-05 claude-kanban + caveman cards in Claude section; DIAGRAMS-01 cross-repo architecture diagrams)
 
-## v3.10 3D Constellation (SHIPPED 2026-06-10)
+## v4.0 Portfolio Redesign — JSON-Driven Section Refactor (IN PROGRESS, opened 2026-06-12)
 
-**Goal delivered:** Recruiter on a capable desktop sees a genuine 3D skill constellation with drag-to-rotate that they cannot get from any other personal portfolio — the existing 117 kB gz three.js lazy chunk now earns its bundle cost, while mobile SVG path stays untouched and Lighthouse mobile HARD gate stays cleared.
+**Goal:** Strip the game-mode / WebGL / Mario-world complexity lineage (v3.8-v3.10) and ship a clean, recruiter-focused portfolio as section-by-section MVP slices. Every section gets its own `src/data/<section>.json` bilingual data contract + 7-spec test file + ~50-line v4 component. JSON contains plain text only (kills `dangerouslySetInnerHTML` XSS surface).
 
-**Shipped features:**
-- **DEPTH-01** — Genuine 3D WebGL constellation: `PerspectiveCamera(fov=55, aspect, 10, 2000)`, deterministic `CATEGORY_Z` constants (8 categories front-to-back, z ∈ [−150, +150]), `OrbitControls` drag-to-rotate + damping=0.06 + polar clamp + autoRotateSpeed=0.5 + permanent pause-on-first-drag, VERTEX_SHADER size-attenuation by depth, `Vector3.project(camera)` + depth-scaled pick radius, `webglcontextlost`/`restored` silent SVG swap via `forceSvgFallback`. Click-vs-drag arbitration extracted into pure jsdom-testable `useClickVsDrag` hook (5px mouse / 8px touch / 250ms thresholds). Mobile SVG path UNCHANGED. Bundled: planets-tier (top-K=6 `isPlanet` + halo + larger radii in BOTH renderers, D-20-PLANETS-TIER) + OnboardingHint bilingual pill (D-20-CONTEXT-HINT). Bundle-gate widened (catches `three/addons/*`) + 3-tier WebGL ladder. Lighthouse mobile HARD gate cleared. 293/293 tests GREEN. v3.9 carried debt also resolved.
+**v4.0 slice playbook (applied each section):**
+1. Cut `v4.0-slice-N-<section>` branch off main (or off `v4.0-slice-1-purge` integration branch while it existed).
+2. Author `src/data/<section>.json` — bilingual `{en, es}` field shape, uniform `pick(field, lang)` helper inlined per component.
+3. RED tests: 7 Vitest + RTL specs (section id, EN render, structured content, ES translation, schema sanity, regression guards).
+4. Refactor parked `<Section>.js` → v4 JSON-driven (~50 LOC). Drops `useInView`, `_shared/SectionLabel`, `dangerouslySetInnerHTML`, all `t.<section>` reads.
+5. Strip `t.<section>` subtree from translations.js (preserve `t.nav.<section>` namespace).
+6. Wire `<Section />` into App.js between flanking sections.
+7. PR, squash, ship.
 
-**Decisions logged during v3.10:**
-- **D-20-VISUAL-3D** supersedes D-17-VISUAL (flat 2D-in-3D ortho) → genuine 3D + drag-to-rotate
-- **D-20-CLICK-DRAG-THRESHOLD** NEW — 5px / 8px touch / 250ms; preserves GAME-04 under OrbitControls gesture state
-- **D-20-PROPS-CONTRACT** reframes GAME-01 — props identical, pixels diverge (SVG ignores `z` silently; WebGL projects)
-- **D-20-CONTEXT-LOSS** NEW defensive — `webglcontextlost`/`restored` swap to SVG via `GameMode.forceSvgFallback`
-- **D-20-PLANETS-TIER** NEW — Destiny-2 Director vibe; top-K=6 by `count`; deterministic tiebreak by id ascending
-- **D-20-CONTEXT-HINT** NEW — bilingual pill with nested `t.game.hint.drag` (NOT flat `hintDrag`); 800ms fade-in + 5s auto-dismiss + localStorage `cam-3d-hint-seen`
+**Shipped slices (on main):**
 
-**Decisions extended (preserved from prior milestones):**
-- **D-14-01-LAYOUT** extended to 3D — `computeLayout()` now returns `{x, y, z}` with `CATEGORY_Z` deterministic constants. Zero new deps (d3-force-3d REJECTED).
-- **D-17-FRAMELOOP** preserved — single rAF loop; only `controls.update()` added as first line of existing `tick()`
-- **D-17-PRIMITIVES** extended — custom ShaderMaterial gained depth size-attenuation via `uCanvasHeight` + `uFovRad` uniforms
-- **D-16-BUNDLE-GATE** extended — 3-tier WebGL ladder (`WEBGL_SOFT_CEIL_KB=125` / `WEBGL_WARN_KB=130` / HARD FAIL >130) on top of existing mobile chunk HARD ceiling
+- **Slice 1 — Game Purge + Base Palette** (PR #26 → main `a623ede`)
+  - Deleted: `src/marioWorld/`, `src/game/`, `src/context/ViewModeContext`, `src/components/_shared/ViewModeToggle`, all sprites + WebGL constellation + planets-tier + OnboardingHint + click-vs-drag hook + bundle-gate WebGL ladder
+  - Stripped: `t.game`, `t.world` subtrees from translations.js
+  - Landed: dark palette CSS vars + Tailwind tokens (`bg-bg`, `text-text`, `text-muted`, `bg-surface`, `border-border`, `text-accent`), body bg + grid pattern, simplified App.js (Nav + Hero + Footer only)
+  - Bundle gate: dropped WebGL chunk, rebaselined `index-*.js` (WARN 60 / HARD 68 kB gz)
+  - Hero polish: container wrapper removed (Hero fills viewport), lead copy rewritten (career arc + 10 industry verticals), `</cam>` → `</camt>` glyph rebrand, Footer social order GitHub-first
 
-**Final metrics:**
-- 293/293 tests GREEN (post-merge baseline; +12 from v3.9 261)
-- Mobile chunk 9.46 kB gz (under 38.82 HARD ceiling — no three.js leak)
-- WebGL chunk 122.63 kB gz INFO baseline tier (under 125 kB soft ceiling)
-- Lighthouse mobile HARD gate cleared (operator-verified)
+- **Slice 2 — Contact** (PR #27 → slice-1-purge → main via #26)
+  - New: `src/data/contact.json` (5 cards: email, phone, LinkedIn, GitHub, location) + `src/components/Contact.test.js` (7 specs)
+  - Refactored Contact.js to v4 (~60 LOC, JSON-driven)
+  - Stripped `t.contact` subtree
+  - Wired between Hero and Footer
 
-## Deferred (carried from prior milestones)
+- **Slice 3 — About** (PR #28 → slice-1-purge → main via #26)
+  - New: `src/data/about.json` (3 paragraphs + 5 quick-facts) + `src/components/About.test.js` (7 specs)
+  - Refactored About.js to v4 (~50 LOC); killed `dangerouslySetInnerHTML` + `<strong>` markup leak
+  - Stripped `t.about` subtree
+  - Wired between Hero and Contact
 
-- **Resume v3.7 deploy work** — Plan 11-05 (Lighthouse against deployed `*.vercel.app`), Phase 12 (custom domain `andresmontoyat.co` + DNS), Phase 13 (PR preview deploys). Site auto-deploys from `main` to `*.vercel.app`; missing custom domain + formal production-URL Lighthouse verdict.
-- **VIS-05** — claude-kanban + caveman cards back into AI section (3 of original 5 featured-app cards present). Carries from v3.6.
-- **DIAGRAMS-01** — cross-repo architecture diagrams. Carries from v3.6.
+- **Slice 4 — Skills** (PR #29 → slice-1-purge → main via #26)
+  - New: `src/data/skills.json` (4 categories × 29 chips, bilingual category titles, years suffix `y` EN / `a` ES) + `src/components/Skill.test.js` (7 specs)
+  - Refactored Skill.js to v4 (~50 LOC, JSON-driven)
+  - Stripped `t.skills` subtree
+  - Wired between About and Contact
+
+**Remaining slices (parked sections, awaiting v4 refactor):**
+
+- **Slice 5 — Experience** — Parked `Experience.js` reads `EXPERIENCE` array (`src/data/experience.js`) + `t.exp` subtree (label/h2/intro/expand/collapse). Heaviest remaining: vertical timeline with expand/collapse `useState`. Needs `experience.json` schema redesign (per-entry bilingual fields already in legacy module) + ARIA labels for expand/collapse.
+- **Slice 6 — Projects** — Parked `Projects.js` reads `t.projects` subtree. Smallest remaining: "Selected work" grid with live + GitHub CTAs.
+- **Slice 7 — Claude Code section** — Parked `Claude.js` reads `t.claude` subtree (biggest copy block: counters, values, services, dual CTAs). AI engineering sales pitch. Largest expected `claude.json`. VIS-05 backlog (claude-kanban + caveman cards back into featured-app grid) folds into this slice.
+
+**v4.0 decisions logged (see also STATE.md for live list):**
+- **D-v4.0-PURGE** — Game mode + Mario-world + WebGL constellation + ViewMode lineage REMOVED from main. v3.8-v3.10 work historical only.
+- **D-v4.0-PALETTE** — Dark palette (#0B1020 / #00E5A8 / #00C2FF) via CSS vars + Tailwind tokens. Theme toggle deferred — single dark theme until UAT pushback.
+- **D-v4.0-JSON-PER-SECTION** — Every section reads from `src/data/<section>.json`. Bilingual via `{en, es}` field shape + universal `pick(field, lang)` helper inlined per component. NO shared util module — duplicating `pick` keeps each section self-contained.
+- **D-v4.0-NO-HTML-IN-DATA** — JSON contains plain text only. `<strong>` and inline HTML markup eliminated (kills `dangerouslySetInnerHTML` XSS surface).
+- **D-v4.0-NO-SCROLL-REVEAL** — `useInView` + `animate-on-scroll` patterns dropped. v3.x animation layer not carried into v4.
+- **D-v4.0-NO-SHARED-SECTIONLABEL** — `_shared/SectionLabel` component dropped. Each section inlines its own mono-accent label pattern (`font-mono text-xs uppercase tracking-[3px] text-accent` + 10px accent bar).
+- **D-v4.0-STACKED-PR-INTEGRATION** — Each slice opens a PR onto the `v4.0-slice-1-purge` integration branch while it existed. Final integration squash carried the full chain into main as one commit. Integration branch retired post-#26 merge; Slices 5+ base directly on main.
+
+**Decisions retired with v4.0 purge** (no longer load-bearing):
+- All `D-20-*` (3D constellation: VISUAL-3D, CLICK-DRAG-THRESHOLD, PROPS-CONTRACT, CONTEXT-LOSS, PLANETS-TIER, CONTEXT-HINT)
+- All `D-17-*` (WebGL desktop renderer: EXTRACT, HOVERED-PROP, EDGE-RGBA, LIGHTHOUSE-FLOW, SC5-TEST, FRAMELOOP, LIB, PRIMITIVES)
+- All `D-14`/`D-16` game-mode decisions (LAYOUT, CARD-POSITION, BUNDLE-GATE-WebGL)
+
+## Deferred (carried into v4.0+ from prior milestones)
+
+- **Custom domain + production-URL Lighthouse** — Phase 12 (custom domain `andresmontoyat.co` + DNS) and Plan 11-05 (Lighthouse against deployed `*.vercel.app` URL) still pending. Site auto-deploys from `main` to `*.vercel.app`. Target: v4.1 post-v4.0 close.
+- **PR preview deploys** — Phase 13. Target: v4.1.
+- **VIS-05** — claude-kanban + caveman cards back into Claude section (3 of original 5 featured-app cards present). Folds into Slice 7.
+- **DIAGRAMS-01** — cross-repo architecture diagrams. Carries from v3.6. Target: v4.2 or separate milestone.
 
 <details>
 <summary>v3.8 Game Mode — original milestone goal (for historical reference)</summary>
