@@ -1,0 +1,168 @@
+{
+  "label": {
+    "en": "AI Engineering · For your team",
+    "es": "AI Engineering · Para tu equipo"
+  },
+  "h2Part1": { "en": "Backend systems", "es": "Sistemas backend" },
+  "h2Part2": {
+    "en": "delivered with AI discipline",
+    "es": "entregados con disciplina AI"
+  },
+  "subLead": {
+    "en": "Senior backend engineer. Combining hexagonal architecture, Spring Boot, and agentic workflows with Claude Code to ship production-ready features in a fraction of the time — without sacrificing testing, ADRs, or observability.",
+    "es": "Senior backend engineer. Combino hexagonal architecture, Spring Boot y workflows agénticos con Claude Code para entregar features production-ready en una fracción del tiempo — sin sacrificar testing, ADRs ni observability."
+  },
+  "ctaPrimary": {
+    "en": "Let's talk about your project →",
+    "es": "Hablemos de tu proyecto →"
+  },
+  "ctaSecondary": { "en": "See projects", "es": "Ver proyectos" },
+  "proofLabel": { "en": "Track record", "es": "Track record" },
+  "proofHeading": {
+    "en": "I built my own toolkit before selling it",
+    "es": "Construí mi propio toolkit antes de venderlo"
+  },
+  "servicesLabel": { "en": "Concrete services", "es": "Servicios concretos" },
+  "values": [
+    {
+      "id": "01",
+      "title": { "en": "Delivery 3–5× faster", "es": "Entrega 3–5× más rápida" },
+      "desc": {
+        "en": "Agentic workflows (discuss → plan → execute → verify) ship in hours what takes days traditionally, while preserving atomic commits and real tests.",
+        "es": "Workflows agénticos (discuss → plan → execute → verify) entregan en horas lo que toma días con desarrollo tradicional, manteniendo atomic commits y tests reales."
+      }
+    },
+    {
+      "id": "02",
+      "title": { "en": "Hexagonal without shortcuts", "es": "Hexagonal sin atajos" },
+      "desc": {
+        "en": "Hexagonal architecture, ports & adapters, ArchUnit gates and ADRs are non-negotiable — agentic speed never comes at the cost of structure.",
+        "es": "Hexagonal architecture, ports & adapters, ArchUnit gates y ADRs no se negocian — la velocidad agéntica nunca sacrifica estructura."
+      }
+    },
+    {
+      "id": "03",
+      "title": {
+        "en": "Tests + observability built-in",
+        "es": "Tests + observability built-in"
+      },
+      "desc": {
+        "en": "Tests (JUnit, Karate, Testcontainers), structured logging and OpenTelemetry tracing are wired from day one, not bolted on later.",
+        "es": "Tests (JUnit, Karate, Testcontainers), structured logging y tracing con OpenTelemetry quedan cableados desde el día uno, no parchados después."
+      }
+    },
+    {
+      "id": "04",
+      "title": {
+        "en": "Your team keeps the workflow",
+        "es": "Tu equipo se lleva el workflow"
+      },
+      "desc": {
+        "en": "I leave your team the workflow, not a black box: the agents, skills and guidelines stay in your repo and your engineers keep using them after I'm gone.",
+        "es": "Le dejo a tu equipo el workflow, no una caja negra: los agents, skills y guidelines quedan en tu repo y tus ingenieros los siguen usando cuando yo no esté."
+      }
+    }
+  ],
+  "counters": [
+    { "id": "agents", "value": 37, "label": { "en": "custom agents", "es": "subagents propios" } },
+    { "id": "skills", "value": 81, "label": { "en": "workflow skills", "es": "workflow skills" } },
+    { "id": "workflows", "value": 86, "label": { "en": "orchestrations", "es": "orquestaciones" } },
+    { "id": "guidelines", "value": 15, "label": { "en": "guidelines", "es": "guidelines" } },
+    { "id": "ciWorkflows", "value": 47, "label": { "en": "CI workflows", "es": "CI workflows" } },
+    { "id": "starterTemplates", "value": 15, "label": { "en": "starter templates", "es": "starter templates" } },
+    { "id": "appsShipped", "value": 5, "label": { "en": "apps shipped", "es": "apps shipped" } }
+  ],
+  "services": [
+    {
+      "id": "greenfield",
+      "title": { "en": "Greenfield builds", "es": "Greenfield builds" },
+      "desc": {
+        "en": "Spring Boot + hexagonal from scratch with CI/CD, observability and complete testing infra.",
+        "es": "Spring Boot + hexagonal desde cero, con CI/CD, observability y testing infra completas."
+      }
+    },
+    {
+      "id": "aiSetup",
+      "title": { "en": "AI workflow setup", "es": "AI workflow setup" },
+      "desc": {
+        "en": "Custom agents, skills and slash-commands tailored to your codebase so your team adopts the workflow on day one.",
+        "es": "Subagents, skills y slash-commands a medida de tu codebase para que tu equipo adopte el workflow desde el primer día."
+      }
+    },
+    {
+      "id": "mcp",
+      "title": { "en": "MCP server development", "es": "MCP server development" },
+      "desc": {
+        "en": "Model Context Protocol servers in Java/Kotlin with Spring AI that connect Claude to your internal systems.",
+        "es": "Servidores Model Context Protocol en Java/Kotlin con Spring AI que conectan Claude a tus sistemas internos."
+      }
+    },
+    {
+      "id": "legacy",
+      "title": { "en": "Legacy refactor", "es": "Legacy refactor" },
+      "desc": {
+        "en": "Strangler-fig refactor of legacy Spring/Java services toward hexagonal architecture, with full test coverage and zero downtime.",
+        "es": "Refactor strangler-fig de servicios Spring/Java legacy hacia hexagonal architecture, con cobertura completa de tests y cero downtime."
+      }
+    },
+    {
+      "id": "devops",
+      "title": { "en": "DevOps automation", "es": "DevOps automation" },
+      "desc": {
+        "en": "Production-ready GitHub Actions templates + GitFlow + multi-cloud deploys (EC2, VPN-tunneled EC2, EKS) backed by the soldife/ci-templates toolkit.",
+        "es": "Templates de GitHub Actions listos para producción + GitFlow + deploys multi-cloud (EC2, EC2 sobre VPN, EKS) respaldados por el toolkit soldife/ci-templates."
+      }
+    }
+  ],
+  "apps": [
+    {
+      "id": "ci-templates",
+      "name": { "en": "ci-templates", "es": "ci-templates" },
+      "tag": { "en": "OPEN SOURCE", "es": "CÓDIGO ABIERTO" },
+      "desc": {
+        "en": "47 reusable GitHub Actions workflows + 15 starter templates (Java, Krakend, React). GitFlow strategy, quality gates (SonarQube · OWASP · ArchUnit · Qodana), deploys EC2 / EC2-over-WireGuard-VPN / EKS.",
+        "es": "47 reusable GitHub Actions workflows + 15 starter templates (Java, Krakend, React). GitFlow strategy, quality gates (SonarQube · OWASP · ArchUnit · Qodana), deploys EC2 / EC2-over-WireGuard-VPN / EKS."
+      },
+      "stack": ["github-actions", "gitflow", "sonarqube", "owasp", "eks", "ec2", "wireguard", "ecr", "helm", "jenkins"]
+    },
+    {
+      "id": "gsd",
+      "name": { "en": "GSD framework", "es": "framework GSD" },
+      "tag": { "en": "FRAMEWORK", "es": "FRAMEWORK" },
+      "desc": {
+        "en": "Get-Shit-Done agentic methodology for Claude Code: 37 custom agents, 81 skills, 86 orchestrations and 15 architectural guidelines that drive the discuss → plan → execute → verify cycle.",
+        "es": "Metodología agéntica Get-Shit-Done para Claude Code: 37 subagents propios, 81 skills, 86 orquestaciones y 15 guidelines arquitectónicos que conducen el ciclo discuss → plan → execute → verify."
+      },
+      "stack": ["claude-code", "subagents", "skills", "mcp", "orchestration", "tdd", "hexagonal"]
+    },
+    {
+      "id": "spring-ai-qdrant-mcp",
+      "name": { "en": "spring-ai-qdrant-mcp", "es": "spring-ai-qdrant-mcp" },
+      "tag": { "en": "MCP", "es": "MCP" },
+      "desc": {
+        "en": "Model Context Protocol server built with Spring Boot 3 + Spring AI + Qdrant vector store. Exposes RAG retrieval over private knowledge bases as MCP tools any Claude-compatible client can call.",
+        "es": "Servidor Model Context Protocol construido con Spring Boot 3 + Spring AI + Qdrant vector store. Expone retrieval RAG sobre bases de conocimiento privadas como herramientas MCP que cualquier cliente Claude-compatible puede invocar."
+      },
+      "stack": ["spring-boot-3", "spring-ai", "qdrant", "mcp", "rag", "java-21"]
+    }
+  ],
+  "stackChips": [
+    "Java 21",
+    "Kotlin 2.x",
+    "Spring Boot 3",
+    "Hexagonal",
+    "PostgreSQL",
+    "Kafka",
+    "Redis",
+    "AWS",
+    "Docker",
+    "Kubernetes",
+    "Terraform",
+    "GitHub Actions",
+    "Jenkins",
+    "SonarQube",
+    "Claude Code",
+    "MCP",
+    "Spring AI"
+  ]
+}
