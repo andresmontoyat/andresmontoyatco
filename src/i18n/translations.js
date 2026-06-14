@@ -39,13 +39,6 @@ const translations = {
       companies: 'Companies',
       industries: 'Industries',
     },
-    exp: {
-      label: 'Experience',
-      h2: 'Career timeline',
-      intro: 'Highlights from 18+ years of building, leading and shipping software.',
-      expand: 'Expand entry',
-      collapse: 'Collapse entry',
-    },
     projects: {
       label: 'PROJECTS',
       h2: 'Selected work',
@@ -130,13 +123,6 @@ const translations = {
       team: 'Equipo liderado',
       companies: 'Empresas',
       industries: 'Industrias',
-    },
-    exp: {
-      label: 'Experiencia',
-      h2: 'Línea de tiempo',
-      intro: 'Highlights de +18 años construyendo, liderando y entregando software.',
-      expand: 'Expandir entrada',
-      collapse: 'Contraer entrada',
     },
     projects: {
       label: 'PROYECTOS',
