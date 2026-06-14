@@ -39,13 +39,6 @@ const translations = {
       companies: 'Companies',
       industries: 'Industries',
     },
-    projects: {
-      label: 'PROJECTS',
-      h2: 'Selected work',
-      intro: 'A focused look at the systems I have shipped recently.',
-      live: 'View Live',
-      github: 'GitHub',
-    },
     claude: {
       label: 'AI Engineering · For your team',
       h2Part1: 'Backend systems',
@@ -123,13 +116,6 @@ const translations = {
       team: 'Equipo liderado',
       companies: 'Empresas',
       industries: 'Industrias',
-    },
-    projects: {
-      label: 'PROYECTOS',
-      h2: 'Trabajo destacado',
-      intro: 'Una mirada enfocada a los sistemas que he entregado recientemente.',
-      live: 'Ver Live',
-      github: 'GitHub',
     },
     claude: {
       label: 'AI Engineering · Para tu equipo',
