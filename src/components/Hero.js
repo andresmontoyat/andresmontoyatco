@@ -58,8 +58,8 @@ export default function Hero() {
       className="relative min-h-screen flex items-center bg-hero-gradient pt-16 pb-16 overflow-hidden"
     >
       <img
-        src="/me-1600.webp"
-        srcSet="/me-800.webp 800w, /me-1600.webp 1600w"
+        src="/me-800.webp"
+        srcSet="/me-400.webp 400w, /me-800.webp 800w, /me-1600.webp 1600w"
         sizes="100vw"
         alt=""
         fetchpriority="high"
