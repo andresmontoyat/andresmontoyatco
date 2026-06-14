@@ -1,135 +1,59 @@
-import React, { useRef } from 'react'
+import React from 'react'
 import { useLanguage } from '../i18n/LanguageContext'
-import useInView from '../hooks/useInView'
-import { VALUES, SERVICES, APPS, COUNTERS, STACK_CHIPS } from '../data/claude'
+import data from '../data/claude.json'
 
-export default function Claude() {
-  const { lang, t } = useLanguage()
-  const sectionRef = useRef(null)
-  const inView = useInView(sectionRef, { threshold: 0.15 })
-
-  return (
-    <section
-      id="claude-code"
-      ref={sectionRef}
-      className="py-24 sm:py-32 bg-ink-950"
-    >
-      <div className="max-w-6xl mx-auto px-6">
-        <PitchHero t={t} />
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-16">
-          {VALUES.map((v, i) => (
-            <ValueCard
-              key={v.key}
-              id={v.id}
-              title={t.claude.values[v.key]}
-              desc={v.desc[lang]}
-              index={i}
-              inView={inView}
-            />
-          ))}
-        </div>
-
-        <ProofBlock t={t} counters={COUNTERS} />
-
-        <p className="text-brand font-mono text-xs uppercase tracking-widest mt-12">
-          {t.claude.servicesLabel}
-        </p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-8">
-          {SERVICES.map((s, i) => (
-            <ServiceCard
-              key={s.key}
-              title={t.claude.services[s.key]}
-              desc={s.desc[lang]}
-              index={i}
-              inView={inView}
-            />
-          ))}
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
-          {APPS.map((a, i) => (
-            <FeaturedAppCard
-              key={a.slug}
-              name={a.name[lang]}
-              tag={a.tag[lang]}
-              desc={a.desc[lang]}
-              stack={a.stack}
-              index={i}
-              inView={inView}
-            />
-          ))}
-        </div>
-
-        <StackStrip chips={STACK_CHIPS} />
-      </div>
-    </section>
-  )
+function pick(field, lang) {
+  if (typeof field === 'string') return field
+  return field?.[lang] ?? field?.en ?? ''
 }
 
-function PitchHero({ t }) {
+function PitchHero({ lang }) {
   return (
-    <div className="text-center max-w-3xl mx-auto bg-card-gradient rounded-2xl p-8 md:p-12 mb-12">
-      <p className="text-brand font-mono text-xs uppercase tracking-widest">
-        {t.claude.label}
-      </p>
-      <h2 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-text-primary mt-4 leading-tight">
-        {t.claude.h2Part1}
-        {' '}
-        <span className="bg-brand-gradient bg-clip-text text-transparent">
-          {t.claude.h2Part2}
-        </span>
+    <div className="text-center max-w-3xl mx-auto bg-surface border border-border rounded-2xl p-8 md:p-12 mb-12">
+      <p className="text-accent font-mono text-xs uppercase tracking-widest">{pick(data.label, lang)}</p>
+      <h2 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-text mt-4 leading-tight">
+        {pick(data.h2Part1, lang)}{' '}
+        <span className="text-accent">{pick(data.h2Part2, lang)}</span>
       </h2>
-      <p className="text-text-secondary text-lg mt-6 max-w-2xl mx-auto">
-        {t.claude.subLead}
-      </p>
+      <p className="text-muted text-lg mt-6 max-w-2xl mx-auto">{pick(data.subLead, lang)}</p>
       <div className="flex flex-col sm:flex-row gap-4 justify-center mt-10">
         <a
           href="#contact"
-          className="bg-brand-gradient text-ink-900 font-extrabold px-8 py-4 rounded-lg motion-safe:transition-transform motion-safe:hover:-translate-y-0.5 shadow-brand focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-light focus-visible:ring-offset-2 focus-visible:ring-offset-ink-900"
+          className="bg-accent text-bg font-extrabold px-8 py-4 rounded-lg transition-transform hover:-translate-y-0.5"
         >
-          {t.claude.ctaPrimary}
+          {pick(data.ctaPrimary, lang)}
         </a>
         <a
           href="#projects"
-          className="border border-ink-400 text-text-primary px-8 py-4 rounded-lg motion-safe:transition-colors hover:border-brand hover:text-brand focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-ink-900"
+          className="border border-border text-text px-8 py-4 rounded-lg transition-colors hover:border-accent hover:text-accent"
         >
-          {t.claude.ctaSecondary}
+          {pick(data.ctaSecondary, lang)}
         </a>
       </div>
     </div>
   )
 }
 
-function ValueCard({ id, title, desc, index, inView }) {
+function ValueCard({ value, lang }) {
   return (
-    <div
-      style={{ transitionDelay: `${index * 100}ms` }}
-      className={`animate-on-scroll${inView ? ' is-visible' : ''} bg-ink-500 border border-ink-400 rounded-xl p-6 hover:border-brand`}
-    >
-      <div className="text-brand font-mono text-2xl font-extrabold">{id}</div>
-      <h3 className="text-text-primary font-extrabold text-lg mt-3">{title}</h3>
-      <p className="text-text-secondary text-base mt-2 leading-relaxed">{desc}</p>
+    <div className="bg-surface border border-border rounded-xl p-6 hover:border-accent transition-colors">
+      <div className="text-accent font-mono text-2xl font-extrabold">{value.id}</div>
+      <h3 className="text-text font-extrabold text-lg mt-3">{pick(value.title, lang)}</h3>
+      <p className="text-muted text-base mt-2 leading-relaxed">{pick(value.desc, lang)}</p>
     </div>
   )
 }
 
-function ProofBlock({ t, counters }) {
+function ProofBlock({ lang }) {
   return (
-    <div className="mt-20 bg-[var(--color-ink-500-60)] border border-ink-400 rounded-2xl p-8 md:p-12">
-      <p className="text-brand font-mono text-xs uppercase tracking-widest">
-        {t.claude.proofLabel}
-      </p>
-      <h3 className="text-2xl md:text-3xl font-extrabold text-text-primary mt-3">
-        {t.claude.proofHeading}
-      </h3>
+    <div className="mt-20 bg-surface border border-border rounded-2xl p-8 md:p-12">
+      <p className="text-accent font-mono text-xs uppercase tracking-widest">{pick(data.proofLabel, lang)}</p>
+      <h3 className="text-2xl md:text-3xl font-extrabold text-text mt-3">{pick(data.proofHeading, lang)}</h3>
       <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-6 mt-8">
-        {counters.map((c) => (
-          <div key={c.key} className="text-center">
-            <div className="text-3xl md:text-4xl font-extrabold text-brand">{c.value}</div>
-            <div className="text-xs text-text-secondary uppercase tracking-wide mt-1">
-              {t.claude.counters[c.key]}
-            </div>
+        {data.counters.map((c) => (
+          <div key={c.id} className="text-center">
+            <div className="text-3xl md:text-4xl font-extrabold text-accent">{c.value}</div>
+            <div className="text-xs text-muted uppercase tracking-wide mt-1">{pick(c.label, lang)}</div>
           </div>
         ))}
       </div>
@@ -137,36 +61,30 @@ function ProofBlock({ t, counters }) {
   )
 }
 
-function ServiceCard({ title, desc, index, inView }) {
+function ServiceCard({ service, lang }) {
   return (
-    <div
-      style={{ transitionDelay: `${index * 100}ms` }}
-      className={`animate-on-scroll${inView ? ' is-visible' : ''} border-l-4 border-brand bg-ink-500 rounded-r-xl p-6`}
-    >
-      <h3 className="text-text-primary font-extrabold text-base">{title}</h3>
-      <p className="text-text-secondary text-sm mt-2">{desc}</p>
+    <div className="border-l-4 border-accent bg-surface rounded-r-xl p-6">
+      <h3 className="text-text font-extrabold text-base">{pick(service.title, lang)}</h3>
+      <p className="text-muted text-sm mt-2">{pick(service.desc, lang)}</p>
     </div>
   )
 }
 
-function FeaturedAppCard({ name, tag, desc, stack, index, inView }) {
+function FeaturedAppCard({ app, lang }) {
   return (
-    <div
-      style={{ transitionDelay: `${index * 100}ms` }}
-      className={`animate-on-scroll${inView ? ' is-visible' : ''} bg-ink-500 border border-ink-400 rounded-xl p-6 hover:border-brand`}
-    >
+    <div className="bg-surface border border-border rounded-xl p-6 hover:border-accent transition-colors">
       <div className="flex items-center justify-between">
-        <h3 className="font-mono text-base font-extrabold text-text-primary">{name}</h3>
-        <span className="font-mono text-xs px-2 py-1 rounded-md bg-brand-gradient text-ink-900 font-extrabold">
-          {tag}
+        <h3 className="font-mono text-base font-extrabold text-text">{pick(app.name, lang)}</h3>
+        <span className="font-mono text-xs px-2 py-1 rounded-md bg-accent text-bg font-extrabold">
+          {pick(app.tag, lang)}
         </span>
       </div>
-      <p className="text-text-secondary text-sm mt-3 leading-relaxed">{desc}</p>
+      <p className="text-muted text-sm mt-3 leading-relaxed">{pick(app.desc, lang)}</p>
       <div className="flex flex-wrap gap-2 mt-4">
-        {stack.map((chip) => (
+        {app.stack.map((chip) => (
           <span
             key={chip}
-            className="font-mono text-xs px-2 py-1 rounded-md bg-ink-400 text-text-secondary border border-ink-400"
+            className="font-mono text-xs px-2 py-1 rounded-md bg-bg text-muted border border-border"
           >
             {chip}
           </span>
@@ -176,19 +94,50 @@ function FeaturedAppCard({ name, tag, desc, stack, index, inView }) {
   )
 }
 
-function StackStrip({ chips }) {
+function StackStrip() {
   return (
-    <div className="mt-16 border-t border-ink-400 pt-10">
+    <div className="mt-16 border-t border-border pt-10">
       <div className="flex flex-wrap justify-center gap-2">
-        {chips.map((chip) => (
+        {data.stackChips.map((chip) => (
           <span
             key={chip}
-            className="font-mono text-xs px-3 py-1.5 rounded-full bg-ink-500 text-text-secondary border border-ink-400"
+            className="font-mono text-xs px-3 py-1.5 rounded-full bg-surface text-muted border border-border"
           >
             {chip}
           </span>
         ))}
       </div>
     </div>
+  )
+}
+
+export default function Claude() {
+  const { lang } = useLanguage()
+  return (
+    <section id="claude-code" className="py-24 sm:py-32">
+      <div className="max-w-6xl mx-auto px-6">
+        <PitchHero lang={lang} />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-16">
+          {data.values.map((v) => (
+            <ValueCard key={v.id} value={v} lang={lang} />
+          ))}
+        </div>
+        <ProofBlock lang={lang} />
+        <p className="text-accent font-mono text-xs uppercase tracking-widest mt-12">
+          {pick(data.servicesLabel, lang)}
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-8">
+          {data.services.map((s) => (
+            <ServiceCard key={s.id} service={s} lang={lang} />
+          ))}
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+          {data.apps.map((a) => (
+            <FeaturedAppCard key={a.id} app={a} lang={lang} />
+          ))}
+        </div>
+        <StackStrip />
+      </div>
+    </section>
   )
 }
