@@ -1,11 +1,11 @@
 ---
 gsd_state_version: 1.0
-milestone: v4.0
-milestone_name: Portfolio Redesign — JSON-Driven Section Refactor
-status: ready_to_close
-stopped_at: All 7 v4.0 slices shipped to main; awaiting real-device UAT + v4.0 tag
-last_updated: 2026-06-13T23:55:00.000Z
-last_activity: 2026-06-13 -- PR #32 merged (e8abb1b) — Slice 7 Claude Code closes v4.0; 57/57 GREEN; 60.93 kB gz (WARN, under HARD 68)
+milestone: v4.1
+milestone_name: Deploy polish — OG + LCP perf
+status: in_flight
+stopped_at: PR #34 open — static hero LCP fix (local Perf 0.84 → 0.98); awaiting Vercel preview + prod Lighthouse verdict
+last_updated: 2026-06-16T14:35:00.000Z
+last_activity: 2026-06-16 -- PR #34 opened (v4.1-lcp-static-hero, 9f3106c) — move hero <img> to index.html, LCP 4.0s → 2.1s, all gates PASS
 progress:
   total_slices: 7
   completed_slices: 7
@@ -84,12 +84,28 @@ Progress bar: `[██████████████] 7/7 slices on main �
 - **v4.2 backlog activation** — VIS-05 claude-kanban + caveman cards (extra featured-app cards in Claude section), DIAGRAMS-01 cross-repo architecture diagrams.
 - **v4.3 theme toggle decision** — Either ship light theme + toggle UI OR formally retire `ThemeContext`.
 
+## v4.1 In-Flight (2026-06-13 → 2026-06-16)
+
+| PR | Commit | Status | Description |
+|---|---|---|---|
+| #33 | 7891e2f | MERGED 2026-06-13 | OG image refresh + responsive me-400.webp variant (orthogonal to actual LCP bottleneck) |
+| #34 | 9f3106c | OPEN 2026-06-16 | Static hero LCP fix — move `<img>` to index.html; local Perf 0.84 → 0.98, LCP 4.0s → 2.1s |
+
+**v4.0 tag:** placed (`v4.0`).
+
+**Production verdict pending PR #34 merge:** Lighthouse on `*.vercel.app` must show ≥0.95 Perf to close v4.1 LCP work.
+
 ## Session Continuity
 
-Last session: 2026-06-13T23:55:00.000Z (Slice 7 Claude Code shipped, v4.0 complete)
-Stopped at: All 7 v4.0 slices on main (e8abb1b). STATE.md refreshed to v4.0-close state. v4.0 tag NOT yet placed.
+Last session: 2026-06-16T14:35:00.000Z (PR #34 opened — static hero LCP fix)
+Stopped at: PR #34 awaiting Vercel preview Lighthouse + merge.
 Resume file: none — clean checkpoint
-Operator next steps: see "v4.0 Close Checklist" above.
+Operator next steps:
+1. Verify Vercel preview render parity (photo + overlay + content positioning intact)
+2. Confirm Vercel deploy Lighthouse gate passes
+3. Merge PR #34 to main
+4. Production Lighthouse on `andresmontoyat.vercel.app` — target Perf ≥0.95
+5. If GREEN: tag `v4.1`, sweep dependabot PRs (#19-#24), move to v4.2 (custom domain)
 
 ## v3.x Closure Reference (historical only)
 
