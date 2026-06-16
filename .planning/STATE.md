@@ -2,10 +2,10 @@
 gsd_state_version: 1.0
 milestone: v4.1
 milestone_name: Deploy polish — OG + LCP perf
-status: in_flight
-stopped_at: PR #34 open — static hero LCP fix (local Perf 0.84 → 0.98); awaiting Vercel preview + prod Lighthouse verdict
-last_updated: 2026-06-16T14:35:00.000Z
-last_activity: 2026-06-16 -- PR #34 opened (v4.1-lcp-static-hero, 9f3106c) — move hero <img> to index.html, LCP 4.0s → 2.1s, all gates PASS
+status: shipped
+stopped_at: v4.1 tag placed (7e2c34c); prod Lighthouse mobile Perf 0.99 / A11y 1.0 / BP 1.0 / SEO 1.0 — all gates PASS
+last_updated: 2026-06-16T15:15:00.000Z
+last_activity: 2026-06-16 -- v4.1 tagged; prod Perf 0.84 → 0.99, LCP 4.0s → 2.1s
 progress:
   total_slices: 7
   completed_slices: 7
@@ -84,28 +84,45 @@ Progress bar: `[██████████████] 7/7 slices on main �
 - **v4.2 backlog activation** — VIS-05 claude-kanban + caveman cards (extra featured-app cards in Claude section), DIAGRAMS-01 cross-repo architecture diagrams.
 - **v4.3 theme toggle decision** — Either ship light theme + toggle UI OR formally retire `ThemeContext`.
 
-## v4.1 In-Flight (2026-06-13 → 2026-06-16)
+## v4.1 SHIPPED (2026-06-13 → 2026-06-16)
 
 | PR | Commit | Status | Description |
 |---|---|---|---|
 | #33 | 7891e2f | MERGED 2026-06-13 | OG image refresh + responsive me-400.webp variant (orthogonal to actual LCP bottleneck) |
-| #34 | 9f3106c | OPEN 2026-06-16 | Static hero LCP fix — move `<img>` to index.html; local Perf 0.84 → 0.98, LCP 4.0s → 2.1s |
+| #34 | a0051b2 | MERGED 2026-06-16 | Static hero LCP fix — move `<img>` to index.html (kill React hydration LCP delay) |
+| #35 | 7e2c34c | MERGED 2026-06-16 | LCP eligibility fix — remove aria-hidden + add alt so photo qualifies as LCP candidate |
 
-**v4.0 tag:** placed (`v4.0`).
+**Tags placed:** `v4.0`, `v4.1`.
 
-**Production verdict pending PR #34 merge:** Lighthouse on `*.vercel.app` must show ≥0.95 Perf to close v4.1 LCP work.
+## v4.1 Final Metrics (prod, andresmontoyatco.vercel.app, Lighthouse mobile simulated throttling)
+
+| Metric | Before v4.1 | After v4.1 |
+|---|---|---|
+| Performance | 0.84 | **0.99** |
+| LCP | ~4.0s | **2.1s** |
+| FCP | — | 1.1s |
+| TBT | — | 0 ms |
+| CLS | — | 0.014 |
+| SI | — | 2.5s |
+| Accessibility | 1.0 | 1.0 |
+| Best Practices | 1.0 | 1.0 |
+| SEO | 1.0 | 1.0 |
+
+Root cause closed: React SPA hydration was blocking the LCP critical path. Hero `<img>` now lives in `index.html` as a static absolute-positioned layer behind `#root`, paints with FCP, and qualifies as LCP candidate (alt + no aria-hidden).
 
 ## Session Continuity
 
-Last session: 2026-06-16T14:35:00.000Z (PR #34 opened — static hero LCP fix)
-Stopped at: PR #34 awaiting Vercel preview Lighthouse + merge.
+Last session: 2026-06-16T15:15:00.000Z (v4.1 tagged; prod gate PASS)
+Stopped at: v4.1 milestone complete. Both tags pushed. Prod live.
 Resume file: none — clean checkpoint
-Operator next steps:
-1. Verify Vercel preview render parity (photo + overlay + content positioning intact)
-2. Confirm Vercel deploy Lighthouse gate passes
-3. Merge PR #34 to main
-4. Production Lighthouse on `andresmontoyat.vercel.app` — target Perf ≥0.95
-5. If GREEN: tag `v4.1`, sweep dependabot PRs (#19-#24), move to v4.2 (custom domain)
+
+## v4.2 Roadmap Candidates (next milestone)
+
+1. **Custom domain** — `andresmontoyat.co` DNS + Vercel binding (currently `*.vercel.app` only; root domain returns 000)
+2. **Dependabot sweep** — Triage open PRs #19-#24 (5 stale npm bumps); merge security fixes, close stale
+3. **PR preview deploys** — Configure Vercel preview deploys (currently SSO-gated; consider bypass token for external Lighthouse runs)
+4. **Theme toggle decision** — Ship light theme + toggle UI OR formally retire `ThemeContext`
+5. **OG image refresh** — When custom domain lives, point `og:url` + `og:image` at it (currently hardcoded to `andresmontoyat.co`)
 
 ## v3.x Closure Reference (historical only)
 
