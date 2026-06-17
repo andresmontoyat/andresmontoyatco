@@ -63,10 +63,10 @@ describe('Experience (v4.0 Slice 5)', () => {
   it('clicking expand toggles bullets and aria-expanded=true', () => {
     renderWithLang('en')
     const buttons = screen.getAllByRole('button', { name: /expand entry/i })
-    expect(screen.queryByText(/Leading performance improvements on the Person API/)).toBeNull()
+    expect(screen.queryByText(/latency reduction on the Person API/)).toBeNull()
     fireEvent.click(buttons[0])
     expect(buttons[0].getAttribute('aria-expanded')).toBe('true')
-    expect(screen.getByText(/Leading performance improvements on the Person API/)).toBeInTheDocument()
+    expect(screen.getByText(/latency reduction on the Person API/)).toBeInTheDocument()
   })
 
   it('translates label/h2/intro/ARIA when lang=es', () => {

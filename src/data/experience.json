@@ -16,39 +16,39 @@
       "location": { "en": "Remote", "es": "Remoto" },
       "bullets": {
         "en": [
-          "Leading performance improvements on the Person API (estimated 40% latency reduction).",
-          "Enhancing event auditing in the GUDD API for stronger compliance and observability.",
-          "Working in a cross-functional squad on user-profile domain services (Java · Spring Boot).",
-          "Accelerating daily development with AI coding assistants (Claude Code, GitHub Copilot, JetBrains Junie)."
+          "Driving a ~40% latency reduction on the Person API through targeted backend performance tuning (Java · Spring Boot).",
+          "Hardening event auditing in the GUDD API to strengthen compliance and observability.",
+          "Shipping user-profile domain services in a cross-functional squad (Java · Spring Boot · microservices).",
+          "Accelerating daily delivery with AI coding assistants (Claude Code, GitHub Copilot, JetBrains Junie)."
         ],
         "es": [
-          "Lidero mejoras de rendimiento en la Person API (reducción estimada del 40% en latencia).",
-          "Mejoro la auditoría de eventos de la GUDD API para un cumplimiento y observabilidad más sólidos.",
-          "Trabajo en un squad multifuncional sobre servicios del dominio de perfil de usuario (Java · Spring Boot).",
-          "Acelero el desarrollo diario con asistentes de IA (Claude Code, GitHub Copilot, JetBrains Junie)."
+          "Lidero una reducción de latencia del ~40% en la Person API con tuning backend dirigido (Java · Spring Boot).",
+          "Endurezco la auditoría de eventos de la GUDD API para reforzar cumplimiento y observabilidad.",
+          "Entrego servicios de dominio de perfil de usuario en un squad multifuncional (Java · Spring Boot · microservicios).",
+          "Acelero la entrega diaria con asistentes de IA (Claude Code, GitHub Copilot, JetBrains Junie)."
         ]
       },
       "tech": ["Java", "Spring Boot", "Claude Code", "GitHub Copilot", "JetBrains Junie"]
     },
     {
       "id": "f2x-2024",
-      "date": { "en": "Sep 2024 — Dec 2025", "es": "Sep 2024 — Dic 2025" },
+      "date": { "en": "Sep 2024 — Apr 2026", "es": "Sep 2024 — Abr 2026" },
       "title": { "en": "Backend Developer", "es": "Backend Developer" },
       "company": "F2X SAS",
       "location": { "en": "Medellín, Colombia", "es": "Medellín, Colombia" },
       "bullets": {
         "en": [
-          "Delivered new product features and core platform capabilities.",
-          "Drove architecture improvements and cross-team collaboration.",
-          "Supported production operations and incident response."
+          "Designed a commissions-calculation component for the F2X memberships product (Java · Spring Boot · hexagonal architecture on AWS · Postgres).",
+          "Designed a billing component for the F2X fuel-services product across the microservice fleet.",
+          "Owned production-incident response and operational support for backend services."
         ],
         "es": [
-          "Entregué nuevas funcionalidades y capacidades core de la plataforma.",
-          "Impulsé mejoras de arquitectura y colaboración entre equipos.",
-          "Apoyé operaciones en producción y respuesta a incidentes."
+          "Diseñé un componente de cálculo de comisiones para el producto de membresías de F2X (Java · Spring Boot · arquitectura hexagonal sobre AWS · Postgres).",
+          "Diseñé un componente de cobro para los servicios de combustibles de F2X sobre el conjunto de microservicios.",
+          "Asumí la respuesta a incidentes en producción y el soporte operacional de los servicios backend."
         ]
       },
-      "tech": ["Java", "Spring Boot", "Microservices"]
+      "tech": ["Java", "Spring Boot", "Microservices", "Hexagonal Architecture", "AWS", "PostgreSQL"]
     },
     {
       "id": "blerify-2024",
@@ -58,35 +58,35 @@
       "location": { "en": "Delaware, USA (Remote)", "es": "Delaware, EE.UU. (Remoto)" },
       "bullets": {
         "en": [
-          "Built a blockchain platform for digital credentials verification.",
-          "Implemented Keycloak security and KrakenD API Gateway on Kubernetes.",
-          "Administered GKE clusters on Google Cloud."
+          "Built a blockchain-based digital credentials verification platform (Java backend on Kubernetes).",
+          "Wired edge security with Keycloak (OAuth2/OIDC) and KrakenD API Gateway across the microservice fleet.",
+          "Operated GKE clusters on Google Cloud: administration, upgrades and observability."
         ],
         "es": [
-          "Construí una plataforma blockchain para verificación de credenciales digitales.",
-          "Implementé seguridad con Keycloak y el API Gateway KrakenD sobre Kubernetes.",
-          "Administré clústeres GKE en Google Cloud."
+          "Construí una plataforma de verificación de credenciales digitales basada en blockchain (backend Java sobre Kubernetes).",
+          "Implementé seguridad en el edge con Keycloak (OAuth2/OIDC) y el API Gateway KrakenD sobre el conjunto de microservicios.",
+          "Operé clústeres GKE en Google Cloud: administración, upgrades y observabilidad."
         ]
       },
       "tech": ["Java", "Keycloak", "KrakenD", "Kubernetes", "GKE", "Google Cloud"]
     },
     {
       "id": "smtech-2023",
-      "date": { "en": "Aug 2023 — Mar 2024", "es": "Ago 2023 — Mar 2024" },
+      "date": { "en": "Aug 2023 — Dec 2023", "es": "Ago 2023 — Dic 2023" },
       "title": { "en": "Backend Developer", "es": "Backend Developer" },
       "company": "SM TECH SAS",
       "location": { "en": "Medellín, Colombia", "es": "Medellín, Colombia" },
       "bullets": {
         "en": [
-          "DraiverDO app components and microservices integrations.",
-          "Led code reviews and bug resolution across the backend team."
+          "Built backend features for the Draiver platform — AI-driven orchestration of an insured nationwide driver marketplace that moves vehicles, handles title and registration documents and runs readiness tasks (Java · Spring Boot · hexagonal architecture on AWS · Postgres).",
+          "Led code reviews and drove bug-resolution practices across the backend team."
         ],
         "es": [
-          "Componentes para la app DraiverDO e integraciones de microservicios.",
-          "Lideré revisiones de código y resolución de bugs en el equipo backend."
+          "Construí funcionalidades backend para la plataforma Draiver — orquestación con IA de un marketplace nacional de conductores asegurados que mueve vehículos, gestiona documentación de título y matrícula y ejecuta tareas de preparación (Java · Spring Boot · arquitectura hexagonal sobre AWS · Postgres).",
+          "Lideré code reviews y elevé las prácticas de resolución de bugs en el equipo backend."
         ]
       },
-      "tech": ["Java", "Spring Boot", "Microservices"]
+      "tech": ["Java", "Spring Boot", "Microservices", "Hexagonal Architecture", "AWS", "PostgreSQL"]
     },
     {
       "id": "tul-2022",
@@ -96,15 +96,15 @@
       "location": { "en": "Medellín, Colombia", "es": "Medellín, Colombia" },
       "bullets": {
         "en": [
-          "Security components for the TUL B2B marketplace microservices.",
-          "Resource management modules and platform code-quality reviews."
+          "Built warehouse-management modules for the TUL B2B marketplace microservice fleet (Java · Spring Boot · hexagonal architecture on AWS · Postgres).",
+          "Delivered Spring Security components and ran platform-wide code-quality reviews."
         ],
         "es": [
-          "Componentes de seguridad para los microservicios del marketplace B2B de TUL.",
-          "Módulos de gestión de recursos y revisiones de calidad de código."
+          "Construí módulos de gestión de bodegas para los microservicios del marketplace B2B de TUL (Java · Spring Boot · arquitectura hexagonal sobre AWS · Postgres).",
+          "Entregué componentes de seguridad con Spring Security y conduje revisiones de calidad de código a nivel de plataforma."
         ]
       },
-      "tech": ["Java", "Spring Boot", "Spring Security", "Microservices"]
+      "tech": ["Java", "Spring Boot", "Spring Security", "Microservices", "Hexagonal Architecture", "AWS", "PostgreSQL"]
     },
     {
       "id": "linked-2021",
@@ -114,12 +114,12 @@
       "location": { "en": "Remote", "es": "Remoto" },
       "bullets": {
         "en": [
-          "Brought 15+ microservices into continuous integration and deployment.",
-          "Installed and configured Jenkins, SonarQube, Nexus and Docker."
+          "Wired 15+ microservices into continuous integration and deployment pipelines.",
+          "Stood up the DevOps toolchain from scratch: Jenkins, SonarQube, Nexus and Docker."
         ],
         "es": [
-          "Integré más de 15 microservicios a integración y despliegue continuos.",
-          "Instalé y configuré Jenkins, SonarQube, Nexus y Docker."
+          "Llevé más de 15 microservicios a pipelines de integración y despliegue continuos.",
+          "Levanté el toolchain DevOps desde cero: Jenkins, SonarQube, Nexus y Docker."
         ]
       },
       "tech": ["Jenkins", "SonarQube", "Nexus", "Docker", "Microservices"]
@@ -132,14 +132,14 @@
       "location": { "en": "Medellín, Colombia", "es": "Medellín, Colombia" },
       "bullets": {
         "en": [
-          "Architected PaaS solutions for next-gen banking products on AWS.",
-          "Designed reusable security and Keycloak/GCP integration frameworks.",
-          "Mentored developers on Spring, SOLID and clean architecture."
+          "Architected PaaS solutions on AWS for MutualSER's next-gen health-insurance products (Colombian EPS).",
+          "Designed reusable security and Keycloak/GCP integration frameworks consumed across product teams.",
+          "Mentored developers on Spring, SOLID principles and clean architecture."
         ],
         "es": [
-          "Diseñé soluciones PaaS para productos bancarios de próxima generación en AWS.",
-          "Diseñé frameworks reutilizables de seguridad e integraciones con Keycloak/GCP.",
-          "Mentoricé desarrolladores en Spring, SOLID y arquitectura limpia."
+          "Diseñé arquitecturas PaaS sobre AWS para los productos de salud de próxima generación de MutualSER (EPS colombiana).",
+          "Diseñé frameworks reutilizables de seguridad e integración con Keycloak/GCP consumidos por varios equipos de producto.",
+          "Mentoricé desarrolladores en Spring, principios SOLID y arquitectura limpia."
         ]
       },
       "tech": ["Java", "Spring Boot", "AWS", "Keycloak", "GCP"]
@@ -152,14 +152,14 @@
       "location": { "en": "LATAM", "es": "LATAM" },
       "bullets": {
         "en": [
-          "Led a team of 45+ developers delivering the Claro Perú transactional portal.",
+          "Led a 45+ developer team delivering the Claro Perú transactional self-service portal.",
           "Designed the Oracle Service Bus integration layer for Claro Colombia.",
-          "Built WebSphere Portlet components and CI infrastructure."
+          "Built WebSphere Portlet components and the CI infrastructure that sustained the LATAM delivery."
         ],
         "es": [
-          "Lideré un equipo de más de 45 desarrolladores entregando el portal transaccional de Claro Perú.",
+          "Lideré un equipo de más de 45 desarrolladores entregando el portal transaccional de autoservicio de Claro Perú.",
           "Diseñé la capa de integración sobre Oracle Service Bus para Claro Colombia.",
-          "Construí componentes WebSphere Portlets e infraestructura de CI."
+          "Construí componentes WebSphere Portlets e infraestructura de CI que sostuvieron la entrega LATAM."
         ]
       },
       "tech": ["Java", "Oracle Service Bus", "WebSphere", "Jenkins"]
@@ -172,12 +172,12 @@
       "location": { "en": "Medellín, Colombia", "es": "Medellín, Colombia" },
       "bullets": {
         "en": [
-          "NetPlanet data-analysis components for the Claro network.",
-          "Vehicle tracking, IoT pilots for the City of Medellín and AWS/on-prem infra."
+          "Architected NetPlanet data-analysis components for the Claro telecom network.",
+          "Delivered vehicle-tracking platforms, IoT pilots for the City of Medellín and AWS/on-prem infrastructure across 11 years of evolving projects."
         ],
         "es": [
-          "Componentes de análisis de datos NetPlanet para la red de Claro.",
-          "Rastreo vehicular, pilotos IoT para Medellín e infraestructura AWS/On-Premise."
+          "Diseñé componentes de análisis de datos NetPlanet para la red de telecomunicaciones de Claro.",
+          "Entregué plataformas de rastreo vehicular, pilotos IoT para la Ciudad de Medellín e infraestructura AWS/on-premise a lo largo de 11 años de proyectos."
         ]
       },
       "tech": ["Java", "AWS", "IoT", "Spring Boot"]
@@ -190,12 +190,12 @@
       "location": { "en": "Medellín, Colombia", "es": "Medellín, Colombia" },
       "bullets": {
         "en": [
-          "Predictive call systems integrating Java with Asterisk telephony.",
-          "Mail Bomber, SMS delivery and Raspberry Pi digital-signage systems."
+          "Led the technical design of predictive call systems integrating Java with Asterisk telephony.",
+          "Built SMS-delivery, mail-marketing and Raspberry Pi digital-signage platforms."
         ],
         "es": [
-          "Sistemas de llamadas predictivas integrando Java con telefonía Asterisk.",
-          "Sistemas Mail Bomber, de envío de SMS y señalización digital con Raspberry Pi."
+          "Lideré el diseño técnico de sistemas de llamadas predictivas integrando Java con telefonía Asterisk.",
+          "Construí plataformas de envío SMS, mail marketing y señalización digital sobre Raspberry Pi."
         ]
       },
       "tech": ["Java", "Asterisk", "Raspberry Pi"]
@@ -208,12 +208,12 @@
       "location": { "en": "Medellín, Colombia", "es": "Medellín, Colombia" },
       "bullets": {
         "en": [
-          "Loan, policy and occupational-risk systems in Java 7 / JEE 5.",
-          "Oracle SQL procedures and efficient backend components."
+          "Built loan, policy and occupational-risk systems for Suramericana (Colombian insurance leader) in Java 7 / JEE 5.",
+          "Authored Oracle SQL stored procedures and high-throughput backend components."
         ],
         "es": [
-          "Sistemas de préstamos, pólizas y riesgos laborales en Java 7 / JEE 5.",
-          "Procedimientos SQL en Oracle y componentes backend eficientes."
+          "Construí sistemas de préstamos, pólizas y riesgos laborales para Suramericana (líder asegurador colombiano) en Java 7 / JEE 5.",
+          "Escribí procedimientos almacenados en Oracle SQL y componentes backend de alto throughput."
         ]
       },
       "tech": ["Java", "JEE 5", "Oracle SQL"]
@@ -226,15 +226,15 @@
       "location": { "en": "Medellín, Colombia", "es": "Medellín, Colombia" },
       "bullets": {
         "en": [
-          "Transportation Management System serving 25+ companies.",
-          "Accounting integrations in Java JDK 1.4–8 with SQL Server and MySQL."
+          "Built a Transportation Management System (TMS) for bulk-cargo and parcel logistics, used by 25+ companies (full-stack: Java + JSP frontends).",
+          "Delivered accounting integrations in Java (JDK 1.4–8) against SQL Server and MySQL — first senior role, progressed from junior on the same product."
         ],
         "es": [
-          "Sistema de Gestión de Transporte (TMS) usado por más de 25 empresas.",
-          "Integraciones contables en Java JDK 1.4–8 con SQL Server y MySQL."
+          "Construí un Sistema de Gestión de Transporte (TMS) para carga masiva y paqueteo, usado por más de 25 empresas (full-stack: Java + frontends JSP).",
+          "Entregué integraciones contables en Java (JDK 1.4–8) sobre SQL Server y MySQL — primer rol senior, progresé desde junior en el mismo producto."
         ]
       },
-      "tech": ["Java", "SQL Server", "MySQL"]
+      "tech": ["Java", "JavaScript", "JSP", "SQL Server", "MySQL"]
     }
   ]
 }
