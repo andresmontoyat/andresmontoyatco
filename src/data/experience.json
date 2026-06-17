@@ -32,23 +32,23 @@
     },
     {
       "id": "f2x-2024",
-      "date": { "en": "Sep 2024 — Dec 2025", "es": "Sep 2024 — Dic 2025" },
+      "date": { "en": "Sep 2024 — Apr 2026", "es": "Sep 2024 — Abr 2026" },
       "title": { "en": "Backend Developer", "es": "Backend Developer" },
       "company": "F2X SAS",
       "location": { "en": "Medellín, Colombia", "es": "Medellín, Colombia" },
       "bullets": {
         "en": [
-          "Shipped new product features and core platform capabilities across Java · Spring Boot microservices.",
-          "Drove architecture improvements through cross-team collaboration on backend services.",
+          "Designed a commissions-calculation component for the F2X memberships product (Java · Spring Boot · hexagonal architecture on AWS · Postgres).",
+          "Designed a billing component for the F2X fuel-services product across the microservice fleet.",
           "Owned production-incident response and operational support for backend services."
         ],
         "es": [
-          "Entregué nuevas funcionalidades de producto y capacidades core sobre microservicios Java · Spring Boot.",
-          "Impulsé mejoras de arquitectura coordinando equipos sobre los servicios backend.",
+          "Diseñé un componente de cálculo de comisiones para el producto de membresías de F2X (Java · Spring Boot · arquitectura hexagonal sobre AWS · Postgres).",
+          "Diseñé un componente de cobro para los servicios de combustibles de F2X sobre el conjunto de microservicios.",
           "Asumí la respuesta a incidentes en producción y el soporte operacional de los servicios backend."
         ]
       },
-      "tech": ["Java", "Spring Boot", "Microservices"]
+      "tech": ["Java", "Spring Boot", "Microservices", "Hexagonal Architecture", "AWS", "PostgreSQL"]
     },
     {
       "id": "blerify-2024",
@@ -72,21 +72,21 @@
     },
     {
       "id": "smtech-2023",
-      "date": { "en": "Aug 2023 — Mar 2024", "es": "Ago 2023 — Mar 2024" },
+      "date": { "en": "Aug 2023 — Dec 2023", "es": "Ago 2023 — Dic 2023" },
       "title": { "en": "Backend Developer", "es": "Backend Developer" },
       "company": "SM TECH SAS",
       "location": { "en": "Medellín, Colombia", "es": "Medellín, Colombia" },
       "bullets": {
         "en": [
-          "Built backend components and microservice integrations for the DraiverDO logistics app (Java · Spring Boot).",
+          "Built backend features for the Draiver platform — AI-driven orchestration of an insured nationwide driver marketplace that moves vehicles, handles title and registration documents and runs readiness tasks (Java · Spring Boot · hexagonal architecture on AWS · Postgres).",
           "Led code reviews and drove bug-resolution practices across the backend team."
         ],
         "es": [
-          "Construí componentes backend e integraciones de microservicios para la app de logística DraiverDO (Java · Spring Boot).",
+          "Construí funcionalidades backend para la plataforma Draiver — orquestación con IA de un marketplace nacional de conductores asegurados que mueve vehículos, gestiona documentación de título y matrícula y ejecuta tareas de preparación (Java · Spring Boot · arquitectura hexagonal sobre AWS · Postgres).",
           "Lideré code reviews y elevé las prácticas de resolución de bugs en el equipo backend."
         ]
       },
-      "tech": ["Java", "Spring Boot", "Microservices"]
+      "tech": ["Java", "Spring Boot", "Microservices", "Hexagonal Architecture", "AWS", "PostgreSQL"]
     },
     {
       "id": "tul-2022",
@@ -96,15 +96,15 @@
       "location": { "en": "Medellín, Colombia", "es": "Medellín, Colombia" },
       "bullets": {
         "en": [
-          "Built security components (Spring Security) for the TUL B2B marketplace microservice fleet.",
-          "Delivered resource-management modules and ran platform-wide code-quality reviews."
+          "Built warehouse-management modules for the TUL B2B marketplace microservice fleet (Java · Spring Boot · hexagonal architecture on AWS · Postgres).",
+          "Delivered Spring Security components and ran platform-wide code-quality reviews."
         ],
         "es": [
-          "Construí componentes de seguridad (Spring Security) para los microservicios del marketplace B2B de TUL.",
-          "Entregué módulos de gestión de recursos y conduje revisiones de calidad de código a nivel de plataforma."
+          "Construí módulos de gestión de bodegas para los microservicios del marketplace B2B de TUL (Java · Spring Boot · arquitectura hexagonal sobre AWS · Postgres).",
+          "Entregué componentes de seguridad con Spring Security y conduje revisiones de calidad de código a nivel de plataforma."
         ]
       },
-      "tech": ["Java", "Spring Boot", "Spring Security", "Microservices"]
+      "tech": ["Java", "Spring Boot", "Spring Security", "Microservices", "Hexagonal Architecture", "AWS", "PostgreSQL"]
     },
     {
       "id": "linked-2021",
@@ -132,12 +132,12 @@
       "location": { "en": "Medellín, Colombia", "es": "Medellín, Colombia" },
       "bullets": {
         "en": [
-          "Architected PaaS solutions on AWS for next-gen banking products.",
+          "Architected PaaS solutions on AWS for MutualSER's next-gen health-insurance products (Colombian EPS).",
           "Designed reusable security and Keycloak/GCP integration frameworks consumed across product teams.",
           "Mentored developers on Spring, SOLID principles and clean architecture."
         ],
         "es": [
-          "Diseñé arquitecturas PaaS sobre AWS para productos bancarios de próxima generación.",
+          "Diseñé arquitecturas PaaS sobre AWS para los productos de salud de próxima generación de MutualSER (EPS colombiana).",
           "Diseñé frameworks reutilizables de seguridad e integración con Keycloak/GCP consumidos por varios equipos de producto.",
           "Mentoricé desarrolladores en Spring, principios SOLID y arquitectura limpia."
         ]
@@ -208,11 +208,11 @@
       "location": { "en": "Medellín, Colombia", "es": "Medellín, Colombia" },
       "bullets": {
         "en": [
-          "Built loan, policy and occupational-risk systems in Java 7 / JEE 5.",
+          "Built loan, policy and occupational-risk systems for Suramericana (Colombian insurance leader) in Java 7 / JEE 5.",
           "Authored Oracle SQL stored procedures and high-throughput backend components."
         ],
         "es": [
-          "Construí sistemas de préstamos, pólizas y riesgos laborales en Java 7 / JEE 5.",
+          "Construí sistemas de préstamos, pólizas y riesgos laborales para Suramericana (líder asegurador colombiano) en Java 7 / JEE 5.",
           "Escribí procedimientos almacenados en Oracle SQL y componentes backend de alto throughput."
         ]
       },
@@ -226,15 +226,15 @@
       "location": { "en": "Medellín, Colombia", "es": "Medellín, Colombia" },
       "bullets": {
         "en": [
-          "Built a Transportation Management System (TMS) that served 25+ companies.",
-          "Delivered accounting integrations in Java (JDK 1.4–8) against SQL Server and MySQL."
+          "Built a Transportation Management System (TMS) for bulk-cargo and parcel logistics, used by 25+ companies (full-stack: Java + JSP frontends).",
+          "Delivered accounting integrations in Java (JDK 1.4–8) against SQL Server and MySQL — first senior role, progressed from junior on the same product."
         ],
         "es": [
-          "Construí un Sistema de Gestión de Transporte (TMS) usado por más de 25 empresas.",
-          "Entregué integraciones contables en Java (JDK 1.4–8) sobre SQL Server y MySQL."
+          "Construí un Sistema de Gestión de Transporte (TMS) para carga masiva y paqueteo, usado por más de 25 empresas (full-stack: Java + frontends JSP).",
+          "Entregué integraciones contables en Java (JDK 1.4–8) sobre SQL Server y MySQL — primer rol senior, progresé desde junior en el mismo producto."
         ]
       },
-      "tech": ["Java", "SQL Server", "MySQL"]
+      "tech": ["Java", "JavaScript", "JSP", "SQL Server", "MySQL"]
     }
   ]
 }
