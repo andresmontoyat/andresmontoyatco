@@ -55,10 +55,13 @@ describe('Contact (v4.0 Slice 2)', () => {
     }
   })
 
-  it('Location is NOT a link (no anchor wrapper)', () => {
+  it('Location links to Google Maps in a new tab', () => {
     renderWithLang('en')
-    const el = screen.getByText('Medellín, Colombia')
-    expect(el.closest('a')).toBeNull()
+    const el = screen.getByText('Medellín, Colombia').closest('a')
+    expect(el).not.toBeNull()
+    expect(el.getAttribute('href')).toMatch(/maps\.app\.goo\.gl/)
+    expect(el.getAttribute('target')).toBe('_blank')
+    expect(el.getAttribute('rel')).toBe('noopener noreferrer')
   })
 
   it('translates label/h2/intro and kLabels when lang=es', () => {
