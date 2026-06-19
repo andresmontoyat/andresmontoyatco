@@ -22,7 +22,7 @@ function renderWithLang(lang = 'en') {
   )
 }
 
-describe('Projects (v4.0 Slice 6)', () => {
+describe('Projects (v4.2)', () => {
   it('renders the section with id="projects"', () => {
     const { container } = renderWithLang('en')
     expect(container.querySelector('section#projects')).toBeInTheDocument()
@@ -35,20 +35,24 @@ describe('Projects (v4.0 Slice 6)', () => {
     expect(screen.getByText(/A focused look at the systems/)).toBeInTheDocument()
   })
 
-  it('renders all 4 project titles (EN)', () => {
-    renderWithLang('en')
-    expect(data.projects).toHaveLength(4)
-    expect(screen.getAllByText('Person API').length).toBeGreaterThan(0)
-    expect(screen.getAllByText('GUDD API').length).toBeGreaterThan(0)
-    expect(screen.getAllByText('Blockchain Credentials Platform').length).toBeGreaterThan(0)
-    expect(screen.getAllByText('AI-Driven Coding Workflows').length).toBeGreaterThan(0)
+  it('renders one card per project with its EN title', () => {
+    const { container } = renderWithLang('en')
+    expect(container.querySelectorAll('section#projects article')).toHaveLength(
+      data.projects.length,
+    )
+    for (const p of data.projects) {
+      expect(screen.getAllByText(p.title.en).length).toBeGreaterThan(0)
+    }
   })
 
-  it('renders each project description + tech chips', () => {
+  it('renders each project emoji icon + tech chips', () => {
     renderWithLang('en')
-    expect(screen.getByText(/40% latency reduction/)).toBeInTheDocument()
-    expect(screen.getAllByText('Spring Boot').length).toBeGreaterThan(0)
-    expect(screen.getAllByText('Kotlin').length).toBeGreaterThan(0)
+    for (const p of data.projects) {
+      expect(screen.getAllByText(p.icon).length).toBeGreaterThan(0)
+      for (const tag of p.tech) {
+        expect(screen.getAllByText(tag).length).toBeGreaterThan(0)
+      }
+    }
   })
 
   it('translates label/h2/intro + ES project titles when lang=es', () => {
@@ -56,8 +60,9 @@ describe('Projects (v4.0 Slice 6)', () => {
     expect(screen.getByText('Proyectos')).toBeInTheDocument()
     expect(screen.getByText('Trabajo destacado')).toBeInTheDocument()
     expect(screen.getByText(/mirada enfocada/)).toBeInTheDocument()
-    expect(screen.getAllByText('Plataforma de Credenciales Blockchain').length).toBeGreaterThan(0)
-    expect(screen.getAllByText('Flujos de Desarrollo con IA').length).toBeGreaterThan(0)
+    for (const p of data.projects) {
+      expect(screen.getAllByText(p.title.es).length).toBeGreaterThan(0)
+    }
   })
 
   it('no live/github CTAs render when URLs are null (current data state)', () => {
@@ -66,11 +71,12 @@ describe('Projects (v4.0 Slice 6)', () => {
     expect(screen.queryByText('GitHub')).toBeNull()
   })
 
-  it('projects.json schema sanity — 4 projects each with required bilingual keys', () => {
+  it('projects.json schema sanity — each project has required bilingual keys', () => {
     expect(Array.isArray(data.projects)).toBe(true)
-    expect(data.projects).toHaveLength(4)
+    expect(data.projects.length).toBeGreaterThan(0)
     for (const p of data.projects) {
       expect(typeof p.id).toBe('string')
+      expect(typeof p.icon).toBe('string')
       expect(typeof p.title.en).toBe('string')
       expect(typeof p.title.es).toBe('string')
       expect(typeof p.desc.en).toBe('string')

@@ -9,46 +9,38 @@
   "ctaGithub": { "en": "GitHub", "es": "GitHub" },
   "projects": [
     {
-      "id": "person-api",
-      "title": { "en": "Person API", "es": "Person API" },
+      "id": "mr-yoker",
+      "icon": "🎫",
+      "title": { "en": "Mr. Yoker", "es": "Mr. Yoker" },
       "desc": {
-        "en": "High-performance user-profile domain service at Coderio. Led a 40% latency reduction through query optimization, caching and hexagonal architecture refactoring.",
-        "es": "Servicio de dominio de perfil de usuario de alto rendimiento en Coderio. Lideré una reducción de latencia del 40% mediante optimización de consultas, caché y refactorización con arquitectura hexagonal."
+        "en": "Secure ticket-purchasing system built on blockchain, issuing W3C verifiable credentials for each ticket to guarantee authenticity and prevent fraud.",
+        "es": "Sistema de compra de tickets seguros sobre blockchain, que emite credenciales verificables W3C por cada ticket para garantizar autenticidad y prevenir fraude."
       },
-      "tech": ["Java 21", "Spring Boot", "PostgreSQL", "Hexagonal Architecture", "Testcontainers"],
+      "tech": ["Java", "Spring Boot", "Blockchain", "W3C Verifiable Credentials", "Cryptography"],
       "liveUrl": null,
       "githubUrl": null
     },
     {
-      "id": "gudd-api",
-      "title": { "en": "GUDD API", "es": "GUDD API" },
+      "id": "mutual-ser",
+      "icon": "🏥",
+      "title": { "en": "Mutual SER — Microfrontends", "es": "Mutual SER — Microfrontends" },
       "desc": {
-        "en": "Event-driven audit and compliance service at Coderio. Enhanced event auditing pipelines for stronger observability and regulatory compliance across the user-profile squad.",
-        "es": "Servicio de auditoría y cumplimiento orientado a eventos en Coderio. Mejoré los pipelines de auditoría para mayor observabilidad y cumplimiento regulatorio en el squad de perfil de usuario."
+        "en": "Service portal for MutualSER built as composable micro-applications with Module Federation, secured by Keycloak over a clean-architecture backend.",
+        "es": "Portal de servicios para MutualSER construido como micro-aplicaciones componibles con Module Federation, asegurado con Keycloak sobre un backend de arquitectura limpia."
       },
-      "tech": ["Java", "Spring Boot", "Kafka", "Redis", "AWS"],
+      "tech": ["Java", "Spring Boot", "React", "Keycloak", "Module Federation"],
       "liveUrl": null,
       "githubUrl": null
     },
     {
-      "id": "blockchain-credentials",
-      "title": { "en": "Blockchain Credentials Platform", "es": "Plataforma de Credenciales Blockchain" },
+      "id": "hexadialer",
+      "icon": "📞",
+      "title": { "en": "Hexadialer", "es": "Hexadialer" },
       "desc": {
-        "en": "Digital credentials verification platform at Blerify. Issued and validated verifiable credentials on Ethereum, secured with Keycloak and routed through KrakenD on Kubernetes.",
-        "es": "Plataforma de verificación de credenciales digitales en Blerify. Emití y validé credenciales verificables en Ethereum, aseguradas con Keycloak y enrutadas por KrakenD sobre Kubernetes."
+        "en": "Predictive and arithmetic dialer for call centers, optimizing agent-to-customer connection rates through real-time pacing algorithms.",
+        "es": "Marcador predictivo y aritmético para call centers, que optimiza la tasa de conexión agente-cliente mediante algoritmos de ritmo en tiempo real."
       },
-      "tech": ["Kotlin", "Spring Boot", "Ethereum", "Keycloak", "KrakenD", "Kubernetes", "GKE"],
-      "liveUrl": null,
-      "githubUrl": null
-    },
-    {
-      "id": "ai-coding-workflows",
-      "title": { "en": "AI-Driven Coding Workflows", "es": "Flujos de Desarrollo con IA" },
-      "desc": {
-        "en": "GSD methodology and structured AI coding workflows integrating Claude Code, GitHub Copilot and JetBrains Junie with TDD and hexagonal architecture to accelerate backend delivery.",
-        "es": "Metodología GSD y flujos de codificación estructurados con IA integrando Claude Code, GitHub Copilot y JetBrains Junie con TDD y arquitectura hexagonal para acelerar la entrega backend."
-      },
-      "tech": ["Claude Code", "GitHub Copilot", "TDD", "Hexagonal Architecture", "Spring Boot"],
+      "tech": ["Java", "Spring Framework", "Asterisk", "PostgreSQL"],
       "liveUrl": null,
       "githubUrl": null
     }
