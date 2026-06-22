@@ -18,14 +18,6 @@
       "href": "tel:+573244422196"
     },
     {
-      "id": "linkedin",
-      "icon": "in",
-      "kLabel": { "en": "LinkedIn", "es": "LinkedIn" },
-      "value": "carlos-andres-montoya-tobon",
-      "href": "https://www.linkedin.com/in/carlos-andres-montoya-tobon-8b508033",
-      "external": true
-    },
-    {
       "id": "github",
       "icon": "gh",
       "kLabel": { "en": "GitHub", "es": "GitHub" },
@@ -34,11 +26,20 @@
       "external": true
     },
     {
+      "id": "linkedin",
+      "icon": "in",
+      "kLabel": { "en": "LinkedIn", "es": "LinkedIn" },
+      "value": "carlos-andres-montoya-tobon",
+      "href": "https://www.linkedin.com/in/carlos-andres-montoya-tobon-8b508033",
+      "external": true
+    },
+    {
       "id": "location",
       "icon": "◆",
       "kLabel": { "en": "Location", "es": "Ubicación" },
       "value": "Medellín, Colombia",
-      "href": null
+      "href": "https://maps.app.goo.gl/9tcRPrTxqjp76b5A9",
+      "external": true
     }
   ]
 }

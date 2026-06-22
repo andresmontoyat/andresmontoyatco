@@ -12,9 +12,10 @@ function ProjectCard({ project, lang, ctaLive, ctaGithub }) {
   const desc = pick(project.desc, lang)
   return (
     <article className="group bg-surface border border-border rounded-xl overflow-hidden transition-all duration-300 hover:border-accent hover:-translate-y-1">
-      <div className="aspect-video w-full overflow-hidden bg-bg">
-        <div className="w-full h-full flex items-center justify-center">
-          <span className="font-mono text-base text-accent px-4 text-center">{title}</span>
+      <div className="relative aspect-video w-full overflow-hidden bg-bg">
+        <div className="absolute inset-0 bg-grad-accent opacity-[0.12] transition-opacity duration-300 group-hover:opacity-20" />
+        <div className="relative w-full h-full flex items-center justify-center">
+          <span className="text-5xl" aria-hidden="true">{project.icon || '◆'}</span>
         </div>
       </div>
       <div className="p-6">
@@ -73,9 +74,11 @@ export default function Projects() {
           {pick(data.h2, lang)}
         </h2>
         <p className="text-muted max-w-[640px] mb-12 text-base">{pick(data.intro, lang)}</p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="flex flex-wrap justify-center gap-6">
           {data.projects.map((p) => (
-            <ProjectCard key={p.id} project={p} lang={lang} ctaLive={ctaLive} ctaGithub={ctaGithub} />
+            <div key={p.id} className="w-full sm:w-[360px]">
+              <ProjectCard project={p} lang={lang} ctaLive={ctaLive} ctaGithub={ctaGithub} />
+            </div>
           ))}
         </div>
       </div>
