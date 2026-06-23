@@ -1,19 +1,43 @@
 ---
 gsd_state_version: 1.0
-milestone: v4.1
-milestone_name: Deploy polish — OG + LCP perf
-status: shipped
-stopped_at: v4.1 tag placed (7e2c34c); prod Lighthouse mobile Perf 0.99 / A11y 1.0 / BP 1.0 / SEO 1.0 — all gates PASS
-last_updated: 2026-06-16T15:15:00.000Z
-last_activity: 2026-06-16 -- v4.1 tagged; prod Perf 0.84 → 0.99, LCP 4.0s → 2.1s
+milestone: v4.2
+milestone_name: Content polish — experience rewrite + projects redesign
+status: in-progress
+stopped_at: v4.2 content work on main (no tag yet) — experience rewrite (#36) + timeline polish (#37) + projects 3-card redesign + contact reorder (#38) + audit fix (#39). 57/57 tests GREEN.
+last_updated: 2026-06-22T19:14:00-05:00
+last_activity: 2026-06-22 -- merged #38 + #39; closed 16 obsolete dependabot PRs (dead CRA toolchain); STATE+ROADMAP synced to v4.2
 progress:
-  total_slices: 7
-  completed_slices: 7
-  remaining_slices: 0
-  percent: 100
+  shipped_to_main: 4
+  remaining: open  # VIS-05 + content passes; no fixed slice count yet
+  percent: null
 ---
 
 # Project State
+
+## v4.2 Content Polish (IN PROGRESS — on main, no tag)
+
+**Focus:** Recruiter-facing content quality — experience copy rewrite + projects section redesign. No infra/perf scope.
+
+**Shipped to main (PR order):**
+
+| PR | Commit | Description |
+|----|--------|-------------|
+| #36 | 9684201 | Experience rewrite — apply tNic template (Fase 1); 12 entries, JSON-driven |
+| #37 | 8ec5ed2 | Experience timeline UI polish (interactive states) |
+| #38 | 57be81d | Projects 3-card redesign (🎫 Mr. Yoker / 🏥 Mutual SER / 📞 Hexadialer) — emoji glyphs + gradient overlay + centered flexbox (fixed card width, replaces grid); contact reorder (GitHub before LinkedIn) |
+| #39 | 7e3c27e | npm audit fix — non-breaking security bumps (25→23 vulns) |
+
+**Dependency hygiene (2026-06-22):** Closed 16 obsolete dependabot PRs (#5–#24) — all targeted the removed CRA/craco toolchain (craco, react-scripts, axios, lodash + transitives no longer in package.json post-Vite migration). Inmergeable + no-op.
+
+**Carried concerns:**
+- **23 vulns remain** (20 moderate, 1 high, 2 critical) — ALL devDependencies (vite/vitest/@vitest/coverage-v8/esbuild/lighthouse build+test toolchain). NOT shipped to static prod bundle → no end-user exposure. Fix needs `--force` major bumps of vite+vitest → deliberate toolchain upgrade, deferred.
+- **No v4.2 tag** — content work unbounded (no fixed slice count). Tag when content passes converge.
+- **projects-input.md** (`.planning/`) holds the raw project intake (Mr. Yoker filled; Atenea + others blank) — source for future projects expansion.
+
+**v4.2 backlog (not started):**
+- **VIS-05** — claude-kanban + caveman cards into Claude section (3 of 5 featured-app cards present).
+- **DIAGRAMS-01** — cross-repo architecture diagrams.
+- Custom domain `andresmontoyat.co` (carried from v4.1).
 
 ## Project Reference
 
@@ -112,9 +136,10 @@ Root cause closed: React SPA hydration was blocking the LCP critical path. Hero 
 
 ## Session Continuity
 
-Last session: 2026-06-16T15:15:00.000Z (v4.1 tagged; prod gate PASS)
-Stopped at: v4.1 milestone complete. Both tags pushed. Prod live.
+Last session: 2026-06-22T19:14:00-05:00 (resumed; merged PRs + synced docs)
+Stopped at: #38 + #39 merged to main; 16 obsolete dependabot PRs closed; STATE.md + ROADMAP.md synced to v4.2 reality. main clean, 57/57 GREEN.
 Resume file: none — clean checkpoint
+Open PR: #2 junie-init only (foreign JetBrains scaffold — close if unused)
 
 ## v4.2 Roadmap Candidates (next milestone)
 
