@@ -8,15 +8,30 @@
 - ⏸ **v3.7 — Production Deploy** *(PAUSED, opened 2026-05-20 — deferred 2026-05-29)* — Vercel auto-deploy done (site live on `*.vercel.app`); Phase 11 Plan 11-05 Lighthouse mobile gate verdict, custom domain (Phase 12), and PR previews (Phase 13) **carried as deferred**. Resumes in a future milestone. Phases 11–13 reserved — NOT renumbered.
 - ✅ **v3.8 — Game Mode** *(SHIPPED 2026-06-06)* — Interactive skill-constellation landing (node=skill, edges=co-occurrence), floating bilingual experience cards, multi-skill/year/category filters, persisted game/dev toggle. Adaptive render (WebGL desktop / SVG-DOM mobile) holds the Lighthouse mobile HARD gate (cleared Perf ≥95 / A11y 100 / BP 100 / SEO 100). Vitest + RTL test infra introduced (253 tests GREEN). 8/8 REQs delivered (GAME-01..07 + TEST-01). Phases 14–17. See [`milestones/v3.8-ROADMAP.md`](milestones/v3.8-ROADMAP.md).
 - ✅ **v3.9 — Game Mode Polish** *(SHIPPED 2026-06-08)* — Micro-milestone. Two UX fixes shipped same-day: above-the-fold layout (SkillFilters → fixed bottom-0 z-30; H1 compact; renderer slot flex-1) and never-static constellation (SVG ambient twinkle, prefers-reduced-motion gated). 2/2 REQs delivered (POLISH-01, POLISH-02). 261/261 tests GREEN. Phases 18–19.
-- 🟢 **v3.10 — 3D Constellation** *(ACTIVE, opened 2026-06-08)* — Genuine 3D upgrade on existing desktop WebGL renderer: PerspectiveCamera(fov=55) + OrbitControls drag-to-rotate + category-z layout. Activates SEED-3D-CONSTELLATION. 1 REQ (DEPTH-01) / 1 phase (Phase 20) / 4 plans / 3–5 days. Mobile SVG path UNCHANGED — Lighthouse mobile HARD gate intact. Zero new deps (already-installed `three@0.169.0` ships both new imports). See [`v3.10-REQUIREMENTS.md`](REQUIREMENTS.md) and [`research/SUMMARY.md`](research/SUMMARY.md).
+- ✅ **v3.10 — 3D Constellation** *(SHIPPED 2026-06-10, tag `v3.10`/`v3.10.1`)* — Genuine 3D upgrade on desktop WebGL renderer: PerspectiveCamera(fov=55) + OrbitControls drag-to-rotate + category-z layout. 1 REQ (DEPTH-01) / Phase 20 / 4 plans. Mobile SVG path UNCHANGED. 293/293 tests GREEN. **Entire game-mode/WebGL lineage (v3.8–v3.10) superseded by v4.0 purge.** See [`milestones/v3.10-ROADMAP.md`](milestones/v3.10-ROADMAP.md).
+- ✅ **v4.0 — Portfolio Redesign (JSON-Driven Refactor)** *(SHIPPED 2026-06-13, tag `v4.0`)* — Purged game-mode/Mario-world/WebGL/ViewMode lineage; dark palette tokens (#0B1020/#00E5A8/#00C2FF); 7 sections refactored to `src/data/<section>.json` bilingual contracts + 7-spec test files (PRs #26–#32). Killed `dangerouslySetInnerHTML`. 57/57 tests GREEN.
+- ✅ **v4.1 — Deploy Polish (OG + LCP perf)** *(SHIPPED 2026-06-16, tag `v4.1`)* — Static hero `<img>` moved to index.html (kill React-hydration LCP delay) + LCP eligibility fix + OG refresh (PRs #33–#35). Prod Lighthouse mobile: Perf 0.84→**0.99**, LCP 4.0s→**2.1s**; A11y/BP/SEO 1.0.
+- 🟢 **v4.2 — Content Polish** *(IN PROGRESS, no tag)* — Recruiter-facing content quality. Experience copy rewrite (tNic template, 12 entries) + timeline UI polish (PRs #36–#37); projects 3-card redesign (emoji glyphs + gradient overlay + flexbox) + contact reorder (PR #38); npm audit fix (PR #39). 16 obsolete dependabot PRs closed (dead CRA toolchain). 57/57 tests GREEN. Backlog: VIS-05, DIAGRAMS-01, custom domain.
 
 ---
 
 ## Phases
 
-### v3.10 3D Constellation (Phase 20) — 🟢 ACTIVE
+### v4.2 Content Polish — 🟢 ACTIVE (slice-based, on main)
 
-- [ ] **Phase 20: 3D Constellation** (DEPTH-01) — genuine 3D + drag-to-rotate on desktop WebGL; SVG mobile path untouched
+> Content-quality milestone, no fixed phase count. Slices ship directly to main as PRs; no v4.2 tag until passes converge.
+
+- [x] **Experience rewrite** — tNic template, 12 entries, JSON-driven (PR #36 `9684201`)
+- [x] **Experience timeline UI polish** — interactive states (PR #37 `8ec5ed2`)
+- [x] **Projects 3-card redesign + contact reorder** — emoji glyphs + gradient overlay + flexbox; GitHub before LinkedIn (PR #38 `57be81d`)
+- [x] **Dependency hygiene** — npm audit fix non-breaking (PR #39); 16 obsolete dependabot PRs closed (dead CRA toolchain)
+- [ ] **VIS-05** — claude-kanban + caveman cards into Claude section (3 of 5 featured-app cards present)
+- [ ] **DIAGRAMS-01** — cross-repo architecture diagrams
+- [ ] **Custom domain** `andresmontoyat.co` + DNS (carried from v4.1)
+
+### v3.10 3D Constellation (Phase 20) — ✅ SHIPPED (superseded by v4.0 purge)
+
+- [x] **Phase 20: 3D Constellation** (DEPTH-01) — genuine 3D + drag-to-rotate on desktop WebGL; SVG mobile path untouched. Entire WebGL lineage stripped from main by v4.0.
 
 ### v3.7 Production Deploy (Phases 11–13) — ⏸ DEFERRED
 
