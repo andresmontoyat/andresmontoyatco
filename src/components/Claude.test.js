@@ -59,13 +59,13 @@ describe('Claude (v4.0 Slice 7)', () => {
     expect(screen.getByText('orchestrations')).toBeInTheDocument()
   })
 
-  it('renders all 5 services + 3 featured apps (EN)', () => {
+  it('renders all 5 services + 5 featured apps (EN)', () => {
     renderWithLang('en')
     expect(data.services).toHaveLength(5)
     expect(screen.getByText('Greenfield builds')).toBeInTheDocument()
     expect(screen.getByText('MCP server development')).toBeInTheDocument()
     expect(screen.getByText('Legacy refactor')).toBeInTheDocument()
-    expect(data.apps).toHaveLength(3)
+    expect(data.apps).toHaveLength(5)
     expect(screen.getAllByText('ci-templates').length).toBeGreaterThan(0)
     expect(screen.getByText('GSD framework')).toBeInTheDocument()
     expect(screen.getAllByText('spring-ai-qdrant-mcp').length).toBeGreaterThan(0)
