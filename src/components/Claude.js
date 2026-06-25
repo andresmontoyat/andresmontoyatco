@@ -44,19 +44,11 @@ function ValueCard({ value, lang }) {
   )
 }
 
-function ProofBlock({ lang }) {
+function CapabilityCard({ capability, lang }) {
   return (
-    <div className="mt-20 bg-surface border border-border rounded-2xl p-8 md:p-12">
-      <p className="text-accent font-mono text-xs uppercase tracking-widest">{pick(data.proofLabel, lang)}</p>
-      <h3 className="text-2xl md:text-3xl font-extrabold text-text mt-3">{pick(data.proofHeading, lang)}</h3>
-      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-6 mt-8">
-        {data.counters.map((c) => (
-          <div key={c.id} className="text-center">
-            <div className="text-3xl md:text-4xl font-extrabold text-accent">{c.value}</div>
-            <div className="text-xs text-muted uppercase tracking-wide mt-1">{pick(c.label, lang)}</div>
-          </div>
-        ))}
-      </div>
+    <div className="bg-surface border border-border rounded-xl p-6 hover:border-accent transition-colors">
+      <h3 className="text-text font-extrabold text-lg">{pick(capability.title, lang)}</h3>
+      <p className="text-muted text-base mt-2 leading-relaxed">{pick(capability.desc, lang)}</p>
     </div>
   )
 }
@@ -122,7 +114,14 @@ export default function Claude() {
             <ValueCard key={v.id} value={v} lang={lang} />
           ))}
         </div>
-        <ProofBlock lang={lang} />
+        <p className="text-accent font-mono text-xs uppercase tracking-widest mt-12">
+          {pick(data.aiLabel, lang)}
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
+          {data.aiCapabilities.map((c) => (
+            <CapabilityCard key={c.id} capability={c} lang={lang} />
+          ))}
+        </div>
         <p className="text-accent font-mono text-xs uppercase tracking-widest mt-12">
           {pick(data.servicesLabel, lang)}
         </p>

@@ -47,16 +47,13 @@ describe('Claude (v4.0 Slice 7)', () => {
     expect(screen.getByText('Your team keeps the workflow')).toBeInTheDocument()
   })
 
-  it('renders proof block with 7 counters (EN)', () => {
+  it('renders all 4 AI capability cards (EN)', () => {
     renderWithLang('en')
-    expect(screen.getByText('Track record')).toBeInTheDocument()
-    expect(screen.getByText(/built my own toolkit/)).toBeInTheDocument()
-    expect(data.counters).toHaveLength(7)
-    expect(screen.getByText('37')).toBeInTheDocument()
-    expect(screen.getByText('81')).toBeInTheDocument()
-    expect(screen.getByText('86')).toBeInTheDocument()
-    expect(screen.getByText('custom agents')).toBeInTheDocument()
-    expect(screen.getByText('orchestrations')).toBeInTheDocument()
+    expect(data.aiCapabilities).toHaveLength(4)
+    expect(screen.getByText('Agentic workflows')).toBeInTheDocument()
+    expect(screen.getByText('RAG & retrieval')).toBeInTheDocument()
+    expect(screen.getByText('LLM evals & guardrails')).toBeInTheDocument()
+    expect(screen.getByText('AI-assisted delivery')).toBeInTheDocument()
   })
 
   it('renders all 5 services + 5 featured apps (EN)', () => {
@@ -79,17 +76,17 @@ describe('Claude (v4.0 Slice 7)', () => {
     expect(screen.getAllByText('Spring AI').length).toBeGreaterThan(0)
   })
 
-  it('translates pitch + values + counters when lang=es', () => {
+  it('translates pitch + values + capabilities when lang=es', () => {
     renderWithLang('es')
     expect(screen.getByText(/AI Engineering · Para tu equipo/)).toBeInTheDocument()
     expect(screen.getByText(/Sistemas backend/)).toBeInTheDocument()
     expect(screen.getByText(/Hablemos de tu proyecto/)).toBeInTheDocument()
     expect(screen.getByText('Entrega 3–5× más rápida')).toBeInTheDocument()
-    expect(screen.getByText('subagents propios')).toBeInTheDocument()
+    expect(screen.getByText('Flujos agénticos')).toBeInTheDocument()
     expect(screen.getByText('CÓDIGO ABIERTO')).toBeInTheDocument()
   })
 
-  it('claude.json schema sanity — values/services/counters/apps bilingual + stackChips array', () => {
+  it('claude.json schema sanity — values/services/aiCapabilities/apps bilingual + stackChips array', () => {
     expect(Array.isArray(data.values)).toBe(true)
     for (const v of data.values) {
       expect(typeof v.id).toBe('string')
@@ -103,11 +100,12 @@ describe('Claude (v4.0 Slice 7)', () => {
       expect(typeof s.title.en).toBe('string')
       expect(typeof s.desc.es).toBe('string')
     }
-    for (const c of data.counters) {
-      expect(typeof c.id).toBe('string')
-      expect(typeof c.value).toBe('number')
-      expect(typeof c.label.en).toBe('string')
-      expect(typeof c.label.es).toBe('string')
+    for (const cap of data.aiCapabilities) {
+      expect(typeof cap.id).toBe('string')
+      expect(typeof cap.title.en).toBe('string')
+      expect(typeof cap.title.es).toBe('string')
+      expect(typeof cap.desc.en).toBe('string')
+      expect(typeof cap.desc.es).toBe('string')
     }
     for (const a of data.apps) {
       expect(typeof a.id).toBe('string')

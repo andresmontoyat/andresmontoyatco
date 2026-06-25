@@ -17,11 +17,41 @@
     "es": "Hablemos de tu proyecto →"
   },
   "ctaSecondary": { "en": "See projects", "es": "Ver proyectos" },
-  "proofLabel": { "en": "Track record", "es": "Track record" },
-  "proofHeading": {
-    "en": "I built my own toolkit before selling it",
-    "es": "Construí mi propio toolkit antes de venderlo"
-  },
+  "aiLabel": { "en": "AI engineering", "es": "Ingeniería AI" },
+  "aiCapabilities": [
+    {
+      "id": "agentic",
+      "title": { "en": "Agentic workflows", "es": "Flujos agénticos" },
+      "desc": {
+        "en": "Multi-agent orchestration — custom agents and tool-use, discuss→plan→execute→verify pipelines that ship real code.",
+        "es": "Orquestación multiagente: agentes propios y uso de herramientas, pipelines discutir→planear→ejecutar→verificar que entregan código real."
+      }
+    },
+    {
+      "id": "rag",
+      "title": { "en": "RAG & retrieval", "es": "RAG y recuperación" },
+      "desc": {
+        "en": "Spring AI + Qdrant vector search, embeddings and hybrid retrieval over your domain data.",
+        "es": "Spring AI + Qdrant, búsqueda vectorial, embeddings y recuperación híbrida sobre los datos de tu dominio."
+      }
+    },
+    {
+      "id": "evals",
+      "title": { "en": "LLM evals & guardrails", "es": "Evals y guardrails de LLM" },
+      "desc": {
+        "en": "Eval harnesses, rubrics and output validation so AI features ship measured, not vibes.",
+        "es": "Arneses de evaluación, rúbricas y validación de salidas para que las features de AI se midan, no se intuyan."
+      }
+    },
+    {
+      "id": "delivery",
+      "title": { "en": "AI-assisted delivery", "es": "Entrega asistida por AI" },
+      "desc": {
+        "en": "Production-grade output — hexagonal, tested, observable. The agent writes, the gates hold.",
+        "es": "Salida lista para producción: hexagonal, testeada, observable. El agente escribe, los gates sostienen."
+      }
+    }
+  ],
   "servicesLabel": { "en": "Concrete services", "es": "Servicios concretos" },
   "values": [
     {
@@ -62,15 +92,6 @@
         "es": "Le dejo a tu equipo el workflow, no una caja negra: los agents, skills y guidelines quedan en tu repo y tus ingenieros los siguen usando cuando yo no esté."
       }
     }
-  ],
-  "counters": [
-    { "id": "agents", "value": 37, "label": { "en": "custom agents", "es": "subagents propios" } },
-    { "id": "skills", "value": 81, "label": { "en": "workflow skills", "es": "workflow skills" } },
-    { "id": "workflows", "value": 86, "label": { "en": "orchestrations", "es": "orquestaciones" } },
-    { "id": "guidelines", "value": 15, "label": { "en": "guidelines", "es": "guidelines" } },
-    { "id": "ciWorkflows", "value": 47, "label": { "en": "CI workflows", "es": "CI workflows" } },
-    { "id": "starterTemplates", "value": 15, "label": { "en": "starter templates", "es": "starter templates" } },
-    { "id": "appsShipped", "value": 5, "label": { "en": "apps shipped", "es": "apps shipped" } }
   ],
   "services": [
     {
