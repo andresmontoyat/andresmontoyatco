@@ -38,20 +38,11 @@ function ValueCard({ value, lang }) {
   )
 }
 
-function CapabilityCard({ capability, lang }) {
+function OfferingCard({ offering, lang }) {
   return (
     <div className="bg-surface border border-border rounded-xl p-6 hover:border-accent transition-colors">
-      <h3 className="text-text font-extrabold text-lg">{pick(capability.title, lang)}</h3>
-      <p className="text-muted text-base mt-2 leading-relaxed">{pick(capability.desc, lang)}</p>
-    </div>
-  )
-}
-
-function ServiceCard({ service, lang }) {
-  return (
-    <div className="border-l-4 border-accent bg-surface rounded-r-xl p-6">
-      <h3 className="text-text font-extrabold text-base">{pick(service.title, lang)}</h3>
-      <p className="text-muted text-sm mt-2">{pick(service.desc, lang)}</p>
+      <h3 className="text-text font-extrabold text-lg">{pick(offering.title, lang)}</h3>
+      <p className="text-muted text-base mt-2 leading-relaxed">{pick(offering.desc, lang)}</p>
     </div>
   )
 }
@@ -85,19 +76,11 @@ export default function Claude() {
           ))}
         </div>
         <p className="text-accent font-mono text-xs uppercase tracking-widest mt-12">
-          {pick(data.aiLabel, lang)}
+          {pick(data.offeringsLabel, lang)}
         </p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
-          {data.aiCapabilities.map((c) => (
-            <CapabilityCard key={c.id} capability={c} lang={lang} />
-          ))}
-        </div>
-        <p className="text-accent font-mono text-xs uppercase tracking-widest mt-12">
-          {pick(data.servicesLabel, lang)}
-        </p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-8">
-          {data.services.map((s) => (
-            <ServiceCard key={s.id} service={s} lang={lang} />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
+          {data.offerings.map((o) => (
+            <OfferingCard key={o.id} offering={o} lang={lang} />
           ))}
         </div>
         <StackStrip />

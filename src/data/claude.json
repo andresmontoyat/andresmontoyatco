@@ -17,22 +17,22 @@
     "es": "Hablemos de tu proyecto →"
   },
   "ctaSecondary": { "en": "See projects", "es": "Ver proyectos" },
-  "aiLabel": { "en": "AI engineering", "es": "Ingeniería AI" },
-  "aiCapabilities": [
+  "offeringsLabel": { "en": "What I offer", "es": "Lo que ofrezco" },
+  "offerings": [
     {
       "id": "agentic",
-      "title": { "en": "Agentic workflows", "es": "Flujos agénticos" },
+      "title": { "en": "Agentic delivery", "es": "Entrega agéntica" },
       "desc": {
-        "en": "Multi-agent orchestration — custom agents and tool-use, discuss→plan→execute→verify pipelines that ship real code.",
-        "es": "Orquestación multiagente: agentes propios y uso de herramientas, pipelines discutir→planear→ejecutar→verificar que entregan código real."
+        "en": "Custom agents and discuss→plan→execute→verify pipelines wired into your codebase — production-ready features in a fraction of the time, tests and ADRs included.",
+        "es": "Agentes propios y pipelines discutir→planear→ejecutar→verificar integrados en tu codebase — features production-ready en una fracción del tiempo, con tests y ADRs incluidos."
       }
     },
     {
-      "id": "rag",
-      "title": { "en": "RAG & retrieval", "es": "RAG y recuperación" },
+      "id": "rag-mcp",
+      "title": { "en": "RAG & MCP servers", "es": "RAG y servidores MCP" },
       "desc": {
-        "en": "Spring AI + Qdrant vector search, embeddings and hybrid retrieval over your domain data.",
-        "es": "Spring AI + Qdrant, búsqueda vectorial, embeddings y recuperación híbrida sobre los datos de tu dominio."
+        "en": "Spring AI + Qdrant retrieval and Model Context Protocol servers in Java/Kotlin that expose your internal systems and knowledge bases as first-class agent tools.",
+        "es": "Retrieval con Spring AI + Qdrant y servidores Model Context Protocol en Java/Kotlin que exponen tus sistemas internos y bases de conocimiento como herramientas de agente de primera clase."
       }
     },
     {
@@ -44,15 +44,30 @@
       }
     },
     {
-      "id": "delivery",
-      "title": { "en": "AI-assisted delivery", "es": "Entrega asistida por AI" },
+      "id": "greenfield",
+      "title": { "en": "Greenfield builds", "es": "Greenfield builds" },
       "desc": {
-        "en": "Production-grade output — hexagonal, tested, observable. The agent writes, the gates hold.",
-        "es": "Salida lista para producción: hexagonal, testeada, observable. El agente escribe, los gates sostienen."
+        "en": "Spring Boot + hexagonal from scratch with CI/CD, observability and complete testing infra.",
+        "es": "Spring Boot + hexagonal desde cero, con CI/CD, observability y testing infra completas."
+      }
+    },
+    {
+      "id": "legacy",
+      "title": { "en": "Legacy refactor", "es": "Legacy refactor" },
+      "desc": {
+        "en": "Strangler-fig refactor of legacy Spring/Java services toward hexagonal architecture, with full test coverage and zero downtime.",
+        "es": "Refactor strangler-fig de servicios Spring/Java legacy hacia hexagonal architecture, con cobertura completa de tests y cero downtime."
+      }
+    },
+    {
+      "id": "devops",
+      "title": { "en": "DevOps automation", "es": "DevOps automation" },
+      "desc": {
+        "en": "Production-ready GitHub Actions templates + GitFlow + multi-cloud deploys (EC2, VPN-tunneled EC2, EKS) backed by the soldife/ci-templates toolkit.",
+        "es": "Templates de GitHub Actions listos para producción + GitFlow + deploys multi-cloud (EC2, EC2 sobre VPN, EKS) respaldados por el toolkit soldife/ci-templates."
       }
     }
   ],
-  "servicesLabel": { "en": "Concrete services", "es": "Servicios concretos" },
   "values": [
     {
       "id": "01",
@@ -90,48 +105,6 @@
       "desc": {
         "en": "I leave your team the workflow, not a black box: the agents, skills and guidelines stay in your repo and your engineers keep using them after I'm gone.",
         "es": "Le dejo a tu equipo el workflow, no una caja negra: los agents, skills y guidelines quedan en tu repo y tus ingenieros los siguen usando cuando yo no esté."
-      }
-    }
-  ],
-  "services": [
-    {
-      "id": "greenfield",
-      "title": { "en": "Greenfield builds", "es": "Greenfield builds" },
-      "desc": {
-        "en": "Spring Boot + hexagonal from scratch with CI/CD, observability and complete testing infra.",
-        "es": "Spring Boot + hexagonal desde cero, con CI/CD, observability y testing infra completas."
-      }
-    },
-    {
-      "id": "aiSetup",
-      "title": { "en": "AI workflow setup", "es": "AI workflow setup" },
-      "desc": {
-        "en": "Custom agents, skills and slash-commands tailored to your codebase so your team adopts the workflow on day one.",
-        "es": "Subagents, skills y slash-commands a medida de tu codebase para que tu equipo adopte el workflow desde el primer día."
-      }
-    },
-    {
-      "id": "mcp",
-      "title": { "en": "MCP server development", "es": "MCP server development" },
-      "desc": {
-        "en": "Model Context Protocol servers in Java/Kotlin with Spring AI that connect Claude to your internal systems.",
-        "es": "Servidores Model Context Protocol en Java/Kotlin con Spring AI que conectan Claude a tus sistemas internos."
-      }
-    },
-    {
-      "id": "legacy",
-      "title": { "en": "Legacy refactor", "es": "Legacy refactor" },
-      "desc": {
-        "en": "Strangler-fig refactor of legacy Spring/Java services toward hexagonal architecture, with full test coverage and zero downtime.",
-        "es": "Refactor strangler-fig de servicios Spring/Java legacy hacia hexagonal architecture, con cobertura completa de tests y cero downtime."
-      }
-    },
-    {
-      "id": "devops",
-      "title": { "en": "DevOps automation", "es": "DevOps automation" },
-      "desc": {
-        "en": "Production-ready GitHub Actions templates + GitFlow + multi-cloud deploys (EC2, VPN-tunneled EC2, EKS) backed by the soldife/ci-templates toolkit.",
-        "es": "Templates de GitHub Actions listos para producción + GitFlow + deploys multi-cloud (EC2, EC2 sobre VPN, EKS) respaldados por el toolkit soldife/ci-templates."
       }
     }
   ],
