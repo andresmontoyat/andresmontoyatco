@@ -4,8 +4,8 @@ milestone: v4.2
 milestone_name: Content polish — experience rewrite + projects redesign
 status: in-progress
 stopped_at: v4.2 content work on main (no tag yet) — experience rewrite (#36) + timeline polish (#37) + projects 3-card redesign + contact reorder (#38) + audit fix (#39). 57/57 tests GREEN.
-last_updated: 2026-06-25T15:05:00-05:00
-last_activity: 2026-06-25 - Completed quick task 260625-dvq: VIS-05 caveman + claude-kanban featured-app cards (apps 3→5)
+last_updated: 2026-06-25T15:40:00-05:00
+last_activity: 2026-06-25 - Completed quick task 260625-etd: Claude section — replaced Track record counters with 4 AI-capability cards
 progress:
   shipped_to_main: 4
   remaining: open  # VIS-05 + content passes; no fixed slice count yet
@@ -44,6 +44,7 @@ progress:
 | # | Description | Date | Commit | Directory |
 |---|-------------|------|--------|-----------|
 | 260625-dvq | VIS-05 caveman + claude-kanban featured-app cards (apps 3→5) | 2026-06-25 | fddca76 | [260625-dvq-vis-05-add-caveman-claude-kanban-feature](./quick/260625-dvq-vis-05-add-caveman-claude-kanban-feature/) |
+| 260625-etd | Claude section: replace Track record counters with 4 AI-capability cards | 2026-06-25 | e94a377 | [260625-etd-claude-section-replace-track-record-with](./quick/260625-etd-claude-section-replace-track-record-with/) |
 
 ## Project Reference
 
@@ -142,8 +143,8 @@ Root cause closed: React SPA hydration was blocking the LCP critical path. Hero 
 
 ## Session Continuity
 
-Last session: 2026-06-25T15:05:00-05:00 (resumed; shipped VIS-05 via /gsd:quick)
-Stopped at: VIS-05 DONE on local main (260625-dvq). caveman + claude-kanban cards added to claude.json apps[] (3→5); Claude.test.js counts bumped 3→5; 57/57 vitest GREEN. NOT pushed — needs PR per project convention (auto-deploy from main). Next: open PR or pick DIAGRAMS-01 / custom domain.
+Last session: 2026-06-25T15:40:00-05:00 (resumed; shipped VIS-05 + Claude AI-cards redesign via /gsd:quick)
+Stopped at: Two quick tasks DONE on local main, NOT pushed. (1) 260625-dvq VIS-05 caveman+claude-kanban cards. (2) 260625-etd Claude section redesign — removed Track record counters, added 4 AI-capability cards (Agentic / RAG / Evals / AI-assisted delivery, bilingual). 57/57 vitest GREEN, verified live in browser. Both need PR per project convention (main auto-deploys to Vercel). Next: open PR(s) or pick DIAGRAMS-01 / custom domain.
 Resume file: none — clean checkpoint
 Open PR: #2 junie-init only (foreign JetBrains scaffold — close if unused)
 
