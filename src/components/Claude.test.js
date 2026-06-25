@@ -31,7 +31,7 @@ describe('Claude (v4.0 Slice 7)', () => {
   it('renders pitch hero label/h2/subLead/CTAs (EN)', () => {
     renderWithLang('en')
     expect(screen.getByText(/AI Engineering · For your team/)).toBeInTheDocument()
-    expect(screen.getByText(/Backend systems/)).toBeInTheDocument()
+    expect(screen.getByText(/Software/)).toBeInTheDocument()
     expect(screen.getByText(/delivered with AI discipline/)).toBeInTheDocument()
     expect(screen.getByText(/Senior backend engineer/)).toBeInTheDocument()
     expect(screen.getByText(/Let's talk about your project/)).toBeInTheDocument()
@@ -79,7 +79,7 @@ describe('Claude (v4.0 Slice 7)', () => {
   it('translates pitch + values + capabilities when lang=es', () => {
     renderWithLang('es')
     expect(screen.getByText(/AI Engineering · Para tu equipo/)).toBeInTheDocument()
-    expect(screen.getByText(/Sistemas backend/)).toBeInTheDocument()
+    expect(screen.getByText(/Software/)).toBeInTheDocument()
     expect(screen.getByText(/Hablemos de tu proyecto/)).toBeInTheDocument()
     expect(screen.getByText('Entrega 3–5× más rápida')).toBeInTheDocument()
     expect(screen.getByText('Flujos agénticos')).toBeInTheDocument()

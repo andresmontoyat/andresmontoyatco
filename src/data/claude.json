@@ -3,10 +3,10 @@
     "en": "AI Engineering · For your team",
     "es": "AI Engineering · Para tu equipo"
   },
-  "h2Part1": { "en": "Backend systems", "es": "Sistemas backend" },
+  "h2Part1": { "en": "Software", "es": "Software" },
   "h2Part2": {
     "en": "delivered with AI discipline",
-    "es": "entregados con disciplina AI"
+    "es": "entregado con disciplina AI"
   },
   "subLead": {
     "en": "Senior backend engineer. Combining hexagonal architecture, Spring Boot, and agentic workflows with Claude Code to ship production-ready features in a fraction of the time — without sacrificing testing, ADRs, or observability.",
