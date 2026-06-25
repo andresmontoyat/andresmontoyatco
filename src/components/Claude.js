@@ -9,7 +9,7 @@ function pick(field, lang) {
 
 function PitchHero({ lang }) {
   return (
-    <div className="text-center max-w-3xl mx-auto bg-surface border border-border rounded-2xl p-8 md:p-12 mb-12">
+    <div className="text-center max-w-4xl mx-auto bg-surface border border-border rounded-2xl p-10 md:p-14 mb-12">
       <p className="text-accent font-mono text-xs uppercase tracking-widest">{pick(data.label, lang)}</p>
       <h2 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-text mt-4 leading-tight">
         {pick(data.h2Part1, lang)}{' '}
