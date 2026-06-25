@@ -41,7 +41,7 @@ describe('Claude (v4.0 Slice 7)', () => {
     renderWithLang('en')
     expect(data.values).toHaveLength(4)
     expect(screen.getByText('Delivery 3–5× faster')).toBeInTheDocument()
-    expect(screen.getByText('Hexagonal without shortcuts')).toBeInTheDocument()
+    expect(screen.getByText('Architecture without shortcuts')).toBeInTheDocument()
     expect(screen.getByText('Tests + observability built-in')).toBeInTheDocument()
     expect(screen.getByText('Your team keeps the workflow')).toBeInTheDocument()
   })

@@ -64,10 +64,10 @@
     },
     {
       "id": "02",
-      "title": { "en": "Hexagonal without shortcuts", "es": "Hexagonal sin atajos" },
+      "title": { "en": "Architecture without shortcuts", "es": "Arquitectura sin atajos" },
       "desc": {
-        "en": "Hexagonal architecture, ports & adapters, ArchUnit gates and ADRs are non-negotiable — agentic speed never comes at the cost of structure.",
-        "es": "Hexagonal architecture, ports & adapters, ArchUnit gates y ADRs no se negocian — la velocidad agéntica nunca sacrifica estructura."
+        "en": "Clean architecture, ports & adapters, ArchUnit gates and ADRs are non-negotiable — agentic speed never comes at the cost of structure.",
+        "es": "Arquitectura limpia, ports & adapters, ArchUnit gates y ADRs no se negocian — la velocidad agéntica nunca sacrifica estructura."
       }
     },
     {
