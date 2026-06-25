@@ -57,14 +57,6 @@ describe('Claude (v4.0 Slice 7)', () => {
     expect(screen.getByText('DevOps automation')).toBeInTheDocument()
   })
 
-  it('renders stackChips strip (17 chips)', () => {
-    renderWithLang('en')
-    expect(data.stackChips).toHaveLength(17)
-    expect(screen.getAllByText('Java 21').length).toBeGreaterThan(0)
-    expect(screen.getAllByText('Spring Boot 3').length).toBeGreaterThan(0)
-    expect(screen.getAllByText('Spring AI').length).toBeGreaterThan(0)
-  })
-
   it('translates pitch + values + offerings when lang=es', () => {
     renderWithLang('es')
     expect(screen.getByText(/AI Engineering · Para tu equipo/)).toBeInTheDocument()
@@ -74,7 +66,7 @@ describe('Claude (v4.0 Slice 7)', () => {
     expect(screen.getByText('Entrega agéntica')).toBeInTheDocument()
   })
 
-  it('claude.json schema sanity — values/offerings bilingual + stackChips array', () => {
+  it('claude.json schema sanity — values/offerings bilingual', () => {
     expect(Array.isArray(data.values)).toBe(true)
     for (const v of data.values) {
       expect(typeof v.id).toBe('string')
@@ -90,6 +82,5 @@ describe('Claude (v4.0 Slice 7)', () => {
       expect(typeof o.desc.en).toBe('string')
       expect(typeof o.desc.es).toBe('string')
     }
-    expect(Array.isArray(data.stackChips)).toBe(true)
   })
 })

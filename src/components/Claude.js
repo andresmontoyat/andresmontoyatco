@@ -47,23 +47,6 @@ function OfferingCard({ offering, lang }) {
   )
 }
 
-function StackStrip() {
-  return (
-    <div className="mt-16 border-t border-border pt-10">
-      <div className="flex flex-wrap justify-center gap-2">
-        {data.stackChips.map((chip) => (
-          <span
-            key={chip}
-            className="font-mono text-xs px-3 py-1.5 rounded-full bg-surface text-muted border border-border"
-          >
-            {chip}
-          </span>
-        ))}
-      </div>
-    </div>
-  )
-}
-
 export default function Claude() {
   const { lang } = useLanguage()
   return (
@@ -83,7 +66,6 @@ export default function Claude() {
             <OfferingCard key={o.id} offering={o} lang={lang} />
           ))}
         </div>
-        <StackStrip />
       </div>
     </section>
   )

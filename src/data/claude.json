@@ -107,24 +107,5 @@
         "es": "Le dejo a tu equipo el workflow, no una caja negra: los agents, skills y guidelines quedan en tu repo y tus ingenieros los siguen usando cuando yo no esté."
       }
     }
-  ],
-  "stackChips": [
-    "Java 21",
-    "Kotlin 2.x",
-    "Spring Boot 3",
-    "Hexagonal",
-    "PostgreSQL",
-    "Kafka",
-    "Redis",
-    "AWS",
-    "Docker",
-    "Kubernetes",
-    "Terraform",
-    "GitHub Actions",
-    "Jenkins",
-    "SonarQube",
-    "Claude Code",
-    "MCP",
-    "Spring AI"
   ]
 }
