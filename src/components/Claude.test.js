@@ -55,16 +55,12 @@ describe('Claude (v4.0 Slice 7)', () => {
     expect(screen.getByText('AI-assisted delivery')).toBeInTheDocument()
   })
 
-  it('renders all 5 services + 5 featured apps (EN)', () => {
+  it('renders all 5 services (EN)', () => {
     renderWithLang('en')
     expect(data.services).toHaveLength(5)
     expect(screen.getByText('Greenfield builds')).toBeInTheDocument()
     expect(screen.getByText('MCP server development')).toBeInTheDocument()
     expect(screen.getByText('Legacy refactor')).toBeInTheDocument()
-    expect(data.apps).toHaveLength(5)
-    expect(screen.getAllByText('ci-templates').length).toBeGreaterThan(0)
-    expect(screen.getByText('GSD framework')).toBeInTheDocument()
-    expect(screen.getAllByText('spring-ai-qdrant-mcp').length).toBeGreaterThan(0)
   })
 
   it('renders stackChips strip (17 chips)', () => {
@@ -82,10 +78,9 @@ describe('Claude (v4.0 Slice 7)', () => {
     expect(screen.getByText(/Hablemos de tu proyecto/)).toBeInTheDocument()
     expect(screen.getByText('Entrega 3–5× más rápida')).toBeInTheDocument()
     expect(screen.getByText('Flujos agénticos')).toBeInTheDocument()
-    expect(screen.getByText('CÓDIGO ABIERTO')).toBeInTheDocument()
   })
 
-  it('claude.json schema sanity — values/services/aiCapabilities/apps bilingual + stackChips array', () => {
+  it('claude.json schema sanity — values/services/aiCapabilities bilingual + stackChips array', () => {
     expect(Array.isArray(data.values)).toBe(true)
     for (const v of data.values) {
       expect(typeof v.id).toBe('string')
@@ -105,12 +100,6 @@ describe('Claude (v4.0 Slice 7)', () => {
       expect(typeof cap.title.es).toBe('string')
       expect(typeof cap.desc.en).toBe('string')
       expect(typeof cap.desc.es).toBe('string')
-    }
-    for (const a of data.apps) {
-      expect(typeof a.id).toBe('string')
-      expect(typeof a.name.en).toBe('string')
-      expect(typeof a.tag.es).toBe('string')
-      expect(Array.isArray(a.stack)).toBe(true)
     }
     expect(Array.isArray(data.stackChips)).toBe(true)
   })

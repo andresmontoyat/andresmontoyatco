@@ -135,58 +135,6 @@
       }
     }
   ],
-  "apps": [
-    {
-      "id": "ci-templates",
-      "name": { "en": "ci-templates", "es": "ci-templates" },
-      "tag": { "en": "OPEN SOURCE", "es": "CÓDIGO ABIERTO" },
-      "desc": {
-        "en": "47 reusable GitHub Actions workflows + 15 starter templates (Java, Krakend, React). GitFlow strategy, quality gates (SonarQube · OWASP · ArchUnit · Qodana), deploys EC2 / EC2-over-WireGuard-VPN / EKS.",
-        "es": "47 reusable GitHub Actions workflows + 15 starter templates (Java, Krakend, React). GitFlow strategy, quality gates (SonarQube · OWASP · ArchUnit · Qodana), deploys EC2 / EC2-over-WireGuard-VPN / EKS."
-      },
-      "stack": ["github-actions", "gitflow", "sonarqube", "owasp", "eks", "ec2", "wireguard", "ecr", "helm", "jenkins"]
-    },
-    {
-      "id": "gsd",
-      "name": { "en": "GSD framework", "es": "framework GSD" },
-      "tag": { "en": "FRAMEWORK", "es": "FRAMEWORK" },
-      "desc": {
-        "en": "Get-Shit-Done agentic methodology for Claude Code: 37 custom agents, 81 skills, 86 orchestrations and 15 architectural guidelines that drive the discuss → plan → execute → verify cycle.",
-        "es": "Metodología agéntica Get-Shit-Done para Claude Code: 37 subagents propios, 81 skills, 86 orquestaciones y 15 guidelines arquitectónicos que conducen el ciclo discuss → plan → execute → verify."
-      },
-      "stack": ["claude-code", "subagents", "skills", "mcp", "orchestration", "tdd", "hexagonal"]
-    },
-    {
-      "id": "spring-ai-qdrant-mcp",
-      "name": { "en": "spring-ai-qdrant-mcp", "es": "spring-ai-qdrant-mcp" },
-      "tag": { "en": "MCP", "es": "MCP" },
-      "desc": {
-        "en": "Model Context Protocol server built with Spring Boot 3 + Spring AI + Qdrant vector store. Exposes RAG retrieval over private knowledge bases as MCP tools any Claude-compatible client can call.",
-        "es": "Servidor Model Context Protocol construido con Spring Boot 3 + Spring AI + Qdrant vector store. Expone retrieval RAG sobre bases de conocimiento privadas como herramientas MCP que cualquier cliente Claude-compatible puede invocar."
-      },
-      "stack": ["spring-boot-3", "spring-ai", "qdrant", "mcp", "rag", "java-21"]
-    },
-    {
-      "id": "caveman",
-      "name": { "en": "caveman", "es": "caveman" },
-      "tag": { "en": "CLAUDE CODE PLUGIN", "es": "PLUGIN CLAUDE CODE" },
-      "desc": {
-        "en": "Terse-output skill for Claude Code — compresses responses to high-signal fragments (drops articles, filler, hedging) while preserving all technical substance. Configurable levels (lite/full/ultra), auto-disables for security warnings and irreversible actions.",
-        "es": "Skill de salida concisa para Claude Code — comprime las respuestas a fragmentos de alta señal (elimina artículos, relleno y rodeos) preservando toda la sustancia técnica. Niveles configurables (lite/full/ultra), se autodesactiva ante advertencias de seguridad y acciones irreversibles."
-      },
-      "stack": ["claude-code", "skills", "hooks", "plugin"]
-    },
-    {
-      "id": "claude-kanban",
-      "name": { "en": "claude-kanban", "es": "claude-kanban" },
-      "tag": { "en": "CLAUDE CODE PLUGIN", "es": "PLUGIN CLAUDE CODE" },
-      "desc": {
-        "en": "Visual kanban board for Claude Code — track tasks across todo/doing/done columns during agentic sessions, keeping multi-step work organized inside the CLI.",
-        "es": "Tablero kanban visual para Claude Code — sigue tareas a través de las columnas todo/doing/done durante sesiones agénticas, manteniendo el trabajo multi-paso organizado dentro de la CLI."
-      },
-      "stack": ["claude-code", "kanban", "cli", "plugin"]
-    }
-  ],
   "stackChips": [
     "Java 21",
     "Kotlin 2.x",

@@ -56,30 +56,6 @@ function ServiceCard({ service, lang }) {
   )
 }
 
-function FeaturedAppCard({ app, lang }) {
-  return (
-    <div className="bg-surface border border-border rounded-xl p-6 hover:border-accent transition-colors">
-      <div className="flex items-center justify-between">
-        <h3 className="font-mono text-base font-extrabold text-text">{pick(app.name, lang)}</h3>
-        <span className="font-mono text-xs px-2 py-1 rounded-md bg-accent text-bg font-extrabold">
-          {pick(app.tag, lang)}
-        </span>
-      </div>
-      <p className="text-muted text-sm mt-3 leading-relaxed">{pick(app.desc, lang)}</p>
-      <div className="flex flex-wrap gap-2 mt-4">
-        {app.stack.map((chip) => (
-          <span
-            key={chip}
-            className="font-mono text-xs px-2 py-1 rounded-md bg-bg text-muted border border-border"
-          >
-            {chip}
-          </span>
-        ))}
-      </div>
-    </div>
-  )
-}
-
 function StackStrip() {
   return (
     <div className="mt-16 border-t border-border pt-10">
@@ -122,11 +98,6 @@ export default function Claude() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-8">
           {data.services.map((s) => (
             <ServiceCard key={s.id} service={s} lang={lang} />
-          ))}
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
-          {data.apps.map((a) => (
-            <FeaturedAppCard key={a.id} app={a} lang={lang} />
           ))}
         </div>
         <StackStrip />
