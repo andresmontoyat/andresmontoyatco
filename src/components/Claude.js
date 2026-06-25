@@ -23,12 +23,6 @@ function PitchHero({ lang }) {
         >
           {pick(data.ctaPrimary, lang)}
         </a>
-        <a
-          href="#projects"
-          className="border border-border text-text px-8 py-4 rounded-lg transition-colors hover:border-accent hover:text-accent"
-        >
-          {pick(data.ctaSecondary, lang)}
-        </a>
       </div>
     </div>
   )

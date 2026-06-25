@@ -35,7 +35,6 @@ describe('Claude (v4.0 Slice 7)', () => {
     expect(screen.getByText(/delivered with AI discipline/)).toBeInTheDocument()
     expect(screen.getByText(/Senior backend engineer/)).toBeInTheDocument()
     expect(screen.getByText(/Let's talk about your project/)).toBeInTheDocument()
-    expect(screen.getByText('See projects')).toBeInTheDocument()
   })
 
   it('renders all 4 value cards with title + id (EN)', () => {
