@@ -144,6 +144,26 @@
         "es": "Servidor Model Context Protocol construido con Spring Boot 3 + Spring AI + Qdrant vector store. Expone retrieval RAG sobre bases de conocimiento privadas como herramientas MCP que cualquier cliente Claude-compatible puede invocar."
       },
       "stack": ["spring-boot-3", "spring-ai", "qdrant", "mcp", "rag", "java-21"]
+    },
+    {
+      "id": "caveman",
+      "name": { "en": "caveman", "es": "caveman" },
+      "tag": { "en": "CLAUDE CODE PLUGIN", "es": "PLUGIN CLAUDE CODE" },
+      "desc": {
+        "en": "Terse-output skill for Claude Code — compresses responses to high-signal fragments (drops articles, filler, hedging) while preserving all technical substance. Configurable levels (lite/full/ultra), auto-disables for security warnings and irreversible actions.",
+        "es": "Skill de salida concisa para Claude Code — comprime las respuestas a fragmentos de alta señal (elimina artículos, relleno y rodeos) preservando toda la sustancia técnica. Niveles configurables (lite/full/ultra), se autodesactiva ante advertencias de seguridad y acciones irreversibles."
+      },
+      "stack": ["claude-code", "skills", "hooks", "plugin"]
+    },
+    {
+      "id": "claude-kanban",
+      "name": { "en": "claude-kanban", "es": "claude-kanban" },
+      "tag": { "en": "CLAUDE CODE PLUGIN", "es": "PLUGIN CLAUDE CODE" },
+      "desc": {
+        "en": "Visual kanban board for Claude Code — track tasks across todo/doing/done columns during agentic sessions, keeping multi-step work organized inside the CLI.",
+        "es": "Tablero kanban visual para Claude Code — sigue tareas a través de las columnas todo/doing/done durante sesiones agénticas, manteniendo el trabajo multi-paso organizado dentro de la CLI."
+      },
+      "stack": ["claude-code", "kanban", "cli", "plugin"]
     }
   ],
   "stackChips": [
