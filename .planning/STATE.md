@@ -4,8 +4,8 @@ milestone: v4.2
 milestone_name: Content polish — experience rewrite + projects redesign
 status: in-progress
 stopped_at: v4.2 content work on main (no tag yet) — experience rewrite (#36) + timeline polish (#37) + projects 3-card redesign + contact reorder (#38) + audit fix (#39). 57/57 tests GREEN.
-last_updated: 2026-06-22T19:14:00-05:00
-last_activity: 2026-06-22 -- merged #38 + #39; closed 16 obsolete dependabot PRs (dead CRA toolchain); STATE+ROADMAP synced to v4.2
+last_updated: 2026-06-25T15:05:00-05:00
+last_activity: 2026-06-25 - Completed quick task 260625-dvq: VIS-05 caveman + claude-kanban featured-app cards (apps 3→5)
 progress:
   shipped_to_main: 4
   remaining: open  # VIS-05 + content passes; no fixed slice count yet
@@ -34,10 +34,16 @@ progress:
 - **No v4.2 tag** — content work unbounded (no fixed slice count). Tag when content passes converge.
 - **projects-input.md** (`.planning/`) holds the raw project intake (Mr. Yoker filled; Atenea + others blank) — source for future projects expansion.
 
-**v4.2 backlog (not started):**
-- **VIS-05** — claude-kanban + caveman cards into Claude section (3 of 5 featured-app cards present).
+**v4.2 backlog:**
+- ~~**VIS-05**~~ — ✅ DONE (260625-dvq) — caveman + claude-kanban cards added; Claude section apps 3→5. Local main only, not pushed.
 - **DIAGRAMS-01** — cross-repo architecture diagrams.
 - Custom domain `andresmontoyat.co` (carried from v4.1).
+
+### Quick Tasks Completed
+
+| # | Description | Date | Commit | Directory |
+|---|-------------|------|--------|-----------|
+| 260625-dvq | VIS-05 caveman + claude-kanban featured-app cards (apps 3→5) | 2026-06-25 | fddca76 | [260625-dvq-vis-05-add-caveman-claude-kanban-feature](./quick/260625-dvq-vis-05-add-caveman-claude-kanban-feature/) |
 
 ## Project Reference
 
@@ -136,8 +142,8 @@ Root cause closed: React SPA hydration was blocking the LCP critical path. Hero 
 
 ## Session Continuity
 
-Last session: 2026-06-22T19:14:00-05:00 (resumed; merged PRs + synced docs)
-Stopped at: #38 + #39 merged to main; 16 obsolete dependabot PRs closed; STATE.md + ROADMAP.md synced to v4.2 reality. main clean, 57/57 GREEN.
+Last session: 2026-06-25T15:05:00-05:00 (resumed; shipped VIS-05 via /gsd:quick)
+Stopped at: VIS-05 DONE on local main (260625-dvq). caveman + claude-kanban cards added to claude.json apps[] (3→5); Claude.test.js counts bumped 3→5; 57/57 vitest GREEN. NOT pushed — needs PR per project convention (auto-deploy from main). Next: open PR or pick DIAGRAMS-01 / custom domain.
 Resume file: none — clean checkpoint
 Open PR: #2 junie-init only (foreign JetBrains scaffold — close if unused)
 
