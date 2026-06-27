@@ -10,6 +10,7 @@
   "entries": [
     {
       "id": "coderio-2026",
+      "visible": true,
       "date": { "en": "Jan 2026 — Present", "es": "Ene 2026 — Presente" },
       "title": { "en": "Backend Developer — Squad User Profile", "es": "Backend Developer — Squad User Profile" },
       "company": "Coderio",
@@ -32,6 +33,7 @@
     },
     {
       "id": "f2x-2024",
+      "visible": true,
       "date": { "en": "Sep 2024 — Apr 2026", "es": "Sep 2024 — Abr 2026" },
       "title": { "en": "Backend Developer", "es": "Backend Developer" },
       "company": "F2X SAS",
@@ -52,6 +54,7 @@
     },
     {
       "id": "blerify-2024",
+      "visible": true,
       "date": { "en": "Jan 2024 — Jan 2025", "es": "Ene 2024 — Ene 2025" },
       "title": { "en": "Backend Developer", "es": "Backend Developer" },
       "company": "Blerify",
@@ -72,6 +75,7 @@
     },
     {
       "id": "smtech-2023",
+      "visible": true,
       "date": { "en": "Aug 2023 — Dec 2023", "es": "Ago 2023 — Dic 2023" },
       "title": { "en": "Backend Developer", "es": "Backend Developer" },
       "company": "SM TECH SAS",
@@ -90,6 +94,7 @@
     },
     {
       "id": "tul-2022",
+      "visible": true,
       "date": { "en": "Apr 2022 — Jun 2023", "es": "Abr 2022 — Jun 2023" },
       "title": { "en": "Backend Developer", "es": "Backend Developer" },
       "company": "TUL SAS",
@@ -108,6 +113,7 @@
     },
     {
       "id": "linked-2021",
+      "visible": true,
       "date": { "en": "May 2021 — Feb 2022", "es": "May 2021 — Feb 2022" },
       "title": { "en": "Backend & DevOps Engineer", "es": "Backend & Ingeniero DevOps" },
       "company": "Linked",
@@ -126,6 +132,7 @@
     },
     {
       "id": "klever-2020",
+      "visible": true,
       "date": { "en": "Aug 2020 — Feb 2022", "es": "Ago 2020 — Feb 2022" },
       "title": { "en": "Solutions Architect", "es": "Arquitecto de Soluciones" },
       "company": "KLEVER SAS",
@@ -146,6 +153,7 @@
     },
     {
       "id": "tcs-2013",
+      "visible": true,
       "date": { "en": "Aug 2013 — Sep 2015", "es": "Ago 2013 — Sep 2015" },
       "title": { "en": "Technical Lead & Solutions Architect LATAM", "es": "Líder Técnico & Arquitecto de Soluciones LATAM" },
       "company": "Tata Consultancy Services",
@@ -166,6 +174,7 @@
     },
     {
       "id": "path-innkua-2009",
+      "visible": true,
       "date": { "en": "Nov 2009 — Jan 2021", "es": "Nov 2009 — Ene 2021" },
       "title": { "en": "Solutions Architect & DevOps Engineer", "es": "Arquitecto de Soluciones & Ingeniero DevOps" },
       "company": "PATH — INNKUA",
@@ -184,6 +193,7 @@
     },
     {
       "id": "nethexa-2012",
+      "visible": true,
       "date": { "en": "Jun 2012 — Aug 2013", "es": "Jun 2012 — Ago 2013" },
       "title": { "en": "Technical Lead & Solutions Architect", "es": "Líder Técnico & Arquitecto de Soluciones" },
       "company": "Grupo Nethexa",
@@ -202,6 +212,7 @@
     },
     {
       "id": "ceiba-2009",
+      "visible": true,
       "date": { "en": "Jun 2009 — Jun 2010", "es": "Jun 2009 — Jun 2010" },
       "title": { "en": "Senior Developer", "es": "Desarrollador Senior" },
       "company": "Ceiba Software House",
@@ -220,6 +231,7 @@
     },
     {
       "id": "mercurio-2007",
+      "visible": true,
       "date": { "en": "Apr 2007 — Jun 2009", "es": "Abr 2007 — Jun 2009" },
       "title": { "en": "Senior Developer", "es": "Desarrollador Senior" },
       "company": "Mercurio SAS (Castor SAS)",
