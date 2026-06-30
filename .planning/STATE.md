@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v4.2
 milestone_name: Content polish — experience rewrite + projects redesign
 status: in-progress
-stopped_at: v4.2 content work on main (no tag yet) — experience rewrite (#36) + timeline polish (#37) + projects 3-card redesign + contact reorder (#38) + audit fix (#39). 57/57 tests GREEN.
-last_updated: 2026-06-25T15:40:00-05:00
-last_activity: 2026-06-25 - Completed quick task 260625-etd: Claude section — replaced Track record counters with 4 AI-capability cards
+stopped_at: v4.2 content work on main (no tag yet) — experience rewrite (#36) + timeline polish (#37) + projects 3-card redesign + contact reorder (#38) + audit fix (#39) + claude offerings consolidation + experience visibility flag + CV PDF generator. 56/56 tests GREEN. main in sync with origin.
+last_updated: 2026-06-30T10:57:00-05:00
+last_activity: 2026-06-30 - Pushed CV PDF generator + generated PDFs (f406d41); cleaned strays (website-new/, root docx dupes)
 progress:
-  shipped_to_main: 4
-  remaining: open  # VIS-05 + content passes; no fixed slice count yet
+  shipped_to_main: 5
+  remaining: open  # projects expansion + content passes; no fixed slice count yet
   percent: null
 ---
 
@@ -27,6 +27,22 @@ progress:
 | #38 | 57be81d | Projects 3-card redesign (🎫 Mr. Yoker / 🏥 Mutual SER / 📞 Hexadialer) — emoji glyphs + gradient overlay + centered flexbox (fixed card width, replaces grid); contact reorder (GitHub before LinkedIn) |
 | #39 | 7e3c27e | npm audit fix — non-breaking security bumps (25→23 vulns) |
 
+**Direct-to-main since #39 (no PR, content/tooling passes):**
+
+| Commit | Description |
+|--------|-------------|
+| 177392f | claude: remove secondary 'See projects' CTA from PitchHero |
+| d737353 | claude: value card 'Hexagonal' → 'Architecture without shortcuts' |
+| eb35856 | claude: remove featured-apps grid after services (incl VIS-05 cards) |
+| 817a2f0 | claude: merge AI capabilities + services → single 6-card offerings grid |
+| 6bb9ef3 | claude: remove stack chips strip from section end |
+| a97b435 | experience: per-entry `visible` flag (show/hide roles) |
+| 57a05c8 | experience: questionnaire — visibility field + Coderio/Linked role blocks |
+| 743400b | cv: `scripts/generate-cv.mjs` — ATS PDF CV (EN/ES) from site data |
+| f406d41 | cv: commit generated `cv/CarlosMontoya_CV_{EN,ES}.pdf` |
+
+**Repo cleanup (2026-06-30):** Removed strays — `website-new/` (old standalone HTML), root `CV_Carlos_Montoya_{EN,ES}.docx` (byte-identical dupes of tracked `public/` copies). Kept: `.planning/projects-input.md` (active intake), `Diagnostico_LinkedIn_*.docx` (input scratch), `14-PATTERNS.md` (GSD artifact).
+
 **Dependency hygiene (2026-06-22):** Closed 16 obsolete dependabot PRs (#5–#24) — all targeted the removed CRA/craco toolchain (craco, react-scripts, axios, lodash + transitives no longer in package.json post-Vite migration). Inmergeable + no-op.
 
 **Carried concerns:**
@@ -35,7 +51,8 @@ progress:
 - **projects-input.md** (`.planning/`) holds the raw project intake (Mr. Yoker filled; Atenea + others blank) — source for future projects expansion.
 
 **v4.2 backlog:**
-- ~~**VIS-05**~~ — ✅ DONE (260625-dvq) — caveman + claude-kanban cards added; Claude section apps 3→5. Local main only, not pushed.
+- ~~**VIS-05**~~ — RETIRED. Cards added (260625-dvq) then the entire featured-apps grid was removed (eb35856) during Claude offerings consolidation. No longer applicable.
+- **Projects expansion** — fill `.planning/projects-input.md` (Mr. Yoker filled; Atenea + others blank), then surface in Projects section.
 - **DIAGRAMS-01** — cross-repo architecture diagrams.
 - Custom domain `andresmontoyat.co` (carried from v4.1).
 
@@ -143,9 +160,10 @@ Root cause closed: React SPA hydration was blocking the LCP critical path. Hero 
 
 ## Session Continuity
 
-Last session: 2026-06-25T15:40:00-05:00 (resumed; shipped VIS-05 + Claude AI-cards redesign via /gsd:quick)
-Stopped at: Two quick tasks DONE on local main, NOT pushed. (1) 260625-dvq VIS-05 caveman+claude-kanban cards. (2) 260625-etd Claude section redesign — removed Track record counters, added 4 AI-capability cards (Agentic / RAG / Evals / AI-assisted delivery, bilingual). 57/57 vitest GREEN, verified live in browser. Both need PR per project convention (main auto-deploys to Vercel). Next: open PR(s) or pick DIAGRAMS-01 / custom domain.
+Last session: 2026-06-30T10:57:00-05:00 (resumed; pushed CV PDF work, cleaned strays, refreshed STATE.md)
+Stopped at: main in sync with origin (pushed 743400b CV generator + f406d41 generated PDFs). Strays removed (website-new/, root docx dupes). 56/56 vitest GREEN. Claude section converged to 6-card offerings grid (featured-apps grid + stack chips removed). Experience now has per-entry `visible` flag. Next candidates: projects expansion (fill projects-input.md), DIAGRAMS-01, custom domain, or v4.2 tag.
 Resume file: none — clean checkpoint
+Untracked (intentional-keep): .planning/projects-input.md, Diagnostico_LinkedIn_*.docx, 14-PATTERNS.md
 Open PR: #2 junie-init only (foreign JetBrains scaffold — close if unused)
 
 ## v4.2 Roadmap Candidates (next milestone)
