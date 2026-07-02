@@ -38,6 +38,30 @@
     <link rel="apple-touch-icon" href="/logo192.png" />
     <link rel="manifest" href="/manifest.json" />
     <title>Carlos Andrés Montoya Tobón · Solutions Architect &amp; Senior Backend Engineer</title>
+    <!-- Structured data — static fallback (crawlers read this; no JS required) -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "Carlos Andrés Montoya Tobón",
+        "jobTitle": "Solutions Architect & Senior Backend Engineer",
+        "url": "https://andresmontoyat.co/",
+        "image": "https://andresmontoyat.co/og-image.png",
+        "email": "mailto:andresmontoyat@gmail.com",
+        "telephone": "+573244422196",
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Medellín",
+          "addressCountry": "CO"
+        },
+        "sameAs": [
+          "https://github.com/andresmontoyat",
+          "https://www.linkedin.com/in/carlos-andres-montoya-tobon-8b508033"
+        ],
+        "knowsAbout": ["Java", "Spring", "Microservices", "Cloud", "Hexagonal Architecture"],
+        "description": "Carlos Andrés Montoya Tobón — Solutions Architect and Senior Backend Engineer with 18+ years of experience in Java, Spring, microservices and cloud."
+      }
+    </script>
     <!-- Critical CSS — static hero layer paints before React hydrates (kills LCP render delay) -->
     <style>
       :root {
