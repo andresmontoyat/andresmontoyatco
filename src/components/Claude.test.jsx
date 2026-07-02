@@ -31,65 +31,42 @@ describe('Claude (v4.0 Slice 7)', () => {
   it('renders pitch hero label/h2/subLead/CTAs (EN)', () => {
     renderWithLang('en')
     expect(screen.getByText(/AI Engineering · For your team/)).toBeInTheDocument()
-    expect(screen.getByText(/Backend systems/)).toBeInTheDocument()
+    expect(screen.getByText(/Software/)).toBeInTheDocument()
     expect(screen.getByText(/delivered with AI discipline/)).toBeInTheDocument()
     expect(screen.getByText(/Senior backend engineer/)).toBeInTheDocument()
     expect(screen.getByText(/Let's talk about your project/)).toBeInTheDocument()
-    expect(screen.getByText('See projects')).toBeInTheDocument()
   })
 
   it('renders all 4 value cards with title + id (EN)', () => {
     renderWithLang('en')
     expect(data.values).toHaveLength(4)
     expect(screen.getByText('Delivery 3–5× faster')).toBeInTheDocument()
-    expect(screen.getByText('Hexagonal without shortcuts')).toBeInTheDocument()
+    expect(screen.getByText('Architecture without shortcuts')).toBeInTheDocument()
     expect(screen.getByText('Tests + observability built-in')).toBeInTheDocument()
     expect(screen.getByText('Your team keeps the workflow')).toBeInTheDocument()
   })
 
-  it('renders proof block with 7 counters (EN)', () => {
+  it('renders all 6 offerings (EN)', () => {
     renderWithLang('en')
-    expect(screen.getByText('Track record')).toBeInTheDocument()
-    expect(screen.getByText(/built my own toolkit/)).toBeInTheDocument()
-    expect(data.counters).toHaveLength(7)
-    expect(screen.getByText('37')).toBeInTheDocument()
-    expect(screen.getByText('81')).toBeInTheDocument()
-    expect(screen.getByText('86')).toBeInTheDocument()
-    expect(screen.getByText('custom agents')).toBeInTheDocument()
-    expect(screen.getByText('orchestrations')).toBeInTheDocument()
-  })
-
-  it('renders all 5 services + 3 featured apps (EN)', () => {
-    renderWithLang('en')
-    expect(data.services).toHaveLength(5)
+    expect(data.offerings).toHaveLength(6)
+    expect(screen.getByText('Agentic delivery')).toBeInTheDocument()
+    expect(screen.getByText('RAG & MCP servers')).toBeInTheDocument()
+    expect(screen.getByText('LLM evals & guardrails')).toBeInTheDocument()
     expect(screen.getByText('Greenfield builds')).toBeInTheDocument()
-    expect(screen.getByText('MCP server development')).toBeInTheDocument()
     expect(screen.getByText('Legacy refactor')).toBeInTheDocument()
-    expect(data.apps).toHaveLength(3)
-    expect(screen.getAllByText('ci-templates').length).toBeGreaterThan(0)
-    expect(screen.getByText('GSD framework')).toBeInTheDocument()
-    expect(screen.getAllByText('spring-ai-qdrant-mcp').length).toBeGreaterThan(0)
+    expect(screen.getByText('DevOps automation')).toBeInTheDocument()
   })
 
-  it('renders stackChips strip (17 chips)', () => {
-    renderWithLang('en')
-    expect(data.stackChips).toHaveLength(17)
-    expect(screen.getAllByText('Java 21').length).toBeGreaterThan(0)
-    expect(screen.getAllByText('Spring Boot 3').length).toBeGreaterThan(0)
-    expect(screen.getAllByText('Spring AI').length).toBeGreaterThan(0)
-  })
-
-  it('translates pitch + values + counters when lang=es', () => {
+  it('translates pitch + values + offerings when lang=es', () => {
     renderWithLang('es')
     expect(screen.getByText(/AI Engineering · Para tu equipo/)).toBeInTheDocument()
-    expect(screen.getByText(/Sistemas backend/)).toBeInTheDocument()
+    expect(screen.getByText(/Software/)).toBeInTheDocument()
     expect(screen.getByText(/Hablemos de tu proyecto/)).toBeInTheDocument()
     expect(screen.getByText('Entrega 3–5× más rápida')).toBeInTheDocument()
-    expect(screen.getByText('subagents propios')).toBeInTheDocument()
-    expect(screen.getByText('CÓDIGO ABIERTO')).toBeInTheDocument()
+    expect(screen.getByText('Entrega agéntica')).toBeInTheDocument()
   })
 
-  it('claude.json schema sanity — values/services/counters/apps bilingual + stackChips array', () => {
+  it('claude.json schema sanity — values/offerings bilingual', () => {
     expect(Array.isArray(data.values)).toBe(true)
     for (const v of data.values) {
       expect(typeof v.id).toBe('string')
@@ -98,23 +75,12 @@ describe('Claude (v4.0 Slice 7)', () => {
       expect(typeof v.desc.en).toBe('string')
       expect(typeof v.desc.es).toBe('string')
     }
-    for (const s of data.services) {
-      expect(typeof s.id).toBe('string')
-      expect(typeof s.title.en).toBe('string')
-      expect(typeof s.desc.es).toBe('string')
+    for (const o of data.offerings) {
+      expect(typeof o.id).toBe('string')
+      expect(typeof o.title.en).toBe('string')
+      expect(typeof o.title.es).toBe('string')
+      expect(typeof o.desc.en).toBe('string')
+      expect(typeof o.desc.es).toBe('string')
     }
-    for (const c of data.counters) {
-      expect(typeof c.id).toBe('string')
-      expect(typeof c.value).toBe('number')
-      expect(typeof c.label.en).toBe('string')
-      expect(typeof c.label.es).toBe('string')
-    }
-    for (const a of data.apps) {
-      expect(typeof a.id).toBe('string')
-      expect(typeof a.name.en).toBe('string')
-      expect(typeof a.tag.es).toBe('string')
-      expect(Array.isArray(a.stack)).toBe(true)
-    }
-    expect(Array.isArray(data.stackChips)).toBe(true)
   })
 })

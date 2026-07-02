@@ -38,9 +38,19 @@ describe('Experience (v4.0 Slice 5)', () => {
   it('renders all 12 entry companies', () => {
     renderWithLang('en')
     expect(data.entries).toHaveLength(12)
-    for (const entry of data.entries) {
+    for (const entry of data.entries.filter((e) => e.visible !== false)) {
       expect(screen.getAllByText(entry.company).length).toBeGreaterThan(0)
     }
+  })
+
+  it('every entry has a visible attribute and only visible entries render', () => {
+    renderWithLang('en')
+    for (const entry of data.entries) {
+      expect(typeof entry.visible).toBe('boolean')
+    }
+    const visibleCount = data.entries.filter((e) => e.visible !== false).length
+    const cards = screen.getAllByRole('button', { name: /expand entry/i })
+    expect(cards).toHaveLength(visibleCount)
   })
 
   it('each entry renders its date + title + location (EN)', () => {
@@ -54,7 +64,7 @@ describe('Experience (v4.0 Slice 5)', () => {
   it('expand/collapse buttons render with bilingual ARIA labels (EN starts collapsed)', () => {
     renderWithLang('en')
     const buttons = screen.getAllByRole('button', { name: /expand entry/i })
-    expect(buttons).toHaveLength(12)
+    expect(buttons).toHaveLength(data.entries.filter((e) => e.visible !== false).length)
     for (const b of buttons) {
       expect(b.getAttribute('aria-expanded')).toBe('false')
     }

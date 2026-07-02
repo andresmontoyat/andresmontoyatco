@@ -1,19 +1,67 @@
 ---
 gsd_state_version: 1.0
-milestone: v4.1
-milestone_name: Deploy polish — OG + LCP perf
-status: shipped
-stopped_at: v4.1 tag placed (7e2c34c); prod Lighthouse mobile Perf 0.99 / A11y 1.0 / BP 1.0 / SEO 1.0 — all gates PASS
-last_updated: 2026-06-16T15:15:00.000Z
-last_activity: 2026-06-16 -- v4.1 tagged; prod Perf 0.84 → 0.99, LCP 4.0s → 2.1s
+milestone: v4.2
+milestone_name: Content polish — experience rewrite + projects redesign
+status: in-progress
+stopped_at: v4.2 content work on main (no tag yet) — experience rewrite (#36) + timeline polish (#37) + projects 3-card redesign + contact reorder (#38) + audit fix (#39) + claude offerings consolidation + experience visibility flag + CV PDF generator. 56/56 tests GREEN. main in sync with origin.
+last_updated: 2026-06-30T10:57:00-05:00
+last_activity: 2026-06-30 - Pushed CV PDF generator + generated PDFs (f406d41); cleaned strays (website-new/, root docx dupes)
 progress:
-  total_slices: 7
-  completed_slices: 7
-  remaining_slices: 0
-  percent: 100
+  shipped_to_main: 5
+  remaining: open  # projects expansion + content passes; no fixed slice count yet
+  percent: null
 ---
 
 # Project State
+
+## v4.2 Content Polish (IN PROGRESS — on main, no tag)
+
+**Focus:** Recruiter-facing content quality — experience copy rewrite + projects section redesign. No infra/perf scope.
+
+**Shipped to main (PR order):**
+
+| PR | Commit | Description |
+|----|--------|-------------|
+| #36 | 9684201 | Experience rewrite — apply tNic template (Fase 1); 12 entries, JSON-driven |
+| #37 | 8ec5ed2 | Experience timeline UI polish (interactive states) |
+| #38 | 57be81d | Projects 3-card redesign (🎫 Mr. Yoker / 🏥 Mutual SER / 📞 Hexadialer) — emoji glyphs + gradient overlay + centered flexbox (fixed card width, replaces grid); contact reorder (GitHub before LinkedIn) |
+| #39 | 7e3c27e | npm audit fix — non-breaking security bumps (25→23 vulns) |
+
+**Direct-to-main since #39 (no PR, content/tooling passes):**
+
+| Commit | Description |
+|--------|-------------|
+| 177392f | claude: remove secondary 'See projects' CTA from PitchHero |
+| d737353 | claude: value card 'Hexagonal' → 'Architecture without shortcuts' |
+| eb35856 | claude: remove featured-apps grid after services (incl VIS-05 cards) |
+| 817a2f0 | claude: merge AI capabilities + services → single 6-card offerings grid |
+| 6bb9ef3 | claude: remove stack chips strip from section end |
+| a97b435 | experience: per-entry `visible` flag (show/hide roles) |
+| 57a05c8 | experience: questionnaire — visibility field + Coderio/Linked role blocks |
+| 743400b | cv: `scripts/generate-cv.mjs` — ATS PDF CV (EN/ES) from site data |
+| f406d41 | cv: commit generated `cv/CarlosMontoya_CV_{EN,ES}.pdf` |
+
+**Repo cleanup (2026-06-30):** Removed strays — `website-new/` (old standalone HTML), root `CV_Carlos_Montoya_{EN,ES}.docx` (byte-identical dupes of tracked `public/` copies). Kept: `.planning/projects-input.md` (active intake), `Diagnostico_LinkedIn_*.docx` (input scratch), `14-PATTERNS.md` (GSD artifact).
+
+**Dependency hygiene (2026-06-22):** Closed 16 obsolete dependabot PRs (#5–#24) — all targeted the removed CRA/craco toolchain (craco, react-scripts, axios, lodash + transitives no longer in package.json post-Vite migration). Inmergeable + no-op.
+
+**Carried concerns:**
+- **23 vulns remain** (20 moderate, 1 high, 2 critical) — ALL devDependencies (vite/vitest/@vitest/coverage-v8/esbuild/lighthouse build+test toolchain). NOT shipped to static prod bundle → no end-user exposure. Fix needs `--force` major bumps of vite+vitest → deliberate toolchain upgrade, deferred.
+- **No v4.2 tag** — content work unbounded (no fixed slice count). Tag when content passes converge.
+- **projects-input.md** (`.planning/`) holds the raw project intake (Mr. Yoker filled; Atenea + others blank) — source for future projects expansion.
+
+**v4.2 backlog:**
+- ~~**VIS-05**~~ — RETIRED. Cards added (260625-dvq) then the entire featured-apps grid was removed (eb35856) during Claude offerings consolidation. No longer applicable.
+- **Projects expansion** — fill `.planning/projects-input.md` (Mr. Yoker filled; Atenea + others blank), then surface in Projects section.
+- **DIAGRAMS-01** — cross-repo architecture diagrams.
+- Custom domain `andresmontoyat.co` (carried from v4.1).
+
+### Quick Tasks Completed
+
+| # | Description | Date | Commit | Directory |
+|---|-------------|------|--------|-----------|
+| 260625-dvq | VIS-05 caveman + claude-kanban featured-app cards (apps 3→5) | 2026-06-25 | fddca76 | [260625-dvq-vis-05-add-caveman-claude-kanban-feature](./quick/260625-dvq-vis-05-add-caveman-claude-kanban-feature/) |
+| 260625-etd | Claude section: replace Track record counters with 4 AI-capability cards | 2026-06-25 | e94a377 | [260625-etd-claude-section-replace-track-record-with](./quick/260625-etd-claude-section-replace-track-record-with/) |
 
 ## Project Reference
 
@@ -112,9 +160,11 @@ Root cause closed: React SPA hydration was blocking the LCP critical path. Hero 
 
 ## Session Continuity
 
-Last session: 2026-06-16T15:15:00.000Z (v4.1 tagged; prod gate PASS)
-Stopped at: v4.1 milestone complete. Both tags pushed. Prod live.
+Last session: 2026-06-30T10:57:00-05:00 (resumed; pushed CV PDF work, cleaned strays, refreshed STATE.md)
+Stopped at: main in sync with origin (pushed 743400b CV generator + f406d41 generated PDFs). Strays removed (website-new/, root docx dupes). 56/56 vitest GREEN. Claude section converged to 6-card offerings grid (featured-apps grid + stack chips removed). Experience now has per-entry `visible` flag. Next candidates: projects expansion (fill projects-input.md), DIAGRAMS-01, custom domain, or v4.2 tag.
 Resume file: none — clean checkpoint
+Untracked (intentional-keep): .planning/projects-input.md, Diagnostico_LinkedIn_*.docx, 14-PATTERNS.md
+Open PR: #2 junie-init only (foreign JetBrains scaffold — close if unused)
 
 ## v4.2 Roadmap Candidates (next milestone)
 

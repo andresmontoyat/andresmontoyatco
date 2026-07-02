@@ -9,7 +9,7 @@ function pick(field, lang) {
 
 function PitchHero({ lang }) {
   return (
-    <div className="text-center max-w-3xl mx-auto bg-surface border border-border rounded-2xl p-8 md:p-12 mb-12">
+    <div className="text-center max-w-4xl mx-auto bg-surface border border-border rounded-2xl p-10 md:p-14 mb-12">
       <p className="text-accent font-mono text-xs uppercase tracking-widest">{pick(data.label, lang)}</p>
       <h2 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-text mt-4 leading-tight">
         {pick(data.h2Part1, lang)}{' '}
@@ -22,12 +22,6 @@ function PitchHero({ lang }) {
           className="bg-accent text-bg font-extrabold px-8 py-4 rounded-lg transition-transform hover:-translate-y-0.5"
         >
           {pick(data.ctaPrimary, lang)}
-        </a>
-        <a
-          href="#projects"
-          className="border border-border text-text px-8 py-4 rounded-lg transition-colors hover:border-accent hover:text-accent"
-        >
-          {pick(data.ctaSecondary, lang)}
         </a>
       </div>
     </div>
@@ -44,69 +38,11 @@ function ValueCard({ value, lang }) {
   )
 }
 
-function ProofBlock({ lang }) {
-  return (
-    <div className="mt-20 bg-surface border border-border rounded-2xl p-8 md:p-12">
-      <p className="text-accent font-mono text-xs uppercase tracking-widest">{pick(data.proofLabel, lang)}</p>
-      <h3 className="text-2xl md:text-3xl font-extrabold text-text mt-3">{pick(data.proofHeading, lang)}</h3>
-      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-6 mt-8">
-        {data.counters.map((c) => (
-          <div key={c.id} className="text-center">
-            <div className="text-3xl md:text-4xl font-extrabold text-accent">{c.value}</div>
-            <div className="text-xs text-muted uppercase tracking-wide mt-1">{pick(c.label, lang)}</div>
-          </div>
-        ))}
-      </div>
-    </div>
-  )
-}
-
-function ServiceCard({ service, lang }) {
-  return (
-    <div className="border-l-4 border-accent bg-surface rounded-r-xl p-6">
-      <h3 className="text-text font-extrabold text-base">{pick(service.title, lang)}</h3>
-      <p className="text-muted text-sm mt-2">{pick(service.desc, lang)}</p>
-    </div>
-  )
-}
-
-function FeaturedAppCard({ app, lang }) {
+function OfferingCard({ offering, lang }) {
   return (
     <div className="bg-surface border border-border rounded-xl p-6 hover:border-accent transition-colors">
-      <div className="flex items-center justify-between">
-        <h3 className="font-mono text-base font-extrabold text-text">{pick(app.name, lang)}</h3>
-        <span className="font-mono text-xs px-2 py-1 rounded-md bg-accent text-bg font-extrabold">
-          {pick(app.tag, lang)}
-        </span>
-      </div>
-      <p className="text-muted text-sm mt-3 leading-relaxed">{pick(app.desc, lang)}</p>
-      <div className="flex flex-wrap gap-2 mt-4">
-        {app.stack.map((chip) => (
-          <span
-            key={chip}
-            className="font-mono text-xs px-2 py-1 rounded-md bg-bg text-muted border border-border"
-          >
-            {chip}
-          </span>
-        ))}
-      </div>
-    </div>
-  )
-}
-
-function StackStrip() {
-  return (
-    <div className="mt-16 border-t border-border pt-10">
-      <div className="flex flex-wrap justify-center gap-2">
-        {data.stackChips.map((chip) => (
-          <span
-            key={chip}
-            className="font-mono text-xs px-3 py-1.5 rounded-full bg-surface text-muted border border-border"
-          >
-            {chip}
-          </span>
-        ))}
-      </div>
+      <h3 className="text-text font-extrabold text-lg">{pick(offering.title, lang)}</h3>
+      <p className="text-muted text-base mt-2 leading-relaxed">{pick(offering.desc, lang)}</p>
     </div>
   )
 }
@@ -122,21 +58,14 @@ export default function Claude() {
             <ValueCard key={v.id} value={v} lang={lang} />
           ))}
         </div>
-        <ProofBlock lang={lang} />
         <p className="text-accent font-mono text-xs uppercase tracking-widest mt-12">
-          {pick(data.servicesLabel, lang)}
+          {pick(data.offeringsLabel, lang)}
         </p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-8">
-          {data.services.map((s) => (
-            <ServiceCard key={s.id} service={s} lang={lang} />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
+          {data.offerings.map((o) => (
+            <OfferingCard key={o.id} offering={o} lang={lang} />
           ))}
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
-          {data.apps.map((a) => (
-            <FeaturedAppCard key={a.id} app={a} lang={lang} />
-          ))}
-        </div>
-        <StackStrip />
       </div>
     </section>
   )

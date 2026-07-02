@@ -127,7 +127,7 @@ export default function Experience() {
             aria-hidden="true"
             className="absolute left-[7px] top-2 bottom-2 w-0.5 bg-gradient-to-b from-accent/50 via-accent/30 to-transparent"
           />
-          {data.entries.map((entry) => (
+          {data.entries.filter((entry) => entry.visible !== false).map((entry) => (
             <TimelineCard
               key={entry.id}
               entry={entry}
