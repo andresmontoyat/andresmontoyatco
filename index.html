@@ -65,8 +65,10 @@
     <!-- Critical CSS — static hero layer paints before React hydrates (kills LCP render delay) -->
     <style>
       :root {
-        --hero-photo-filter: grayscale(0.2) brightness(0.35);
-        --hero-overlay: linear-gradient(180deg, rgba(13, 13, 26, 0.4) 0%, rgba(13, 13, 26, 0.95) 75%);
+        --hero-photo-filter: grayscale(0.35) brightness(0.62) contrast(1.06);
+        --hero-overlay:
+          linear-gradient(150deg, rgba(0, 229, 168, 0.16) 0%, rgba(0, 194, 255, 0.12) 45%, rgba(13, 13, 26, 0) 70%),
+          linear-gradient(180deg, rgba(13, 13, 26, 0.25) 0%, rgba(13, 13, 26, 0.92) 78%);
       }
       html, body { margin: 0; padding: 0; background: #0D0D1A; }
       #hero-static { position: absolute; top: 0; left: 0; right: 0; height: 100vh; z-index: 0; overflow: hidden; pointer-events: none; }
