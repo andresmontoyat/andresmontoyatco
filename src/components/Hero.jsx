@@ -70,7 +70,7 @@ export default function Hero() {
         </span>
 
         <h1
-          className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tighter leading-none mb-5"
+          className="text-4xl sm:text-5xl lg:text-7xl font-extrabold tracking-tighter leading-[0.95] mb-5"
           aria-label={`${t.hero.h1a} ${t.hero.h1b} ${t.hero.h1c}`}
           style={{ filter: 'drop-shadow(var(--hero-h1-shadow))' }}
         >
@@ -102,7 +102,7 @@ export default function Hero() {
 
         <p
           className="text-base sm:text-lg text-text-secondary max-w-2xl mb-9 leading-relaxed motion-safe:opacity-0 motion-safe:animate-slide-up"
-          style={{ animationDelay: '650ms', animationFillMode: 'forwards', animationDuration: '600ms' }}
+          style={{ animationDelay: '600ms', animationFillMode: 'forwards', animationDuration: '600ms' }}
         >
           {t.hero.lead}
         </p>
@@ -151,8 +151,8 @@ export default function Hero() {
         </div>
 
         <div
-          className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-14 p-7 bg-gradient-to-b from-ink-500 to-ink-700 border border-ink-400 rounded-xl motion-safe:opacity-0 motion-safe:animate-fade-in backdrop-blur-sm"
-          style={{ animationDelay: '950ms', animationFillMode: 'forwards', animationDuration: '500ms' }}
+          className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-12 p-7 bg-gradient-to-b from-ink-500 to-ink-700 border border-ink-400 rounded-xl motion-safe:opacity-0 motion-safe:animate-fade-in backdrop-blur-sm shadow-brand/10"
+          style={{ animationDelay: '850ms', animationFillMode: 'forwards', animationDuration: '500ms' }}
         >
           <Stat num="18+" label={t.stats.years} />
           <Stat num="45+" label={t.stats.team} />
