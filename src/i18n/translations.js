@@ -27,11 +27,12 @@ const translations = {
     },
     hero: {
       status: 'Available for new opportunities',
-      h1a: 'Building scalable',
-      h1b: 'backend systems',
-      h1c: 'that matter.',
-      lead: 'Started in 2007 as a Java full-stack developer, then grew through DevOps, Tech Lead and Solutions Architect roles. 18+ years shipping platforms across fintech, transport, retail, logistics, defense, blockchain, Keycloak-based identity, government and higher education.',
+      h1a: 'Solutions Architect &',
+      h1b: 'Senior Backend',
+      h1c: 'Engineer.',
+      lead: 'I design and ship backend platforms that scale — clean hexagonal architecture, cloud-native, 18+ years, zero shortcuts.',
       cta1: 'Get in touch',
+      cv: 'Download CV',
     },
     stats: {
       years: 'Years',
@@ -72,11 +73,12 @@ const translations = {
     },
     hero: {
       status: 'Disponible para nuevas oportunidades',
-      h1a: 'Construyendo sistemas',
-      h1b: 'backend escalables',
-      h1c: 'que importan.',
-      lead: 'Empecé en 2007 como desarrollador Java full-stack y crecí pasando por roles de DevOps, Tech Lead y Arquitecto de Soluciones. +18 años entregando plataformas para fintech, transporte, retail, logística, defensa, blockchain, identidad con Keycloak, gobierno y educación superior.',
+      h1a: 'Arquitecto de Soluciones',
+      h1b: 'e Ingeniero',
+      h1c: 'Backend Senior.',
+      lead: 'Diseño y entrego plataformas backend que escalan — arquitectura hexagonal limpia, cloud-native, +18 años, cero atajos.',
       cta1: 'Contáctame',
+      cv: 'Descargar CV',
     },
     stats: {
       years: 'Años',
