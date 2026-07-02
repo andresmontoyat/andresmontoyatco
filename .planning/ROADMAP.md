@@ -272,7 +272,7 @@ Tracked but not yet scoped to a milestone. Each item lives as a `999.x-slug` pha
 ### Phase 999.9: intx-contact-form (BACKLOG)
 
 **Requirement:** INTX-01
-**Goal:** Functional contact form (requires backend / forwarder)
+**Goal:** Functional contact form — **STATIC (decided 2026-07-01)**: no backend/forwarder; use a static solution (e.g. `mailto:` action or third-party static form endpoint like Formspree/Web3Forms). Keeps static-hosting constraint.
 **Directory:** `.planning/phases/999.9-intx-contact-form/`
 
 ### Phase 999.10: intx-blog (BACKLOG)
