@@ -44,3 +44,41 @@ describe('Hero copy (redesign)', () => {
     expect(screen.getByText(/arquitectura hexagonal limpia, cloud-native/)).toBeInTheDocument()
   })
 })
+
+describe('Hero CTAs (redesign)', () => {
+  it('primary CTA links to #contact', () => {
+    const { container } = renderWithLang('en')
+    const primary = container.querySelector('a[href="#contact"]')
+    expect(primary).toBeInTheDocument()
+  })
+
+  it('CV button downloads the EN PDF in English', () => {
+    const { container } = renderWithLang('en')
+    const cv = container.querySelector('a[href="/CarlosMontoya_CV_EN.pdf"]')
+    expect(cv).toBeInTheDocument()
+    expect(cv).toHaveAttribute('download')
+    expect(container.querySelector('a[href="/CarlosMontoya_CV_ES.pdf"]')).toBeNull()
+  })
+
+  it('CV button downloads the ES PDF in Spanish', () => {
+    const { container } = renderWithLang('es')
+    const cv = container.querySelector('a[href="/CarlosMontoya_CV_ES.pdf"]')
+    expect(cv).toBeInTheDocument()
+    expect(container.querySelector('a[href="/CarlosMontoya_CV_EN.pdf"]')).toBeNull()
+  })
+
+  it('renders accessible LinkedIn + GitHub links', () => {
+    const { container } = renderWithLang('en')
+    const li = container.querySelector('a[href="https://www.linkedin.com/in/carlos-andres-montoya-tobon-8b508033"]')
+    const gh = container.querySelector('a[href="https://github.com/andresmontoyat"]')
+    expect(li).toHaveAttribute('aria-label')
+    expect(gh).toHaveAttribute('aria-label')
+    expect(li).toHaveAttribute('rel', 'noopener noreferrer')
+    expect(gh).toHaveAttribute('target', '_blank')
+  })
+
+  it('no longer renders the old .docx download links', () => {
+    const { container } = renderWithLang('en')
+    expect(container.querySelector('a[href$=".docx"]')).toBeNull()
+  })
+})
