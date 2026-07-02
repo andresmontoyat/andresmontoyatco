@@ -5,7 +5,7 @@ milestone_name: Content polish — experience rewrite + projects redesign
 status: in-progress
 stopped_at: v4.2 content work on main (no tag yet) — experience rewrite (#36) + timeline polish (#37) + projects 3-card redesign + contact reorder (#38) + audit fix (#39) + claude offerings consolidation + experience visibility flag + CV PDF generator. 56/56 tests GREEN. main in sync with origin.
 last_updated: 2026-06-30T10:57:00-05:00
-last_activity: 2026-06-30 - Pushed CV PDF generator + generated PDFs (f406d41); cleaned strays (website-new/, root docx dupes)
+last_activity: 2026-07-01 - PR #41 vite8/vitest4 + .jsx migration merged; PR #2 closed; quick 260701-v6a JSON-LD Person (999.6/ASEO-01) shipped
 progress:
   shipped_to_main: 5
   remaining: open  # projects expansion + content passes; no fixed slice count yet
@@ -63,6 +63,7 @@ progress:
 |---|-------------|------|--------|-----------|
 | 260625-dvq | VIS-05 caveman + claude-kanban featured-app cards (apps 3→5) | 2026-06-25 | fddca76 | [260625-dvq-vis-05-add-caveman-claude-kanban-feature](./quick/260625-dvq-vis-05-add-caveman-claude-kanban-feature/) |
 | 260625-etd | Claude section: replace Track record counters with 4 AI-capability cards | 2026-06-25 | e94a377 | [260625-etd-claude-section-replace-track-record-with](./quick/260625-etd-claude-section-replace-track-record-with/) |
+| 260701-v6a | 999.6 ASEO-01: static schema.org Person JSON-LD in index.html `<head>` + vitest regression test (63/63 GREEN) | 2026-07-01 | 3480bda | [260701-v6a-aseo-jsonld-person](./quick/260701-v6a-aseo-jsonld-person/) |
 
 ## Project Reference
 
