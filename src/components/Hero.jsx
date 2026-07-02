@@ -122,7 +122,7 @@ export default function Hero() {
             download
             className="inline-flex items-center gap-2 min-h-[44px] px-4 py-3 rounded-full font-extrabold text-xs font-mono bg-transparent text-text-primary border border-ink-400 hover:border-brand hover:text-brand transition-colors"
           >
-            ⬇ {t.hero.cv}
+            <span aria-hidden="true">⬇</span> {t.hero.cv}
           </a>
           <div className="flex items-center gap-2 ml-1">
             <a
@@ -151,7 +151,7 @@ export default function Hero() {
         </div>
 
         <div
-          className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-12 p-7 bg-gradient-to-b from-ink-500 to-ink-700 border border-ink-400 rounded-xl motion-safe:opacity-0 motion-safe:animate-fade-in backdrop-blur-sm shadow-brand/10"
+          className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-12 p-7 bg-gradient-to-b from-ink-500 to-ink-700 border border-ink-400 rounded-xl motion-safe:opacity-0 motion-safe:animate-fade-in backdrop-blur-sm shadow-brand"
           style={{ animationDelay: '850ms', animationFillMode: 'forwards', animationDuration: '500ms' }}
         >
           <Stat num="18+" label={t.stats.years} />

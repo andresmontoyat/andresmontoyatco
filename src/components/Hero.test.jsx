@@ -1,5 +1,5 @@
 import React from 'react'
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, afterEach } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { LanguageProvider } from '../i18n/LanguageContext'
 import Hero from './Hero'
@@ -20,6 +20,14 @@ function renderWithLang(lang = 'en') {
     </LanguageProvider>,
   )
 }
+
+afterEach(() => {
+  try {
+    window.localStorage.clear()
+  } catch (e) {
+    // ignore
+  }
+})
 
 describe('Hero copy (redesign)', () => {
   it('renders role-forward H1 via aria-label (EN)', () => {
@@ -71,9 +79,11 @@ describe('Hero CTAs (redesign)', () => {
     const { container } = renderWithLang('en')
     const li = container.querySelector('a[href="https://www.linkedin.com/in/carlos-andres-montoya-tobon-8b508033"]')
     const gh = container.querySelector('a[href="https://github.com/andresmontoyat"]')
-    expect(li).toHaveAttribute('aria-label')
-    expect(gh).toHaveAttribute('aria-label')
+    expect(li).toHaveAttribute('aria-label', 'LinkedIn profile')
+    expect(gh).toHaveAttribute('aria-label', 'GitHub profile')
     expect(li).toHaveAttribute('rel', 'noopener noreferrer')
+    expect(gh).toHaveAttribute('rel', 'noopener noreferrer')
+    expect(li).toHaveAttribute('target', '_blank')
     expect(gh).toHaveAttribute('target', '_blank')
   })
 
