@@ -92,3 +92,14 @@ describe('Hero CTAs (redesign)', () => {
     expect(container.querySelector('a[href$=".docx"]')).toBeNull()
   })
 })
+
+describe('Hero photo layer (brand duotone, scoped)', () => {
+  it('renders a decorative background photo behind the content', () => {
+    const { container } = renderWithLang('en')
+    const layer = container.querySelector('#hero > div[aria-hidden="true"]')
+    expect(layer).toBeInTheDocument()
+    const img = layer.querySelector('img')
+    expect(img).toHaveAttribute('src', '/me-800.webp')
+    expect(img).toHaveAttribute('alt', '')
+  })
+})

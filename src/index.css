@@ -53,9 +53,11 @@
     --color-text-muted:     #606080;
     --color-text-inverse:   #0D0D1A;
 
-    /* Hero — photo + overlay + h1 shadow (Phase 8 / HERO-01) */
-    --hero-photo-filter: grayscale(0.2) brightness(0.35);
-    --hero-overlay: linear-gradient(180deg, rgba(13, 13, 26, 0.4) 0%, rgba(13, 13, 26, 0.95) 75%);
+    /* Hero — photo + overlay + h1 shadow (Phase 8 / HERO-01; brand-duotone 2026-07) */
+    --hero-photo-filter: grayscale(0.35) brightness(0.62) contrast(1.06);
+    --hero-overlay:
+      linear-gradient(150deg, rgba(0, 229, 168, 0.16) 0%, rgba(0, 194, 255, 0.12) 45%, rgba(13, 13, 26, 0) 70%),
+      linear-gradient(180deg, rgba(13, 13, 26, 0.25) 0%, rgba(13, 13, 26, 0.92) 78%);
     --hero-h1-shadow: 0 2px 16px rgba(0, 0, 0, 0.55);
 
     /* Background gradients — theme-aware (Phase 7 review WR-01, WR-02) */

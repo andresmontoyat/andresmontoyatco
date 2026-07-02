@@ -60,6 +60,18 @@ export default function Hero() {
       id="hero"
       className="relative min-h-screen flex items-center pt-16 pb-16 overflow-hidden"
     >
+      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none" aria-hidden="true">
+        <img
+          src="/me-800.webp"
+          srcSet="/me-400.webp 400w, /me-800.webp 800w, /me-1600.webp 1600w"
+          sizes="100vw"
+          alt=""
+          className="absolute inset-0 w-full h-full object-cover"
+          style={{ objectPosition: 'center 30%', filter: 'var(--hero-photo-filter)' }}
+        />
+        <div className="absolute inset-0" style={{ background: 'var(--hero-overlay)' }} />
+      </div>
+
       <div className="relative z-10 max-w-6xl mx-auto px-6 py-20 w-full">
         <span
           className="inline-flex items-center gap-2 px-4 py-1.5 border border-ink-400 rounded-full font-mono text-xs text-text-secondary bg-ink-500 mb-6 motion-safe:opacity-0 motion-safe:animate-fade-in"
