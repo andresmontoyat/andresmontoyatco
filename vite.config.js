@@ -5,9 +5,7 @@ import { visualizer } from 'rollup-plugin-visualizer'
 
 export default defineConfig({
   plugins: [
-    react({
-      include: '**/*.{jsx,js}',
-    }),
+    react(),
     visualizer({
       filename: 'dist/stats.html',
       template: 'treemap',
@@ -17,21 +15,9 @@ export default defineConfig({
       brotliSize: true,
     }),
   ],
-  esbuild: {
-    loader: 'jsx',
-    include: /src\/.*\.js$/,
-    exclude: [],
-  },
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
-    },
-  },
-  optimizeDeps: {
-    esbuildOptions: {
-      loader: {
-        '.js': 'jsx',
-      },
     },
   },
   test: {
@@ -42,12 +28,12 @@ export default defineConfig({
       },
     },
     globals: true,
-    setupFiles: ['./src/test/setup.js'],
+    setupFiles: ['./src/test/setup.jsx'],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'lcov'],
-      include: ['src/**/*.js'],
-      exclude: ['src/test/**', 'src/index.js'],
+      include: ['src/**/*.{js,jsx}'],
+      exclude: ['src/test/**', 'src/index.jsx'],
     },
   },
 })
