@@ -40,13 +40,14 @@ progress:
 | 57a05c8 | experience: questionnaire — visibility field + Coderio/Linked role blocks |
 | 743400b | cv: `scripts/generate-cv.mjs` — ATS PDF CV (EN/ES) from site data |
 | f406d41 | cv: commit generated `cv/CarlosMontoya_CV_{EN,ES}.pdf` |
+| 6cf7c8b | **PR #41** deps: vite 6→8, vitest 2→4, plugin-react 4→6, esbuild dropped + `.js`→`.jsx` migration (23 files) for oxc JSX parsing. Vulns 23→17 (2 critical + 1 high CLEARED, 17 moderate remain — all devDep). 56/56 GREEN, Vercel PASS |
 
 **Repo cleanup (2026-06-30):** Removed strays — `website-new/` (old standalone HTML), root `CV_Carlos_Montoya_{EN,ES}.docx` (byte-identical dupes of tracked `public/` copies). Kept: `.planning/projects-input.md` (active intake), `Diagnostico_LinkedIn_*.docx` (input scratch), `14-PATTERNS.md` (GSD artifact).
 
 **Dependency hygiene (2026-06-22):** Closed 16 obsolete dependabot PRs (#5–#24) — all targeted the removed CRA/craco toolchain (craco, react-scripts, axios, lodash + transitives no longer in package.json post-Vite migration). Inmergeable + no-op.
 
 **Carried concerns:**
-- **23 vulns remain** (20 moderate, 1 high, 2 critical) — ALL devDependencies (vite/vitest/@vitest/coverage-v8/esbuild/lighthouse build+test toolchain). NOT shipped to static prod bundle → no end-user exposure. Fix needs `--force` major bumps of vite+vitest → deliberate toolchain upgrade, deferred.
+- ~~**23 vulns**~~ — CLOSED via PR #41 (2026-07-01). Toolchain upgraded (vite 8 / vitest 4 / plugin-react 6); required `.js`→`.jsx` migration (oxc replaced esbuild, parses JSX only in `.jsx`). **17 moderate vulns remain** — all still devDep (vite/vitest/lighthouse chain); 2 critical + 1 high eliminated. No prod-bundle exposure.
 - **No v4.2 tag** — content work unbounded (no fixed slice count). Tag when content passes converge.
 - **projects-input.md** (`.planning/`) holds the raw project intake (Mr. Yoker filled; Atenea + others blank) — source for future projects expansion.
 
