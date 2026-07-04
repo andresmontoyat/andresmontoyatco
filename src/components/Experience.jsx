@@ -192,7 +192,8 @@ function FilterChip({ chip, isOn, onToggle }) {
 
 function FilterBar({ lang, activeTech, onToggleChip, onClear, matchCount }) {
   const hasActive = activeTech.length > 0
-  const countLabel = `${matchCount} ${pick(data.filter.count, lang)}`
+  const countWord = pick(matchCount === 1 ? data.filter.count.one : data.filter.count.other, lang)
+  const countLabel = `${matchCount} ${countWord}`
 
   return (
     <div className="mb-10">

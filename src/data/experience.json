@@ -10,7 +10,10 @@
   "filter": {
     "hint": { "en": "Filter by stack", "es": "Filtrar por stack" },
     "clear": { "en": "Clear", "es": "Limpiar" },
-    "count": { "en": "roles", "es": "roles" },
+    "count": {
+      "one": { "en": "role", "es": "rol" },
+      "other": { "en": "roles", "es": "roles" }
+    },
     "chips": [
       "Java",
       "Spring Boot",

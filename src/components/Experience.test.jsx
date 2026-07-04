@@ -186,6 +186,14 @@ describe('Experience (v4.0 Slice 5)', () => {
     expect(status.textContent).toMatch(new RegExp(`${matches.length}`))
   })
 
+  it('uses a singular noun when exactly one role matches (1 role, not 1 roles)', () => {
+    renderWithLang('en')
+    const status = screen.getByRole('status')
+    // Kubernetes matches exactly one role (Blerify)
+    fireEvent.click(screen.getByRole('button', { name: /filter by Kubernetes/i }))
+    expect(status.textContent.trim()).toBe('1 role')
+  })
+
   it('experience.json schema sanity — 12 entries each with required bilingual keys', () => {
     expect(Array.isArray(data.entries)).toBe(true)
     expect(data.entries).toHaveLength(12)
