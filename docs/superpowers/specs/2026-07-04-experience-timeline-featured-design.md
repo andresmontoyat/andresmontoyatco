@@ -90,9 +90,48 @@ Split the current `TimelineCard` into two variants, selected by `entry.featured`
 - Bilingual: metric label swaps EN/ES on language toggle.
 - Regression: all 12 visible roles still render.
 
+## v2 — Modern + interactive (C + D)
+
+Iteration on top of the shipped featured/compact timeline. Chosen via visual companion: **C (vertical hover-lift)** + **D (curated tech filter)**. Layer A (featured/compact) stays; v2 adds interaction, does not replace structure.
+
+### D6 — Curated tech filter (highlight + dim, multi-select OR)
+
+A chip bar above the timeline with ~8 signature techs. Selecting chips highlights matching roles and dims the rest to ~28% opacity. Chronological order and all 12 roles stay visible (no filter-out). *(Rejected: filter-out/collapse — breaks chronology, can leave a single result.)*
+
+- **Chips (curated, adjustable):** `Java` · `Spring Boot` · `Microservices` · `AWS` · `Hexagonal Architecture` · `Keycloak` · `Kubernetes` · `PostgreSQL`. Each chip is an exact string matched against `entry.tech`.
+- **Multi-select, OR semantics:** a role matches if its `tech` includes *any* selected chip. Clicking a chip toggles it.
+- **No selection = neutral:** zero chips active → nothing dimmed, all roles normal.
+- **Match styling:** matching cards keep full opacity + accent ring/left-bar emphasis; non-matching drop to `opacity-28` with `motion-safe` transition. Both featured and compact variants dim identically.
+- **Placement:** chip bar between the intro paragraph and the timeline rail. Includes a live match count (e.g. "5 roles · Java, AWS") and a "Clear" affordance when any chip is active.
+- **State:** new `activeTech` state (a `Set`/array of chip strings) in `Experience`, independent from `openCards`.
+- **Chips are bilingual-neutral** (tech names are language-agnostic); the count label + "Clear" are bilingual via `pick()`/new JSON keys.
+
+### D7 — Hover micro-interactions (no scroll-reveal)
+
+- Card hover: lift (`-translate-y`) + accent glow (already partly present on featured). Extend consistent hover to compact rows.
+- Timeline dot: subtle glow/scale on row hover.
+- **No scroll-triggered animation.** Respect `D-v4.0-NO-SCROLL-REVEAL` — no `useInView`, no draw-in-on-scroll. All motion is hover/toggle/filter-driven and `motion-safe`.
+
+### Accessibility (v2)
+
+- Filter chips are `<button>` with `aria-pressed` reflecting active state.
+- An `aria-live="polite"` region announces the match count when filters change.
+- Dimmed non-matching cards stay in the DOM and keyboard-focusable (dim is visual only, not `aria-hidden`).
+- Respect `prefers-reduced-motion`: opacity/dim still applies (state clarity), but transforms/transitions gate on `motion-safe`.
+
+### Testing (v2, additive)
+
+- Chip bar renders the curated chips.
+- Clicking a chip sets `aria-pressed=true` and marks matching roles (e.g. `Kubernetes` → Blerify highlighted, others carry the dim class).
+- Multi-select: two chips active → union of matches highlighted (OR).
+- Clear/deselect → no roles dimmed.
+- Match-count live region updates with selection.
+- Regression: all prior featured/compact + expand tests stay green.
+
 ## Out of scope
 
 - Refining metric values/copy (deferred — "luego mejoramos las experiencias").
-- Tech filtering / scrub interactivity.
+- Horizontal scrub (direction A) and sticky scroll-progress (direction B) — not chosen.
+- Filter-out/collapse behaviour, category/era filters — rejected in favour of tech highlight+dim.
 - Era grouping / pagination.
 - Reordering entries (chronology stays as-is in JSON).
