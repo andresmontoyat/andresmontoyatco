@@ -134,6 +134,58 @@ describe('Experience (v4.0 Slice 5)', () => {
     expect(screen.getByText(/commissions-calculation component/)).toBeInTheDocument()
   })
 
+  it('renders the curated tech filter chip bar as aria-pressed buttons', () => {
+    renderWithLang('en')
+    for (const chip of data.filter.chips) {
+      const btn = screen.getByRole('button', { name: new RegExp(`filter by ${chip}`, 'i') })
+      expect(btn).toBeInTheDocument()
+      expect(btn.getAttribute('aria-pressed')).toBe('false')
+    }
+  })
+
+  it('no chip active dims nothing', () => {
+    const { container } = renderWithLang('en')
+    expect(container.querySelectorAll('[data-dim="true"]')).toHaveLength(0)
+  })
+
+  it('activating a chip highlights matching roles and dims the rest', () => {
+    const { container } = renderWithLang('en')
+    const k8s = screen.getByRole('button', { name: /filter by Kubernetes/i })
+    fireEvent.click(k8s)
+    expect(k8s.getAttribute('aria-pressed')).toBe('true')
+    // Only Blerify has Kubernetes → 1 match, rest dimmed
+    const matches = data.entries.filter((e) => e.visible !== false && e.tech.includes('Kubernetes'))
+    const visible = data.entries.filter((e) => e.visible !== false)
+    expect(container.querySelectorAll('[data-dim="false"]')).toHaveLength(matches.length)
+    expect(container.querySelectorAll('[data-dim="true"]')).toHaveLength(visible.length - matches.length)
+  })
+
+  it('multi-select unions matches (OR semantics)', () => {
+    const { container } = renderWithLang('en')
+    fireEvent.click(screen.getByRole('button', { name: /filter by Kubernetes/i }))
+    fireEvent.click(screen.getByRole('button', { name: /filter by Keycloak/i }))
+    const matches = data.entries.filter(
+      (e) => e.visible !== false && (e.tech.includes('Kubernetes') || e.tech.includes('Keycloak')),
+    )
+    expect(container.querySelectorAll('[data-dim="false"]')).toHaveLength(matches.length)
+  })
+
+  it('clear resets all filters', () => {
+    const { container } = renderWithLang('en')
+    fireEvent.click(screen.getByRole('button', { name: /filter by Kubernetes/i }))
+    expect(container.querySelectorAll('[data-dim="true"]').length).toBeGreaterThan(0)
+    fireEvent.click(screen.getByRole('button', { name: /clear/i }))
+    expect(container.querySelectorAll('[data-dim="true"]')).toHaveLength(0)
+  })
+
+  it('announces match count in a live region when filtering', () => {
+    renderWithLang('en')
+    const status = screen.getByRole('status')
+    fireEvent.click(screen.getByRole('button', { name: /filter by AWS/i }))
+    const matches = data.entries.filter((e) => e.visible !== false && e.tech.includes('AWS'))
+    expect(status.textContent).toMatch(new RegExp(`${matches.length}`))
+  })
+
   it('experience.json schema sanity — 12 entries each with required bilingual keys', () => {
     expect(Array.isArray(data.entries)).toBe(true)
     expect(data.entries).toHaveLength(12)

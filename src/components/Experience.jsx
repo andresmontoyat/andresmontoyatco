@@ -94,11 +94,15 @@ function Bullets({ entry, lang }) {
   )
 }
 
-function FeaturedCard({ entry, lang, isOpen, onToggle, expandLabel, collapseLabel }) {
+function dimClass(dimmed) {
+  return dimmed ? 'opacity-[.28] motion-safe:transition-opacity motion-safe:duration-300' : 'motion-safe:transition-opacity motion-safe:duration-300'
+}
+
+function FeaturedCard({ entry, lang, isOpen, onToggle, expandLabel, collapseLabel, dimmed }) {
   const active = isActiveRole(entry.date)
 
   return (
-    <div className="relative pb-9 group" data-variant="featured">
+    <div className={`relative pb-9 group ${dimClass(dimmed)}`} data-variant="featured" data-dim={String(!!dimmed)}>
       <span
         aria-hidden="true"
         className={`absolute -left-[32px] top-[8px] w-3 h-3 rounded-full ${active ? 'bg-accent' : 'bg-accent/80 group-hover:bg-accent'} shadow-[0_0_0_3px_var(--bg),0_0_12px_2px_var(--accent)] transition-colors duration-200`}
@@ -131,16 +135,16 @@ function FeaturedCard({ entry, lang, isOpen, onToggle, expandLabel, collapseLabe
   )
 }
 
-function CompactRow({ entry, lang, isOpen, onToggle, expandLabel, collapseLabel }) {
+function CompactRow({ entry, lang, isOpen, onToggle, expandLabel, collapseLabel, dimmed }) {
   const active = isActiveRole(entry.date)
 
   return (
-    <div className="relative pb-5 group" data-variant="compact">
+    <div className={`relative pb-5 group ${dimClass(dimmed)}`} data-variant="compact" data-dim={String(!!dimmed)}>
       <span
         aria-hidden="true"
-        className={`absolute -left-[27px] top-[9px] w-2 h-2 rounded-full ${active ? 'bg-accent' : 'bg-accent/60 group-hover:bg-accent'} shadow-[0_0_0_3px_var(--bg)] transition-colors duration-200`}
+        className={`absolute -left-[27px] top-[9px] w-2 h-2 rounded-full ${active ? 'bg-accent' : 'bg-accent/60 group-hover:bg-accent group-hover:scale-125'} shadow-[0_0_0_3px_var(--bg)] transition-all duration-200`}
       />
-      <div className="border-b border-border/60 pb-4 hover:border-accent/40 transition-colors duration-200">
+      <div className="rounded-lg border-b border-border/60 pb-4 px-2 -mx-2 hover:border-accent/40 hover:bg-surface/40 motion-safe:hover:-translate-y-0.5 transition-all duration-200">
         <button
           type="button"
           onClick={onToggle}
@@ -168,15 +172,88 @@ function CompactRow({ entry, lang, isOpen, onToggle, expandLabel, collapseLabel 
   )
 }
 
+function FilterChip({ chip, isOn, onToggle }) {
+  return (
+    <button
+      type="button"
+      onClick={onToggle}
+      aria-pressed={isOn}
+      aria-label={`Filter by ${chip}`}
+      className={`font-mono text-[11px] rounded-full px-3 py-1.5 border transition-colors duration-150 ${
+        isOn
+          ? 'bg-accent text-bg border-accent font-bold'
+          : 'bg-bg text-muted border-border hover:border-accent hover:text-accent'
+      }`}
+    >
+      {chip}
+    </button>
+  )
+}
+
+function FilterBar({ lang, activeTech, onToggleChip, onClear, matchCount }) {
+  const hasActive = activeTech.length > 0
+  const countLabel = `${matchCount} ${pick(data.filter.count, lang)}`
+
+  return (
+    <div className="mb-10">
+      <div className="flex items-center gap-2 flex-wrap">
+        <span className="font-mono text-[10px] uppercase tracking-[2px] text-muted mr-1">
+          {pick(data.filter.hint, lang)}
+        </span>
+        {data.filter.chips.map((chip) => (
+          <FilterChip
+            key={chip}
+            chip={chip}
+            isOn={activeTech.includes(chip)}
+            onToggle={() => onToggleChip(chip)}
+          />
+        ))}
+        {hasActive && (
+          <button
+            type="button"
+            onClick={onClear}
+            aria-label={pick(data.filter.clear, lang)}
+            className="font-mono text-[11px] text-accent hover:text-text transition-colors duration-150 ml-1 underline underline-offset-2"
+          >
+            {pick(data.filter.clear, lang)}
+          </button>
+        )}
+      </div>
+      <div role="status" aria-live="polite" className="mt-2 font-mono text-[11px] text-muted min-h-[1rem]">
+        {hasActive ? countLabel : ''}
+      </div>
+    </div>
+  )
+}
+
 export default function Experience() {
   const { lang } = useLanguage()
   const [openCards, setOpenCards] = useState({})
+  const [activeTech, setActiveTech] = useState([])
   const expandLabel = pick(data.expand, lang)
   const collapseLabel = pick(data.collapse, lang)
 
   function toggle(id) {
     setOpenCards((prev) => ({ ...prev, [id]: !prev[id] }))
   }
+
+  function toggleChip(chip) {
+    setActiveTech((prev) => (prev.includes(chip) ? prev.filter((c) => c !== chip) : [...prev, chip]))
+  }
+
+  function clearFilters() {
+    setActiveTech([])
+  }
+
+  function isDimmed(entry) {
+    if (activeTech.length === 0) return false
+    return !entry.tech.some((t) => activeTech.includes(t))
+  }
+
+  const visibleEntries = data.entries.filter((entry) => entry.visible !== false)
+  const matchCount = activeTech.length === 0
+    ? visibleEntries.length
+    : visibleEntries.filter((e) => !isDimmed(e)).length
 
   return (
     <section id="experience" className="py-20">
@@ -187,28 +264,34 @@ export default function Experience() {
         <h2 className="text-3xl sm:text-4xl md:text-[42px] font-extrabold tracking-tight text-text mb-4 leading-tight">
           {pick(data.h2, lang)}
         </h2>
-        <p className="text-muted max-w-[640px] mb-12 text-base">{pick(data.intro, lang)}</p>
+        <p className="text-muted max-w-[640px] mb-8 text-base">{pick(data.intro, lang)}</p>
+        <FilterBar
+          lang={lang}
+          activeTech={activeTech}
+          onToggleChip={(chip) => toggleChip(chip)}
+          onClear={() => clearFilters()}
+          matchCount={matchCount}
+        />
         <div className="relative pl-8 mt-6">
           <span
             aria-hidden="true"
             className="absolute left-[7px] top-2 bottom-2 w-0.5 bg-gradient-to-b from-accent/50 via-accent/30 to-transparent"
           />
-          {data.entries
-            .filter((entry) => entry.visible !== false)
-            .map((entry) => {
-              const Card = entry.featured ? FeaturedCard : CompactRow
-              return (
-                <Card
-                  key={entry.id}
-                  entry={entry}
-                  lang={lang}
-                  isOpen={!!openCards[entry.id]}
-                  onToggle={() => toggle(entry.id)}
-                  expandLabel={expandLabel}
-                  collapseLabel={collapseLabel}
-                />
-              )
-            })}
+          {visibleEntries.map((entry) => {
+            const Card = entry.featured ? FeaturedCard : CompactRow
+            return (
+              <Card
+                key={entry.id}
+                entry={entry}
+                lang={lang}
+                isOpen={!!openCards[entry.id]}
+                onToggle={() => toggle(entry.id)}
+                expandLabel={expandLabel}
+                collapseLabel={collapseLabel}
+                dimmed={isDimmed(entry)}
+              />
+            )
+          })}
         </div>
       </div>
     </section>

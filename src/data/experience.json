@@ -7,6 +7,21 @@
   },
   "expand": { "en": "Expand entry", "es": "Expandir entrada" },
   "collapse": { "en": "Collapse entry", "es": "Contraer entrada" },
+  "filter": {
+    "hint": { "en": "Filter by stack", "es": "Filtrar por stack" },
+    "clear": { "en": "Clear", "es": "Limpiar" },
+    "count": { "en": "roles", "es": "roles" },
+    "chips": [
+      "Java",
+      "Spring Boot",
+      "Microservices",
+      "AWS",
+      "Hexagonal Architecture",
+      "Keycloak",
+      "Kubernetes",
+      "PostgreSQL"
+    ]
+  },
   "entries": [
     {
       "id": "coderio-2026",
