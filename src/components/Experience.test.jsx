@@ -88,6 +88,52 @@ describe('Experience (v4.0 Slice 5)', () => {
     expect(buttons).toHaveLength(12)
   })
 
+  it('marks coderio, klever and tcs as featured; the rest are compact', () => {
+    const featuredIds = data.entries.filter((e) => e.featured).map((e) => e.id)
+    expect(featuredIds.sort()).toEqual(['coderio-2026', 'klever-2020', 'tcs-2013'])
+  })
+
+  it('featured entries render as featured variant, others as compact', () => {
+    const { container } = renderWithLang('en')
+    const featured = container.querySelectorAll('[data-variant="featured"]')
+    const compact = container.querySelectorAll('[data-variant="compact"]')
+    const visibleCount = data.entries.filter((e) => e.visible !== false).length
+    expect(featured).toHaveLength(3)
+    expect(compact).toHaveLength(visibleCount - 3)
+  })
+
+  it('renders hero metric value + label for a featured entry with a value (Coderio, EN)', () => {
+    renderWithLang('en')
+    expect(screen.getByText('~40%')).toBeInTheDocument()
+    expect(screen.getByText('Person API latency ↓')).toBeInTheDocument()
+    expect(screen.getByText('45+')).toBeInTheDocument()
+    expect(screen.getByText('developers led')).toBeInTheDocument()
+  })
+
+  it('featured entry without a metric value (KLEVER) renders label only, no crash', () => {
+    renderWithLang('en')
+    expect(screen.getByText('PaaS Architect · health')).toBeInTheDocument()
+    const klever = data.entries.find((e) => e.id === 'klever-2020')
+    expect(klever.metric.value).toBeUndefined()
+  })
+
+  it('metric label swaps to ES on language toggle', () => {
+    renderWithLang('es')
+    expect(screen.getByText('latencia Person API ↓')).toBeInTheDocument()
+    expect(screen.getByText('devs liderados')).toBeInTheDocument()
+    expect(screen.getByText('Arquitecto PaaS · salud')).toBeInTheDocument()
+  })
+
+  it('compact rows keep expand/collapse bullets behaviour', () => {
+    renderWithLang('en')
+    // F2X is compact (not featured); its bullet text is hidden until expanded
+    expect(screen.queryByText(/commissions-calculation component/)).toBeNull()
+    const buttons = screen.getAllByRole('button', { name: /expand entry/i })
+    // F2X is the 2nd visible entry
+    fireEvent.click(buttons[1])
+    expect(screen.getByText(/commissions-calculation component/)).toBeInTheDocument()
+  })
+
   it('experience.json schema sanity — 12 entries each with required bilingual keys', () => {
     expect(Array.isArray(data.entries)).toBe(true)
     expect(data.entries).toHaveLength(12)

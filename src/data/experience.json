@@ -11,6 +11,11 @@
     {
       "id": "coderio-2026",
       "visible": true,
+      "featured": true,
+      "metric": {
+        "value": "~40%",
+        "label": { "en": "Person API latency ↓", "es": "latencia Person API ↓" }
+      },
       "date": { "en": "Jan 2026 — Present", "es": "Ene 2026 — Presente" },
       "title": { "en": "Backend Developer — Squad User Profile", "es": "Backend Developer — Squad User Profile" },
       "company": "Coderio",
@@ -133,6 +138,10 @@
     {
       "id": "klever-2020",
       "visible": true,
+      "featured": true,
+      "metric": {
+        "label": { "en": "PaaS Architect · health", "es": "Arquitecto PaaS · salud" }
+      },
       "date": { "en": "Aug 2020 — Feb 2022", "es": "Ago 2020 — Feb 2022" },
       "title": { "en": "Solutions Architect", "es": "Arquitecto de Soluciones" },
       "company": "KLEVER SAS",
@@ -154,6 +163,11 @@
     {
       "id": "tcs-2013",
       "visible": true,
+      "featured": true,
+      "metric": {
+        "value": "45+",
+        "label": { "en": "developers led", "es": "devs liderados" }
+      },
       "date": { "en": "Aug 2013 — Sep 2015", "es": "Ago 2013 — Sep 2015" },
       "title": { "en": "Technical Lead & Solutions Architect LATAM", "es": "Líder Técnico & Arquitecto de Soluciones LATAM" },
       "company": "Tata Consultancy Services",

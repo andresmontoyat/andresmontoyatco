@@ -39,23 +39,77 @@ function ActiveBadge({ lang }) {
   )
 }
 
-function TimelineCard({ entry, lang, isOpen, onToggle, expandLabel, collapseLabel }) {
+function HeroMetric({ metric, lang }) {
+  if (!metric) return null
+  const label = pick(metric.label, lang)
+  return (
+    <div className="mb-5 flex items-baseline gap-3">
+      {metric.value && (
+        <span className="text-4xl sm:text-5xl font-extrabold leading-none text-accent">{metric.value}</span>
+      )}
+      <span className="font-mono text-xs uppercase tracking-[2px] text-muted">{label}</span>
+    </div>
+  )
+}
+
+function TechChips({ tech }) {
+  return (
+    <div className="flex flex-wrap gap-1.5 mb-4">
+      {tech.map((t) => (
+        <span
+          key={t}
+          className="font-mono text-[11px] py-1 px-2.5 bg-bg border border-border rounded-full text-muted hover:border-accent hover:text-accent transition-colors duration-150"
+        >
+          {t}
+        </span>
+      ))}
+    </div>
+  )
+}
+
+function ToggleButton({ isOpen, onToggle, expandLabel, collapseLabel }) {
+  return (
+    <button
+      type="button"
+      onClick={onToggle}
+      aria-expanded={isOpen}
+      aria-label={isOpen ? collapseLabel : expandLabel}
+      className="flex items-center gap-2 text-xs font-mono text-accent hover:text-text transition-colors duration-150"
+    >
+      <ChevronIcon open={isOpen} />
+      {isOpen ? collapseLabel : expandLabel}
+    </button>
+  )
+}
+
+function Bullets({ entry, lang }) {
+  return (
+    <ul className="mt-5 text-base text-text/85 leading-relaxed space-y-2.5 border-t border-border pt-5">
+      {pick(entry.bullets, lang).map((b, j) => (
+        <li key={j} className="relative pl-6">
+          <span className="absolute left-0 top-[2px] text-accent font-bold">→</span>{b}
+        </li>
+      ))}
+    </ul>
+  )
+}
+
+function FeaturedCard({ entry, lang, isOpen, onToggle, expandLabel, collapseLabel }) {
   const active = isActiveRole(entry.date)
 
   return (
-    <div className="relative pb-9 group">
+    <div className="relative pb-9 group" data-variant="featured">
       <span
         aria-hidden="true"
-        className={`absolute -left-[30px] top-[10px] w-2.5 h-2.5 rounded-full ${active ? 'bg-accent' : 'bg-accent/70 group-hover:bg-accent'} shadow-[0_0_0_3px_var(--bg)] transition-colors duration-200`}
+        className={`absolute -left-[32px] top-[8px] w-3 h-3 rounded-full ${active ? 'bg-accent' : 'bg-accent/80 group-hover:bg-accent'} shadow-[0_0_0_3px_var(--bg),0_0_12px_2px_var(--accent)] transition-colors duration-200`}
       />
-      {active && (
-        <span
-          aria-hidden="true"
-          className="absolute -left-[34px] top-[6px] w-[18px] h-[18px] rounded-full bg-accent/30 motion-safe:animate-ping"
-        />
-      )}
-      <div className="bg-surface border border-border rounded-xl p-7 hover:border-accent hover:-translate-y-0.5 transition-all duration-200">
-        <div className="flex justify-between items-center gap-4 flex-wrap mb-2">
+      <span
+        aria-hidden="true"
+        className="absolute -left-[36px] top-[4px] w-5 h-5 rounded-full bg-accent/25 motion-safe:animate-ping"
+      />
+      <div className="relative overflow-hidden rounded-xl border border-accent/40 bg-surface p-7 shadow-[0_8px_30px_-12px_var(--accent)] hover:border-accent hover:-translate-y-0.5 transition-all duration-200">
+        <span aria-hidden="true" className="absolute left-0 top-0 h-full w-1 bg-gradient-to-b from-accent to-secondary" />
+        <div className="flex justify-between items-center gap-4 flex-wrap mb-3">
           <div className="flex items-center gap-3">
             <span className="font-mono text-sm text-accent">{pick(entry.date, lang)}</span>
             {active && <ActiveBadge lang={lang} />}
@@ -64,38 +118,50 @@ function TimelineCard({ entry, lang, isOpen, onToggle, expandLabel, collapseLabe
             {entry.company}
           </span>
         </div>
+        <HeroMetric metric={entry.metric} lang={lang} />
         <h3 className="text-lg sm:text-xl font-extrabold text-text mb-1 leading-tight">
           {pick(entry.title, lang)}
         </h3>
         <div className="text-sm text-muted mb-4">{pick(entry.location, lang)}</div>
-        <div className="flex flex-wrap gap-1.5 mb-4">
-          {entry.tech.map((t) => (
-            <span
-              key={t}
-              className="font-mono text-[11px] py-1 px-2.5 bg-bg border border-border rounded-full text-muted hover:border-accent hover:text-accent transition-colors duration-150"
-            >
-              {t}
-            </span>
-          ))}
-        </div>
+        <TechChips tech={entry.tech} />
+        <ToggleButton isOpen={isOpen} onToggle={onToggle} expandLabel={expandLabel} collapseLabel={collapseLabel} />
+        {isOpen && <Bullets entry={entry} lang={lang} />}
+      </div>
+    </div>
+  )
+}
+
+function CompactRow({ entry, lang, isOpen, onToggle, expandLabel, collapseLabel }) {
+  const active = isActiveRole(entry.date)
+
+  return (
+    <div className="relative pb-5 group" data-variant="compact">
+      <span
+        aria-hidden="true"
+        className={`absolute -left-[27px] top-[9px] w-2 h-2 rounded-full ${active ? 'bg-accent' : 'bg-accent/60 group-hover:bg-accent'} shadow-[0_0_0_3px_var(--bg)] transition-colors duration-200`}
+      />
+      <div className="border-b border-border/60 pb-4 hover:border-accent/40 transition-colors duration-200">
         <button
           type="button"
           onClick={onToggle}
           aria-expanded={isOpen}
           aria-label={isOpen ? collapseLabel : expandLabel}
-          className="flex items-center gap-2 text-xs font-mono text-accent hover:text-text transition-colors duration-150"
+          className="flex w-full items-center gap-3 text-left"
         >
-          <ChevronIcon open={isOpen} />
-          {isOpen ? collapseLabel : expandLabel}
+          <span className="font-mono text-xs text-accent shrink-0">{pick(entry.date, lang)}</span>
+          <span className="text-sm sm:text-base font-bold text-text leading-tight">{pick(entry.title, lang)}</span>
+          <span className="hidden sm:inline font-mono text-xs text-muted">· {entry.company}</span>
+          <span className="ml-auto shrink-0 text-accent">
+            <ChevronIcon open={isOpen} />
+          </span>
         </button>
+        <div className="mt-0.5 sm:hidden font-mono text-xs text-muted">{entry.company}</div>
         {isOpen && (
-          <ul className="mt-5 text-base text-text/85 leading-relaxed space-y-2.5 border-t border-border pt-5">
-            {pick(entry.bullets, lang).map((b, j) => (
-              <li key={j} className="relative pl-6">
-                <span className="absolute left-0 top-[2px] text-accent font-bold">→</span>{b}
-              </li>
-            ))}
-          </ul>
+          <>
+            <div className="mt-3 text-sm text-muted">{pick(entry.location, lang)}</div>
+            <TechChips tech={entry.tech} />
+            <Bullets entry={entry} lang={lang} />
+          </>
         )}
       </div>
     </div>
@@ -127,17 +193,22 @@ export default function Experience() {
             aria-hidden="true"
             className="absolute left-[7px] top-2 bottom-2 w-0.5 bg-gradient-to-b from-accent/50 via-accent/30 to-transparent"
           />
-          {data.entries.filter((entry) => entry.visible !== false).map((entry) => (
-            <TimelineCard
-              key={entry.id}
-              entry={entry}
-              lang={lang}
-              isOpen={!!openCards[entry.id]}
-              onToggle={() => toggle(entry.id)}
-              expandLabel={expandLabel}
-              collapseLabel={collapseLabel}
-            />
-          ))}
+          {data.entries
+            .filter((entry) => entry.visible !== false)
+            .map((entry) => {
+              const Card = entry.featured ? FeaturedCard : CompactRow
+              return (
+                <Card
+                  key={entry.id}
+                  entry={entry}
+                  lang={lang}
+                  isOpen={!!openCards[entry.id]}
+                  onToggle={() => toggle(entry.id)}
+                  expandLabel={expandLabel}
+                  collapseLabel={collapseLabel}
+                />
+              )
+            })}
         </div>
       </div>
     </section>
