@@ -27,34 +27,6 @@
   },
   "entries": [
     {
-      "id": "coderio-2026",
-      "visible": true,
-      "featured": true,
-      "metric": {
-        "value": "~40%",
-        "label": { "en": "Person API latency ↓", "es": "latencia Person API ↓" }
-      },
-      "date": { "en": "Jan 2026 — Present", "es": "Ene 2026 — Presente" },
-      "title": { "en": "Backend Developer — Squad User Profile", "es": "Backend Developer — Squad User Profile" },
-      "company": "Coderio",
-      "location": { "en": "Remote", "es": "Remoto" },
-      "bullets": {
-        "en": [
-          "Driving a ~40% latency reduction on the Person API through targeted backend performance tuning (Java · Spring Boot).",
-          "Hardening event auditing in the GUDD API to strengthen compliance and observability.",
-          "Shipping user-profile domain services in a cross-functional squad (Java · Spring Boot · microservices).",
-          "Accelerating daily delivery with AI coding assistants (Claude Code, GitHub Copilot, JetBrains Junie)."
-        ],
-        "es": [
-          "Lidero una reducción de latencia del ~40% en la Person API con tuning backend dirigido (Java · Spring Boot).",
-          "Endurezco la auditoría de eventos de la GUDD API para reforzar cumplimiento y observabilidad.",
-          "Entrego servicios de dominio de perfil de usuario en un squad multifuncional (Java · Spring Boot · microservicios).",
-          "Acelero la entrega diaria con asistentes de IA (Claude Code, GitHub Copilot, JetBrains Junie)."
-        ]
-      },
-      "tech": ["Java", "Spring Boot", "Claude Code", "GitHub Copilot", "JetBrains Junie"]
-    },
-    {
       "id": "f2x-2024",
       "visible": true,
       "date": { "en": "Sep 2024 — Apr 2026", "es": "Sep 2024 — Abr 2026" },
