@@ -35,9 +35,9 @@ describe('Experience (v4.0 Slice 5)', () => {
     expect(screen.getByText(/18\+ years of building, leading and shipping/)).toBeInTheDocument()
   })
 
-  it('renders all 12 entry companies', () => {
+  it('renders all 11 entry companies', () => {
     renderWithLang('en')
-    expect(data.entries).toHaveLength(12)
+    expect(data.entries).toHaveLength(11)
     for (const entry of data.entries.filter((e) => e.visible !== false)) {
       expect(screen.getAllByText(entry.company).length).toBeGreaterThan(0)
     }
@@ -85,7 +85,7 @@ describe('Experience (v4.0 Slice 5)', () => {
     expect(screen.getByText('Línea de tiempo')).toBeInTheDocument()
     expect(screen.getByText(/Highlights de \+18 años/)).toBeInTheDocument()
     const buttons = screen.getAllByRole('button', { name: /expandir entrada/i })
-    expect(buttons).toHaveLength(12)
+    expect(buttons).toHaveLength(11)
   })
 
   it('marks coderio, klever and tcs as featured; the rest are compact', () => {
@@ -150,11 +150,11 @@ describe('Experience (v4.0 Slice 5)', () => {
 
   it('activating a chip highlights matching roles and dims the rest', () => {
     const { container } = renderWithLang('en')
-    const k8s = screen.getByRole('button', { name: /filter by Kubernetes/i })
-    fireEvent.click(k8s)
-    expect(k8s.getAttribute('aria-pressed')).toBe('true')
-    // Only Blerify has Kubernetes → 1 match, rest dimmed
-    const matches = data.entries.filter((e) => e.visible !== false && e.tech.includes('Kubernetes'))
+    const keycloak = screen.getByRole('button', { name: /filter by Keycloak/i })
+    fireEvent.click(keycloak)
+    expect(keycloak.getAttribute('aria-pressed')).toBe('true')
+    // Only KLEVER has Keycloak → 1 match, rest dimmed
+    const matches = data.entries.filter((e) => e.visible !== false && e.tech.includes('Keycloak'))
     const visible = data.entries.filter((e) => e.visible !== false)
     expect(container.querySelectorAll('[data-dim="false"]')).toHaveLength(matches.length)
     expect(container.querySelectorAll('[data-dim="true"]')).toHaveLength(visible.length - matches.length)
@@ -162,17 +162,17 @@ describe('Experience (v4.0 Slice 5)', () => {
 
   it('multi-select unions matches (OR semantics)', () => {
     const { container } = renderWithLang('en')
-    fireEvent.click(screen.getByRole('button', { name: /filter by Kubernetes/i }))
     fireEvent.click(screen.getByRole('button', { name: /filter by Keycloak/i }))
+    fireEvent.click(screen.getByRole('button', { name: /filter by AWS/i }))
     const matches = data.entries.filter(
-      (e) => e.visible !== false && (e.tech.includes('Kubernetes') || e.tech.includes('Keycloak')),
+      (e) => e.visible !== false && (e.tech.includes('Keycloak') || e.tech.includes('AWS')),
     )
     expect(container.querySelectorAll('[data-dim="false"]')).toHaveLength(matches.length)
   })
 
   it('clear resets all filters', () => {
     const { container } = renderWithLang('en')
-    fireEvent.click(screen.getByRole('button', { name: /filter by Kubernetes/i }))
+    fireEvent.click(screen.getByRole('button', { name: /filter by Keycloak/i }))
     expect(container.querySelectorAll('[data-dim="true"]').length).toBeGreaterThan(0)
     fireEvent.click(screen.getByRole('button', { name: /clear/i }))
     expect(container.querySelectorAll('[data-dim="true"]')).toHaveLength(0)
@@ -189,14 +189,14 @@ describe('Experience (v4.0 Slice 5)', () => {
   it('uses a singular noun when exactly one role matches (1 role, not 1 roles)', () => {
     renderWithLang('en')
     const status = screen.getByRole('status')
-    // Kubernetes matches exactly one role (Blerify)
-    fireEvent.click(screen.getByRole('button', { name: /filter by Kubernetes/i }))
+    // Keycloak matches exactly one role (KLEVER)
+    fireEvent.click(screen.getByRole('button', { name: /filter by Keycloak/i }))
     expect(status.textContent.trim()).toBe('1 role')
   })
 
-  it('experience.json schema sanity — 12 entries each with required bilingual keys', () => {
+  it('experience.json schema sanity — 11 entries each with required bilingual keys', () => {
     expect(Array.isArray(data.entries)).toBe(true)
-    expect(data.entries).toHaveLength(12)
+    expect(data.entries).toHaveLength(11)
     for (const e of data.entries) {
       expect(typeof e.id).toBe('string')
       expect(typeof e.company).toBe('string')
