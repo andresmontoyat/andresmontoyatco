@@ -12,7 +12,8 @@
       "symbol": "◆",
       "title": { "en": "Backend", "es": "Backend" },
       "chips": [
-        { "label": "Java", "years": 18 },
+        { "label": "Java", "years": 18, "core": true },
+        { "label": "Kotlin", "years": 8, "core": true },
         { "label": "Spring Boot", "years": 15 },
         { "label": "Spring Cloud", "years": 12 },
         { "label": "Spring Security", "years": 12 },
@@ -27,10 +28,10 @@
       "symbol": "●",
       "title": { "en": "Cloud & Infrastructure", "es": "Nube e Infraestructura" },
       "chips": [
-        { "label": "AWS", "years": 10 },
+        { "label": "AWS", "years": 10, "core": true },
         { "label": "GCP", "years": 6 },
         { "label": "Azure", "years": 4 },
-        { "label": "Kubernetes", "years": 6 },
+        { "label": "Kubernetes", "years": 6, "core": true },
         { "label": "Docker", "years": 8 },
         { "label": "GKE", "years": 4 },
         { "label": "KrakenD", "years": 4 },
@@ -47,7 +48,7 @@
         { "label": "SonarQube", "years": 8 },
         { "label": "Nexus", "years": 8 },
         { "label": "Gradle", "years": 8 },
-        { "label": "Maven", "years": 15 },
+        { "label": "Maven", "years": 15, "core": true },
         { "label": "PostgreSQL", "years": 10 },
         { "label": "MySQL", "years": 14 },
         { "label": "Oracle SQL", "years": 12 }
@@ -58,7 +59,7 @@
       "symbol": "✦",
       "title": { "en": "AI & Productivity", "es": "IA y Productividad" },
       "chips": [
-        { "label": "Claude Code", "years": 1 },
+        { "label": "Claude Code", "years": 1, "core": true },
         { "label": "GitHub Copilot", "years": 2 },
         { "label": "JetBrains Junie", "years": 1 },
         { "label": "Prompt Engineering", "years": 2 }

@@ -43,13 +43,31 @@ describe('Skill (v4.0 Slice 4)', () => {
     expect(screen.getByText('AI & Productivity')).toBeInTheDocument()
   })
 
-  it('renders every chip with its label (29 chips total)', () => {
+  it('renders every chip with its label (30 chips total)', () => {
     renderWithLang('en')
     const allChips = data.categories.flatMap((c) => c.chips)
-    expect(allChips).toHaveLength(29)
+    expect(allChips).toHaveLength(30)
     for (const chip of allChips) {
       expect(screen.getAllByText(chip.label).length).toBeGreaterThan(0)
     }
+  })
+
+  it('renders Kotlin as a Backend skill with 8 years', () => {
+    renderWithLang('en')
+    expect(screen.getAllByText('Kotlin').length).toBeGreaterThan(0)
+    const backend = data.categories.find((c) => c.id === 'backend')
+    const kotlin = backend.chips.find((ch) => ch.label === 'Kotlin')
+    expect(kotlin).toBeDefined()
+    expect(kotlin.years).toBe(8)
+    expect(kotlin.core).toBe(true)
+  })
+
+  it('marks core skills with data-core="true" tiles (6 core total)', () => {
+    const { container } = renderWithLang('en')
+    const coreTiles = container.querySelectorAll('[data-core="true"]')
+    const coreChips = data.categories.flatMap((c) => c.chips).filter((ch) => ch.core)
+    expect(coreChips).toHaveLength(6)
+    expect(coreTiles.length).toBe(6)
   })
 
   it('translates h2/intro/category-titles when lang=es', () => {
