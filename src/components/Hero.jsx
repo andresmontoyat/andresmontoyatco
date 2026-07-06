@@ -47,11 +47,65 @@ function Stat({ num, label }) {
   )
 }
 
+function CvMenuItem({ href, label, onSelect }) {
+  return (
+    <a
+      role="menuitem"
+      href={href}
+      download
+      onClick={onSelect}
+      className="block px-4 py-2 rounded-lg text-xs font-mono text-text-secondary hover:bg-ink-500 hover:text-brand transition-colors"
+    >
+      {label}
+    </a>
+  )
+}
+
+function CvDownload({ t }) {
+  const [open, setOpen] = useState(false)
+  const ref = useRef(null)
+
+  useEffect(() => {
+    if (!open) return undefined
+    function onDoc(e) { if (ref.current && !ref.current.contains(e.target)) setOpen(false) }
+    function onKey(e) { if (e.key === 'Escape') setOpen(false) }
+    document.addEventListener('mousedown', onDoc)
+    document.addEventListener('keydown', onKey)
+    return () => {
+      document.removeEventListener('mousedown', onDoc)
+      document.removeEventListener('keydown', onKey)
+    }
+  }, [open])
+
+  return (
+    <div ref={ref} className="relative">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        aria-haspopup="menu"
+        aria-expanded={open}
+        className="inline-flex items-center gap-2 min-h-[44px] px-4 py-3 rounded-full font-extrabold text-xs font-mono bg-transparent text-text-primary border border-ink-400 hover:border-brand hover:text-brand transition-colors"
+      >
+        <span aria-hidden="true">⬇</span> {t.hero.cv}
+        <span aria-hidden="true" className={`transition-transform duration-200 ${open ? 'rotate-180' : ''}`}>▾</span>
+      </button>
+      {open && (
+        <div
+          role="menu"
+          className="absolute left-0 mt-2 min-w-[160px] rounded-xl border border-ink-400 bg-ink-900/95 backdrop-blur-md p-1 z-50 shadow-brand-lg"
+        >
+          <CvMenuItem href="/CarlosMontoya_CV_EN.pdf" label={t.hero.cvEn} onSelect={() => setOpen(false)} />
+          <CvMenuItem href="/CarlosMontoya_CV_ES.pdf" label={t.hero.cvEs} onSelect={() => setOpen(false)} />
+        </div>
+      )}
+    </div>
+  )
+}
+
 export default function Hero() {
   const { lang, t } = useLanguage()
   const displayText = useCharReveal(t.hero.h1b, 300, 40)
   const isComplete = displayText.length === t.hero.h1b.length
-  const cvHref = lang === 'es' ? '/CarlosMontoya_CV_ES.pdf' : '/CarlosMontoya_CV_EN.pdf'
   const liAria = lang === 'es' ? 'Perfil de LinkedIn' : 'LinkedIn profile'
   const ghAria = lang === 'es' ? 'Perfil de GitHub' : 'GitHub profile'
 
@@ -129,13 +183,7 @@ export default function Hero() {
           >
             {t.hero.cta1} →
           </a>
-          <a
-            href={cvHref}
-            download
-            className="inline-flex items-center gap-2 min-h-[44px] px-4 py-3 rounded-full font-extrabold text-xs font-mono bg-transparent text-text-primary border border-ink-400 hover:border-brand hover:text-brand transition-colors"
-          >
-            <span aria-hidden="true">⬇</span> {t.hero.cv}
-          </a>
+          <CvDownload t={t} />
           <div className="flex items-center gap-2 ml-1">
             <a
               href="https://www.linkedin.com/in/carlos-andres-montoya-tobon-8b508033"

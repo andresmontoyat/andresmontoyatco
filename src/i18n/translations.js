@@ -33,6 +33,8 @@ const translations = {
       lead: 'I design and ship backend platforms that scale — clean hexagonal architecture, cloud-native, 18+ years, zero shortcuts.',
       cta1: 'Get in touch',
       cv: 'Download CV',
+      cvEn: 'English',
+      cvEs: 'Spanish',
     },
     stats: {
       years: 'Years',
@@ -79,6 +81,8 @@ const translations = {
       lead: 'Diseño y entrego plataformas backend que escalan — arquitectura hexagonal limpia, cloud-native, +18 años, cero atajos.',
       cta1: 'Contáctame',
       cv: 'Descargar CV',
+      cvEn: 'Inglés',
+      cvEs: 'Español',
     },
     stats: {
       years: 'Años',

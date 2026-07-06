@@ -1,6 +1,6 @@
 import React from 'react'
 import { describe, it, expect, afterEach } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { render, screen, fireEvent } from '@testing-library/react'
 import { LanguageProvider } from '../i18n/LanguageContext'
 import Hero from './Hero'
 
@@ -60,19 +60,24 @@ describe('Hero CTAs (redesign)', () => {
     expect(primary).toBeInTheDocument()
   })
 
-  it('CV button downloads the EN PDF in English', () => {
+  it('CV download is a dropdown, closed by default (no PDF links shown)', () => {
     const { container } = renderWithLang('en')
-    const cv = container.querySelector('a[href="/CarlosMontoya_CV_EN.pdf"]')
-    expect(cv).toBeInTheDocument()
-    expect(cv).toHaveAttribute('download')
+    const trigger = screen.getByRole('button', { name: /download cv/i })
+    expect(trigger).toHaveAttribute('aria-haspopup', 'menu')
+    expect(trigger).toHaveAttribute('aria-expanded', 'false')
+    expect(container.querySelector('a[href="/CarlosMontoya_CV_EN.pdf"]')).toBeNull()
     expect(container.querySelector('a[href="/CarlosMontoya_CV_ES.pdf"]')).toBeNull()
   })
 
-  it('CV button downloads the ES PDF in Spanish', () => {
-    const { container } = renderWithLang('es')
-    const cv = container.querySelector('a[href="/CarlosMontoya_CV_ES.pdf"]')
-    expect(cv).toBeInTheDocument()
-    expect(container.querySelector('a[href="/CarlosMontoya_CV_EN.pdf"]')).toBeNull()
+  it('opening the CV dropdown reveals both EN and ES download links', () => {
+    const { container } = renderWithLang('en')
+    fireEvent.click(screen.getByRole('button', { name: /download cv/i }))
+    const en = container.querySelector('a[href="/CarlosMontoya_CV_EN.pdf"]')
+    const es = container.querySelector('a[href="/CarlosMontoya_CV_ES.pdf"]')
+    expect(en).toBeInTheDocument()
+    expect(es).toBeInTheDocument()
+    expect(en).toHaveAttribute('download')
+    expect(es).toHaveAttribute('download')
   })
 
   it('renders accessible LinkedIn + GitHub links', () => {

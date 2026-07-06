@@ -25,7 +25,8 @@
     "coverage": "vitest run --coverage",
     "lint": "eslint src --ext .js,.jsx",
     "og:gen": "node scripts/generate-og-image.js",
-    "hero:process": "node scripts/process-hero-photo.js"
+    "hero:process": "node scripts/process-hero-photo.js",
+    "cv:gen": "node scripts/generate-cv.mjs"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.6.3",
