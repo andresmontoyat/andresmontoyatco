@@ -7,44 +7,36 @@ function pick(field, lang) {
   return field?.[lang] ?? field?.en ?? ''
 }
 
-function CoreTile({ chip, suffix }) {
+function maxYears() {
+  return Math.max(...data.categories.flatMap((c) => c.chips).map((ch) => ch.years))
+}
+
+function MeterRow({ chip, suffix, max }) {
+  const fill = Math.max(8, Math.round((chip.years / max) * 100))
   return (
-    <div
-      data-core="true"
-      className="col-span-2 group flex flex-col justify-between gap-3 bg-surface border border-accent/40 rounded-2xl p-5 transition-all duration-200 hover:-translate-y-0.5 hover:border-accent shadow-[0_0_30px_rgba(0,229,168,0.10)] hover:shadow-[0_0_40px_rgba(0,229,168,0.18)]"
-    >
-      <span className="text-lg font-extrabold text-text tracking-tight">{chip.label}</span>
-      <span className="text-xs font-mono text-accent">{chip.years}{suffix}</span>
+    <div data-core={chip.core ? 'true' : 'false'} className="group py-1.5">
+      <div className="flex items-baseline justify-between mb-1.5 gap-3">
+        <span className={chip.core ? 'text-sm font-bold text-accent' : 'text-sm text-text/80'}>{chip.label}</span>
+        <span className="font-mono text-[11px] text-muted shrink-0">{chip.years}{suffix}</span>
+      </div>
+      <div className="h-2 rounded-full bg-white/[0.07] overflow-hidden">
+        <div
+          className={`h-full rounded-full transition-all duration-300 ${chip.core ? 'bg-gradient-to-r from-accent to-secondary shadow-[0_0_8px_rgba(0,229,168,0.55)]' : 'bg-accent/55 group-hover:bg-accent/80'}`}
+          style={{ width: `${fill}%` }}
+        />
+      </div>
     </div>
   )
 }
 
-function SmallTile({ chip, suffix }) {
+function Category({ category, lang, suffix, max }) {
   return (
-    <div
-      data-core="false"
-      className="flex items-center justify-between gap-2 bg-surface border border-border rounded-xl px-3 py-2.5 transition-all duration-200 hover:-translate-y-0.5 hover:border-accent/50"
-    >
-      <span className="text-sm text-text truncate">{chip.label}</span>
-      <span className="text-xs font-mono text-muted shrink-0">{chip.years}{suffix}</span>
-    </div>
-  )
-}
-
-function Tile({ chip, suffix }) {
-  return chip.core
-    ? <CoreTile chip={chip} suffix={suffix} />
-    : <SmallTile chip={chip} suffix={suffix} />
-}
-
-function Category({ category, lang, suffix }) {
-  return (
-    <div className="bg-surface/40 border border-border rounded-[16px] p-5">
+    <div className="bg-surface/40 border border-border rounded-[16px] p-6">
       <h3 className="text-base font-extrabold mb-4 flex items-center gap-2 text-text">
         <span className="text-accent">{category.symbol}</span> {pick(category.title, lang)}
       </h3>
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 auto-rows-fr">
-        {category.chips.map((c) => <Tile key={c.label} chip={c} suffix={suffix} />)}
+      <div className="flex flex-col gap-1">
+        {category.chips.map((c) => <MeterRow key={c.label} chip={c} suffix={suffix} max={max} />)}
       </div>
     </div>
   )
@@ -53,6 +45,7 @@ function Category({ category, lang, suffix }) {
 export default function Skill() {
   const { lang } = useLanguage()
   const suffix = pick(data.yearsSuffix, lang)
+  const max = maxYears()
   return (
     <section id="skills" className="py-20">
       <div className="max-w-6xl mx-auto px-6">
@@ -63,8 +56,8 @@ export default function Skill() {
           {pick(data.h2, lang)}
         </h2>
         <p className="text-muted max-w-[640px] mb-12 text-base">{pick(data.intro, lang)}</p>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {data.categories.map((c) => <Category key={c.id} category={c} lang={lang} suffix={suffix} />)}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
+          {data.categories.map((c) => <Category key={c.id} category={c} lang={lang} suffix={suffix} max={max} />)}
         </div>
       </div>
     </section>
