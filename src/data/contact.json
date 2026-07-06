@@ -33,14 +33,6 @@
       "value": "andresmontoyat",
       "href": "https://github.com/andresmontoyat",
       "external": true
-    },
-    {
-      "id": "location",
-      "icon": "◆",
-      "kLabel": { "en": "Location", "es": "Ubicación" },
-      "value": "Medellín, Colombia",
-      "href": "https://maps.app.goo.gl/9tcRPrTxqjp76b5A9",
-      "external": true
     }
   ]
 }

@@ -28,13 +28,13 @@ describe('Contact (v4.0 Slice 2)', () => {
     expect(container.querySelector('section#contact')).toBeInTheDocument()
   })
 
-  it('renders exactly 5 contact cards', () => {
+  it('renders exactly 4 contact cards', () => {
     renderWithLang('en')
     expect(screen.getByText('andresmontoyat@gmail.com')).toBeInTheDocument()
     expect(screen.getByText('+57 324 442 2196')).toBeInTheDocument()
     expect(screen.getByText('carlos-andres-montoya-tobon')).toBeInTheDocument()
     expect(screen.getByText('andresmontoyat')).toBeInTheDocument()
-    expect(screen.getByText('Medellín, Colombia')).toBeInTheDocument()
+    expect(screen.queryByText('Medellín, Colombia')).not.toBeInTheDocument()
   })
 
   it('Email card href is mailto:', () => {
@@ -55,22 +55,12 @@ describe('Contact (v4.0 Slice 2)', () => {
     }
   })
 
-  it('Location links to Google Maps in a new tab', () => {
-    renderWithLang('en')
-    const el = screen.getByText('Medellín, Colombia').closest('a')
-    expect(el).not.toBeNull()
-    expect(el.getAttribute('href')).toMatch(/maps\.app\.goo\.gl/)
-    expect(el.getAttribute('target')).toBe('_blank')
-    expect(el.getAttribute('rel')).toBe('noopener noreferrer')
-  })
-
   it('translates label/h2/intro and kLabels when lang=es', () => {
     renderWithLang('es')
     expect(screen.getByText('Contacto')).toBeInTheDocument()
     expect(screen.getByText('Construyamos algo juntos')).toBeInTheDocument()
     expect(screen.getByText('Correo')).toBeInTheDocument()
     expect(screen.getByText('Teléfono')).toBeInTheDocument()
-    expect(screen.getByText('Ubicación')).toBeInTheDocument()
   })
 
   it('renders exactly one primary (hero) tile and it is the email card', () => {
@@ -81,19 +71,18 @@ describe('Contact (v4.0 Slice 2)', () => {
     expect(primary[0].closest('a').getAttribute('href')).toBe('mailto:andresmontoyat@gmail.com')
   })
 
-  it('renders exactly four rail tiles for the secondary channels', () => {
+  it('renders exactly three rail tiles for the secondary channels', () => {
     const { container } = renderWithLang('en')
-    expect(container.querySelectorAll('[data-role="rail"]')).toHaveLength(4)
+    expect(container.querySelectorAll('[data-role="rail"]')).toHaveLength(3)
   })
 
-  it('rail order is LinkedIn, Phone, GitHub, Location', () => {
+  it('rail order is LinkedIn, Phone, GitHub', () => {
     const { container } = renderWithLang('en')
     const rail = [...container.querySelectorAll('[data-role="rail"]')]
     const values = rail.map((r) => r.textContent)
     expect(values[0]).toMatch(/carlos-andres-montoya-tobon/)
     expect(values[1]).toMatch(/\+57 324 442 2196/)
     expect(values[2]).toMatch(/andresmontoyat/)
-    expect(values[3]).toMatch(/Medellín, Colombia/)
   })
 
   it('email card is flagged primary in data', () => {
@@ -101,9 +90,9 @@ describe('Contact (v4.0 Slice 2)', () => {
     expect(email.primary).toBe(true)
   })
 
-  it('contact.json schema sanity — 5 cards, each with required keys', () => {
+  it('contact.json schema sanity — 4 cards, each with required keys', () => {
     expect(Array.isArray(data.cards)).toBe(true)
-    expect(data.cards).toHaveLength(5)
+    expect(data.cards).toHaveLength(4)
     for (const c of data.cards) {
       expect(typeof c.id).toBe('string')
       expect(typeof c.icon).toBe('string')
