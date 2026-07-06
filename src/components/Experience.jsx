@@ -160,10 +160,12 @@ function CompactRow({ entry, lang, isOpen, onToggle, expandLabel, collapseLabel,
           </span>
         </button>
         <div className="mt-0.5 sm:hidden font-mono text-xs text-muted">{entry.company}</div>
+        <div className="mt-3">
+          <TechChips tech={entry.tech} />
+        </div>
         {isOpen && (
           <>
-            <div className="mt-3 text-sm text-muted">{pick(entry.location, lang)}</div>
-            <TechChips tech={entry.tech} />
+            <div className="text-sm text-muted">{pick(entry.location, lang)}</div>
             <Bullets entry={entry} lang={lang} />
           </>
         )}

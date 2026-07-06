@@ -134,6 +134,14 @@ describe('Experience (v4.0 Slice 5)', () => {
     expect(screen.getByText(/commissions-calculation component/)).toBeInTheDocument()
   })
 
+  it('renders tech chips on collapsed compact rows (skills per position)', () => {
+    renderWithLang('en')
+    // Software Estratégico is compact and collapsed — bullets hidden...
+    expect(screen.queryByText(/Matrix Tech's product line/)).toBeNull()
+    // ...but its Cassandra tech chip (compact-only, not a filter chip) still renders
+    expect(screen.getAllByText('Cassandra').length).toBeGreaterThan(0)
+  })
+
   it('renders the curated tech filter chip bar as aria-pressed buttons', () => {
     renderWithLang('en')
     for (const chip of data.filter.chips) {
