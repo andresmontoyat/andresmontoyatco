@@ -73,6 +73,34 @@ describe('Contact (v4.0 Slice 2)', () => {
     expect(screen.getByText('Ubicación')).toBeInTheDocument()
   })
 
+  it('renders exactly one primary (hero) tile and it is the email card', () => {
+    const { container } = renderWithLang('en')
+    const primary = container.querySelectorAll('[data-role="primary"]')
+    expect(primary).toHaveLength(1)
+    expect(primary[0].textContent).toMatch(/andresmontoyat@gmail\.com/)
+    expect(primary[0].closest('a').getAttribute('href')).toBe('mailto:andresmontoyat@gmail.com')
+  })
+
+  it('renders exactly four rail tiles for the secondary channels', () => {
+    const { container } = renderWithLang('en')
+    expect(container.querySelectorAll('[data-role="rail"]')).toHaveLength(4)
+  })
+
+  it('rail order is LinkedIn, Phone, GitHub, Location', () => {
+    const { container } = renderWithLang('en')
+    const rail = [...container.querySelectorAll('[data-role="rail"]')]
+    const values = rail.map((r) => r.textContent)
+    expect(values[0]).toMatch(/carlos-andres-montoya-tobon/)
+    expect(values[1]).toMatch(/\+57 324 442 2196/)
+    expect(values[2]).toMatch(/andresmontoyat/)
+    expect(values[3]).toMatch(/Medellín, Colombia/)
+  })
+
+  it('email card is flagged primary in data', () => {
+    const email = data.cards.find((c) => c.id === 'email')
+    expect(email.primary).toBe(true)
+  })
+
   it('contact.json schema sanity — 5 cards, each with required keys', () => {
     expect(Array.isArray(data.cards)).toBe(true)
     expect(data.cards).toHaveLength(5)

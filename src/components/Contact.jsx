@@ -7,41 +7,56 @@ function pick(field, lang) {
   return field?.[lang] ?? field?.en ?? ''
 }
 
-function Card({ card, lang }) {
-  const k = pick(card.kLabel, lang)
-  const v = card.value
-  const classes =
-    'block bg-surface border border-border rounded-[14px] p-6 text-center '
-    + 'transition-all duration-300 hover:border-accent hover:-translate-y-1 '
-    + 'hover:shadow-[0_20px_30px_-20px_rgba(0,229,168,0.3)]'
-  const inner = (
-    <>
-      <div className="text-3xl mb-3 text-accent" aria-hidden="true">{card.icon}</div>
-      <div className="text-xs uppercase tracking-widest text-muted mb-1.5">{k}</div>
-      <div className="text-sm font-semibold text-text break-all">{v}</div>
-    </>
-  )
-  if (!card.href) {
-    return (
-      <div className={classes} aria-label={`${k}: ${v}`}>
-        {inner}
-      </div>
-    )
+function linkProps(card, label) {
+  return {
+    href: card.href,
+    'aria-label': `${label}: ${card.value}`,
+    ...(card.external ? { target: '_blank', rel: 'noopener noreferrer' } : {}),
   }
+}
+
+function HeroContact({ card, lang }) {
+  const label = pick(card.kLabel, lang)
   return (
     <a
-      href={card.href}
-      title={k}
-      {...(card.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-      className={classes}
+      {...linkProps(card, label)}
+      data-role="primary"
+      className="group flex flex-col justify-between gap-6 h-full bg-surface border border-accent/40 rounded-2xl p-8 transition-all duration-300 hover:-translate-y-1 hover:border-accent shadow-[0_0_30px_rgba(0,229,168,0.10)] hover:shadow-[0_0_45px_rgba(0,229,168,0.20)]"
     >
-      {inner}
+      <div className="text-4xl text-accent" aria-hidden="true">{card.icon}</div>
+      <div>
+        <div className="text-xs uppercase tracking-widest text-muted mb-2">{label}</div>
+        <div className="text-xl sm:text-2xl font-extrabold text-text break-all">{card.value}</div>
+      </div>
+      <span className="text-accent text-sm font-mono transition-transform duration-300 group-hover:translate-x-1">
+        {lang === 'es' ? 'Escríbeme' : 'Reach out'} →
+      </span>
+    </a>
+  )
+}
+
+function RailItem({ card, lang }) {
+  const label = pick(card.kLabel, lang)
+  return (
+    <a
+      {...linkProps(card, label)}
+      data-role="rail"
+      className="group flex items-center gap-4 bg-surface border border-border rounded-xl px-5 py-4 transition-all duration-200 hover:-translate-y-0.5 hover:border-accent"
+    >
+      <span className="text-xl text-accent shrink-0 w-6 text-center" aria-hidden="true">{card.icon}</span>
+      <div className="min-w-0 flex-1">
+        <div className="text-[11px] uppercase tracking-widest text-muted">{label}</div>
+        <div className="text-sm font-semibold text-text truncate">{card.value}</div>
+      </div>
+      <span className="text-muted shrink-0 transition-all duration-200 group-hover:text-accent group-hover:translate-x-0.5">→</span>
     </a>
   )
 }
 
 export default function Contact() {
   const { lang } = useLanguage()
+  const hero = data.cards.find((c) => c.primary)
+  const rail = data.cards.filter((c) => !c.primary)
   return (
     <section id="contact" className="py-20">
       <div className="max-w-6xl mx-auto px-6">
@@ -52,8 +67,11 @@ export default function Contact() {
           {pick(data.h2, lang)}
         </h2>
         <p className="text-muted max-w-[640px] mb-12 text-base">{pick(data.intro, lang)}</p>
-        <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4">
-          {data.cards.map((c) => <Card key={c.id} card={c} lang={lang} />)}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <HeroContact card={hero} lang={lang} />
+          <div className="flex flex-col gap-3">
+            {rail.map((c) => <RailItem key={c.id} card={c} lang={lang} />)}
+          </div>
         </div>
       </div>
     </section>
