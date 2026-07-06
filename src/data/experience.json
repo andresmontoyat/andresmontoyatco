@@ -29,6 +29,10 @@
     {
       "id": "f2x-2024",
       "visible": true,
+      "featured": true,
+      "metric": {
+        "label": { "en": "Commissions & billing · microservices", "es": "Comisiones y cobro · microservicios" }
+      },
       "date": { "en": "Sep 2024 — Apr 2026", "es": "Sep 2024 — Abr 2026" },
       "title": { "en": "Backend Developer", "es": "Backend Developer" },
       "company": "F2X - Flypass",
@@ -69,6 +73,10 @@
     {
       "id": "tul-2022",
       "visible": true,
+      "featured": true,
+      "metric": {
+        "label": { "en": "B2B marketplace · warehousing", "es": "Marketplace B2B · bodegas" }
+      },
       "date": { "en": "Apr 2022 — Jun 2023", "es": "Abr 2022 — Jun 2023" },
       "title": { "en": "Backend Developer", "es": "Backend Developer" },
       "company": "Tul",

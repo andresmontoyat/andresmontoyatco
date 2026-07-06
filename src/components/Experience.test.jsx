@@ -88,9 +88,9 @@ describe('Experience (v4.0 Slice 5)', () => {
     expect(buttons).toHaveLength(10)
   })
 
-  it('marks klever and tcs as featured; the rest are compact', () => {
+  it('marks f2x, tul, klever and tcs as featured; the rest are compact', () => {
     const featuredIds = data.entries.filter((e) => e.featured).map((e) => e.id)
-    expect(featuredIds.sort()).toEqual(['klever-2020', 'tcs-2013'])
+    expect(featuredIds.sort()).toEqual(['f2x-2024', 'klever-2020', 'tcs-2013', 'tul-2022'])
   })
 
   it('featured entries render as featured variant, others as compact', () => {
@@ -98,8 +98,8 @@ describe('Experience (v4.0 Slice 5)', () => {
     const featured = container.querySelectorAll('[data-variant="featured"]')
     const compact = container.querySelectorAll('[data-variant="compact"]')
     const visibleCount = data.entries.filter((e) => e.visible !== false).length
-    expect(featured).toHaveLength(2)
-    expect(compact).toHaveLength(visibleCount - 2)
+    expect(featured).toHaveLength(4)
+    expect(compact).toHaveLength(visibleCount - 4)
   })
 
   it('renders hero metric value + label for a featured entry with a value (TCS, EN)', () => {
