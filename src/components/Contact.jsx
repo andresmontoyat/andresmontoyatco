@@ -21,14 +21,14 @@ function HeroContact({ card, lang }) {
     <a
       {...linkProps(card, label)}
       data-role="primary"
-      className="group flex flex-col justify-between gap-6 h-full bg-surface border border-accent/40 rounded-2xl p-8 transition-all duration-300 hover:-translate-y-1 hover:border-accent shadow-[0_0_30px_rgba(0,229,168,0.10)] hover:shadow-[0_0_45px_rgba(0,229,168,0.20)]"
+      className="group flex flex-col gap-6 md:self-start bg-surface border border-accent/40 rounded-2xl p-8 transition-all duration-300 hover:-translate-y-1 hover:border-accent shadow-[0_0_30px_rgba(0,229,168,0.10)] hover:shadow-[0_0_45px_rgba(0,229,168,0.20)]"
     >
-      <div className="text-4xl text-accent" aria-hidden="true">{card.icon}</div>
+      <div className="text-5xl text-accent" aria-hidden="true">{card.icon}</div>
       <div>
         <div className="text-xs uppercase tracking-widest text-muted mb-2">{label}</div>
-        <div className="text-xl sm:text-2xl font-extrabold text-text break-all">{card.value}</div>
+        <div className="text-2xl sm:text-3xl font-extrabold text-text break-all leading-tight">{card.value}</div>
       </div>
-      <span className="text-accent text-sm font-mono transition-transform duration-300 group-hover:translate-x-1">
+      <span className="inline-flex items-center gap-2 text-accent text-sm font-mono transition-transform duration-300 group-hover:translate-x-1">
         {lang === 'es' ? 'Escríbeme' : 'Reach out'} →
       </span>
     </a>
