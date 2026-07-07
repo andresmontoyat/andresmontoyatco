@@ -9,6 +9,18 @@
   "ctaGithub": { "en": "GitHub", "es": "GitHub" },
   "projects": [
     {
+      "id": "llevape",
+      "icon": "🏬",
+      "title": { "en": "Llevape", "es": "Llevape" },
+      "desc": {
+        "en": "Designed the architecture and components for a warehouse-management system in Peru — Keycloak-secured, Spring Boot with Kotlin and Java on Gradle, backed by PostgreSQL.",
+        "es": "Diseñé la arquitectura y los componentes para un sistema de gestión de warehouses en Perú — seguridad con Keycloak, Spring Boot con Kotlin y Java sobre Gradle, respaldado por PostgreSQL."
+      },
+      "tech": ["Kotlin", "Java", "Spring Boot", "Keycloak", "Gradle", "PostgreSQL"],
+      "liveUrl": null,
+      "githubUrl": null
+    },
+    {
       "id": "mr-yoker",
       "icon": "🎫",
       "title": { "en": "Mr. Yoker", "es": "Mr. Yoker" },
