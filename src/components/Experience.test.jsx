@@ -35,9 +35,9 @@ describe('Experience (v4.0 Slice 5)', () => {
     expect(screen.getByText(/18\+ years of building, leading and shipping/)).toBeInTheDocument()
   })
 
-  it('renders all 10 entry companies', () => {
+  it('renders all 11 entry companies', () => {
     renderWithLang('en')
-    expect(data.entries).toHaveLength(10)
+    expect(data.entries).toHaveLength(11)
     for (const entry of data.entries.filter((e) => e.visible !== false)) {
       expect(screen.getAllByText(entry.company).length).toBeGreaterThan(0)
     }
@@ -73,10 +73,11 @@ describe('Experience (v4.0 Slice 5)', () => {
   it('clicking expand toggles bullets and aria-expanded=true', () => {
     renderWithLang('en')
     const buttons = screen.getAllByRole('button', { name: /expand entry/i })
-    expect(screen.queryByText(/commissions-calculation component/)).toBeNull()
+    // Soldife is the first (most recent, featured) entry
+    expect(screen.queryByText(/architectural standard/)).toBeNull()
     fireEvent.click(buttons[0])
     expect(buttons[0].getAttribute('aria-expanded')).toBe('true')
-    expect(screen.getByText(/commissions-calculation component/)).toBeInTheDocument()
+    expect(screen.getByText(/architectural standard/)).toBeInTheDocument()
   })
 
   it('translates label/h2/intro/ARIA when lang=es', () => {
@@ -85,12 +86,12 @@ describe('Experience (v4.0 Slice 5)', () => {
     expect(screen.getByText('Línea de tiempo')).toBeInTheDocument()
     expect(screen.getByText(/Highlights de \+18 años/)).toBeInTheDocument()
     const buttons = screen.getAllByRole('button', { name: /expandir entrada/i })
-    expect(buttons).toHaveLength(10)
+    expect(buttons).toHaveLength(11)
   })
 
-  it('marks f2x, tul, klever and tcs as featured; the rest are compact', () => {
+  it('marks soldife, f2x, tul, klever and tcs as featured; the rest are compact', () => {
     const featuredIds = data.entries.filter((e) => e.featured).map((e) => e.id)
-    expect(featuredIds.sort()).toEqual(['f2x-2024', 'klever-2020', 'tcs-2013', 'tul-2022'])
+    expect(featuredIds.sort()).toEqual(['f2x-2024', 'klever-2020', 'soldife-2026', 'tcs-2013', 'tul-2022'])
   })
 
   it('featured entries render as featured variant, others as compact', () => {
@@ -98,8 +99,8 @@ describe('Experience (v4.0 Slice 5)', () => {
     const featured = container.querySelectorAll('[data-variant="featured"]')
     const compact = container.querySelectorAll('[data-variant="compact"]')
     const visibleCount = data.entries.filter((e) => e.visible !== false).length
-    expect(featured).toHaveLength(4)
-    expect(compact).toHaveLength(visibleCount - 4)
+    expect(featured).toHaveLength(5)
+    expect(compact).toHaveLength(visibleCount - 5)
   })
 
   it('renders hero metric value + label for a featured entry with a value (TCS, EN)', () => {
@@ -126,8 +127,8 @@ describe('Experience (v4.0 Slice 5)', () => {
     // Source Meridian is compact (not featured); its bullet text is hidden until expanded
     expect(screen.queryByText(/DraiverDO mobile app/)).toBeNull()
     const buttons = screen.getAllByRole('button', { name: /expand entry/i })
-    // Source Meridian is the 2nd visible entry (after F2X)
-    fireEvent.click(buttons[1])
+    // Source Meridian is the 3rd visible entry (Soldife, F2X, Source Meridian)
+    fireEvent.click(buttons[2])
     expect(screen.getByText(/DraiverDO mobile app/)).toBeInTheDocument()
   })
 
@@ -199,9 +200,9 @@ describe('Experience (v4.0 Slice 5)', () => {
     expect(status.textContent.trim()).toBe('1 role')
   })
 
-  it('experience.json schema sanity — 10 entries each with required bilingual keys', () => {
+  it('experience.json schema sanity — 11 entries each with required bilingual keys', () => {
     expect(Array.isArray(data.entries)).toBe(true)
-    expect(data.entries).toHaveLength(10)
+    expect(data.entries).toHaveLength(11)
     for (const e of data.entries) {
       expect(typeof e.id).toBe('string')
       expect(typeof e.company).toBe('string')

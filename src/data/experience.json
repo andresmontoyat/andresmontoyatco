@@ -27,6 +27,38 @@
   },
   "entries": [
     {
+      "id": "soldife-2026",
+      "visible": true,
+      "featured": true,
+      "metric": {
+        "value": "6+9",
+        "label": { "en": "microservices + SDKs", "es": "microservicios + SDKs" }
+      },
+      "date": { "en": "May 2026 — Present", "es": "May 2026 — Presente" },
+      "title": { "en": "Solution Architect & Tech Lead", "es": "Arquitecto de Soluciones & Tech Lead" },
+      "company": "Soldife",
+      "location": { "en": "Remote", "es": "Remoto" },
+      "bullets": {
+        "en": [
+          "Set the platform's architectural standard — hexagonal + DDD across 6 microservices and 9 SDKs, dependencies always pointing to the domain, enforced by ArchUnit on every build (zero architecture drift between PRs).",
+          "Designed an ecosystem of 9 auto-configurable Spring Boot SDKs with contract governance — SemVer, backward compatibility and ADRs — published versioned to GitHub Packages.",
+          "Established cross-cutting patterns: transactional outbox, canonical event envelope, end-to-end W3C tracing and centralized identity at the gateway.",
+          "Documented architecture as code: C4 model (L1–L4) in Structurizr, ADRs and AI-oriented development guidelines.",
+          "Designed CI/CD on GitHub Actions (GitFlow + shift-left) with reusable workflows parameterized by project type (Java, KrakenD, NGINX, contracts) and mandatory quality gates: build → tag-filtered unit/Karate tests → JaCoCo coverage → OWASP scan → ArchUnit → Spotless.",
+          "Built SemVer-tagged base images on GHCR (Temurin 21, GraalVM native-image, KrakenD/Go toolchain) to cut per-job tool installs and speed pipelines; org-level governance via branch/PR rulesets and in-pipeline Slack notifications."
+        ],
+        "es": [
+          "Definí el estándar arquitectónico de la plataforma — hexagonal + DDD en 6 microservicios y 9 SDKs, con dependencias apuntando siempre al dominio y verificación de fronteras con ArchUnit en cada build (cero drift de arquitectura entre PRs).",
+          "Diseñé un ecosistema de 9 SDKs Spring Boot auto-configurables con gobierno de contratos — SemVer, compatibilidad hacia atrás y ADRs — publicados versionados a GitHub Packages.",
+          "Establecí patrones transversales: outbox transaccional, envelope de evento canónico, tracing W3C end-to-end e identidad centralizada en el gateway.",
+          "Documenté la arquitectura como código: modelo C4 (L1–L4) en Structurizr, ADRs y guidelines de desarrollo para IA.",
+          "Diseñé CI/CD sobre GitHub Actions (GitFlow + shift-left) con reusable workflows parametrizados por tipo de proyecto (Java, KrakenD, NGINX, contratos) y quality gates obligatorios: build → tests unit/Karate filtrados por tag → cobertura JaCoCo → OWASP dependency scan → ArchUnit → Spotless.",
+          "Construí imágenes base con tags SemVer en GHCR (Temurin 21, GraalVM native-image, toolchain KrakenD/Go) que eliminan instalaciones de herramientas por job y aceleran los pipelines; gobierno a nivel de organización con rulesets de branch/PR y notificaciones Slack in-pipeline."
+        ]
+      },
+      "tech": ["Java", "Spring Boot", "Hexagonal Architecture", "DDD", "Microservices", "ArchUnit", "GitHub Actions", "KrakenD", "GraalVM", "Structurizr"]
+    },
+    {
       "id": "f2x-2024",
       "visible": true,
       "featured": true,
