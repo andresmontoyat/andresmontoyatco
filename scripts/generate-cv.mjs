@@ -14,6 +14,8 @@ const pick = (f, lang) => (typeof f === 'string' ? f : f?.[lang] ?? f?.en ?? '')
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
 const card = (id) => contact.cards.find((c) => c.id === id)
 
+const photoUri = `data:image/webp;base64,${readFileSync(join(root, 'public/me-400.webp')).toString('base64')}`
+
 const STR = {
   en: {
     title: 'Solutions Architect & Senior Backend Engineer',
@@ -71,7 +73,9 @@ export function buildHtml(lang) {
   return `<!doctype html><html lang="${lang}"><head><meta charset="utf-8"><style>
     * { box-sizing: border-box; }
     body { font-family: Arial, Helvetica, sans-serif; color: #1a1a1a; font-size: 10.5px; line-height: 1.42; margin: 0; }
-    .head { border-bottom: 2.5px solid #00708a; padding-bottom: 8px; margin-bottom: 6px; }
+    .head { border-bottom: 2.5px solid #00708a; padding-bottom: 8px; margin-bottom: 6px; display: flex; align-items: flex-start; gap: 16px; }
+    .head-text { flex: 1; }
+    .photo { width: 76px; height: 76px; border-radius: 50%; object-fit: cover; object-position: center 25%; border: 2px solid #00708a; flex-shrink: 0; }
     h1 { font-size: 23px; margin: 0 0 1px; letter-spacing: .2px; color: #0b1020; }
     .subtitle { font-size: 12px; color: #00708a; font-weight: bold; margin-bottom: 6px; }
     .contact { font-size: 9.5px; color: #333; }
@@ -96,9 +100,12 @@ export function buildHtml(lang) {
     .skill-items strong { color: #00708a; }
   </style></head><body>
     <div class="head">
-      <h1>Carlos Andrés Montoya Tobón</h1>
-      <div class="subtitle">${s.title}</div>
-      <div class="contact">${esc(loc)} &nbsp;·&nbsp; ${esc(email)} &nbsp;·&nbsp; ${esc(phone)} &nbsp;·&nbsp; github.com/${esc(gh.value)} &nbsp;·&nbsp; linkedin.com/in/${esc(li.value)} &nbsp;·&nbsp; andresmontoyat.co</div>
+      <div class="head-text">
+        <h1>Carlos Andrés Montoya Tobón</h1>
+        <div class="subtitle">${s.title}</div>
+        <div class="contact">${esc(loc)} &nbsp;·&nbsp; ${esc(email)} &nbsp;·&nbsp; ${esc(phone)} &nbsp;·&nbsp; github.com/${esc(gh.value)} &nbsp;·&nbsp; linkedin.com/in/${esc(li.value)} &nbsp;·&nbsp; andresmontoyat.co</div>
+      </div>
+      <img class="photo" src="${photoUri}" alt="" />
     </div>
     <div class="stack"><span class="lbl">${s.stack}</span>${highlights}</div>
     <h2>${s.summary}</h2>
