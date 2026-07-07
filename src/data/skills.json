@@ -44,7 +44,7 @@
       "title": { "en": "DevOps & Tools", "es": "DevOps y Herramientas" },
       "chips": [
         { "label": "Jenkins", "years": 10 },
-        { "label": "GitHub Actions", "years": 4 },
+        { "label": "GitHub Actions", "years": 5 },
         { "label": "SonarQube", "years": 8 },
         { "label": "Nexus", "years": 8 },
         { "label": "Gradle", "years": 8 },
