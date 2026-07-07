@@ -7,7 +7,21 @@
   },
   "ctaLive": { "en": "View Live", "es": "Ver Live" },
   "ctaGithub": { "en": "GitHub", "es": "GitHub" },
+  "featuredLabel": { "en": "Featured", "es": "Destacado" },
   "projects": [
+    {
+      "id": "mr-yoker",
+      "icon": "🎫",
+      "featured": true,
+      "title": { "en": "Mr. Yoker", "es": "Mr. Yoker" },
+      "desc": {
+        "en": "Secure ticket-purchasing system built on blockchain, issuing W3C verifiable credentials for each ticket to guarantee authenticity and prevent fraud.",
+        "es": "Sistema de compra de tickets seguros sobre blockchain, que emite credenciales verificables W3C por cada ticket para garantizar autenticidad y prevenir fraude."
+      },
+      "tech": ["Java", "Spring Boot", "Blockchain", "W3C Verifiable Credentials", "Cryptography"],
+      "liveUrl": null,
+      "githubUrl": null
+    },
     {
       "id": "llevape",
       "icon": "🏬",
@@ -17,18 +31,6 @@
         "es": "Diseñé la arquitectura y los componentes para un sistema de gestión de warehouses en Perú — seguridad con Keycloak, Spring Boot con Kotlin y Java sobre Gradle, respaldado por PostgreSQL."
       },
       "tech": ["Kotlin", "Java", "Spring Boot", "Keycloak", "Gradle", "PostgreSQL"],
-      "liveUrl": null,
-      "githubUrl": null
-    },
-    {
-      "id": "mr-yoker",
-      "icon": "🎫",
-      "title": { "en": "Mr. Yoker", "es": "Mr. Yoker" },
-      "desc": {
-        "en": "Secure ticket-purchasing system built on blockchain, issuing W3C verifiable credentials for each ticket to guarantee authenticity and prevent fraud.",
-        "es": "Sistema de compra de tickets seguros sobre blockchain, que emite credenciales verificables W3C por cada ticket para garantizar autenticidad y prevenir fraude."
-      },
-      "tech": ["Java", "Spring Boot", "Blockchain", "W3C Verifiable Credentials", "Cryptography"],
       "liveUrl": null,
       "githubUrl": null
     },

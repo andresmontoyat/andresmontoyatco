@@ -71,6 +71,16 @@ describe('Projects (v4.2)', () => {
     expect(screen.queryByText('GitHub')).toBeNull()
   })
 
+  it('renders the featured project first as a highlighted variant (Mr. Yoker)', () => {
+    const { container } = renderWithLang('en')
+    expect(data.projects[0].id).toBe('mr-yoker')
+    expect(data.projects[0].featured).toBe(true)
+    const featured = container.querySelectorAll('[data-featured="true"]')
+    expect(featured).toHaveLength(1)
+    expect(featured[0].textContent).toContain('Mr. Yoker')
+    expect(featured[0].textContent).toMatch(/Featured/i)
+  })
+
   it('projects.json schema sanity — each project has required bilingual keys', () => {
     expect(Array.isArray(data.projects)).toBe(true)
     expect(data.projects.length).toBeGreaterThan(0)
