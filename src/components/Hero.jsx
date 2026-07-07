@@ -34,13 +34,45 @@ function useCharReveal(target, startOffsetMs, perCharMs) {
   return text
 }
 
+function prefersReducedMotion() {
+  return typeof window !== 'undefined'
+    && typeof window.matchMedia === 'function'
+    && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+}
+
+function useCountUp(target, ms = 1100) {
+  const [n, setN] = useState(target)
+  useEffect(() => {
+    if (!target || prefersReducedMotion() || typeof requestAnimationFrame === 'undefined') {
+      setN(target)
+      return undefined
+    }
+    let raf
+    let startTs = null
+    function tick(ts) {
+      if (startTs === null) startTs = ts
+      const p = Math.min(1, (ts - startTs) / ms)
+      setN(Math.round(target * (1 - (1 - p) ** 3)))
+      if (p < 1) raf = requestAnimationFrame(tick)
+    }
+    setN(0)
+    raf = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(raf)
+  }, [target, ms])
+  return n
+}
+
 function Stat({ num, label }) {
+  const match = num.match(/\d+/)
+  const target = match ? Number(match[0]) : 0
+  const n = useCountUp(target)
+  const display = match ? num.replace(/\d+/, String(n)) : num
   return (
-    <div className="text-center">
-      <div className="text-3xl font-extrabold leading-none bg-brand-gradient bg-clip-text text-transparent">
-        {num}
+    <div className="group text-center cursor-default motion-safe:transition-transform motion-safe:duration-200 motion-safe:hover:-translate-y-1">
+      <div className="text-3xl font-extrabold leading-none bg-brand-gradient bg-clip-text text-transparent transition-transform duration-200 group-hover:scale-110 motion-safe:group-hover:drop-shadow-[0_0_10px_rgba(37,99,235,0.5)]">
+        {display}
       </div>
-      <div className="mt-1 text-xs font-mono font-normal text-text-secondary uppercase tracking-widest">
+      <div className="mt-1 text-xs font-mono font-normal text-text-secondary uppercase tracking-widest transition-colors duration-200 group-hover:text-brand">
         {label}
       </div>
     </div>
