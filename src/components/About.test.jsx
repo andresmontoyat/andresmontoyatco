@@ -38,27 +38,28 @@ describe('About (v4.0 Slice 3)', () => {
   })
 
   it('renders all 5 quick-fact rows with EN labels + values', () => {
-    renderWithLang('en')
+    const { container } = renderWithLang('en')
     expect(screen.getByText('Location')).toBeInTheDocument()
     expect(screen.getByText('Current role')).toBeInTheDocument()
     expect(screen.getByText('Experience')).toBeInTheDocument()
     expect(screen.getByText('Languages')).toBeInTheDocument()
     expect(screen.getByText('Work mode')).toBeInTheDocument()
     expect(screen.getByText('Medellín, CO')).toBeInTheDocument()
-    expect(screen.getByText('Backend @ Coderio')).toBeInTheDocument()
-    expect(screen.getByText('18+ years')).toBeInTheDocument()
+    expect(screen.getByText('Solution Architect @ Soldife')).toBeInTheDocument()
+    // Experience value count-ups on mount; scope to the facts panel + digit-agnostic form
+    expect(container.querySelector('aside').textContent).toMatch(/\d+\+ years/)
     expect(screen.getByText('ES · EN')).toBeInTheDocument()
     expect(screen.getByText('Remote friendly')).toBeInTheDocument()
   })
 
   it('translates label/h2/quick-label and bilingual fact values when lang=es', () => {
-    renderWithLang('es')
+    const { container } = renderWithLang('es')
     expect(screen.getByText('Sobre mí')).toBeInTheDocument()
     expect(screen.getByText('Quién soy')).toBeInTheDocument()
     expect(screen.getByText('Datos rápidos')).toBeInTheDocument()
     expect(screen.getByText('Ubicación')).toBeInTheDocument()
     expect(screen.getByText('Rol actual')).toBeInTheDocument()
-    expect(screen.getByText('+18 años')).toBeInTheDocument()
+    expect(container.querySelector('aside').textContent).toMatch(/\+\d+ años/)
     expect(screen.getByText('Remoto')).toBeInTheDocument()
   })
 
