@@ -4,6 +4,16 @@ import useActiveSection from '../hooks/useActiveSection'
 
 const SECTION_IDS = ['hero', 'about', 'skills', 'experience', 'projects', 'claude-code', 'contact']
 
+const SECTION_COLORS = {
+  hero: '#00E5A8',
+  about: '#00C2FF',
+  skills: '#3B82F6',
+  experience: '#8B5CF6',
+  projects: '#EC4899',
+  'claude-code': '#F59E0B',
+  contact: '#34D399',
+}
+
 function prefersReducedMotion() {
   return typeof window !== 'undefined'
     && typeof window.matchMedia === 'function'
@@ -47,7 +57,7 @@ function PagerButton({ dpath, label, onClick, disabled }) {
   )
 }
 
-function ProgressDial({ progress, index, total }) {
+function ProgressDial({ progress, index, total, color }) {
   const r = 15
   const c = 2 * Math.PI * r
   const offset = c * (1 - Math.min(100, Math.max(0, progress)) / 100)
@@ -56,20 +66,19 @@ function ProgressDial({ progress, index, total }) {
       <svg width="40" height="40" viewBox="0 0 40 40" className="-rotate-90">
         <circle cx="20" cy="20" r={r} fill="none" stroke="currentColor" strokeWidth="2.5" className="text-ink-400" />
         <circle
+          data-role="dial-progress"
           cx="20"
           cy="20"
           r={r}
           fill="none"
-          stroke="currentColor"
           strokeWidth="2.5"
           strokeLinecap="round"
-          className="text-brand transition-[stroke-dashoffset] duration-150"
           strokeDasharray={c}
           strokeDashoffset={offset}
-          style={{ filter: 'drop-shadow(0 0 3px currentColor)' }}
+          style={{ stroke: color, filter: `drop-shadow(0 0 3px ${color})`, transition: 'stroke-dashoffset .15s, stroke .3s, filter .3s' }}
         />
       </svg>
-      <span className="absolute font-mono text-[10px] font-bold text-text-primary">
+      <span className="absolute font-mono text-[10px] font-bold" style={{ color, transition: 'color .3s' }}>
         {index + 1}
         <span className="text-text-secondary">/{total}</span>
       </span>
@@ -110,6 +119,7 @@ export default function SectionPager() {
   const idx = Math.max(0, SECTION_IDS.indexOf(active))
   const atStart = idx <= 0
   const atEnd = idx >= SECTION_IDS.length - 1
+  const activeColor = SECTION_COLORS[SECTION_IDS[idx]]
 
   return (
     <nav
@@ -121,7 +131,7 @@ export default function SectionPager() {
     >
       <PagerButton dpath={ICONS.top} label={t.nav.pagerTop} onClick={() => scrollToY(0)} disabled={atStart} />
       <PagerButton dpath={ICONS.prev} label={t.nav.pagerPrev} onClick={() => scrollToId(SECTION_IDS[Math.max(0, idx - 1)])} disabled={atStart} />
-      <ProgressDial progress={progress} index={idx} total={SECTION_IDS.length} />
+      <ProgressDial progress={progress} index={idx} total={SECTION_IDS.length} color={activeColor} />
       <PagerButton dpath={ICONS.next} label={t.nav.pagerNext} onClick={() => scrollToId(SECTION_IDS[Math.min(SECTION_IDS.length - 1, idx + 1)])} disabled={atEnd} />
       <PagerButton dpath={ICONS.end} label={t.nav.pagerEnd} onClick={() => scrollToY(document.documentElement.scrollHeight)} disabled={atEnd} />
     </nav>

@@ -49,6 +49,14 @@ describe('SectionPager', () => {
     expect(window.scrollTo).toHaveBeenCalled()
   })
 
+  it('tints the progress dial with the active section color', () => {
+    const { container } = renderWithLang('en')
+    // first section (hero) → brand teal #00E5A8
+    const ring = container.querySelector('[data-role="dial-progress"]')
+    expect(ring).toBeInTheDocument()
+    expect(ring.getAttribute('style')).toMatch(/stroke:\s*(#00E5A8|rgb\(0,\s*229,\s*168\))/i)
+  })
+
   it('translates ARIA labels to Spanish', () => {
     renderWithLang('es')
     expect(screen.getByRole('button', { name: /volver al inicio/i, hidden: true })).toBeInTheDocument()
