@@ -174,7 +174,7 @@ export default function Hero() {
         </p>
 
         <div
-          className="flex items-center gap-3 flex-wrap motion-safe:opacity-0 motion-safe:animate-slide-up"
+          className="relative z-30 flex items-center gap-3 flex-wrap motion-safe:opacity-0 motion-safe:animate-slide-up"
           style={{ animationDelay: '800ms', animationFillMode: 'forwards', animationDuration: '600ms' }}
         >
           <a
