@@ -62,7 +62,7 @@ function Logomark() {
   return (
     <a
       href="#hero"
-      className="font-mono text-xs tracking-tight text-text-primary"
+      className="font-pixel text-[10px] tracking-tight text-text-primary hover:text-brand transition-colors"
     >
       &lt;<span className="text-brand">/</span>camt&gt;
     </a>

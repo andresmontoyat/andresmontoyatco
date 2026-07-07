@@ -12,7 +12,7 @@ export default function Footer() {
   return (
     <footer className="border-t border-ink-400 py-10 mt-10">
       <div className="max-w-6xl mx-auto px-6 text-center">
-        <div className="font-mono font-extrabold text-xs mb-3">
+        <div className="font-pixel text-[10px] mb-3">
           <a
             href="#hero"
             className="inline-block text-text-primary hover:text-brand transition-colors duration-200 motion-safe:transition-transform motion-safe:hover:-translate-y-0.5"

@@ -66,10 +66,10 @@ export default function About() {
   return (
     <section id="about" className="py-20">
       <div className="max-w-6xl mx-auto px-6">
-        <div className="font-mono text-xs uppercase tracking-[3px] text-accent flex items-center gap-3 mb-4">
+        <div className="font-pixel text-[10px] uppercase tracking-[1px] text-accent flex items-center gap-3 mb-4">
           <span className="block w-10 h-0.5 bg-accent" /> {pick(data.label, lang)}
         </div>
-        <h2 className="text-3xl sm:text-4xl md:text-[42px] font-extrabold tracking-tight text-text mb-4 leading-tight">
+        <h2 className="font-pixel text-lg sm:text-xl md:text-2xl font-extrabold tracking-normal text-text mb-4 leading-tight">
           {pick(data.h2, lang)}
         </h2>
         <div className="grid lg:grid-cols-5 gap-10 mt-6">

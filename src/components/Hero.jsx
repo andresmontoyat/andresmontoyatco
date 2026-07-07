@@ -168,7 +168,7 @@ export default function Hero() {
         </span>
 
         <h1
-          className="text-4xl sm:text-5xl lg:text-7xl font-extrabold tracking-tighter leading-[0.95] mb-5"
+          className="font-pixel text-xl sm:text-3xl lg:text-4xl font-extrabold tracking-normal leading-[1.5] mb-7"
           aria-label={`${t.hero.h1a} ${t.hero.h1b} ${t.hero.h1c}`}
           style={{ filter: 'drop-shadow(var(--hero-h1-shadow))' }}
         >

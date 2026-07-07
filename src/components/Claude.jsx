@@ -10,8 +10,8 @@ function pick(field, lang) {
 function PitchHero({ lang }) {
   return (
     <div className="text-center max-w-4xl mx-auto bg-surface border border-border rounded-2xl p-10 md:p-14 mb-12">
-      <p className="text-accent font-mono text-xs uppercase tracking-widest">{pick(data.label, lang)}</p>
-      <h2 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-text mt-4 leading-tight">
+      <p className="text-accent font-pixel text-[10px] uppercase tracking-[1px]">{pick(data.label, lang)}</p>
+      <h2 className="font-pixel text-lg sm:text-xl md:text-2xl font-extrabold text-text mt-4 leading-snug">
         {pick(data.h2Part1, lang)}{' '}
         <span className="text-accent">{pick(data.h2Part2, lang)}</span>
       </h2>
