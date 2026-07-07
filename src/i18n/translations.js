@@ -20,6 +20,11 @@ const translations = {
       langGroup: 'Language',
       langSwitchEn: 'Switch to English',
       langSwitchEs: 'Switch to Spanish',
+      pagerGroup: 'Section navigation',
+      pagerTop: 'Back to top',
+      pagerPrev: 'Previous section',
+      pagerNext: 'Next section',
+      pagerEnd: 'Go to end',
     },
     meta: {
       title: 'Carlos Andrés Montoya Tobón · Solutions Architect & Senior Backend Engineer',
@@ -68,6 +73,11 @@ const translations = {
       langGroup: 'Idioma',
       langSwitchEn: 'Cambiar a inglés',
       langSwitchEs: 'Cambiar a español',
+      pagerGroup: 'Navegación de secciones',
+      pagerTop: 'Volver al inicio',
+      pagerPrev: 'Sección anterior',
+      pagerNext: 'Sección siguiente',
+      pagerEnd: 'Ir al final',
     },
     meta: {
       title: 'Carlos Andrés Montoya Tobón · Arquitecto de Soluciones e Ingeniero Backend Senior',

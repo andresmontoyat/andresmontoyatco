@@ -11,6 +11,7 @@ import Projects from './components/Projects'
 import Claude from './components/Claude'
 import Contact from './components/Contact'
 import Footer from './components/Footer'
+import SectionPager from './components/SectionPager'
 
 export default function App() {
   return (
@@ -28,6 +29,7 @@ export default function App() {
             <Contact />
           </main>
           <Footer />
+          <SectionPager />
         </div>
       </LanguageProvider>
     </ThemeProvider>
