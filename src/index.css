@@ -18,6 +18,10 @@
     --grad-accent: linear-gradient(135deg, #00E5A8 0%, #00C2FF 100%);
     --radius:    14px;
     --shadow-accent: 0 20px 40px -20px rgba(0, 229, 168, 0.25);
+    --bg-backdrop:
+      radial-gradient(600px circle at 10% 0%, rgba(0, 229, 168, 0.08), transparent 50%),
+      radial-gradient(800px circle at 90% 20%, rgba(0, 194, 255, 0.06), transparent 55%),
+      linear-gradient(180deg, #0B1020 0%, #0A0F1E 100%);
 
     /* Legacy token mirrors — point existing ink/brand/accent names to the new palette
        so parked components (Nav/Hero/Footer) absorb the new look without a refactor.
@@ -97,6 +101,25 @@
   }
 
   [data-theme="light"] {
+    /* v4.0 canonical tokens — light overrides. These were dark-only in :root,
+       so the v4.0 sections (Experience/Skills/Contact/About/Projects) that
+       consume --bg/--surface/--border/--text/--muted/--accent-2 never flipped. */
+    --bg:        #F7F8FC;
+    --bg-2:      #EFF1F8;
+    --bg-3:      #E7EAF4;
+    --surface:   #FFFFFF;
+    --border:    #DCE1EE;
+    --text:      #0D1330;
+    --muted:     #596288;
+    --accent:    #047857;  /* emerald-700 — AA on light, matches --color-accent light */
+    --accent-2:  #0369A1;  /* sky-700 — AA on light */
+    --grad-accent: linear-gradient(135deg, #047857 0%, #0369A1 100%);
+    --shadow-accent: 0 20px 40px -20px rgba(4, 120, 87, 0.20);
+    --bg-backdrop:
+      radial-gradient(600px circle at 10% 0%, rgba(4, 120, 87, 0.06), transparent 50%),
+      radial-gradient(800px circle at 90% 20%, rgba(3, 105, 161, 0.05), transparent 55%),
+      linear-gradient(180deg, #F7F8FC 0%, #FFFFFF 100%);
+
     /* Surface scale (ink) — inverted from dark ink scale to light grays */
     --color-ink-950: #FFFFFF;
     --color-ink-900: #FAFAFA;
@@ -298,10 +321,7 @@
   }
   body::before {
     content: ""; position: fixed; inset: 0; z-index: -2; pointer-events: none;
-    background:
-      radial-gradient(600px circle at 10% 0%, rgba(0, 229, 168, 0.08), transparent 50%),
-      radial-gradient(800px circle at 90% 20%, rgba(0, 194, 255, 0.06), transparent 55%),
-      linear-gradient(180deg, #0B1020 0%, #0A0F1E 100%);
+    background: var(--bg-backdrop);
   }
   body::after {
     content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
