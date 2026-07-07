@@ -73,7 +73,7 @@ export default function Projects() {
         <h2 className="font-pixel text-lg sm:text-xl md:text-2xl font-extrabold tracking-normal text-text mb-4 leading-tight">
           {pick(data.h2, lang)}
         </h2>
-        <p className="text-muted max-w-[640px] mb-12 text-base">{pick(data.intro, lang)}</p>
+        <p className="text-muted max-w-[640px] mb-12 font-pixel text-[11px] leading-[2]">{pick(data.intro, lang)}</p>
         <div className="flex flex-wrap justify-center gap-6">
           {data.projects.map((p) => (
             <div key={p.id} className="w-full sm:w-[360px]">

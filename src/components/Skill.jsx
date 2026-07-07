@@ -58,7 +58,7 @@ export default function Skill() {
         <h2 className="font-pixel text-lg sm:text-xl md:text-2xl font-extrabold tracking-normal text-text mb-4 leading-tight">
           {pick(data.h2, lang)}
         </h2>
-        <p className="text-muted max-w-[640px] mb-12 text-base">{pick(data.intro, lang)}</p>
+        <p className="text-muted max-w-[640px] mb-12 font-pixel text-[11px] leading-[2]">{pick(data.intro, lang)}</p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
           {data.categories.map((c) => <Category key={c.id} category={c} lang={lang} suffix={suffix} max={max} />)}
         </div>

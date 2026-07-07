@@ -15,7 +15,7 @@ function PitchHero({ lang }) {
         {pick(data.h2Part1, lang)}{' '}
         <span className="text-accent">{pick(data.h2Part2, lang)}</span>
       </h2>
-      <p className="text-muted text-lg mt-6 max-w-2xl mx-auto">{pick(data.subLead, lang)}</p>
+      <p className="font-pixel text-[11px] leading-[2] text-muted mt-6 max-w-2xl mx-auto">{pick(data.subLead, lang)}</p>
       <div className="flex flex-col sm:flex-row gap-4 justify-center mt-10">
         <a
           href="#contact"

@@ -199,7 +199,7 @@ export default function Hero() {
         </h1>
 
         <p
-          className="text-base sm:text-lg text-text-secondary max-w-2xl mb-9 leading-relaxed motion-safe:opacity-0 motion-safe:animate-slide-up"
+          className="font-pixel text-[11px] sm:text-xs text-text-secondary max-w-2xl mb-9 leading-[2] motion-safe:opacity-0 motion-safe:animate-slide-up"
           style={{ animationDelay: '600ms', animationFillMode: 'forwards', animationDuration: '600ms' }}
         >
           {t.hero.lead}

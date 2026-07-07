@@ -20,7 +20,7 @@ export default function Footer() {
             &lt;<span className="text-brand">/</span>camt&gt;
           </a>
         </div>
-        <p className="text-text-secondary text-base mb-6">{t.footer.tagline}</p>
+        <p className="font-pixel text-[11px] leading-[2] text-text-secondary mb-6">{t.footer.tagline}</p>
         <div className="flex justify-center gap-4 mb-6">
           {social.map((s) => (
             <a
