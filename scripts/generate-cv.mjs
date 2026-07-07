@@ -35,11 +35,12 @@ const STR = {
 
 export function buildHtml(lang) {
   const s = STR[lang]
-  const email = card('email').value
-  const phone = card('phone').value
+  const emailCard = card('email')
+  const phoneCard = card('phone')
   const gh = card('github')
   const li = card('linkedin')
   const loc = 'Medellín, Colombia'
+  const link = (href, text) => `<a href="${esc(href)}">${esc(text)}</a>`
   const summary = about.paragraphs.slice(0, 2).map((p) => esc(pick(p, lang))).join(' ')
   const highlights = exp.filter.chips.map(esc).join(' &nbsp;·&nbsp; ')
 
@@ -103,7 +104,7 @@ export function buildHtml(lang) {
       <div class="head-text">
         <h1>Carlos Andrés Montoya Tobón</h1>
         <div class="subtitle">${s.title}</div>
-        <div class="contact">${esc(loc)} &nbsp;·&nbsp; ${esc(email)} &nbsp;·&nbsp; ${esc(phone)} &nbsp;·&nbsp; github.com/${esc(gh.value)} &nbsp;·&nbsp; linkedin.com/in/${esc(li.value)} &nbsp;·&nbsp; andresmontoyat.co</div>
+        <div class="contact">${esc(loc)} &nbsp;·&nbsp; ${link(emailCard.href, emailCard.value)} &nbsp;·&nbsp; ${link(phoneCard.href, phoneCard.value)} &nbsp;·&nbsp; ${link(gh.href, `github.com/${gh.value}`)} &nbsp;·&nbsp; ${link(li.href, `linkedin.com/in/${li.value}`)} &nbsp;·&nbsp; ${link('https://andresmontoyat.co', 'andresmontoyat.co')}</div>
       </div>
       <img class="photo" src="${photoUri}" alt="" />
     </div>
