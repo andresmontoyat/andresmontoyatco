@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v4.2
 milestone_name: Content polish — experience rewrite + projects redesign
 status: in-progress
-stopped_at: v4.2 content work on main (no tag yet) — experience rewrite (#36) + timeline polish (#37) + projects 3-card redesign + contact reorder (#38) + audit fix (#39) + claude offerings consolidation + experience visibility flag + CV PDF generator. 56/56 tests GREEN. main in sync with origin.
-last_updated: 2026-06-30T10:57:00-05:00
-last_activity: 2026-07-01 - PR #41 vite8/vitest4 + .jsx migration merged; PR #2 closed; quick 260701-v6a JSON-LD Person (999.6/ASEO-01) shipped
+stopped_at: v4.2 content work on main (no tag yet) — experience rewrite + projects expansion (Llevape + Mr. Yoker featured lead) + retro pixel font (Press Start 2P) + interactive hover states across sections. Working tree cleaned (dead docx CVs removed, questionnaire intake committed). main in sync with origin.
+last_updated: 2026-07-16T10:40:00-05:00
+last_activity: 2026-07-16 - resume-work cleanup: 2 atomic commits (333bcd2 remove dead public docx CVs; 392316f fill v4.2 experience fase-2 questionnaire). Tree clean.
 progress:
   shipped_to_main: 5
   remaining: open  # projects expansion + content passes; no fixed slice count yet
@@ -27,7 +27,20 @@ progress:
 | #38 | 57be81d | Projects 3-card redesign (🎫 Mr. Yoker / 🏥 Mutual SER / 📞 Hexadialer) — emoji glyphs + gradient overlay + centered flexbox (fixed card width, replaces grid); contact reorder (GitHub before LinkedIn) |
 | #39 | 7e3c27e | npm audit fix — non-breaking security bumps (25→23 vulns) |
 
-**Direct-to-main since #39 (no PR, content/tooling passes):**
+**Direct-to-main since PR #41 (no PR, content/type passes):**
+
+| Commit | Description |
+|--------|-------------|
+| aca26be | type: retro pixel display font (Press Start 2P) on titles + accents |
+| 9ce6817 | type: pixel font on short lead/intro texts |
+| a01bc08 · 70df9ad · 3dad919 | interactive states — about quick-facts, hero count-up stats bar, skills+footer hover |
+| 26481cc | skills: GitHub Actions 4→5 years |
+| c191dd0 | projects: add Llevape warehouse system |
+| 10fbc78 | projects: feature Mr. Yoker as highlighted lead (2-tier featured/regular card system) |
+| 333bcd2 | cv: remove dead public docx CVs (superseded by generated PDFs) |
+| 392316f | planning: fill v4.2 experience fase-2 questionnaire (ES rewrites + visibility flags) |
+
+**Earlier direct-to-main (pre-pixel-font):**
 
 | Commit | Description |
 |--------|-------------|
@@ -162,8 +175,8 @@ Root cause closed: React SPA hydration was blocking the LCP critical path. Hero 
 
 ## Session Continuity
 
-Last session: 2026-06-30T10:57:00-05:00 (resumed; pushed CV PDF work, cleaned strays, refreshed STATE.md)
-Stopped at: main in sync with origin (pushed 743400b CV generator + f406d41 generated PDFs). Strays removed (website-new/, root docx dupes). 56/56 vitest GREEN. Claude section converged to 6-card offerings grid (featured-apps grid + stack chips removed). Experience now has per-entry `visible` flag. Next candidates: projects expansion (fill projects-input.md), DIAGRAMS-01, custom domain, or v4.2 tag.
+Last session: 2026-07-16T10:40:00-05:00 (resume-work; committed working-tree cleanup, refreshed STATE.md)
+Stopped at: main in sync with origin. Working tree clean (2 atomic commits: dead docx CVs removed, questionnaire intake filled). Since last STATE sync main gained: pixel display font (Press Start 2P), interactive hover states (about/hero/skills/footer), Llevape project, Mr. Yoker featured lead. Next candidates: (a) apply filled questionnaire → experience.json (fase-2 experience content), (b) projects expansion — Atenea still blank in projects-input.md, (c) v4.2 tag, (d) DIAGRAMS-01 / custom domain.
 Resume file: none — clean checkpoint
 Untracked (intentional-keep): .planning/projects-input.md, Diagnostico_LinkedIn_*.docx, 14-PATTERNS.md
 Open PR: #2 junie-init only (foreign JetBrains scaffold — close if unused)
