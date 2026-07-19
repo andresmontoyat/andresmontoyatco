@@ -1,0 +1,136 @@
+---
+// src/layouts/BaseLayout.astro
+// Shared <head> shell for every page: meta/OG/JSON-LD/GA + hreflang/canonical +
+// html lang + blocking theme-flip script. Ports index.html's static <head>
+// (favicon/viewport/preload/theme-color, OG/Twitter, JSON-LD Person, GA) and
+// replaces LanguageContext's runtime useEffect (D-07) + ThemeContext's
+// post-mount theme flip (ISLAND-04) with build-time / pre-paint equivalents.
+import { getRelativeLocaleUrl } from 'astro:i18n'
+import translations from '../i18n/translations.js'
+
+interface Props {
+  title?: string
+  description?: string
+}
+
+const locale = Astro.currentLocale ?? 'en'
+const meta = translations[locale]?.meta
+const { title = meta?.title, description = meta?.description } = Astro.props
+
+// Un-prefixed path, shared by canonical + all hreflang alternates
+const path = Astro.url.pathname.replace(/^\/(en|es)/, '') || '/'
+
+// D-06: base domain is a build-time env var, never hardcoded in this file.
+// D-05: value is https://andresmontoyat.co (matches index.html's current domain).
+const siteUrl = import.meta.env.PUBLIC_SITE_URL
+
+// [ASSUMED->CONFIRMED] astro@7.1.1's public `astro:i18n` GetLocaleOptions type
+// only exposes { normalizeLocale, prependWith } — no `base` override (verified
+// against node_modules/astro/dist/i18n/index.d.ts: `base` is injected
+// internally from astro.config.mjs's own `site` field, not a call-site option).
+// Fallback path taken per 21-RESEARCH.md Open Question 2: build the relative
+// locale URL, then resolve it against siteUrl with the WHATWG URL constructor.
+const canonicalUrl = new URL(Astro.url.pathname, siteUrl).toString()
+const hreflangEn = new URL(getRelativeLocaleUrl('en', path), siteUrl).toString()
+const hreflangEs = new URL(getRelativeLocaleUrl('es', path), siteUrl).toString()
+const ogImageUrl = new URL('/og-image.png', siteUrl).toString()
+---
+<html lang={locale}>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="preload"
+      as="image"
+      type="image/webp"
+      href="/me-800.webp"
+      imagesrcset="/me-400.webp 400w, /me-800.webp 800w, /me-1600.webp 1600w"
+      imagesizes="100vw"
+      fetchpriority="high"
+    />
+    <meta name="theme-color" content="#0B1020" />
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="alternate" hreflang="en" href={hreflangEn} />
+    <link rel="alternate" hreflang="es" href={hreflangEs} />
+    <link rel="alternate" hreflang="x-default" href={hreflangEn} />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+
+    <!-- Twitter / X card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content={ogImageUrl} />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+
+    <link rel="apple-touch-icon" href="/logo192.png" />
+    <link rel="manifest" href="/manifest.json" />
+
+    <!-- Structured data — static, English-only in both locales (D-08) -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "Carlos Andrés Montoya Tobón",
+        "jobTitle": "Solutions Architect & Senior Backend Engineer",
+        "url": "https://andresmontoyat.co/",
+        "image": "https://andresmontoyat.co/og-image.png",
+        "email": "mailto:andresmontoyat@gmail.com",
+        "telephone": "+573244422196",
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Medellín",
+          "addressCountry": "CO"
+        },
+        "sameAs": [
+          "https://github.com/andresmontoyat",
+          "https://www.linkedin.com/in/carlos-andres-montoya-tobon-8b508033"
+        ],
+        "knowsAbout": ["Java", "Spring", "Microservices", "Cloud", "Hexagonal Architecture"],
+        "description": "Carlos Andrés Montoya Tobón — Solutions Architect and Senior Backend Engineer with 18+ years of experience in Java, Spring, microservices and cloud."
+      }
+    </script>
+
+    <!-- Google Analytics (D-09, verbatim) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-4TZJGR3MXR"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-4TZJGR3MXR');
+    </script>
+
+    <script is:inline>
+      // ISLAND-04: blocking, runs before paint — flips theme pre-paint (kills FOUC).
+      // Mirrors src/i18n/ThemeContext.jsx's readInitialTheme() exactly:
+      // storage key 'cam-theme', default 'dark', try/catch for private-mode safety.
+      (function () {
+        var STORAGE_KEY = 'cam-theme'
+        var DEFAULT_THEME = 'dark'
+        var VALID_THEMES = ['dark', 'light']
+        var theme = DEFAULT_THEME
+        try {
+          var stored = localStorage.getItem(STORAGE_KEY)
+          if (stored && VALID_THEMES.indexOf(stored) !== -1) theme = stored
+        } catch (e) {
+          // localStorage blocked (private mode, etc) — fall through to default
+        }
+        document.documentElement.dataset.theme = theme
+      })()
+    </script>
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>
