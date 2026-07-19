@@ -1,0 +1,54 @@
+---
+// src/components/astro/About.astro
+// Zero-client-JS port of src/components/About.jsx (v5 STATIC-01).
+// Count-up animation (useCountUp/AnimatedValue) intentionally DROPPED per D-04 —
+// static values render verbatim; Phase 24 owns re-introducing count-up as a
+// shared vanilla <script> enhancer for both Hero and About.
+import data from '../../data/about.json'
+
+const { locale } = Astro.props
+
+function pick(field, lang) {
+  if (typeof field === 'string') return field
+  return field?.[lang] ?? field?.en ?? ''
+}
+
+const { facts } = data
+---
+<section id="about" class="py-20">
+  <div class="max-w-6xl mx-auto px-6">
+    <div class="font-pixel text-[10px] uppercase tracking-[1px] text-accent flex items-center gap-3 mb-4">
+      <span class="block w-10 h-0.5 bg-accent" /> {pick(data.label, locale)}
+    </div>
+    <h2 class="font-pixel text-lg sm:text-xl md:text-2xl font-extrabold tracking-normal text-text mb-4 leading-tight">
+      {pick(data.h2, locale)}
+    </h2>
+    <div class="grid lg:grid-cols-5 gap-10 mt-6">
+      <div class="lg:col-span-3 space-y-4 text-muted text-base leading-relaxed">
+        {data.paragraphs.map((p) => (
+          <p>{pick(p, locale)}</p>
+        ))}
+      </div>
+      <aside class="lg:col-span-2 bg-surface border border-border rounded-xl p-7 transition-colors duration-200 hover:border-accent/40">
+        <h3 class="text-base font-extrabold mb-4 flex items-center gap-2 text-text">
+          <span class="text-accent">◆</span> {pick(data.quick, locale)}
+        </h3>
+        <ul class="text-base">
+          {facts.map((f, i) => (
+            <li
+              class={`group relative -mx-2 flex items-center justify-between gap-4 rounded-lg px-2 py-2.5 transition-all duration-200 hover:bg-accent/[0.07] motion-safe:hover:translate-x-0.5 ${i === facts.length - 1 ? '' : 'border-b border-border hover:border-transparent'}`}
+            >
+              <span class="flex items-center gap-2.5 text-muted transition-colors duration-200 group-hover:text-text">
+                <span aria-hidden="true" class="h-1.5 w-1.5 shrink-0 rounded-full bg-accent/40 transition-all duration-200 group-hover:scale-150 group-hover:bg-accent group-hover:shadow-[0_0_6px_var(--accent)]" />
+                {pick(f.kLabel, locale)}
+              </span>
+              <span class="text-right font-extrabold text-text transition-colors duration-200 group-hover:text-accent">
+                {pick(f.value, locale)}
+              </span>
+            </li>
+          ))}
+        </ul>
+      </aside>
+    </div>
+  </div>
+</section>
