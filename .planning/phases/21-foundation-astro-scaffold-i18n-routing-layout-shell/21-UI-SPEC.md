@@ -1,10 +1,11 @@
 ---
 phase: 21
 slug: foundation-astro-scaffold-i18n-routing-layout-shell
-status: draft
+status: approved
 shadcn_initialized: false
 preset: none
 created: 2026-07-19
+reviewed_at: 2026-07-19
 ---
 
 # Phase 21 — UI Design Contract
