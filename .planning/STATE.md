@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v5
 milestone_name: Astro Migration
 status: planning
-stopped_at: Phase 21 context gathered
-last_updated: "2026-07-19T18:22:46.607Z"
+stopped_at: Phase 21 UI-SPEC approved
+last_updated: "2026-07-19T18:57:18.869Z"
 last_activity: 2026-07-19 — ROADMAP.md + REQUIREMENTS.md traceability written for v5 (17/17 requirements mapped)
 progress:
   total_phases: 22
@@ -191,9 +191,9 @@ Root cause closed: React SPA hydration was blocking the LCP critical path. Hero 
 
 ## Session Continuity
 
-Last session: 2026-07-19T18:22:46.601Z
-Stopped at: Phase 21 context gathered
-Resume file: .planning/phases/21-foundation-astro-scaffold-i18n-routing-layout-shell/21-CONTEXT.md
+Last session: 2026-07-19T18:57:18.860Z
+Stopped at: Phase 21 UI-SPEC approved
+Resume file: .planning/phases/21-foundation-astro-scaffold-i18n-routing-layout-shell/21-UI-SPEC.md
 Untracked (intentional-keep): .planning/projects-input.md, Diagnostico_LinkedIn_*.docx, 14-PATTERNS.md
 Open PR: #2 junie-init only (foreign JetBrains scaffold — close if unused)
 
