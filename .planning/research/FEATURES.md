@@ -1,208 +1,139 @@
-# Feature Research — v3.10 3D Constellation
+# Feature Research
 
-**Domain:** Interactive 3D skill-constellation upgrade for a recruiter-facing portfolio (WebGL desktop only; SVG mobile path untouched).
-**Researched:** 2026-06-08
-**Confidence:** HIGH on camera/control patterns and shader primitives (three.js docs + multiple corroborating sources); MEDIUM on recruiter-conversion specifics (industry rules of thumb, not Carlos's audience data).
+**Domain:** Astro SSG migration — i18n routing + island hydration model (v5 milestone)
+**Researched:** 2026-07-19
+**Confidence:** HIGH (Context7 `/withastro/docs` verified for all Astro-specific claims; codebase read for existing patterns)
 
-> **Scope reminder (DO NOT re-research):** SVG ambient twinkle, prefers-reduced-motion path, focus trap, ExperienceCard dialog, filters (multi-skill AND / year slider / category chips), 8-category clustering, keyboard nav, FpsCounter, RendererErrorBoundary — all SHIPPED in v3.8/v3.9. This file scopes only the **3D + drag-to-rotate** delta on top of `WebGLConstellation.js`.
+## Scope Note
 
----
+This is a narrow, architecture-focused feature landscape for the three questions in scope: `astro:i18n` routing/redirect, island hydration directive selection, and the theme-flip-before-paint pattern. It is not a general portfolio feature survey — those features (Hero, About, Experience, etc.) are already built and validated; this file covers what the Astro migration itself needs to introduce or replace. Supersedes the prior `FEATURES.md` (v3.10 3D constellation research, June 2026) — no longer relevant, WebGL lineage was purged in v4.0.
 
 ## Feature Landscape
 
-### Table Stakes (Users Expect These for a Credible 3D Scene)
+### Table Stakes (Migration Won't Ship Without These)
 
-If any of these is missing, the constellation either stops feeling "3D" or feels broken. Recruiter intuition is calibrated by every other 3D web experience they've ever touched (Google Earth, Sketchfab, product configurators).
+| Feature | Why Expected | Complexity | Notes |
+|---------|--------------|------------|-------|
+| `astro:i18n` config with `locales: ['en','es']`, `defaultLocale: 'en'` | Required for `/en/*` `/es/*` static trees, `Astro.currentLocale`, `getRelativeLocaleUrl()` | LOW | `astro.config.mjs` addition. Verified HIGH confidence — Context7 `/withastro/docs`. |
+| `prefixDefaultLocale: true` | Design spec requires both `/en` and `/es` prefixed (no unprefixed default-locale route) — matches spec's `src/pages/en/index.astro` + `src/pages/es/index.astro` symmetry | LOW | Default Astro behavior is `prefixDefaultLocale: false` (unprefixed default). Must explicitly set `true` or `/en` won't exist as a route — it'll be `/` instead. |
+| Root `/` → locale redirect via **Vercel Edge Middleware** (`middlewareMode: 'edge'`) | `Astro.preferredLocale`/`Accept-Language` detection and cookie reads only work on **on-demand rendered** pages per Astro docs ("browser language detection... for pages rendered on demand"). Plain `output:'static'` middleware does NOT run against prerendered static output when deployed — it only executes at build time / dev server, not on the deployed static files. | MEDIUM | **Critical dependency gap in the design spec.** Spec says "Root `/` resolves via Astro middleware" but doesn't call out that this requires the `@astrojs/vercel` adapter with `adapter: vercel({ middlewareMode: 'edge' })` — a NEW dependency not currently in `package.json`. Without it, `src/middleware.ts` is inert on the deployed Vercel static site. See Pitfalls research for full detail. |
+| Locale-prefixed `<html lang>` per static tree | WCAG/SEO — each `/en/*` and `/es/*` document must declare correct `lang` attribute at the HTML level, build-time, no JS | LOW | Replaces current runtime `document.documentElement.lang = lang` set from React. Now trivial: `<html lang={Astro.currentLocale}>` in `BaseLayout.astro`. |
+| Blocking inline `<script is:inline>` theme-flip in `<head>` | FOUC prevention — must run before first paint, before any hydration | LOW | Standard Astro pattern (official tutorial: "Add client-side interactivity" / islands tutorial ch. 6). Read `localStorage` → fall back `prefers-color-scheme` → set `data-theme` attribute synchronously. |
+| Per-component hydration directive audit (no default-to-`client:load` everywhere) | This is the entire performance thesis of the migration — Astro ships zero JS by default; assigning `client:load` to everything defeats the purpose and reproduces the current CSR bundle problem | LOW–MEDIUM | Design spec's island table is already directionally correct (see below); this research confirms/tightens it against docs. |
+| `ThemeContext`/`LanguageContext` removal for cross-island state | React Context does **not** span island boundaries — each `client:*` component is an independently-hydrated React root with its own module scope. Two separate islands (e.g., Nav island vs a hypothetical standalone ThemeToggle island) cannot share a `createContext()` provider unless one wraps the other in the *same* island tree. | MEDIUM | Direct dependency identified: **ThemeToggle must stay nested inside the Nav island** (as it already is in current `Nav.jsx`, rendered twice for desktop/mobile) rather than being hydrated as an independent sibling island — otherwise it has no way to read/write `data-theme` state in sync with Nav without a shared Context, which islands don't support. Design spec's island table lists ThemeToggle as its own row; this should collapse into "part of the Nav island" unless there's a second standalone use elsewhere. |
+| `Astro.currentLocale` prop-drilled into islands (not Context) | Islands needing the current locale (e.g., Nav labels, language switcher target) read it as a plain prop passed from the `.astro` parent at render time | LOW | Confirmed by design spec and consistent with `Astro.currentLocale` working "for all pages" (including prerendered) per docs — no SSR needed for this specific API. |
 
-| Feature | Why Expected | Complexity | v3.8 Dependency | Notes |
-|---------|--------------|------------|-----------------|-------|
-| **PerspectiveCamera (fov 50–60)** | Without perspective foreshortening, "3D" looks like 2D ortho. Existing `OrthographicCamera` is the bug this milestone fixes. | LOW | Replaces camera in `WebGLConstellation.js` only. | fov=50–60 is the safe portfolio-scale range. fov ≥75 induces fisheye distortion and motion sickness; ≤40 feels telephoto / flat. **Recommend fov=55** as middle ground; many three.js examples default 50, R3F default 75. Document the choice in a D-20 decision. |
-| **Drag-to-rotate (orbit gesture)** | Every 3D web product accepts left-mouse-drag = orbit. Anything else fails the "obvious 3D" test. | LOW | New: `OrbitControls` from `three/examples/jsm/controls/OrbitControls.js` (~5 kB gz). | Default `enableDamping: true`, `dampingFactor: 0.05`, `rotateSpeed: 0.5–0.7` (default 1.0 feels twitchy on trackpad). Must call `controls.update(deltaTime)` in rAF loop. |
-| **Click-vs-drag disambiguation (≥5 px threshold)** | If pointerdown→pointerup with movement triggers `onSelectSkill`, recruiters cannot rotate without accidentally opening ExperienceCard. | MEDIUM | Wraps existing `onSelectSkill` handler in `WebGLConstellation.js`. | Industry-standard threshold: **5 px movement** OR **>250 ms held** before treating pointerup as drag-end-not-click. Track pointerdown coords + timestamp; on pointerup compare. Mobile tap tolerance can be slightly higher (8 px) per Apple HIG. |
-| **Visible depth cue (size attenuation)** | Without it, rotating a 3D point cloud looks like 2D points flickering — no depth read. | LOW | `Points` shader already uses custom `ShaderMaterial`; add `gl_PointSize *= (300.0 / -mvPosition.z)` in vertex shader. | three.js `PointsMaterial.sizeAttenuation` exists but doesn't consider FOV. Custom shader is already in place — minor edit. ~3 LOC. |
-| **Keep existing keyboard nav + focus trap functional** | WCAG 2.1 AA + GAME-06 a11y commitment is non-negotiable; keyboard users cannot rotate but must still navigate nodes. | LOW | Reuses `spatialNav.js` + existing node focus ring. | Keyboard arrows = spatial nav (existing). No keyboard rotation gesture — out of scope, would require a "perspective unlock" mental model. Document: "keyboard users see the constellation from the auto-rotate angle at moment of focus." |
-| **`prefers-reduced-motion` → freeze rotation** | A11y baseline; v3.9 POLISH-02 preserved this for SVG. Must extend to 3D: disable auto-rotate AND disable damping inertia. | LOW | Existing `useRendererCapability.js` already reads media query. | Drag-to-rotate can stay enabled (user-initiated motion is intentional per WCAG 2.3.3). Only suppress auto-spin + inertia. |
-| **Restore camera-state across viewmode toggle** | If recruiter toggles game→dev→game, expect the constellation in the same orientation, not reset. Standard 3D viewer behavior. | LOW | Persist `{phi, theta}` to existing `cam-viewmode` localStorage namespace. | Optional v3.10.1 if cut for scope; not blocking. |
+### Differentiators (Worth Doing Well, Not Blocking)
 
-### Differentiators (Stop the Mid-Scroll)
+| Feature | Value Proposition | Complexity | Notes |
+|---------|-------------------|------------|-------|
+| Locale switch preserves current section hash (`#projects` etc.) | Recruiter mid-scroll on `/en#experience` clicking ES shouldn't land back at the top of `/es` | LOW–MEDIUM | Since `/en` and `/es` are separate static documents (not client-routed), switching locale is a full navigation. `getRelativeLocaleUrl(targetLocale, '')` gives the base path; the Nav island must append `window.location.hash` client-side when building the switcher `href` (can't be done at Astro build time — hash is runtime-only browser state). Small, isolated bit of JS inside the already-hydrated Nav island — no extra cost. |
+| Cookie-based redirect (not just Accept-Language) at `/` | Once a user picks a language via the switcher, `/` should respect that choice on return visits, not just browser locale | LOW | Design spec already specifies cookie-first, header-fallback — this is the right order. Requires the Nav language switcher (or a tiny inline script) to `Set-Cookie: cam-lang=es` client-side or via a redirect response, mirroring the current `localStorage` key `cam-lang` semantics but as a cookie so edge middleware can read it server-side. |
+| Astro View Transitions (`<ClientRouter />`) for locale switch | Could make `/en` ↔ `/es` feel like an SPA transition instead of a hard reload, preserving scroll position automatically | MEDIUM–HIGH | Not in design spec scope. Two fully separate static documents (different `lang`, different content) via View Transitions is a heavier lift and mostly benefits perceived polish, not the Lighthouse gate. Flag as optional post-gate polish, not v5 core. |
+| `client:media` for viewport-conditional hydration (e.g., mobile-only hamburger logic vs desktop nav) | Nav already branches desktop/mobile with two `<ThemeToggle />` renders; `client:media="(max-width: 767px)"` could skip hydrating unused variants | LOW | Available directive per Astro docs (`client:load`, `client:idle`, `client:visible`, `client:media={QUERY}`, `client:only`) — not called out in design spec's island table. Minor bundle trim; only worth it if Nav island size becomes a Lighthouse concern post-migration. |
 
-These are where v3.10 earns the 117 kB gz lazy chunk that v3.8 paid for. Each maps to a "wow → engage" beat.
+### Anti-Features (Do Not Build)
 
-| Feature | Value Proposition | Complexity | v3.8 Dependency | Notes |
-|---------|-------------------|------------|-----------------|-------|
-| **Auto-rotate idle spin (slow, ~30 s/orbit)** | First-render answer to "is this interactive?" — the motion telegraphs depth before the recruiter touches anything. Same trick Sketchfab, Google Earth on first load, and every product configurator uses. | LOW | `OrbitControls.autoRotate = true; autoRotateSpeed ≈ 0.5` (≈ 30 s/full revolution at 60fps default). | **Must pause on user interaction** (`addEventListener('start', ...)` on controls). Auto-rotate axis = world Y (vertical) — never X or Z, which induces nausea fast. Suppress under `prefers-reduced-motion`. |
-| **Category-z architecture clusters** | The depth axis *means* something: backend layer at z=−100, frontend at z=+100, cloud at z=0, etc. Recruiter rotates → sees Carlos's stack literally stratified. Self-documenting differentiation vs generic "random 3D blob". | MEDIUM | Extends `constellation.layout.js` `computeLayout` to return `{x, y, z}`. Adds category→z map (probably in `src/data/skills.js` next to the existing category color map). | Tests in `constellation.layout.test.js` need new shape assertions. Reject `d3-force-3d` (~15 kB) per D-14-01-LAYOUT — deterministic z assignment is enough. |
-| **First-render onboarding hint ("drag to rotate")** | First ~3 s of auto-spin + a fading text/icon overlay = recruiter understands the gesture without reading docs. Vanishes on first interaction. Mirrors POLISH-02 SVG twinkle's "tell the visitor this is alive" goal. | LOW | New small overlay component near `GameMode.js`; bilingual via existing i18n. Auto-dismiss on first pointerdown OR after 5 s. | Persist "seen" flag in localStorage (`cam-3d-hint-seen`) to avoid spam on repeat visits. Mobile (SVG path) does NOT show the hint — gesture doesn't apply. |
-| **Cursor change to `grab` / `grabbing`** | Tiny affordance, huge clarity. Modern 3D viewers all do this; absence reads "unprofessional". | LOW | CSS-only on the `<canvas>` element. | `cursor: grab` default, `cursor: grabbing` while pointer is down. Set via React state during pointer events. |
-| **Damping inertia on release** | Letting go mid-drag and watching the constellation glide to a stop feels like a real object with mass — *that* is the "wow". `OrbitControls.enableDamping = true` does this for ~free. | LOW | Single flag on OrbitControls; rAF loop already running. | `dampingFactor: 0.05–0.08` is the documented sweet spot. <0.04 = feels weightless/jittery; >0.12 = perceptibly slow stop (anti-feature, see below). |
-| **Size-attenuated stars (perspective scaling)** | Distant skills render smaller, near skills render larger — primal depth cue, ~zero cost. | LOW | ~3 LOC in existing vertex shader. | Already listed as table stakes; double-listed here because it is *also* the highest visual lift per LOC. |
-| **Fog / fade-far falloff** | `THREE.Fog` or per-vertex opacity falloff at far z — distant clusters dim out, creating "deep space" feel. Cheap and recruiter-pleasing. | LOW | `scene.fog = new Fog(bg, near, far)` — but `Points` with custom `ShaderMaterial` does NOT auto-pick up scene.fog. Must add `fogColor` + `fogDensity` uniforms + multiply in fragment. | ~10 LOC shader edit. Optional for v1; high impact-per-LOC if shipped. |
-
-### Anti-Features (Sound Cool, Hurt Recruiter Conversion)
-
-These are the traps. Each one has a recorded failure mode in the 3D-web ecosystem. Reject by default, revisit only if explicit data demands.
-
-| Feature | Why Tempting | Why Problematic | Alternative |
-|---------|--------------|-----------------|-------------|
-| **Free-look first-person camera / no `up` constraint** | Feels "more 3D"; lets recruiter "fly through". | Motion sickness is well-documented for fov-mismatched / unconstrained-roll cameras (MDN WebXR, A List Apart vestibular guide). Recruiter loses orientation in 3 s, bounces. | Lock `up = Y` axis via `OrbitControls` (default). Constrain `minPolarAngle ≈ Math.PI * 0.15` / `maxPolarAngle ≈ Math.PI * 0.85` to prevent upside-down. |
-| **Pinch-to-zoom / scroll-to-zoom enabled** | "Why wouldn't we let them zoom?" | Scroll-zoom hijacks page scroll → recruiter trying to scroll past the constellation gets zoomed in instead → rage-bounce. Mobile is on SVG anyway, so pinch is N/A. | `controls.enableZoom = false`. Camera distance is fixed. If zoom is ever desired, gate behind a discoverable button — never on scroll. |
-| **`controls.enablePan = true`** | OrbitControls ships pan on by default. | Pan moves the *target*, drifting the constellation off-center; recruiter never recovers the original framing → frustration. | `controls.enablePan = false`. Rotate-only. |
-| **Accelerometer / device-tilt parallax** | "Cool factor" on mobile. | Mobile path is SVG (zero three.js). Adding accelerometer reintroduces the perf cliff v3.8 explicitly avoided. Also `prefers-reduced-motion` + iOS permission prompt UX cost. | Stay on SVG mobile. If "fancy mobile" ever matters, it is a new milestone (see SEED in v3.11+). |
-| **Slow damping (`dampingFactor < 0.04`)** | "Feels premium / cinematic." | Perceived as laggy / unresponsive on Mac trackpads. GitHub issue #9577 documents the trap. | `0.05–0.08` range. Test on trackpad before locking. |
-| **OrbitControls `rotateSpeed = 1.0` (default)** | Out-of-the-box ship-it. | Twitchy on high-DPI trackpads; recruiter overshoots target, bounces. | `rotateSpeed: 0.5–0.7`. Single line. |
-| **Complex shader effects (volumetric glow, post-processing bloom, ambient occlusion fake)** | "Looks like a Three.js demo." | Adds 30–80 kB gz (postprocessing pass + UnrealBloomPass), risks the Phase 17 perf budget headroom, and visually overpowers the skill labels — recruiter loses the SIGNAL (skills) under the NOISE (bloom). | Stick to `Points` + `LineSegments` + size-attenuation + optional fog. v3.8 already ships glow pulse + halo brighten — enough. |
-| **VR / WebXR mode** | "Future-proof / brag-worthy." | Zero recruiters have headsets at their desk. Adds permission prompts, polyfills, ~50 kB bundle. Pure scope-creep. | Reject. Document in Out of Scope. If user explicitly asks, point at SEED. |
-| **OrbitControls damping at perceptibly slow speeds (8+ second glide)** | "Cinematic." | Recruiter waits for the constellation to stop before clicking → friction. The wait is in the conversion path. | Damping should settle in <1 s after release. |
-| **Auto-rotate at recruiter-detectable speed (too fast OR too slow)** | "Visible motion = wow." | Too fast (>15 deg/s) = nauseating, especially on widescreen. Too slow (<1 deg/s) = looks broken / stuck. | ~12 deg/s ≈ 30 s/orbit. (`autoRotateSpeed ≈ 0.5` in OrbitControls' unit system.) |
-| **Lock-on / "fly to clicked node" camera animations** | "Like a slick configurator." | Hijacks the camera while recruiter is mid-explore → orientation loss → bounce. Also requires tween library (~5 kB). | Click = open ExperienceCard (existing v3.8 behavior). Camera stays where the user left it. |
-| **Background star particles / parallax space dust** | "Sets the constellation in a cosmos." | Visually competes with the actual skill nodes. Recruiter cannot tell signal from chrome. Bundle + GPU cost not free. | Solid `ink-900` background (existing). Maybe `THREE.Fog` for depth (above). |
-| **Touch-to-rotate on mobile WebGL (i.e., abandoning adaptive render for mobile)** | "Symmetry between desktop + mobile." | Re-introduces the mobile-Safari WebGL perf cliff that the v3.8 adaptive render was specifically designed to dodge. Kills Lighthouse mobile gate. | Mobile stays on SVG. Document the divergence as adaptive-fidelity feature (per SEED Risk #1). |
-
----
+| Feature | Why it Seems Appealing | Why Problematic | Alternative |
+|---------|------------------------|------------------|-------------|
+| Custom i18n routing/redirect system (manual `getStaticPaths` + hand-rolled locale resolver) | Full control, matches existing bespoke `LanguageContext` mental model | `astro:i18n` (`routing`, `fallback`, `redirectToFallback`, `getRelativeLocaleUrl`) already covers prefix generation, fallback locales, and redirect helpers natively — reinventing it duplicates well-tested framework code and loses the `Astro.currentLocale`/`Astro.preferredLocale` integration | Use built-in `i18n` config block; only write custom logic for the one truly custom piece (cookie+header redirect at `/`), via `defineMiddleware` + `redirectToFallback` helper where applicable |
+| `routing: 'manual'` mode | Feels like "more control" | Disables Astro's default i18n middleware entirely, forcing the team to reimplement prefix matching, 404 handling, and locale fallback by hand — over-engineering for a 2-locale site | Default (`prefix`) routing mode with `prefixDefaultLocale: true` covers the 2-locale `/en` `/es` symmetry the spec wants |
+| React Context (`LanguageContext`/`ThemeContext`) ported as-is into Astro islands | Minimal diff from current codebase, "just works" mentally | Context providers can't cross island boundaries; wrapping multiple independent islands in a single shared `<Provider>` forces them back into one monolithic hydrated tree — exactly what islands architecture exists to avoid, and defeats the Lighthouse JS-payload goal | Prop-drilling from `.astro` parent (locale) + local component state per island reading `data-theme`/`localStorage`/cookie directly (theme) — no shared runtime Context needed |
+| Defaulting every interactive component to `client:load` "to be safe" | Avoids thinking about each component's actual need; interactivity "just works" immediately | Reproduces the current CSR problem — everything ships JS on first load regardless of position/priority, directly undermining the migration's Lighthouse performance thesis | Directive-per-component based on actual need: `client:load` only for above-the-fold, always-visible, small components (Nav, ThemeToggle); `client:visible` for anything below the fold or gated behind user scroll (Experience accordion, SectionPager) |
+| `client:only` as a default/fallback when unsure | Sidesteps SSR mismatch errors quickly | Skips server-side HTML rendering entirely — the component renders nothing until JS loads, which is bad for perceived load (blank flash) and bad for SEO/crawlers on interactive-but-content-bearing components | Reserve `client:only` for components that genuinely cannot SSR (browser-API-dependent on first render, e.g. something reading `window` synchronously before mount) — none of Nav/Experience/ThemeToggle/SectionPager should need it since they all have valid static HTML fallbacks |
+| Full SSR (`output: 'server'`) just to solve the `/` redirect | Simplest mental model — "just use `Astro.preferredLocale` everywhere, no edge middleware needed" | Throws away the static-output Lighthouse win for the entire site to solve one route's redirect; adds a server runtime dependency and cold-start/TTFB risk site-wide instead of on one function | Keep `output: 'static'`; use Vercel Edge Middleware (`middlewareMode: 'edge'`) which runs the redirect logic for every request including static assets, without converting any page to on-demand rendering |
 
 ## Feature Dependencies
 
 ```
-PerspectiveCamera (camera swap)
-    └── enables ──> Drag-to-rotate (OrbitControls)
-                        ├── requires ──> Click-vs-drag threshold (≥5 px / 250 ms)
-                        ├── enhances ──> Damping inertia on release
-                        ├── enhances ──> Cursor change (grab/grabbing)
-                        └── enables ──> Auto-rotate idle spin
-                                            ├── requires ──> Pause-on-user-interaction
-                                            └── enhances ──> First-render onboarding hint
+astro:i18n config (locales + prefixDefaultLocale)
+    └──requires──> src/pages/en/index.astro + src/pages/es/index.astro (route trees exist)
+                       └──requires──> LanguageContext removal (static content no longer needs runtime lang state)
+                                          └──enables──> BaseLayout.astro <html lang={Astro.currentLocale}> (build-time, zero JS)
 
-PerspectiveCamera
-    └── enables ──> Size-attenuated stars (perspective shader edit)
-                        └── enhances ──> Fog / fade-far falloff
+Root "/" cookie+Accept-Language redirect
+    └──requires──> @astrojs/vercel adapter, middlewareMode: 'edge'  [NEW DEPENDENCY — not in current package.json]
+                       └──requires──> src/middleware.ts (defineMiddleware)
+                       └──enhances──> cam-lang cookie set by Nav language switcher (replaces localStorage-only persistence)
 
-Category-z layout (data layer)
-    ├── requires ──> computeLayout returns {x, y, z}
-    ├── conflicts ──> GAME-01 "identical render contract" (visual divergence — reframe as adaptive-fidelity)
-    └── informs ──> SVG mobile path stays 2D (untouched)
+Theme-flip-before-paint inline script
+    └──requires──> data-theme attribute + CSS var system (already exists, unchanged from current src/index.css)
+    └──conflicts-with──> ThemeContext's current useEffect-based flip (must be fully removed, not layered on top — two competing writers to data-theme causes flicker/race)
+    └──enables──> ThemeToggle island (reads data-theme on mount, writes on click + localStorage/cookie, no Context needed)
 
-prefers-reduced-motion
-    ├── disables ──> Auto-rotate idle spin
-    ├── disables ──> Damping inertia
-    └── preserves ──> Drag-to-rotate (user-initiated, WCAG 2.3.3 exempt)
+ThemeToggle island
+    └──requires──> stays nested inside Nav island (client:load) — cannot be an independent sibling island without a shared Context, which islands don't support
+                       └──conflicts-with──> design spec's island table listing ThemeToggle as its own separate row
+
+Experience expand/collapse island (client:visible)
+    └──requires──> Experience.astro static shell renders full content server-side first (accordion collapsed state is a progressive enhancement, not a content-gating mechanism — SEO/no-JS users must still get full text)
+
+SectionPager (client:visible) + Nav scroll-spy (client:load)
+    └──both read──> useActiveSection-equivalent logic; if they need to share "current active section" state, that's a second cross-island coordination case similar to ThemeToggle — either co-locate in one island or communicate via a DOM event / URL hash, not React Context
 ```
 
 ### Dependency Notes
 
-- **Drag-to-rotate requires click-vs-drag threshold:** Without the threshold, every drag-end fires the existing `onSelectSkill` → ExperienceCard opens unexpectedly. This is the single most likely v3.10 UAT regression.
-- **Auto-rotate requires pause-on-interaction:** Without it, the camera keeps drifting while the user tries to rotate → frustration. `controls.addEventListener('start', () => controls.autoRotate = false)` is the one-liner fix.
-- **Category-z conflicts with GAME-01:** The v3.8 spec promised "identical props contract" between SVG and WebGL. 3D z-axis breaks visual identity (SVG cannot do perspective). Roadmap must explicitly reframe GAME-01 as "identical *data* contract; adaptive *visual fidelity*" — already flagged in SEED.
-- **First-render hint enhances auto-rotate, doesn't require it:** If auto-rotate is cut, the hint still works (text says "drag to rotate"). If hint is cut, auto-rotate still telegraphs interactivity. They compound but are independent.
-- **Size-attenuation + fog compound:** Both communicate depth via the same channel (apparent brightness/size with distance). Either alone gives 80% of the read; together gives 95%. Ship at least one.
+- **Root redirect requires the Vercel adapter, which is a scope addition the design spec doesn't name.** This is the single most consequential finding: without `@astrojs/vercel` + `middlewareMode: 'edge'`, the spec's "Root `/` resolves via Astro middleware" line is not achievable against a deployed `output:'static'` site — middleware only runs at build/dev time for prerendered output, not per-request in production, unless a runtime (edge function) is attached. Flag for roadmap: this is a phase-0/infra-setup task, not incidental.
+- **ThemeToggle and LanguageContext both hit the same underlying constraint** — React Context cannot bridge island boundaries. Every place the current codebase relies on a Context Provider wrapping multiple components that will become *separate* islands needs a redesign: either (a) co-locate the components in one island, (b) drop to props from the `.astro` parent (works for read-only, build-time-known values like locale), or (c) use a non-React mechanism (DOM `CustomEvent`, `data-*` attribute + `MutationObserver`, or plain module-level closure if both islands are literally the same hydration boundary).
+- **Experience accordion must remain server-rendered in full** — `client:visible` for the *toggle control* only (per design spec), but the underlying content (all bullets/tech chips) must be present in the static HTML output regardless of JS/hydration state, both for the "12 entries visible from first load" existing requirement and for SEO/no-JS accessibility. This isn't a new feature, but it constrains how the island boundary is drawn: the expand/collapse control is the island; the content is not gated by it, only visually toggled.
 
----
+## MVP Definition
 
-## MVP Definition (for v3.10 DEPTH-01)
+### Launch With (v5 exit criteria)
 
-### Launch With (v3.10.0) — Single REQ Scope
+- [ ] `astro:i18n` config: `locales:['en','es']`, `defaultLocale:'en'`, `routing.prefixDefaultLocale:true` — table stakes, blocks everything else
+- [ ] `@astrojs/vercel` adapter with `middlewareMode:'edge'` + `src/middleware.ts` cookie/Accept-Language redirect at `/` — table stakes, spec's explicit exit criteria depends on it working in production, not just locally
+- [ ] Blocking `<script is:inline>` theme-flip in `BaseLayout.astro <head>` — table stakes, directly targets the Lighthouse gate (removes React-hydration-dependent FOUC)
+- [ ] Island directive assignment per design spec's table, corrected per this research: Nav (`client:load`, includes nested ThemeToggle — not a separate island), Experience expand/collapse control (`client:visible`), SectionPager (`client:visible`), Hero interactive slice (spec-defined), About/Skill/Footer/Projects static (no directive)
+- [ ] `LanguageContext`/`ThemeContext` fully removed — no dual-writer race with the new inline script / prop-drilling approach
 
-The bar is "credible 3D + recruiter cannot break it accidentally."
+### Add After Validation (post-Lighthouse-gate)
 
-- [ ] **PerspectiveCamera** (fov=55) — without this, nothing else is 3D.
-- [ ] **3D layout: category-z** — without depth-per-node, the camera swap shows nothing.
-- [ ] **OrbitControls drag-to-rotate** — `enableDamping=true`, `dampingFactor=0.06`, `rotateSpeed=0.6`, `enableZoom=false`, `enablePan=false`, polar-angle clamped.
-- [ ] **Click-vs-drag threshold** — 5 px / 250 ms guard around existing `onSelectSkill`.
-- [ ] **Size-attenuated points** — 3-LOC vertex shader edit.
-- [ ] **Cursor grab/grabbing** — CSS-only.
-- [ ] **`prefers-reduced-motion` path: drag stays, auto-rotate + damping suppressed.**
-- [ ] **Keep all v3.8/v3.9 a11y + filter + ExperienceCard behavior functional after camera swap.**
+- [ ] Locale switch preserves current section hash — small Nav island addition, do once base routing is proven green
+- [ ] `client:media` viewport-conditional hydration for desktop/mobile Nav variants — only if bundle-gate numbers post-migration show it's worth the marginal savings
 
-### Add After Validation (v3.10.1, if quick UAT shows engagement)
+### Future Consideration (not v5)
 
-Trigger: post-deploy session-replay or visit-duration shows recruiters interact with the canvas (mousemove + pointer events) but bounce before opening an ExperienceCard.
-
-- [ ] **Auto-rotate idle spin** (`autoRotateSpeed ≈ 0.5`) with pause-on-interaction — telegraphs interactivity for the recruiters who *don't* mousemove first.
-- [ ] **First-render onboarding hint** ("drag to rotate" / "arrastra para rotar") — bilingual, 5-second auto-dismiss, localStorage seen-flag.
-- [ ] **Fog falloff** — soft fade at far z, ~10 LOC.
-
-### Future Consideration (v3.11+, only if a new milestone is opened)
-
-- [ ] **Camera state persistence** across viewmode toggle.
-- [ ] **"Reset view" button** if UAT shows users get lost (likely no — polar clamp prevents disorientation).
-- [ ] **Per-category depth color shift** — subtle blue→amber gradient with z.
-- [ ] **Reject permanently:** WebXR/VR, accelerometer parallax, post-processing bloom, mobile WebGL.
-
----
+- [ ] Astro View Transitions (`<ClientRouter />`) for SPA-like locale switching — real UX polish but orthogonal to the Lighthouse gate that defines v5's exit criteria; revisit as its own micro-milestone once v5 ships
 
 ## Feature Prioritization Matrix
 
-| Feature | User Value | Implementation Cost | Priority | v3.8 Dependency |
-|---------|------------|---------------------|----------|-----------------|
-| PerspectiveCamera (fov=55) | HIGH | LOW | **P1** | Camera swap in `WebGLConstellation.js` |
-| 3D layout: category-z | HIGH | MEDIUM | **P1** | Extends `constellation.layout.js` + tests |
-| OrbitControls drag-to-rotate | HIGH | LOW | **P1** | New import; configure flags |
-| Click-vs-drag threshold | HIGH | MEDIUM | **P1** | Wraps existing `onSelectSkill` |
-| Size-attenuated points (shader) | HIGH | LOW | **P1** | Existing shader edit |
-| `prefers-reduced-motion` path preserved | HIGH | LOW | **P1** | Existing `useRendererCapability.js` |
-| Cursor grab/grabbing | MEDIUM | LOW | **P1** | CSS only |
-| Damping inertia | MEDIUM | LOW | **P1** | One flag on OrbitControls |
-| Polar-angle clamp | HIGH | LOW | **P1** | Two numbers on OrbitControls |
-| Auto-rotate idle spin | HIGH | LOW | **P2** | One flag + pause-on-start listener |
-| First-render onboarding hint | MEDIUM | LOW | **P2** | New small bilingual component |
-| Fog falloff | MEDIUM | LOW | **P2** | Shader uniforms |
-| Camera-state persistence | LOW | MEDIUM | **P3** | Extends localStorage layer |
-| Per-category depth color shift | LOW | MEDIUM | **P3** | Shader + skills.js extension |
-| "Reset view" button | LOW | LOW | **P3** | UI button calling `controls.reset()` |
+| Feature | User Value | Implementation Cost | Priority |
+|---------|------------|---------------------|----------|
+| `astro:i18n` locale-prefixed routing | HIGH | LOW | P1 |
+| Vercel edge middleware root redirect | HIGH | MEDIUM | P1 |
+| Blocking theme-flip inline script | HIGH | LOW | P1 |
+| Correct hydration directive per island | HIGH | LOW–MEDIUM | P1 |
+| Context removal / prop-drilling refactor | HIGH (unblocks above) | MEDIUM | P1 |
+| Hash-preserving locale switch | MEDIUM | LOW | P2 |
+| `client:media` viewport hydration split | LOW | LOW | P3 |
+| View Transitions locale switch | LOW (polish only) | HIGH | P3 |
 
 **Priority key:**
-- **P1** Must ship for v3.10.0 — bar for "credible 3D."
-- **P2** Ship if scope allows in v3.10.0; otherwise v3.10.1 micro-milestone.
-- **P3** Backlog / future seed.
-
----
-
-## Competitor / Pattern Reference
-
-| Pattern | Sketchfab | Google Earth | Generic Three.js Demo | Carlos v3.10 Approach |
-|---------|-----------|--------------|------------------------|------------------------|
-| Default camera | Perspective ~45 fov | Perspective ~35 fov | R3F default 75 fov | **Perspective fov=55** (mid-range; avoids fisheye + flat) |
-| Drag-to-rotate | Yes, primary gesture | Yes | Yes via OrbitControls | **Yes** (OrbitControls, `rotateSpeed=0.6`) |
-| Auto-rotate on first load | Yes (on model viewer pages) | No | Often (demo flex) | **Yes, P2** — slow ~30 s/orbit, pause-on-interaction |
-| Scroll-to-zoom | Yes | Yes | Default ON | **Disabled** — protects page scroll |
-| Pan | Yes (right-drag) | Yes | Default ON | **Disabled** — prevents off-center drift |
-| Click-vs-drag handling | Threshold-based | Threshold-based | Often broken in demos | **5 px / 250 ms threshold** |
-| Damping | Yes | Yes | Often missing | **Yes, `dampingFactor=0.06`** |
-| Size attenuation | N/A (meshes) | N/A | Sometimes on Points | **Yes, custom shader (already present)** |
-| First-visit hint | Subtle "drag to rotate" icon | None (assumes familiarity) | None | **Yes, P2** — bilingual, auto-dismiss |
-| Reduced-motion handling | Partial | Partial | Almost never | **Yes** — auto-rotate + damping suppressed |
-| VR mode | Yes (cost: bundle + permission) | Yes (Earth VR) | Often demo-only | **No** — rejected as anti-feature |
-
----
-
-## Quality Gate Self-Check
-
-- [x] **Categories clear:** Table stakes (7) / Differentiators (7) / Anti-features (13).
-- [x] **Complexity tagged per feature:** LOW / MEDIUM / HIGH in every row.
-- [x] **v3.8 dependency identified per feature:** Every row in table stakes + differentiators names the existing file or hook the change touches.
-- [x] **Single REQ discipline preserved:** DEPTH-01 maps to the P1 set; auto-rotate + hint flagged P2 (cuttable without breaking the credible-3D bar).
-- [x] **Adaptive-fidelity divergence (GAME-01 reframe) surfaced** as a dependency note.
-- [x] **Mobile path (SVG) untouched commitment honored** in anti-features.
+- P1: Required for v5 exit criteria (Lighthouse gate green, feature parity)
+- P2: Should have, low-risk addition once P1 is stable
+- P3: Nice to have, separate future milestone
 
 ## Sources
 
-- [OrbitControls — three.js docs](https://threejs.org/docs/pages/OrbitControls.html)
-- [OrbitControls.autoRotateSpeed reference](https://threejs.org/docs/#examples/en/controls/OrbitControls.autoRotateSpeed)
-- [OrbitControls: Speed and sensitivity is too high — Issue #9577](https://github.com/mrdoob/three.js/issues/9577)
-- [Camera Controls — Wawa Sensei React Three Fiber course](https://wawasensei.dev/courses/react-three-fiber/lessons/camera-controls)
-- [3D Data Visualization with React and Three.js — Peter Beshai (Cortico)](https://medium.com/cortico/3d-data-visualization-with-react-and-three-js-7272fb6de432)
-- [PointsMaterial size attenuation doesn't consider FOV — Issue #12150](https://github.com/mrdoob/three.js/issues/12150)
-- [PointsMaterial's sizeAttenuation default — Issue #10385](https://github.com/mrdoob/three.js/issues/10385)
-- [WebXR Perspective Retrospective — MDN](https://developer.mozilla.org/en-US/docs/Web/API/WebXR_Device_API/Perspective)
-- [Game Accessibility Guidelines — Default FOV](https://gameaccessibilityguidelines.com/if-the-game-uses-field-of-view-3d-engine-only-set-an-appropriate-default-for-the-expected-viewing-environment/)
-- [Designing Safer Web Animation for Motion Sensitivity — A List Apart](https://alistapart.com/article/designing-safer-web-animation-for-motion-sensitivity/)
-- [Discover three.js — Extend with a Camera Controls Plugin](https://discoverthreejs.com/book/first-steps/camera-controls/)
-- [3D Force Graph — vasturiano/3d-force-graph](https://github.com/vasturiano/3d-force-graph)
-- [3D Artist Portfolio Guide for 2026 — Fast.io](https://fast.io/resources/3d-artist-portfolio/)
-- [Controls Zoom & Pan Bug on Touch Devices — Issue #27073](https://github.com/mrdoob/three.js/issues/27073)
-- [camera-controls (yomotsu) — alternative ref](https://github.com/yomotsu/camera-controls)
-- Internal SEED: `.planning/seeds/SEED-3D-CONSTELLATION.md`
-- Internal: `.planning/milestones/v3.8-REQUIREMENTS.md` (GAME-01 contract reframe context)
+- Context7 `/withastro/docs` (official Astro documentation, HIGH confidence, verified 2026-07-19):
+  - `reference/configuration-reference.mdx` — i18n `routing` object, `prefixDefaultLocale`, `redirectToDefaultLocale`, `fallbackType`
+  - `guides/internationalization.mdx` — fallback locales, manual routing mode, browser language detection (`Astro.preferredLocale` limited to on-demand rendered pages)
+  - `reference/modules/astro-i18n.mdx` — `redirectToFallback`, `getRelativeLocaleUrl()` signature and examples
+  - `guides/integrations-guide/vercel.mdx` — `middlewareMode: 'edge'`, Astro middleware running as Vercel Edge Function on all requests including static assets
+  - `guides/upgrade-to/v3.mdx` — historical `edgeMiddleware` config shape (superseded by `middlewareMode`)
+  - `reference/routing-reference.mdx`, `guides/on-demand-rendering.mdx` — `export const prerender = false` per-route opt-out semantics under `output:'static'`
+  - `guides/framework-components.mdx`, `reference/directives-reference.mdx` — `client:load`, `client:idle`, `client:visible`, `client:media`, `client:only` semantics and priority
+  - `tutorial/6-islands/2.mdx` — official theme-toggle tutorial pattern (`<script is:inline>`, localStorage + `prefers-color-scheme` fallback, `data-theme`/class toggling before hydration)
+  - `recipes/i18n.mdx` — root index redirect patterns (`<meta http-equiv="refresh">` for static, `Astro.redirect()` for SSR)
+- Codebase inspection (HIGH confidence — read directly):
+  - `src/i18n/ThemeContext.jsx` — current React-Context-based theme flip (useEffect-driven, confirms the dual-writer race risk if layered under a new inline script)
+  - `src/components/_shared/ThemeToggle.jsx`, `src/components/Nav.jsx` — confirms ThemeToggle is currently nested inside Nav (rendered twice, desktop+mobile), supporting the "must stay co-located, not a separate island" finding
+  - `index.html` — confirms no existing pre-paint theme script; current FOUC (if any) is masked because default theme (dark) matches default CSS, only a returning light-theme user would see a flash
+  - `docs/superpowers/specs/2026-07-19-astro-migration-design.md` — approved design spec, source of the island boundary table and root-redirect strategy assessed against docs above
+  - `.planning/PROJECT.md` — milestone context, existing Lighthouse gate thresholds
 
 ---
-*Feature research for: v3.10 3D Constellation — adaptive-fidelity desktop WebGL upgrade*
-*Researched: 2026-06-08*
+*Feature research for: Astro `astro:i18n` routing + islands hydration model (v5 migration)*
+*Researched: 2026-07-19*
