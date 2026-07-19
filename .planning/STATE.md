@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v5
 milestone_name: Astro Migration
-status: ready_to_plan
-stopped_at: Phase 22 complete (2/2) — ready to discuss Phase 999.4
-last_updated: 2026-07-19T21:57:47.998Z
+status: planning
+stopped_at: Phase 23 context gathered (--auto)
+last_updated: "2026-07-19T22:01:38.840Z"
 last_activity: 2026-07-19
 progress:
   total_phases: 22
   completed_phases: 2
   total_plans: 16
-  completed_plans: 63
+  completed_plans: 14
   percent: 9
 ---
 
@@ -206,9 +206,9 @@ Root cause closed: React SPA hydration was blocking the LCP critical path. Hero 
 
 ## Session Continuity
 
-Last session: 2026-07-19T21:42:09.927Z
-Stopped at: Completed 22-02-PLAN.md
-Resume file: None
+Last session: 2026-07-19T22:01:38.834Z
+Stopped at: Phase 23 context gathered (--auto)
+Resume file: .planning/phases/23-static-content-sections/23-CONTEXT.md
 Untracked (intentional-keep): .planning/projects-input.md, Diagnostico_LinkedIn_*.docx, 14-PATTERNS.md
 Open PR: #2 junie-init only (foreign JetBrains scaffold — close if unused)
 
