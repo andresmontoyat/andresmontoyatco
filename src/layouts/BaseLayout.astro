@@ -22,7 +22,10 @@ const path = Astro.url.pathname.replace(/^\/(en|es)/, '') || '/'
 
 // D-06: base domain is a build-time env var, never hardcoded in this file.
 // D-05: value is https://andresmontoyat.co (matches index.html's current domain).
-const siteUrl = import.meta.env.PUBLIC_SITE_URL
+// Falls back to D-05's value if PUBLIC_SITE_URL isn't configured on the build
+// environment (e.g. Vercel env var not yet set) — prevents a hard build crash
+// from `new URL(path, undefined)` while env var remains the intended override.
+const siteUrl = import.meta.env.PUBLIC_SITE_URL || 'https://andresmontoyat.co'
 
 // [ASSUMED->CONFIRMED] astro@7.1.1's public `astro:i18n` GetLocaleOptions type
 // only exposes { normalizeLocale, prependWith } — no `base` override (verified
