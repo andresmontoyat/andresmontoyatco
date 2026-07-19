@@ -1,15 +1,16 @@
 ---
 gsd_state_version: 1.0
-milestone: v4.2
-milestone_name: Content polish — experience rewrite + projects redesign
-status: in-progress
-stopped_at: v4.2 content work on main (no tag yet) — experience rewrite + projects expansion (Llevape + Mr. Yoker featured lead) + retro pixel font (Press Start 2P) + interactive hover states across sections. Working tree cleaned (dead docx CVs removed, questionnaire intake committed). main in sync with origin.
-last_updated: 2026-07-16T10:40:00-05:00
-last_activity: 2026-07-16 - resume-work cleanup: 2 atomic commits (333bcd2 remove dead public docx CVs; 392316f fill v4.2 experience fase-2 questionnaire). Tree clean.
+milestone: v5
+milestone_name: Astro Migration
+status: planning
+last_updated: "2026-07-19T16:18:57.175Z"
+last_activity: 2026-07-19
 progress:
-  shipped_to_main: 5
-  remaining: open  # projects expansion + content passes; no fixed slice count yet
-  percent: null
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 # Project State
@@ -60,11 +61,13 @@ progress:
 **Dependency hygiene (2026-06-22):** Closed 16 obsolete dependabot PRs (#5–#24) — all targeted the removed CRA/craco toolchain (craco, react-scripts, axios, lodash + transitives no longer in package.json post-Vite migration). Inmergeable + no-op.
 
 **Carried concerns:**
+
 - ~~**23 vulns**~~ — CLOSED via PR #41 (2026-07-01). Toolchain upgraded (vite 8 / vitest 4 / plugin-react 6); required `.js`→`.jsx` migration (oxc replaced esbuild, parses JSX only in `.jsx`). **17 moderate vulns remain** — all still devDep (vite/vitest/lighthouse chain); 2 critical + 1 high eliminated. No prod-bundle exposure.
 - **No v4.2 tag** — content work unbounded (no fixed slice count). Tag when content passes converge.
 - **projects-input.md** (`.planning/`) holds the raw project intake (Mr. Yoker filled; Atenea + others blank) — source for future projects expansion.
 
 **v4.2 backlog:**
+
 - ~~**VIS-05**~~ — RETIRED. Cards added (260625-dvq) then the entire featured-apps grid was removed (eb35856) during Claude offerings consolidation. No longer applicable.
 - **Projects expansion** — fill `.planning/projects-input.md` (Mr. Yoker filled; Atenea + others blank), then surface in Projects section.
 - **DIAGRAMS-01** — cross-repo architecture diagrams.
@@ -88,10 +91,10 @@ See: .planning/PROJECT.md (refreshed 2026-06-13 — v4.0 milestone documented; v
 
 ## Current Position
 
-Slice: 7 of 7 shipped ✅
-Status: Ready to close v4.0 (awaiting UAT + tag)
-Last activity: 2026-06-13T23:55Z
-Progress bar: `[██████████████] 7/7 slices on main — v4.0 complete`
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements
+Last activity: 2026-07-19 — Milestone v5 started
 
 ## Shipped Slices (on main, in chronological + PR order)
 
@@ -108,6 +111,7 @@ Progress bar: `[██████████████] 7/7 slices on main �
 **Final section order:** Nav → Hero → About → Skill → Experience → Projects → Claude → Contact → Footer.
 
 **Final metrics:**
+
 - 57/57 tests GREEN on main
 - Build 60.93 kB gz (bundle-gate WARN — over soft 60, under HARD 68 — Claude section content +1 kB above soft ceiling acceptable for closing slice)
 - All 7 sections JSON-driven; uniform `pick(field, lang)` helper inlined per component
@@ -175,8 +179,8 @@ Root cause closed: React SPA hydration was blocking the LCP critical path. Hero 
 
 ## Session Continuity
 
-Last session: 2026-07-16T10:40:00-05:00 (resume-work; committed working-tree cleanup, refreshed STATE.md)
-Stopped at: main in sync with origin. Working tree clean (2 atomic commits: dead docx CVs removed, questionnaire intake filled). Since last STATE sync main gained: pixel display font (Press Start 2P), interactive hover states (about/hero/skills/footer), Llevape project, Mr. Yoker featured lead. Next candidates: (a) apply filled questionnaire → experience.json (fase-2 experience content), (b) projects expansion — Atenea still blank in projects-input.md, (c) v4.2 tag, (d) DIAGRAMS-01 / custom domain.
+Last session: 2026-07-16T11:27:00-05:00 (resume-work; projects thread reviewed → converged)
+Stopped at: main in sync with origin. Projects section COMPLETE — all 4 filled intake projects live in projects.json (Mr. Yoker featured, Llevape, Mutual SER, Hexadialer). Atenea SKIPPED (no content provided; marked in projects-input.md so it won't resurface as a false gap). Projects expansion closed — no further work unless new project intake arrives. Next candidates: (a) apply filled questionnaire → experience.json (fase-2 experience content), (b) v4.2 tag, (c) DIAGRAMS-01 / custom domain.
 Resume file: none — clean checkpoint
 Untracked (intentional-keep): .planning/projects-input.md, Diagnostico_LinkedIn_*.docx, 14-PATTERNS.md
 Open PR: #2 junie-init only (foreign JetBrains scaffold — close if unused)

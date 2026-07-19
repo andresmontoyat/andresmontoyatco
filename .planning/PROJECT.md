@@ -1,5 +1,20 @@
 # Carlos Montoya Portfolio — Redesign
 
+## Current Milestone: v5 Astro Migration
+
+**Goal:** Migrate from React CSR (Vite) to Astro SSG with React islands for interactive components, to clear the Lighthouse mobile hard gate (Performance ≥0.95, Accessibility/Best Practices/SEO = 1.0) that has been blocking since v4.2 Phase 11.
+
+**Target features:**
+- Astro SSG (`output: 'static'`) shell, same Vercel host
+- `/en` `/es` routes via `astro:i18n`; `/` redirects by cookie/Accept-Language
+- React islands only where needed: Nav, SectionPager, Hero (interactive part), Experience expand/collapse, ThemeToggle
+- Static `.astro` components (zero client JS): About, Skill, Footer, Projects
+- Theme flip via blocking inline `<head>` script (reuses existing `data-theme` pattern)
+- Per-phase test gate: RTL for islands, Astro Container API for static components
+- `vercel.json` SPA-fallback rewrite removed; unused `three` dependency removed
+
+**Scope note:** This milestone is separate from v4.2 (Content Polish), which remains in progress directly on `main` and is untouched by this work. All v5 work happens on its own branch; merges to `main` only with the Lighthouse gate green. Source spec: `docs/superpowers/specs/2026-07-19-astro-migration-design.md` (commit `6a3bf4a`).
+
 ## Current State
 
 **Active milestone:** **v4.0 Portfolio Redesign — JSON-Driven Section Refactor** (in progress, opened 2026-06-12).
@@ -288,4 +303,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-06-10 — milestone v3.10 SHIPPED (3D Constellation: DEPTH-01 delivered, 1/1 REQ, 293/293 tests GREEN, operator UAT 12/12 PASS + Lighthouse mobile HARD gate cleared, tag candidate v3.10 queued). v3.9 carried debt (above-fold + SVG twinkle real-device confirms) resolved in same operator sweep. v3.7 deploy work (Plan 11-05, DEPLOY-02/03), VIS-05, DIAGRAMS-01 carried as deferred — candidates for v3.11.*
+*Last updated: 2026-07-19 — milestone v5 Astro Migration started. v4.2 Content Polish remains in-progress directly on `main`, untouched by v5 (separate branch, merges only with Lighthouse gate green). Source: `docs/superpowers/specs/2026-07-19-astro-migration-design.md` (commit `6a3bf4a`).*
