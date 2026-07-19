@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v5
 milestone_name: Astro Migration
 status: executing
-stopped_at: Completed 21-04-PLAN.md
-last_updated: "2026-07-19T20:24:37.523Z"
+stopped_at: "Phase 21: plans 21-01..21-04 complete (104/104 tests GREEN), 21-05 checkpoint reached — needs PUBLIC_SITE_URL in Vercel env vars + git push of v5-astro-migration to trigger preview deploy + 7-check validation matrix (see 21-05-PLAN.md). User deferred the push. Branch v5-astro-migration never pushed to origin."
+last_updated: "2026-07-19T20:30:58.020Z"
 last_activity: 2026-07-19
 progress:
   total_phases: 22
@@ -199,9 +199,9 @@ Root cause closed: React SPA hydration was blocking the LCP critical path. Hero 
 
 ## Session Continuity
 
-Last session: 2026-07-19T20:24:37.517Z
-Stopped at: Completed 21-04-PLAN.md
-Resume file: None
+Last session: 2026-07-19T20:30:58.009Z
+Stopped at: Phase 21: plans 21-01..21-04 complete (104/104 tests GREEN), 21-05 checkpoint reached — needs PUBLIC_SITE_URL in Vercel env vars + git push of v5-astro-migration to trigger preview deploy + 7-check validation matrix (see 21-05-PLAN.md). User deferred the push. Branch v5-astro-migration never pushed to origin.
+Resume file: .planning/phases/21-foundation-astro-scaffold-i18n-routing-layout-shell/21-05-PLAN.md
 Untracked (intentional-keep): .planning/projects-input.md, Diagnostico_LinkedIn_*.docx, 14-PATTERNS.md
 Open PR: #2 junie-init only (foreign JetBrains scaffold — close if unused)
 
