@@ -112,7 +112,12 @@
   1. Hero's char-reveal H1 and entrance treatment render without waiting on React hydration; the hero photo remains the LCP candidate (LCP timing at or better than v4.1's 2.1s baseline).
   2. The CV download control uses native `<details>`/`<summary>` (zero JS) and works identically on `/en` and `/es`, keyboard-operable (Escape-key close cross-browser verified) and screen-reader-navigable.
   3. Any duplicated count-up animation logic (Hero + About) is consolidated into a single shared vanilla-script enhancer, not left duplicated per component.
-**Plans**: TBD
+**Plans**: 5 plans
+  - [ ] 24-01-PLAN.md — Shared vanilla enhancers: count-up.js (D-02) + details-dismiss.js (D-06) + jsdom tests (STATIC-02)
+  - [ ] 24-02-PLAN.md — Hero.astro (CSS steps() typewriter D-01, native <details> CV dropdown roles-dropped D-05, direct photo D-08, count-up spans D-02) + index.css + Container API test (STATIC-02)
+  - [ ] 24-03-PLAN.md — About.astro count-up retrofit via shared script (D-03) + extended test (STATIC-02)
+  - [ ] 24-04-PLAN.md — Mount Hero on /en//es, delete deprecated Hero.jsx/test, build zero-JS/LCP verify (STATIC-02)
+  - [ ] 24-05-PLAN.md — Cross-browser manual QA gate: Escape/outside-click close in Chrome/Firefox/Safari (D-07) + typewriter/count-up/LCP (STATIC-02)
 **UI hint**: yes
 
 ### Phase 25: SectionPager
@@ -321,7 +326,7 @@ See [`milestones/v3.9-ROADMAP.md`](milestones/v3.9-ROADMAP.md) and [`milestones/
 | 21. Foundation — Astro scaffold, routing & layout | v5 | 4/5 | In Progress|  |
 | 22. Nav island | v5 | 2/2 | Complete    | 2026-07-19 |
 | 23. Static content sections | v5 | 4/4 | Complete    | 2026-07-19 |
-| 24. Hero | v5 | 0/TBD | Not started | — |
+| 24. Hero | v5 | 0/5 | Planned | — |
 | 25. SectionPager | v5 | 0/TBD | Not started | — |
 | 26. Experience | v5 | 0/TBD | Not started | — |
 | 27. Lighthouse gate + cleanup | v5 | 0/TBD | Not started | — |
