@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v5
 milestone_name: Astro Migration
-status: verifying
-stopped_at: Completed 23-04-PLAN.md — Phase 23 (Static content sections) complete
-last_updated: "2026-07-19T23:02:33.386Z"
+status: ready_to_plan
+stopped_at: Phase 23 complete (4/4) — ready to discuss Phase 999.4
+last_updated: 2026-07-19T23:07:00.137Z
 last_activity: 2026-07-19
 progress:
   total_phases: 22
   completed_phases: 3
   total_plans: 20
-  completed_plans: 18
+  completed_plans: 67
   percent: 14
 ---
 
@@ -131,14 +131,14 @@ progress:
 See: .planning/PROJECT.md (refreshed 2026-07-19 — v5 Astro Migration milestone started)
 
 **Core value:** Hero + first impression must stop recruiters mid-scroll and convert visits into engineering conversations.
-**Current focus:** Phase 23 — Static content sections
+**Current focus:** Phase 999.4 — vis company logos
 **Last shipped:** v4.1 tag (2026-06-16). v4.2 Content Polish continues in parallel on `main`, untouched by v5.
 
 ## Current Position
 
-Phase: 23 (Static content sections) — EXECUTING
-Plan: 4 of 4
-Status: Phase complete — ready for verification
+Phase: 999.4
+Plan: Not started
+Status: Ready to plan
 Last activity: 2026-07-19
 
 Progress: [█████████░] 90%
