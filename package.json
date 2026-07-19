@@ -3,23 +3,27 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@astrojs/react": "^6.0.1",
     "@fontsource/inter": "^5.2.8",
     "@fontsource/jetbrains-mono": "^5.2.8",
     "@vercel/analytics": "^2.0.1",
+    "astro": "^7.1.1",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "three": "^0.169.0"
+    "react-dom": "^18.3.1"
+  },
+  "engines": {
+    "node": ">=22.12.0"
   },
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
+    "dev": "astro dev",
+    "build": "astro build",
     "build:analyze": "vite build && open dist/stats.html || true",
     "build:gate": "vite build && node scripts/check-bundle-gate.mjs",
     "lighthouse:local": "npm run build && (npx vite preview --port=4173 &) && sleep 3 && npx lighthouse http://localhost:4173 --form-factor=desktop --throttling-method=simulate --output=json --output=html --output-path=./lighthouse-report --quiet --chrome-flags=\"--headless --no-sandbox --disable-gpu\" && pkill -f 'vite preview' || true",
     "lighthouse:mobile": "if [ -n \"$LIGHTHOUSE_TARGET_URL\" ]; then npx lighthouse \"$LIGHTHOUSE_TARGET_URL\" --form-factor=mobile --throttling-method=simulate --output=json --output=html --output-path=./lighthouse-report-mobile --quiet --chrome-flags=\"--headless --no-sandbox --disable-gpu\"; else npm run build && (npx vite preview --port=4173 &) && sleep 3 && npx lighthouse http://localhost:4173 --form-factor=mobile --throttling-method=simulate --output=json --output=html --output-path=./lighthouse-report-mobile --quiet --chrome-flags=\"--headless --no-sandbox --disable-gpu\" && pkill -f 'vite preview' || true; fi",
     "lighthouse:deployed": "if [ -z \"$LIGHTHOUSE_TARGET_URL\" ]; then echo 'ERROR: LIGHTHOUSE_TARGET_URL not set. Usage: LIGHTHOUSE_TARGET_URL=https://your-app.vercel.app npm run lighthouse:deployed' >&2; exit 1; fi && npx lighthouse \"$LIGHTHOUSE_TARGET_URL\" --form-factor=mobile --throttling-method=simulate --output=json --output=html --output-path=./lighthouse-report-mobile --quiet --chrome-flags=\"--headless --no-sandbox --disable-gpu\"",
     "lighthouse:check": "node -e \"const r = require('./lighthouse-report-mobile.report.json'); const p = r.categories.performance.score; const a = r.categories.accessibility.score; const b = r.categories['best-practices'].score; const s = r.categories.seo.score; const t = r.audits['target-size'].score; const rows = [['Performance', p, 0.95, p >= 0.95], ['Accessibility', a, 1.0, a >= 1.0], ['Best Practices', b, 1.0, b >= 1.0], ['SEO', s, 1.0, s >= 1.0], ['Target-size audit', t, 1, t === 1]]; console.log('Phase 11 HARD gate check (mobile):'); rows.forEach(([n,v,th,ok]) => console.log((ok?'PASS':'FAIL') + ' ' + n + ': ' + v + ' (threshold ' + th + ')')); if (rows.some(r => !r[3])) { console.error('LIGHTHOUSE GATE FAILED'); process.exit(1); } console.log('LIGHTHOUSE GATE PASSED');\"",
-    "preview": "vite preview",
+    "preview": "astro preview",
     "test": "vitest",
     "test:run": "vitest run",
     "coverage": "vitest run --coverage",
@@ -32,6 +36,8 @@
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.2",
     "@vitest/coverage-v8": "^4.1.9",
     "autoprefixer": "^10.5.0",
