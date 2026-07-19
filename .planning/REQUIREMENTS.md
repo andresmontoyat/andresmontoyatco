@@ -26,12 +26,12 @@ Requirements for this milestone. Each maps to a v5 roadmap phase. All are requir
 
 ### STATIC — zero-JS components
 
-- [ ] **STATIC-01**: About, Skill, Footer, Projects, Claude render as zero-client-JS `.astro` components, consuming existing `data/*.json` unchanged
+- [x] **STATIC-01**: About, Skill, Footer, Projects, Claude render as zero-client-JS `.astro` components, consuming existing `data/*.json` unchanged
 - [ ] **STATIC-02**: Experience expand/collapse and Hero's CV dropdown use native `<details>`/`<summary>`, zero JS
 
 ### TEST — coverage gate
 
-- [ ] **TEST-01**: Every static `.astro` component has an Astro Container API test replacing its former RTL test (bilingual content + ARIA assertions preserved)
+- [x] **TEST-01**: Every static `.astro` component has an Astro Container API test replacing its former RTL test (bilingual content + ARIA assertions preserved)
 - [x] **TEST-02**: Every React island keeps its Vitest + React Testing Library coverage unchanged
 
 ### DEPLOY — cleanup & gate
@@ -72,9 +72,9 @@ Deferred to a future release. Tracked but not in the v5 roadmap.
 | ISLAND-02 | Phase 25 | Pending |
 | ISLAND-03 | Phase 26 | Pending |
 | ISLAND-04 | Phase 21 | Complete |
-| STATIC-01 | Phase 23 | Pending |
+| STATIC-01 | Phase 23 | Complete |
 | STATIC-02 | Phase 24 / Phase 26 | Pending |
-| TEST-01 | Phase 23 | Pending |
+| TEST-01 | Phase 23 | Complete |
 | TEST-02 | Phase 22 | Complete |
 | DEPLOY-01 | Phase 21 | Complete |
 | DEPLOY-02 | Phase 21 | Complete |
