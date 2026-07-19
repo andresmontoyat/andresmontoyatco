@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v5
 milestone_name: Astro Migration
 status: executing
-stopped_at: Completed 21-03-PLAN.md
-last_updated: "2026-07-19T20:15:48.164Z"
+stopped_at: Completed 21-04-PLAN.md
+last_updated: "2026-07-19T20:24:37.523Z"
 last_activity: 2026-07-19
 progress:
   total_phases: 22
   completed_phases: 1
   total_plans: 14
-  completed_plans: 11
+  completed_plans: 12
   percent: 5
 ---
 
@@ -41,8 +41,9 @@ progress:
 - 21-01 (build toolchain): Astro 7.1.1 + @astrojs/react installed, astro:i18n configured, Vitest migrated to `getViteConfig()`. 102/102 tests GREEN.
 - 21-02 (BaseLayout + /en /es route tree): `src/layouts/BaseLayout.astro` ships build-time `<html lang>`, per-locale title/description (D-07), canonical + hreflang (en/es/x-default) resolved from `PUBLIC_SITE_URL` (D-05/D-06), JSON-LD Person + GA verbatim (D-08/D-09), blocking `cam-theme` pre-paint script (ISLAND-04). `/en`, `/es`, bare `/` fallback all build-verified. **Decision:** `astro:i18n`'s `getAbsoluteLocaleUrl` has no `{ base }` option in astro@7.1.1 (confirmed via `node_modules/astro/dist/i18n/index.d.ts`) — use `getRelativeLocaleUrl(locale, path)` + `new URL(..., siteUrl)` instead; resolves 21-RESEARCH.md's Open Question 2. `PUBLIC_SITE_URL` still needs configuring in Vercel Project Settings (user_setup, not yet done) — a gitignored local `.env` unblocks builds on this machine meanwhile. 102/102 tests still GREEN.
 - 21-03 (vercel.json + middleware.ts): `vercel.json` rewritten for Astro static output — `rewrites` block removed entirely, `framework: "astro"`, cache headers scoped to single `/_astro/(.*)` rule (DEPLOY-02). `middleware.ts` authored at repo root — 302-redirects `/` to `/en`/`/es` (cam-lang cookie first, else Accept-Language substring heuristic, D-01/D-02/D-03), `isKnownLocale()` allowlist gate before the `Location` header (T-21-03-01 open-redirect mitigation), `cam-lang` cookie refresh on `/en/*`/`/es/*` (D-04). **Decision:** matcher uses a negative-lookahead excluding `/_astro/` + static-asset extensions instead of RESEARCH.md's literal `'/(.*)'` — narrows D-04's "every route" to "every page route"; flagged in 21-03-SUMMARY.md for user sign-off, not silently applied. Bare-200 pass-through (Assumption A2) implemented per spec but **not yet validated** — deferred to Plan 21-05's real Vercel preview deploy, no `@vercel/functions` added. Source-level verification assertions pass for both files; no live-deploy testing performed in this plan.
+- 21-04 (404.astro + Container API harness): `src/pages/404.astro` authored as a **standalone** `<html lang>` doc — deliberately NOT wrapped in `BaseLayout` (locale copy/CTA is inferred from `Astro.url.pathname`'s `/en`/`/es` prefix, but `BaseLayout`'s `Astro.currentLocale` is always `'en'` on this unprefixed catch-all route, and its canonical/hreflang/OG machinery assumes real indexable content). Real dark-palette tokens only (`bg-ink-900`, `text-text-primary`/`text-text-secondary`, `text-brand`, `border-ink-400`, `bg-brand-gradient`) — zero `text-neon`/`bg-grad-neon`/`shadow-neon` (DEPLOY-02). `astro build` verified: emits `dist/404.html`. `src/pages/404.test.ts` stands up the Astro Container API harness (first `.astro` component test in the repo) — `experimental_AstroContainer` + `renderToString()`. **Decision:** esbuild's startup invariant fails under the repo's default jsdom test environment when compiling `.astro` files, so `404.test.ts` forces `// @vitest-environment node` per-file (no change to `vitest.config.ts`'s repo-wide jsdom default) — this is the pattern Phase 23 should reuse for its own Container API tests. 104/104 tests GREEN (102 + 2 new).
 
-**Next step:** Plan 21-04 (remaining Phase 21 scope — see 21-04-PLAN.md), then Plan 21-05 validates `middleware.ts` against a real Vercel preview deploy (bare-200 pass-through + live redirect behavior).
+**Next step:** Plan 21-05 validates `middleware.ts` against a real Vercel preview deploy (bare-200 pass-through + live redirect behavior) — the only remaining Phase 21 scope.
 
 ## v4.2 Content Polish (IN PROGRESS — on main, no tag)
 
@@ -121,11 +122,11 @@ See: .planning/PROJECT.md (refreshed 2026-07-19 — v5 Astro Migration milestone
 ## Current Position
 
 Phase: 21 (Foundation — Astro scaffold, i18n routing & layout shell) — EXECUTING
-Plan: 4 of 5
+Plan: 5 of 5
 Status: Ready to execute
 Last activity: 2026-07-19
 
-Progress: [████████░░] 79%
+Progress: [█████████░] 86%
 
 ## Shipped Slices (v4.0, on main, in chronological + PR order)
 
@@ -164,7 +165,7 @@ Progress: [████████░░] 79%
 
 - **v5 root-redirect risk** — `middleware.ts` code now written (21-03: cookie/`Accept-Language` parsing + `isKnownLocale()` allowlist + 302 redirect + cookie refresh, source-verified). Still UNVALIDATED against a real deploy — the bare-200 pass-through assumption (Assumption A2) must be confirmed via a real Vercel preview before any later phase assumes it works (3 of 4 research passes flagged this independently; validation is Plan 21-05's job, not yet run).
 - **v5 Tailwind + Astro PostCSS pickup** — MEDIUM confidence combination per research STACK.md; validate with a build spike at the very start of Phase 21.
-- **v5 Astro Container API coverage parity** — unresolved until at least one static component is migrated and its assertions compared side-by-side with the original RTL spec (Phase 23); experimental API, breaking-change risk.
+- **v5 Astro Container API coverage parity** — harness stood up and proven working (21-04: `experimental_AstroContainer` + `renderToString()` against `404.astro`, forced to `@vitest-environment node` per-file to work around an esbuild/jsdom incompatibility). Full coverage-parity comparison against an original RTL spec still unresolved until a real content component is migrated (Phase 23); experimental API, breaking-change risk remains.
 - **Real-device UAT pending (v4.0/v4.1 lineage)** — Operator UAT (Chrome stable + Safari iOS + Android real device) not yet formally re-executed since v4.1 LCP fix; carries as background item, not a v5 blocker.
 - **18 stale dependabot PRs** open — None blocking; sweep opportunistically.
 - **Vercel production URL** — Site lives on `*.vercel.app`; custom domain `andresmontoyat.co` still deferred (carries through v4.1/v4.2, unrelated to v5).
@@ -198,8 +199,8 @@ Root cause closed: React SPA hydration was blocking the LCP critical path. Hero 
 
 ## Session Continuity
 
-Last session: 2026-07-19T20:15:48.158Z
-Stopped at: Completed 21-03-PLAN.md
+Last session: 2026-07-19T20:24:37.517Z
+Stopped at: Completed 21-04-PLAN.md
 Resume file: None
 Untracked (intentional-keep): .planning/projects-input.md, Diagnostico_LinkedIn_*.docx, 14-PATTERNS.md
 Open PR: #2 junie-init only (foreign JetBrains scaffold — close if unused)
