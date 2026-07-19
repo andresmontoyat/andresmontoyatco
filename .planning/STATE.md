@@ -4,12 +4,12 @@ milestone: v5
 milestone_name: Astro Migration
 status: executing
 stopped_at: Phase 22 context gathered (--auto)
-last_updated: "2026-07-19T21:11:21.560Z"
-last_activity: 2026-07-19
+last_updated: "2026-07-19T21:29:20.681Z"
+last_activity: 2026-07-19 -- Phase 22 planning complete
 progress:
   total_phases: 22
   completed_phases: 1
-  total_plans: 14
+  total_plans: 16
   completed_plans: 12
   percent: 5
 ---
@@ -124,7 +124,7 @@ See: .planning/PROJECT.md (refreshed 2026-07-19 — v5 Astro Migration milestone
 Phase: 21 (Foundation — Astro scaffold, i18n routing & layout shell) — EXECUTING
 Plan: 5 of 5
 Status: Ready to execute
-Last activity: 2026-07-19
+Last activity: 2026-07-19 -- Phase 22 planning complete
 
 Progress: [█████████░] 86%
 
