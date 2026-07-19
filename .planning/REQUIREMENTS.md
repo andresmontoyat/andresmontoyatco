@@ -15,11 +15,11 @@ Requirements for this milestone. Each maps to a v5 roadmap phase. All are requir
 - [x] **ROUTE-02**: Visitor hitting `/` is redirected (302) to `/en` or `/es` — `cam-lang` cookie first, else `Accept-Language` header — via Vercel Edge Middleware (`middleware.ts`, platform-native, no Astro adapter)
 - [x] **ROUTE-03**: Each locale page carries correct `hreflang` + canonical tags in `<head>`
 - [x] **ROUTE-04**: `html lang` attribute set correctly per locale at build time (no runtime JS mutation)
-- [ ] **ROUTE-05**: Language switcher navigates `/en` ↔ `/es` preserving the current section hash
+- [x] **ROUTE-05**: Language switcher navigates `/en` ↔ `/es` preserving the current section hash
 
 ### ISLAND — React islands
 
-- [ ] **ISLAND-01**: Nav (with nested ThemeToggle) hydrates as `client:load`; scroll-spy and theme flip behave identically to the current site
+- [x] **ISLAND-01**: Nav (with nested ThemeToggle) hydrates as `client:load`; scroll-spy and theme flip behave identically to the current site
 - [ ] **ISLAND-02**: SectionPager hydrates as `client:visible`, unchanged behavior
 - [ ] **ISLAND-03**: Experience tech-chip filter implemented as a narrowly-scoped `client:visible` island or vanilla script — not `client:load`
 - [x] **ISLAND-04**: Theme flips before first paint via a blocking inline `<head>` script — zero FOUC on load or refresh
@@ -67,8 +67,8 @@ Deferred to a future release. Tracked but not in the v5 roadmap.
 | ROUTE-02 | Phase 21 | Complete |
 | ROUTE-03 | Phase 21 | Complete |
 | ROUTE-04 | Phase 21 | Complete |
-| ROUTE-05 | Phase 22 | Pending |
-| ISLAND-01 | Phase 22 | Pending |
+| ROUTE-05 | Phase 22 | Complete |
+| ISLAND-01 | Phase 22 | Complete |
 | ISLAND-02 | Phase 25 | Pending |
 | ISLAND-03 | Phase 26 | Pending |
 | ISLAND-04 | Phase 21 | Complete |

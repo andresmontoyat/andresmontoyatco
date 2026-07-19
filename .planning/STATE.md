@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v5
 milestone_name: Astro Migration
 status: executing
-stopped_at: Phase 22 context gathered (--auto)
-last_updated: "2026-07-19T21:29:20.681Z"
-last_activity: 2026-07-19 -- Phase 22 planning complete
+stopped_at: Completed 22-01-PLAN.md
+last_updated: "2026-07-19T21:35:39.498Z"
+last_activity: 2026-07-19
 progress:
   total_phases: 22
   completed_phases: 1
   total_plans: 16
-  completed_plans: 12
+  completed_plans: 13
   percent: 5
 ---
 
@@ -44,6 +44,12 @@ progress:
 - 21-04 (404.astro + Container API harness): `src/pages/404.astro` authored as a **standalone** `<html lang>` doc — deliberately NOT wrapped in `BaseLayout` (locale copy/CTA is inferred from `Astro.url.pathname`'s `/en`/`/es` prefix, but `BaseLayout`'s `Astro.currentLocale` is always `'en'` on this unprefixed catch-all route, and its canonical/hreflang/OG machinery assumes real indexable content). Real dark-palette tokens only (`bg-ink-900`, `text-text-primary`/`text-text-secondary`, `text-brand`, `border-ink-400`, `bg-brand-gradient`) — zero `text-neon`/`bg-grad-neon`/`shadow-neon` (DEPLOY-02). `astro build` verified: emits `dist/404.html`. `src/pages/404.test.ts` stands up the Astro Container API harness (first `.astro` component test in the repo) — `experimental_AstroContainer` + `renderToString()`. **Decision:** esbuild's startup invariant fails under the repo's default jsdom test environment when compiling `.astro` files, so `404.test.ts` forces `// @vitest-environment node` per-file (no change to `vitest.config.ts`'s repo-wide jsdom default) — this is the pattern Phase 23 should reuse for its own Container API tests. 104/104 tests GREEN (102 + 2 new).
 
 **Next step:** Plan 21-05 validates `middleware.ts` against a real Vercel preview deploy (bare-200 pass-through + live redirect behavior) — the only remaining Phase 21 scope.
+
+**Phase 22 progress:**
+
+- 22-01 (Nav island): `src/components/react/Nav.jsx` ported into a single `client:load` React island (D-01), `NAV_ITEMS`/`SECTION_IDS` unchanged module-level (D-07). `locale`/`hrefEn`/`hrefEs` arrive as props — `translations[locale]` replaces `useLanguage()`/`LanguageContext` entirely (D-02). `src/components/react/ThemeToggle.jsx` nested (not top-level) — local `useState` seeded from `document.documentElement.dataset.theme` (already correct pre-paint via Phase 21's blocking script, zero flicker), persists to `cam-theme` (D-03). `LangPill` EN/ES buttons rewritten as `<a>` links: `href` seeds from `hrefEn`/`hrefEs` props then syncs `window.location.hash` via `useEffect` + `hashchange` listener (ROUTE-05, D-04); `onClick` writes the `cam-lang` cookie with a hardcoded locale literal, never derived from input (D-05, open-redirect guard mirrors `middleware.ts`'s `isKnownLocale`). `ProgressBar`/`MobileMenu`/`useActiveSection` carried over with zero logic changes (D-06). `src/pages/en/index.astro` and `src/pages/es/index.astro` mount `<Nav client:load locale hrefEn hrefEs />`, computing hrefs via `getRelativeLocaleUrl(locale, path)` in frontmatter (server-only helper, not importable in island code). `astro build` verified: both `dist/en/index.html`/`dist/es/index.html` carry server-rendered Nav markup (locale-correct `Language`/`Idioma` labels) plus an `astro-island` element with `client="load"`. 104/104 tests still GREEN, zero regressions.
+
+**Next step:** Plan 22-02 (tests against Nav's props contract, TEST-02).
 
 ## v4.2 Content Polish (IN PROGRESS — on main, no tag)
 
@@ -116,17 +122,17 @@ progress:
 See: .planning/PROJECT.md (refreshed 2026-07-19 — v5 Astro Migration milestone started)
 
 **Core value:** Hero + first impression must stop recruiters mid-scroll and convert visits into engineering conversations.
-**Current focus:** Phase 21 — Foundation — Astro scaffold, i18n routing & layout shell
+**Current focus:** Phase 22 — Nav island — shell navigability
 **Last shipped:** v4.1 tag (2026-06-16). v4.2 Content Polish continues in parallel on `main`, untouched by v5.
 
 ## Current Position
 
-Phase: 21 (Foundation — Astro scaffold, i18n routing & layout shell) — EXECUTING
-Plan: 5 of 5
+Phase: 22 (Nav island — shell navigability) — EXECUTING
+Plan: 2 of 2
 Status: Ready to execute
-Last activity: 2026-07-19 -- Phase 22 planning complete
+Last activity: 2026-07-19
 
-Progress: [█████████░] 86%
+Progress: [████████░░] 81%
 
 ## Shipped Slices (v4.0, on main, in chronological + PR order)
 
@@ -199,9 +205,9 @@ Root cause closed: React SPA hydration was blocking the LCP critical path. Hero 
 
 ## Session Continuity
 
-Last session: 2026-07-19T21:11:21.554Z
-Stopped at: Phase 22 context gathered (--auto)
-Resume file: .planning/phases/22-nav-island-shell-navigability/22-CONTEXT.md
+Last session: 2026-07-19T21:35:39.492Z
+Stopped at: Completed 22-01-PLAN.md
+Resume file: None
 Untracked (intentional-keep): .planning/projects-input.md, Diagnostico_LinkedIn_*.docx, 14-PATTERNS.md
 Open PR: #2 junie-init only (foreign JetBrains scaffold — close if unused)
 

@@ -85,7 +85,7 @@
   2. Clicking the language switcher on `/en#experience` navigates to `/es#experience` (or the reverse) — the current section hash is preserved across the locale switch, not reset to top.
   3. Nav's Vitest + React Testing Library suite passes with coverage equivalent to the pre-migration component — same assertions now targeting the island.
 **Plans**: 2 plans
-  - [ ] 22-01-PLAN.md — Nav island port (ThemeToggle local-state + Context→props + LangPill hash-preserving links) mounted client:load on /en//es (ISLAND-01, ROUTE-05)
+  - [x] 22-01-PLAN.md — Nav island port (ThemeToggle local-state + Context→props + LangPill hash-preserving links) mounted client:load on /en//es (ISLAND-01, ROUTE-05)
   - [ ] 22-02-PLAN.md — jsdom IntersectionObserver stub + Nav island RTL suite (bilingual, langpill hrefs, active highlight, theme toggle, cam-lang cookie) (TEST-02)
 **UI hint**: yes
 
@@ -315,7 +315,7 @@ See [`milestones/v3.9-ROADMAP.md`](milestones/v3.9-ROADMAP.md) and [`milestones/
 | 19. Never-static constellation | v3.9 | inline | ✓ Complete | 2026-06-08 |
 | 20. 3D Constellation | v3.10 | 4/4 | Complete    | 2026-06-10 |
 | 21. Foundation — Astro scaffold, routing & layout | v5 | 4/5 | In Progress|  |
-| 22. Nav island | v5 | 0/2 | Planned | — |
+| 22. Nav island | v5 | 1/2 | In Progress|  |
 | 23. Static content sections | v5 | 0/TBD | Not started | — |
 | 24. Hero | v5 | 0/TBD | Not started | — |
 | 25. SectionPager | v5 | 0/TBD | Not started | — |
