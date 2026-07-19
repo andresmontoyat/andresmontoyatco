@@ -1,0 +1,56 @@
+---
+// src/components/astro/Claude.astro
+// Zero-client-JS port of src/components/Claude.jsx (v5 STATIC-01).
+// PitchHero / ValueCard / OfferingCard sub-components inlined directly into
+// the template and the data.values.map() / data.offerings.map() blocks —
+// Astro components cannot be invoked as plain JS functions the way React
+// sub-components were.
+import data from '../../data/claude.json'
+
+const { locale } = Astro.props
+
+function pick(field, lang) {
+  if (typeof field === 'string') return field
+  return field?.[lang] ?? field?.en ?? ''
+}
+---
+<section id="claude-code" class="py-24 sm:py-32">
+  <div class="max-w-6xl mx-auto px-6">
+    <div class="text-center max-w-4xl mx-auto bg-surface border border-border rounded-2xl p-10 md:p-14 mb-12">
+      <p class="text-accent font-pixel text-[10px] uppercase tracking-[1px]">{pick(data.label, locale)}</p>
+      <h2 class="font-pixel text-lg sm:text-xl md:text-2xl font-extrabold text-text mt-4 leading-snug">
+        {pick(data.h2Part1, locale)}{' '}
+        <span class="text-accent">{pick(data.h2Part2, locale)}</span>
+      </h2>
+      <p class="font-pixel text-[11px] leading-[2] text-muted mt-6 max-w-2xl mx-auto">{pick(data.subLead, locale)}</p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center mt-10">
+        <a
+          href="#contact"
+          class="bg-accent text-bg font-extrabold px-8 py-4 rounded-lg transition-transform hover:-translate-y-0.5"
+        >
+          {pick(data.ctaPrimary, locale)}
+        </a>
+      </div>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-16">
+      {data.values.map((v) => (
+        <div class="bg-surface border border-border rounded-xl p-6 hover:border-accent transition-colors">
+          <div class="text-accent font-mono text-2xl font-extrabold">{v.id}</div>
+          <h3 class="text-text font-extrabold text-lg mt-3">{pick(v.title, locale)}</h3>
+          <p class="text-muted text-base mt-2 leading-relaxed">{pick(v.desc, locale)}</p>
+        </div>
+      ))}
+    </div>
+    <p class="text-accent font-mono text-xs uppercase tracking-widest mt-12">
+      {pick(data.offeringsLabel, locale)}
+    </p>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
+      {data.offerings.map((o) => (
+        <div class="bg-surface border border-border rounded-xl p-6 hover:border-accent transition-colors">
+          <h3 class="text-text font-extrabold text-lg">{pick(o.title, locale)}</h3>
+          <p class="text-muted text-base mt-2 leading-relaxed">{pick(o.desc, locale)}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
