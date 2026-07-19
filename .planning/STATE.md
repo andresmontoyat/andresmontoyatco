@@ -3,10 +3,10 @@ gsd_state_version: 1.0
 milestone: v5
 milestone_name: Astro Migration
 status: planning
-last_updated: "2026-07-19T16:18:57.175Z"
+last_updated: "2026-07-19T17:30:00.000Z"
 last_activity: 2026-07-19
 progress:
-  total_phases: 0
+  total_phases: 7
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
@@ -14,6 +14,28 @@ progress:
 ---
 
 # Project State
+
+## v5 Astro Migration (ROADMAPPED — Phases 21-27, not yet planned)
+
+**Focus:** React CSR (Vite) → Astro SSG with React islands, to clear the Lighthouse mobile hard gate (Performance ≥0.95, Accessibility/Best Practices/SEO = 1.0) blocked since v4.2 Phase 11. Separate branch from `main`; does not touch v4.2 Content Polish in progress there.
+
+**Roadmap:** 17/17 v1 requirements mapped across 7 phases (21-27) — see `.planning/ROADMAP.md` § Phase Details (v5). Source: `docs/superpowers/specs/2026-07-19-astro-migration-design.md` (commit `6a3bf4a`); research: `.planning/research/SUMMARY.md` (4 independent passes, confidence HIGH).
+
+**Phase sequence:**
+
+| Phase | Name | Requirements |
+|-------|------|--------------|
+| 21 | Foundation — Astro scaffold, i18n routing & layout shell | ROUTE-01..04, ISLAND-04, DEPLOY-01..03 |
+| 22 | Nav island | ISLAND-01, ROUTE-05, TEST-02 |
+| 23 | Static content sections | STATIC-01, TEST-01 |
+| 24 | Hero | STATIC-02 (Hero half) |
+| 25 | SectionPager | ISLAND-02 |
+| 26 | Experience | ISLAND-03, STATIC-02 (Experience half) |
+| 27 | Lighthouse gate + cleanup | DEPLOY-04 |
+
+**Locked decision carried from research:** Root `/` redirect uses Vercel-native Edge Middleware (`middleware.ts`, platform feature, no npm package) — NOT Astro's own middleware (confirmed inert under `output: 'static'`) and NOT `@astrojs/vercel`. This is the single highest-severity risk item, independently flagged by 3 of 4 research passes; must be validated against a real Vercel preview deploy in Phase 21, not just `astro dev`.
+
+**Next step:** `/gsd:plan-phase 21`
 
 ## v4.2 Content Polish (IN PROGRESS — on main, no tag)
 
@@ -83,20 +105,22 @@ progress:
 
 ## Project Reference
 
-See: .planning/PROJECT.md (refreshed 2026-06-13 — v4.0 milestone documented; v3.10/9/8 demoted to "previously shipped")
+See: .planning/PROJECT.md (refreshed 2026-07-19 — v5 Astro Migration milestone started)
 
 **Core value:** Hero + first impression must stop recruiters mid-scroll and convert visits into engineering conversations.
-**Current focus:** v4.0 milestone close — real-device UAT + tag `v4.0`.
-**Last shipped:** v4.0 Slice 7 Claude Code on main 2026-06-13 (PR #32 squash e8abb1b).
+**Current focus:** v5 Astro Migration — ROADMAP.md created (Phases 21-27), awaiting `/gsd:plan-phase 21`.
+**Last shipped:** v4.1 tag (2026-06-16). v4.2 Content Polish continues in parallel on `main`, untouched by v5.
 
 ## Current Position
 
-Phase: Not started (defining requirements)
-Plan: —
-Status: Defining requirements
-Last activity: 2026-07-19 — Milestone v5 started
+Phase: 21 of 27 (Foundation — Astro scaffold, i18n routing & layout shell)
+Plan: TBD — not yet planned
+Status: Roadmap created, ready to plan
+Last activity: 2026-07-19 — ROADMAP.md + REQUIREMENTS.md traceability written for v5 (17/17 requirements mapped)
 
-## Shipped Slices (on main, in chronological + PR order)
+Progress: [░░░░░░░░░░] 0%
+
+## Shipped Slices (v4.0, on main, in chronological + PR order)
 
 | Slice | Section | PR | Squash commit | Description |
 |-------|---------|-----|---------------|-------------|
@@ -129,27 +153,14 @@ Last activity: 2026-07-19 — Milestone v5 started
 - **D-v4.0-NO-SHARED-SECTIONLABEL** — `_shared/SectionLabel` dropped.
 - **D-v4.0-STACKED-PR-INTEGRATION** — Slices 1+2+3+4 stacked onto `v4.0-slice-1-purge` integration branch and squashed via PR #26; Slices 5+6+7 based directly on main.
 
-## Blockers / Concerns (carried into v4.0 close + v4.1)
+## Blockers / Concerns
 
-- **Real-device UAT pending** — All 7 sections live on `*.vercel.app` (auto-deploy from main). Operator UAT (Chrome stable + Safari iOS + Android real device) and Lighthouse mobile run not yet executed.
-- **Bundle WARN tier** — Index chunk 60.93 kB gz crossed soft ceiling 60 kB after Slice 7. Under HARD 68 so non-blocking; flag at v4.1 if Claude section grows further.
-- **Theme toggle parked** — `ThemeContext` still wired but no UI toggle. Defer to post-v4.0 OR drop entirely.
-- **18 stale dependabot PRs** open — None blocking; sweep at v4.0 tag close.
-- **Vercel production URL** — Site lives on `*.vercel.app`; custom domain `andresmontoyat.co` still deferred (carries to v4.1).
-
-## v4.0 Close Checklist (next operator actions)
-
-1. **Real-device UAT** — Browse production on Chrome stable + Safari iOS + Android real device. All 7 sections render bilingual EN/ES; nav anchors scroll; Contact + Claude CTAs work; Hero CV download buttons download EN/ES Word docs.
-2. **Lighthouse mobile run** — `npm run lighthouse:mobile && npm run lighthouse:check` (or against production URL). Target ≥ v3.10 baseline (Perf ≥95 / A11y 100 / BP 100 / SEO 100). Note: bundle WARN tier may shave a few perf points — acceptable if A11y/BP/SEO hold.
-3. **Tag `v4.0`** on the v4.0-closing commit (e8abb1b or HEAD after UAT fixes).
-4. **Dependabot sweep** — Triage open dependabot PRs #5-#24; merge security fixes, close stale.
-5. **(optional) PROJECT.md final pass** — Update Current State to "v4.0 SHIPPED" with metrics + tag.
-
-## v4.1 Roadmap Candidates (post-tag)
-
-- **v4.1 Production polish + custom domain** — DEPLOY-02 (custom domain `andresmontoyat.co` + DNS), DEPLOY-03 (PR preview deploys), production-URL Lighthouse verdict, Open Graph image refresh.
-- **v4.2 backlog activation** — VIS-05 claude-kanban + caveman cards (extra featured-app cards in Claude section), DIAGRAMS-01 cross-repo architecture diagrams.
-- **v4.3 theme toggle decision** — Either ship light theme + toggle UI OR formally retire `ThemeContext`.
+- **v5 root-redirect risk** — Vercel Edge Middleware cookie/`Accept-Language` parsing + allowlist validation is the least-certain, highest-consequence piece of Phase 21; must be validated against a real Vercel preview deploy before any later phase assumes it works (3 of 4 research passes flagged this independently).
+- **v5 Tailwind + Astro PostCSS pickup** — MEDIUM confidence combination per research STACK.md; validate with a build spike at the very start of Phase 21.
+- **v5 Astro Container API coverage parity** — unresolved until at least one static component is migrated and its assertions compared side-by-side with the original RTL spec (Phase 23); experimental API, breaking-change risk.
+- **Real-device UAT pending (v4.0/v4.1 lineage)** — Operator UAT (Chrome stable + Safari iOS + Android real device) not yet formally re-executed since v4.1 LCP fix; carries as background item, not a v5 blocker.
+- **18 stale dependabot PRs** open — None blocking; sweep opportunistically.
+- **Vercel production URL** — Site lives on `*.vercel.app`; custom domain `andresmontoyat.co` still deferred (carries through v4.1/v4.2, unrelated to v5).
 
 ## v4.1 SHIPPED (2026-06-13 → 2026-06-16)
 
@@ -175,23 +186,22 @@ Last activity: 2026-07-19 — Milestone v5 started
 | Best Practices | 1.0 | 1.0 |
 | SEO | 1.0 | 1.0 |
 
-Root cause closed: React SPA hydration was blocking the LCP critical path. Hero `<img>` now lives in `index.html` as a static absolute-positioned layer behind `#root`, paints with FCP, and qualifies as LCP candidate (alt + no aria-hidden).
+Root cause closed: React SPA hydration was blocking the LCP critical path. Hero `<img>` now lives in `index.html` as a static absolute-positioned layer behind `#root`, paints with FCP, and qualifies as LCP candidate (alt + no aria-hidden). **v5 supersedes this architecture entirely** — the LCP fix pattern (static `<img>` outside React) is subsumed by the whole-page static-by-default Astro approach.
 
 ## Session Continuity
 
-Last session: 2026-07-16T11:27:00-05:00 (resume-work; projects thread reviewed → converged)
-Stopped at: main in sync with origin. Projects section COMPLETE — all 4 filled intake projects live in projects.json (Mr. Yoker featured, Llevape, Mutual SER, Hexadialer). Atenea SKIPPED (no content provided; marked in projects-input.md so it won't resurface as a false gap). Projects expansion closed — no further work unless new project intake arrives. Next candidates: (a) apply filled questionnaire → experience.json (fase-2 experience content), (b) v4.2 tag, (c) DIAGRAMS-01 / custom domain.
+Last session: 2026-07-19T17:30:00-05:00 (roadmapper — v5 ROADMAP.md + REQUIREMENTS.md traceability written)
+Stopped at: v5 Astro Migration roadmapped — 7 phases (21-27), 17/17 requirements mapped, zero orphans. Next: `/gsd:plan-phase 21`.
 Resume file: none — clean checkpoint
 Untracked (intentional-keep): .planning/projects-input.md, Diagnostico_LinkedIn_*.docx, 14-PATTERNS.md
 Open PR: #2 junie-init only (foreign JetBrains scaffold — close if unused)
 
-## v4.2 Roadmap Candidates (next milestone)
+## v4.2 Roadmap Candidates (separate track, on main)
 
 1. **Custom domain** — `andresmontoyat.co` DNS + Vercel binding (currently `*.vercel.app` only; root domain returns 000)
 2. **Dependabot sweep** — Triage open PRs #19-#24 (5 stale npm bumps); merge security fixes, close stale
 3. **PR preview deploys** — Configure Vercel preview deploys (currently SSO-gated; consider bypass token for external Lighthouse runs)
-4. **Theme toggle decision** — Ship light theme + toggle UI OR formally retire `ThemeContext`
-5. **OG image refresh** — When custom domain lives, point `og:url` + `og:image` at it (currently hardcoded to `andresmontoyat.co`)
+4. **OG image refresh** — When custom domain lives, point `og:url` + `og:image` at it (currently hardcoded to `andresmontoyat.co`)
 
 ## v3.x Closure Reference (historical only)
 

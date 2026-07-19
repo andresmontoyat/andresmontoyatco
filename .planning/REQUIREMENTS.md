@@ -61,33 +61,33 @@ Deferred to a future release. Tracked but not in the v5 roadmap.
 
 ## Traceability
 
-Populated during roadmap creation.
-
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| ROUTE-01 | TBD | Pending |
-| ROUTE-02 | TBD | Pending |
-| ROUTE-03 | TBD | Pending |
-| ROUTE-04 | TBD | Pending |
-| ROUTE-05 | TBD | Pending |
-| ISLAND-01 | TBD | Pending |
-| ISLAND-02 | TBD | Pending |
-| ISLAND-03 | TBD | Pending |
-| ISLAND-04 | TBD | Pending |
-| STATIC-01 | TBD | Pending |
-| STATIC-02 | TBD | Pending |
-| TEST-01 | TBD | Pending |
-| TEST-02 | TBD | Pending |
-| DEPLOY-01 | TBD | Pending |
-| DEPLOY-02 | TBD | Pending |
-| DEPLOY-03 | TBD | Pending |
-| DEPLOY-04 | TBD | Pending |
+| ROUTE-01 | Phase 21 | Pending |
+| ROUTE-02 | Phase 21 | Pending |
+| ROUTE-03 | Phase 21 | Pending |
+| ROUTE-04 | Phase 21 | Pending |
+| ROUTE-05 | Phase 22 | Pending |
+| ISLAND-01 | Phase 22 | Pending |
+| ISLAND-02 | Phase 25 | Pending |
+| ISLAND-03 | Phase 26 | Pending |
+| ISLAND-04 | Phase 21 | Pending |
+| STATIC-01 | Phase 23 | Pending |
+| STATIC-02 | Phase 24 / Phase 26 | Pending |
+| TEST-01 | Phase 23 | Pending |
+| TEST-02 | Phase 22 | Pending |
+| DEPLOY-01 | Phase 21 | Pending |
+| DEPLOY-02 | Phase 21 | Pending |
+| DEPLOY-03 | Phase 21 | Pending |
+| DEPLOY-04 | Phase 27 | Pending |
+
+**Note on STATIC-02:** Requirement bundles two independent native-`<details>` conversions — Hero's CV dropdown (delivered Phase 24) and Experience's expand/collapse (delivered Phase 26). Traceability anchored at Phase 24 per "assign to the first phase that could deliver it"; Phase 26 completes the requirement's second half and is called out explicitly in its own Requirements line for full-coverage clarity.
 
 **Coverage:**
 - v1 requirements: 17 total
-- Mapped to phases: 0 (pending roadmap)
-- Unmapped: 17 ⚠️ (expected — roadmapper fills this next)
+- Mapped to phases: 17 (Phases 21–27)
+- Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-07-19*
-*Last updated: 2026-07-19 after initial definition (v5 Astro Migration)*
+*Last updated: 2026-07-19 after roadmap creation (v5 Astro Migration) — 17/17 requirements mapped to Phases 21-27*
