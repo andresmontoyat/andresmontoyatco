@@ -1,10 +1,18 @@
 ---
 // src/pages/es/index.astro — thin locale entry, proves the /es route tree
-// resolves through BaseLayout (ROUTE-01). Content-section components
-// (Hero/About/etc.) migrate in Phase 22+ per the phase boundary.
+// resolves through BaseLayout (ROUTE-01). Mounts the Nav island (Phase 22).
+// Content-section components (Hero/About/etc.) migrate in Phase 23+.
 import BaseLayout from '../../layouts/BaseLayout.astro'
+import Nav from '../../components/react/Nav.jsx'
+import { getRelativeLocaleUrl } from 'astro:i18n'
+
+const locale = Astro.currentLocale ?? 'es'
+const path = Astro.url.pathname.replace(/^\/(en|es)/, '') || '/'
+const hrefEn = getRelativeLocaleUrl('en', path)
+const hrefEs = getRelativeLocaleUrl('es', path)
 ---
 <BaseLayout>
+  <Nav client:load locale={locale} hrefEn={hrefEn} hrefEs={hrefEs} />
   <main>
     <h1>Carlos Montoya</h1>
   </main>
