@@ -1,0 +1,36 @@
+// @vitest-environment node
+//
+// src/pages/404.test.ts
+// Astro Container API proof-of-life (TEST-01 harness stand-up) — the first
+// `.astro` component test in the repo. `experimental_AstroContainer` is
+// experimental and subject to breaking changes even in minor/patch Astro
+// releases (no stabilization date per Astro's own docs, confirmed in
+// 21-RESEARCH.md) — downstream harness use (Phase 23) should not assume this
+// API's shape is stable, only that the pattern below (create -> renderToString
+// -> assert on the output string) is the current documented way to compile
+// and render an .astro component under Vitest via getViteConfig().
+//
+// Forced to the `node` environment (per-file override) instead of the repo's
+// jsdom default (vitest.config.ts): Astro's compiler invokes esbuild
+// synchronously to build the component, and esbuild's own startup invariant
+// check (`new TextEncoder().encode("") instanceof Uint8Array`) fails under
+// jsdom's shimmed TextEncoder — a documented esbuild/jsdom incompatibility,
+// unrelated to this test's assertions. `renderToString()` output is plain
+// HTML text, so no DOM APIs are needed here anyway.
+import { experimental_AstroContainer as AstroContainer } from 'astro/container'
+import { describe, expect, it } from 'vitest'
+import NotFoundPage from './404.astro'
+
+describe('404 page (Container API proof-of-life — TEST-01 harness)', () => {
+  it('renders without throwing', async () => {
+    const container = await AstroContainer.create()
+    await expect(container.renderToString(NotFoundPage)).resolves.toBeTruthy()
+  })
+
+  it('renders a home link and the 404 numeral', async () => {
+    const container = await AstroContainer.create()
+    const result = await container.renderToString(NotFoundPage)
+    expect(result).toMatch(/href="\/(en|es)?"/)
+    expect(result).toContain('404')
+  })
+})
