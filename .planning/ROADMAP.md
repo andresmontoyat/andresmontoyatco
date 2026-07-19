@@ -315,7 +315,7 @@ See [`milestones/v3.9-ROADMAP.md`](milestones/v3.9-ROADMAP.md) and [`milestones/
 | 19. Never-static constellation | v3.9 | inline | ✓ Complete | 2026-06-08 |
 | 20. 3D Constellation | v3.10 | 4/4 | Complete    | 2026-06-10 |
 | 21. Foundation — Astro scaffold, routing & layout | v5 | 4/5 | In Progress|  |
-| 22. Nav island | v5 | 2/2 | Complete   | 2026-07-19 |
+| 22. Nav island | v5 | 2/2 | Complete    | 2026-07-19 |
 | 23. Static content sections | v5 | 0/TBD | Not started | — |
 | 24. Hero | v5 | 0/TBD | Not started | — |
 | 25. SectionPager | v5 | 0/TBD | Not started | — |
