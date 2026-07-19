@@ -11,6 +11,9 @@
 # production
 /build
 
+# Astro generated types cache
+.astro/
+
 # misc
 .DS_Store
 .env.local
