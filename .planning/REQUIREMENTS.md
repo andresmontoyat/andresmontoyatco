@@ -12,7 +12,7 @@ Requirements for this milestone. Each maps to a v5 roadmap phase. All are requir
 ### ROUTE — i18n routing & SEO
 
 - [x] **ROUTE-01**: Site serves fully static content at `/en` and `/es` via `astro:i18n`, symmetric locale trees
-- [ ] **ROUTE-02**: Visitor hitting `/` is redirected (302) to `/en` or `/es` — `cam-lang` cookie first, else `Accept-Language` header — via Vercel Edge Middleware (`middleware.ts`, platform-native, no Astro adapter)
+- [x] **ROUTE-02**: Visitor hitting `/` is redirected (302) to `/en` or `/es` — `cam-lang` cookie first, else `Accept-Language` header — via Vercel Edge Middleware (`middleware.ts`, platform-native, no Astro adapter)
 - [x] **ROUTE-03**: Each locale page carries correct `hreflang` + canonical tags in `<head>`
 - [x] **ROUTE-04**: `html lang` attribute set correctly per locale at build time (no runtime JS mutation)
 - [ ] **ROUTE-05**: Language switcher navigates `/en` ↔ `/es` preserving the current section hash
@@ -37,7 +37,7 @@ Requirements for this milestone. Each maps to a v5 roadmap phase. All are requir
 ### DEPLOY — cleanup & gate
 
 - [x] **DEPLOY-01**: `three` (unused dependency) removed from `package.json`
-- [ ] **DEPLOY-02**: `vercel.json` SPA-fallback rewrite removed; explicit `404.astro` authored; cache headers scoped to `/_astro/*` only
+- [x] **DEPLOY-02**: `vercel.json` SPA-fallback rewrite removed; explicit `404.astro` authored; cache headers scoped to `/_astro/*` only
 - [x] **DEPLOY-03**: `engines.node >=22.12.0` pinned in `package.json`; Vercel project Node version updated to match
 - [ ] **DEPLOY-04**: Lighthouse mobile hard gate (Performance ≥0.95, Accessibility/Best Practices/SEO = 1.0) passes on all 3 target URLs (`/`, `/en`, `/es`) before merge to `main`
 
@@ -64,7 +64,7 @@ Deferred to a future release. Tracked but not in the v5 roadmap.
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | ROUTE-01 | Phase 21 | Complete |
-| ROUTE-02 | Phase 21 | Pending |
+| ROUTE-02 | Phase 21 | Complete |
 | ROUTE-03 | Phase 21 | Complete |
 | ROUTE-04 | Phase 21 | Complete |
 | ROUTE-05 | Phase 22 | Pending |
@@ -77,7 +77,7 @@ Deferred to a future release. Tracked but not in the v5 roadmap.
 | TEST-01 | Phase 23 | Pending |
 | TEST-02 | Phase 22 | Pending |
 | DEPLOY-01 | Phase 21 | Complete |
-| DEPLOY-02 | Phase 21 | Pending |
+| DEPLOY-02 | Phase 21 | Complete |
 | DEPLOY-03 | Phase 21 | Complete |
 | DEPLOY-04 | Phase 27 | Pending |
 
