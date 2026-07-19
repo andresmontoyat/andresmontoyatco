@@ -47,3 +47,30 @@ if (typeof jsdom !== 'undefined' && jsdom.window) {
     })
   }
 }
+
+// jsdom does not implement IntersectionObserver. Phase 22's Nav island calls
+// useActiveSection on mount, which instantiates `new IntersectionObserver(...)`
+// for scroll-spy — without a stub that throws under jsdom and any component
+// rendering the island would fail to mount in tests. Stub is a no-op: tests
+// that need deterministic active-section assertions mock useActiveSection
+// directly (see Nav.test.jsx) rather than driving a real observer.
+if (typeof globalThis.IntersectionObserver === 'undefined') {
+  class IntersectionObserverStub {
+    constructor(callback, options) {
+      this.callback = callback
+      this.options = options
+    }
+
+    observe() {}
+
+    unobserve() {}
+
+    disconnect() {}
+
+    takeRecords() {
+      return []
+    }
+  }
+
+  globalThis.IntersectionObserver = IntersectionObserverStub
+}
