@@ -98,7 +98,7 @@
   2. Each of these five components reads directly from its existing `src/data/*.json` file with no data-shape changes.
   3. Each of these five components has an Astro Container API test (bilingual content + ARIA assertions preserved) replacing its former RTL test — assertions ported, not diluted; coverage parity spot-checked against the original RTL spec for at least one component.
 **Plans**: 4 plans
-  - [ ] 23-01-PLAN.md — About.astro + Container API parity test (D-07 spot-check); count-up dropped per D-04 (STATIC-01, TEST-01)
+  - [x] 23-01-PLAN.md — About.astro + Container API parity test (D-07 spot-check); count-up dropped per D-04 (STATIC-01, TEST-01)
   - [ ] 23-02-PLAN.md — Skill.astro + Footer.astro (translations + build-time year) + Container API tests; Footer authored fresh (STATIC-01, TEST-01)
   - [ ] 23-03-PLAN.md — Projects.astro + Claude.astro + Container API parity tests (STATIC-01, TEST-01)
   - [ ] 23-04-PLAN.md — Mount all 5 in /en//es pages (D-05 order), build zero-JS verify + browser human-verify (STATIC-01)
@@ -320,7 +320,7 @@ See [`milestones/v3.9-ROADMAP.md`](milestones/v3.9-ROADMAP.md) and [`milestones/
 | 20. 3D Constellation | v3.10 | 4/4 | Complete    | 2026-06-10 |
 | 21. Foundation — Astro scaffold, routing & layout | v5 | 4/5 | In Progress|  |
 | 22. Nav island | v5 | 2/2 | Complete    | 2026-07-19 |
-| 23. Static content sections | v5 | 0/TBD | Not started | — |
+| 23. Static content sections | v5 | 1/4 | In Progress|  |
 | 24. Hero | v5 | 0/TBD | Not started | — |
 | 25. SectionPager | v5 | 0/TBD | Not started | — |
 | 26. Experience | v5 | 0/TBD | Not started | — |

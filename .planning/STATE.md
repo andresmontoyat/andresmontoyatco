@@ -4,13 +4,13 @@ milestone: v5
 milestone_name: Astro Migration
 status: executing
 stopped_at: Phase 23 context gathered (--auto)
-last_updated: "2026-07-19T22:30:10.243Z"
-last_activity: 2026-07-19 -- Phase 23 planning complete
+last_updated: "2026-07-19T22:44:57.645Z"
+last_activity: 2026-07-19
 progress:
   total_phases: 22
   completed_phases: 2
   total_plans: 20
-  completed_plans: 14
+  completed_plans: 15
   percent: 9
 ---
 
@@ -123,17 +123,17 @@ progress:
 See: .planning/PROJECT.md (refreshed 2026-07-19 — v5 Astro Migration milestone started)
 
 **Core value:** Hero + first impression must stop recruiters mid-scroll and convert visits into engineering conversations.
-**Current focus:** Phase 999.4 — vis company logos
+**Current focus:** Phase 23 — Static content sections
 **Last shipped:** v4.1 tag (2026-06-16). v4.2 Content Polish continues in parallel on `main`, untouched by v5.
 
 ## Current Position
 
-Phase: 999.4
-Plan: Not started
+Phase: 23 (Static content sections) — EXECUTING
+Plan: 2 of 4
 Status: Ready to execute
-Last activity: 2026-07-19 -- Phase 23 planning complete
+Last activity: 2026-07-19
 
-Progress: [█████████░] 88%
+Progress: [████████░░] 75%
 
 ## Shipped Slices (v4.0, on main, in chronological + PR order)
 
@@ -206,9 +206,9 @@ Root cause closed: React SPA hydration was blocking the LCP critical path. Hero 
 
 ## Session Continuity
 
-Last session: 2026-07-19T22:01:38.834Z
+Last session: 2026-07-19T22:44:57.639Z
 Stopped at: Phase 23 context gathered (--auto)
-Resume file: .planning/phases/23-static-content-sections/23-CONTEXT.md
+Resume file: None
 Untracked (intentional-keep): .planning/projects-input.md, Diagnostico_LinkedIn_*.docx, 14-PATTERNS.md
 Open PR: #2 junie-init only (foreign JetBrains scaffold — close if unused)
 
