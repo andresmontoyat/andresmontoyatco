@@ -13,8 +13,8 @@ Requirements for this milestone. Each maps to a v5 roadmap phase. All are requir
 
 - [x] **ROUTE-01**: Site serves fully static content at `/en` and `/es` via `astro:i18n`, symmetric locale trees
 - [ ] **ROUTE-02**: Visitor hitting `/` is redirected (302) to `/en` or `/es` — `cam-lang` cookie first, else `Accept-Language` header — via Vercel Edge Middleware (`middleware.ts`, platform-native, no Astro adapter)
-- [ ] **ROUTE-03**: Each locale page carries correct `hreflang` + canonical tags in `<head>`
-- [ ] **ROUTE-04**: `html lang` attribute set correctly per locale at build time (no runtime JS mutation)
+- [x] **ROUTE-03**: Each locale page carries correct `hreflang` + canonical tags in `<head>`
+- [x] **ROUTE-04**: `html lang` attribute set correctly per locale at build time (no runtime JS mutation)
 - [ ] **ROUTE-05**: Language switcher navigates `/en` ↔ `/es` preserving the current section hash
 
 ### ISLAND — React islands
@@ -22,7 +22,7 @@ Requirements for this milestone. Each maps to a v5 roadmap phase. All are requir
 - [ ] **ISLAND-01**: Nav (with nested ThemeToggle) hydrates as `client:load`; scroll-spy and theme flip behave identically to the current site
 - [ ] **ISLAND-02**: SectionPager hydrates as `client:visible`, unchanged behavior
 - [ ] **ISLAND-03**: Experience tech-chip filter implemented as a narrowly-scoped `client:visible` island or vanilla script — not `client:load`
-- [ ] **ISLAND-04**: Theme flips before first paint via a blocking inline `<head>` script — zero FOUC on load or refresh
+- [x] **ISLAND-04**: Theme flips before first paint via a blocking inline `<head>` script — zero FOUC on load or refresh
 
 ### STATIC — zero-JS components
 
@@ -65,13 +65,13 @@ Deferred to a future release. Tracked but not in the v5 roadmap.
 |-------------|-------|--------|
 | ROUTE-01 | Phase 21 | Complete |
 | ROUTE-02 | Phase 21 | Pending |
-| ROUTE-03 | Phase 21 | Pending |
-| ROUTE-04 | Phase 21 | Pending |
+| ROUTE-03 | Phase 21 | Complete |
+| ROUTE-04 | Phase 21 | Complete |
 | ROUTE-05 | Phase 22 | Pending |
 | ISLAND-01 | Phase 22 | Pending |
 | ISLAND-02 | Phase 25 | Pending |
 | ISLAND-03 | Phase 26 | Pending |
-| ISLAND-04 | Phase 21 | Pending |
+| ISLAND-04 | Phase 21 | Complete |
 | STATIC-01 | Phase 23 | Pending |
 | STATIC-02 | Phase 24 / Phase 26 | Pending |
 | TEST-01 | Phase 23 | Pending |

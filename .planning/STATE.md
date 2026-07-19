@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v5
 milestone_name: Astro Migration
 status: executing
-stopped_at: Completed 21-01-PLAN.md
-last_updated: "2026-07-19T19:43:25.126Z"
+stopped_at: Completed 21-02-PLAN.md
+last_updated: "2026-07-19T20:09:18.673Z"
 last_activity: 2026-07-19
 progress:
   total_phases: 22
   completed_phases: 1
   total_plans: 14
-  completed_plans: 9
+  completed_plans: 10
   percent: 5
 ---
 
@@ -36,7 +36,11 @@ progress:
 
 **Locked decision carried from research:** Root `/` redirect uses Vercel-native Edge Middleware (`middleware.ts`, platform feature, no npm package) — NOT Astro's own middleware (confirmed inert under `output: 'static'`) and NOT `@astrojs/vercel`. This is the single highest-severity risk item, independently flagged by 3 of 4 research passes; must be validated against a real Vercel preview deploy in Phase 21, not just `astro dev`.
 
-**Next step:** `/gsd:plan-phase 21`
+**Phase 21 progress:**
+- 21-01 (build toolchain): Astro 7.1.1 + @astrojs/react installed, astro:i18n configured, Vitest migrated to `getViteConfig()`. 102/102 tests GREEN.
+- 21-02 (BaseLayout + /en /es route tree): `src/layouts/BaseLayout.astro` ships build-time `<html lang>`, per-locale title/description (D-07), canonical + hreflang (en/es/x-default) resolved from `PUBLIC_SITE_URL` (D-05/D-06), JSON-LD Person + GA verbatim (D-08/D-09), blocking `cam-theme` pre-paint script (ISLAND-04). `/en`, `/es`, bare `/` fallback all build-verified. **Decision:** `astro:i18n`'s `getAbsoluteLocaleUrl` has no `{ base }` option in astro@7.1.1 (confirmed via `node_modules/astro/dist/i18n/index.d.ts`) — use `getRelativeLocaleUrl(locale, path)` + `new URL(..., siteUrl)` instead; resolves 21-RESEARCH.md's Open Question 2. `PUBLIC_SITE_URL` still needs configuring in Vercel Project Settings (user_setup, not yet done) — a gitignored local `.env` unblocks builds on this machine meanwhile. 102/102 tests still GREEN.
+
+**Next step:** Plan 21-03 (`middleware.ts` — the real `/` redirect + Vercel preview validation)
 
 ## v4.2 Content Polish (IN PROGRESS — on main, no tag)
 
@@ -115,11 +119,11 @@ See: .planning/PROJECT.md (refreshed 2026-07-19 — v5 Astro Migration milestone
 ## Current Position
 
 Phase: 21 (Foundation — Astro scaffold, i18n routing & layout shell) — EXECUTING
-Plan: 2 of 5
-Status: Plan 21-01 complete, ready to execute 21-02
-Last activity: 2026-07-19 -- Completed 21-01-PLAN.md (Astro scaffold & build tooling)
+Plan: 3 of 5
+Status: Ready to execute
+Last activity: 2026-07-19
 
-Progress: [██████░░░░] 64%
+Progress: [███████░░░] 71%
 
 ## Shipped Slices (v4.0, on main, in chronological + PR order)
 
@@ -162,6 +166,7 @@ Progress: [██████░░░░] 64%
 - **Real-device UAT pending (v4.0/v4.1 lineage)** — Operator UAT (Chrome stable + Safari iOS + Android real device) not yet formally re-executed since v4.1 LCP fix; carries as background item, not a v5 blocker.
 - **18 stale dependabot PRs** open — None blocking; sweep opportunistically.
 - **Vercel production URL** — Site lives on `*.vercel.app`; custom domain `andresmontoyat.co` still deferred (carries through v4.1/v4.2, unrelated to v5).
+- **v5 `PUBLIC_SITE_URL` env var not yet configured on Vercel** — `src/layouts/BaseLayout.astro` (21-02) reads it at build time for canonical/hreflang/og:url; must be set in Vercel Project → Settings → Environment Variables (value: `https://andresmontoyat.co`) before any production/preview deploy of the v5 branch. Local dev/CI builds on this machine use a gitignored `.env` fallback.
 
 ## v4.1 SHIPPED (2026-06-13 → 2026-06-16)
 
@@ -191,8 +196,8 @@ Root cause closed: React SPA hydration was blocking the LCP critical path. Hero 
 
 ## Session Continuity
 
-Last session: 2026-07-19T19:43:25.120Z
-Stopped at: Completed 21-01-PLAN.md
+Last session: 2026-07-19T20:09:18.667Z
+Stopped at: Completed 21-02-PLAN.md
 Resume file: None
 Untracked (intentional-keep): .planning/projects-input.md, Diagnostico_LinkedIn_*.docx, 14-PATTERNS.md
 Open PR: #2 junie-init only (foreign JetBrains scaffold — close if unused)
