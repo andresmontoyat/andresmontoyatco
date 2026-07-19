@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v5
 milestone_name: Astro Migration
-status: executing
-stopped_at: Completed 22-01-PLAN.md
-last_updated: "2026-07-19T21:35:39.498Z"
+status: verifying
+stopped_at: Completed 22-02-PLAN.md
+last_updated: "2026-07-19T21:42:09.933Z"
 last_activity: 2026-07-19
 progress:
   total_phases: 22
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 16
-  completed_plans: 13
-  percent: 5
+  completed_plans: 14
+  percent: 9
 ---
 
 # Project State
@@ -48,8 +48,9 @@ progress:
 **Phase 22 progress:**
 
 - 22-01 (Nav island): `src/components/react/Nav.jsx` ported into a single `client:load` React island (D-01), `NAV_ITEMS`/`SECTION_IDS` unchanged module-level (D-07). `locale`/`hrefEn`/`hrefEs` arrive as props — `translations[locale]` replaces `useLanguage()`/`LanguageContext` entirely (D-02). `src/components/react/ThemeToggle.jsx` nested (not top-level) — local `useState` seeded from `document.documentElement.dataset.theme` (already correct pre-paint via Phase 21's blocking script, zero flicker), persists to `cam-theme` (D-03). `LangPill` EN/ES buttons rewritten as `<a>` links: `href` seeds from `hrefEn`/`hrefEs` props then syncs `window.location.hash` via `useEffect` + `hashchange` listener (ROUTE-05, D-04); `onClick` writes the `cam-lang` cookie with a hardcoded locale literal, never derived from input (D-05, open-redirect guard mirrors `middleware.ts`'s `isKnownLocale`). `ProgressBar`/`MobileMenu`/`useActiveSection` carried over with zero logic changes (D-06). `src/pages/en/index.astro` and `src/pages/es/index.astro` mount `<Nav client:load locale hrefEn hrefEs />`, computing hrefs via `getRelativeLocaleUrl(locale, path)` in frontmatter (server-only helper, not importable in island code). `astro build` verified: both `dist/en/index.html`/`dist/es/index.html` carry server-rendered Nav markup (locale-correct `Language`/`Idioma` labels) plus an `astro-island` element with `client="load"`. 104/104 tests still GREEN, zero regressions.
+- 22-02 (Nav island tests, TEST-02): `src/test/setup.jsx` gained a guarded no-op `IntersectionObserver` stub (mirrors the existing `HTMLCanvasElement` stub style) so `useActiveSection` mounts cleanly under jsdom. `src/components/react/Nav.test.jsx` — new 6-spec RTL suite rendering the island directly (`renderNav(locale)`, props-only, zero `LanguageProvider`): bilingual nav links (EN/ES), LangPill anchors (`role="group"` `Language`, ES href `/^\/es\//`, `aria-pressed` on active locale), active-section `border-brand` highlight (via `vi.mock('../../hooks/useActiveSection', () => ({ default: () => 'about' }))`), theme toggle `dataset.theme` flip, and `cam-lang` cookie write on LangPill click. `getAllByText`/`getAllByRole` used throughout since `MobileMenu` is always mounted (opacity-toggled, not conditionally rendered) — every interactive element exists twice in the DOM. 110/110 tests GREEN (104 baseline + 6 new), zero regressions.
 
-**Next step:** Plan 22-02 (tests against Nav's props contract, TEST-02).
+**Phase 22 complete.** Next step: Phase 23 (static content sections, STATIC-01/TEST-01).
 
 ## v4.2 Content Polish (IN PROGRESS — on main, no tag)
 
@@ -122,17 +123,17 @@ progress:
 See: .planning/PROJECT.md (refreshed 2026-07-19 — v5 Astro Migration milestone started)
 
 **Core value:** Hero + first impression must stop recruiters mid-scroll and convert visits into engineering conversations.
-**Current focus:** Phase 22 — Nav island — shell navigability
+**Current focus:** Phase 23 — Static content sections (STATIC-01, TEST-01)
 **Last shipped:** v4.1 tag (2026-06-16). v4.2 Content Polish continues in parallel on `main`, untouched by v5.
 
 ## Current Position
 
-Phase: 22 (Nav island — shell navigability) — EXECUTING
+Phase: 22 (Nav island — shell navigability) — COMPLETE (both plans done, TEST-02 satisfied)
 Plan: 2 of 2
-Status: Ready to execute
+Status: Phase complete — ready for verification
 Last activity: 2026-07-19
 
-Progress: [████████░░] 81%
+Progress: [█████████░] 88%
 
 ## Shipped Slices (v4.0, on main, in chronological + PR order)
 
@@ -205,8 +206,8 @@ Root cause closed: React SPA hydration was blocking the LCP critical path. Hero 
 
 ## Session Continuity
 
-Last session: 2026-07-19T21:35:39.492Z
-Stopped at: Completed 22-01-PLAN.md
+Last session: 2026-07-19T21:42:09.927Z
+Stopped at: Completed 22-02-PLAN.md
 Resume file: None
 Untracked (intentional-keep): .planning/projects-input.md, Diagnostico_LinkedIn_*.docx, 14-PATTERNS.md
 Open PR: #2 junie-init only (foreign JetBrains scaffold — close if unused)

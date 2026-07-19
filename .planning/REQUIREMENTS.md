@@ -32,7 +32,7 @@ Requirements for this milestone. Each maps to a v5 roadmap phase. All are requir
 ### TEST — coverage gate
 
 - [ ] **TEST-01**: Every static `.astro` component has an Astro Container API test replacing its former RTL test (bilingual content + ARIA assertions preserved)
-- [ ] **TEST-02**: Every React island keeps its Vitest + React Testing Library coverage unchanged
+- [x] **TEST-02**: Every React island keeps its Vitest + React Testing Library coverage unchanged
 
 ### DEPLOY — cleanup & gate
 
@@ -75,7 +75,7 @@ Deferred to a future release. Tracked but not in the v5 roadmap.
 | STATIC-01 | Phase 23 | Pending |
 | STATIC-02 | Phase 24 / Phase 26 | Pending |
 | TEST-01 | Phase 23 | Pending |
-| TEST-02 | Phase 22 | Pending |
+| TEST-02 | Phase 22 | Complete |
 | DEPLOY-01 | Phase 21 | Complete |
 | DEPLOY-02 | Phase 21 | Complete |
 | DEPLOY-03 | Phase 21 | Complete |
