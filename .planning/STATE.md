@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v5
 milestone_name: Astro Migration
 status: executing
-stopped_at: Completed 23-02-PLAN.md
-last_updated: "2026-07-19T22:50:00.511Z"
+stopped_at: Completed 23-03-PLAN.md
+last_updated: "2026-07-19T22:56:30.613Z"
 last_activity: 2026-07-19
 progress:
   total_phases: 22
   completed_phases: 2
   total_plans: 20
-  completed_plans: 16
+  completed_plans: 17
   percent: 9
 ---
 
@@ -56,8 +56,9 @@ progress:
 
 - 23-01 (About.astro): `src/components/astro/` directory established (mirrors `src/components/react/` from Phase 22). `About.astro` imports `about.json` unchanged, ports `pick(field, lang)` verbatim, renders zero React/hooks/`client:` directives. `useCountUp`/`AnimatedValue` deliberately NOT ported (D-04) — static value strings render verbatim; count-up re-introduction deferred to Phase 24's shared vanilla enhancer. `About.test.ts` — first Astro Container API coverage-parity spot-check (D-07), ports all 7 `it` blocks from the former RTL spec via `renderToString()` + string assertions. `src/components/About.test.jsx` removed. 110/110 tests GREEN.
 - 23-02 (Skill.astro + Footer.astro): `Skill.astro` imports `skills.json` unchanged, ports `pick()`/`maxYears()` verbatim; the React `MeterRow`/`Category` sub-components (no logic beyond markup) are inlined into the template's `.map()` blocks rather than extracted as separate `.astro` partials — Astro components cannot be invoked as plain JS functions the way React sub-components were. `Skill.test.ts` ports all 9 `it` blocks from `Skill.test.jsx`; two assertions required matching Astro's auto-escaped HTML output (`&amp;`, not `&`) rather than the raw source string. `Footer.astro` has no dedicated JSON file (D-02) — sources `footerCopy = translations[locale]?.footer` (BaseLayout's established idiom) and copies the hardcoded `social` array verbatim; reads `new Date().getFullYear()` at build time instead of React runtime (D-03). `Footer.test.ts` authors 5 fresh Container API assertions (no prior RTL baseline existed for Footer). `src/components/Skill.test.jsx` removed. 115/115 tests GREEN (110 baseline − 9 removed + 9 + 5 new).
+- 23-03 (Projects.astro + Claude.astro): `Projects.astro` imports `projects.json` unchanged, ports `pick()`/featured-rest filter split verbatim; `FeaturedProjectCard`/`ProjectCard`/`TechTags` inlined into `featured.map()`/`rest.map()` template blocks, preserving `data-featured="true"/"false"`, the conditional CTA short-circuit, and `aria-hidden` decorative spans. `Projects.test.ts` ports all 8 `it` blocks from `Projects.test.jsx`. `Claude.astro` imports `claude.json` unchanged, ports `pick()` verbatim; `PitchHero`/`ValueCard`/`OfferingCard` inlined into the template and `data.values.map()`/`data.offerings.map()` blocks, preserving the split `h2Part1`/`h2Part2` heading structure. `Claude.test.ts` ports all 6 `it` blocks from `Claude.test.jsx`; two assertions adjusted for Astro's auto-escaped output (`&#39;`, `&amp;`). `src/components/Projects.test.jsx` and `src/components/Claude.test.jsx` removed. 115/115 tests GREEN (net zero change — 14 RTL specs removed, 14 Container API specs added). None of the 5 static components are mounted on any page yet — mounting (STATIC-01/TEST-01 completion gate) is Plan 23-04's scope.
 
-**Next step:** Plan 23-03 (Projects.astro + Claude.astro).
+**Next step:** Plan 23-04 (mount all 5 static components into `en/index.astro` / `es/index.astro`).
 
 ## v4.2 Content Polish (IN PROGRESS — on main, no tag)
 
@@ -136,11 +137,11 @@ See: .planning/PROJECT.md (refreshed 2026-07-19 — v5 Astro Migration milestone
 ## Current Position
 
 Phase: 23 (Static content sections) — EXECUTING
-Plan: 3 of 4
+Plan: 4 of 4
 Status: Ready to execute
 Last activity: 2026-07-19
 
-Progress: [████████░░] 80%
+Progress: [█████████░] 85%
 
 ## Shipped Slices (v4.0, on main, in chronological + PR order)
 
@@ -213,8 +214,8 @@ Root cause closed: React SPA hydration was blocking the LCP critical path. Hero 
 
 ## Session Continuity
 
-Last session: 2026-07-19T22:50:00.506Z
-Stopped at: Completed 23-02-PLAN.md
+Last session: 2026-07-19T22:56:30.593Z
+Stopped at: Completed 23-03-PLAN.md
 Resume file: None
 Untracked (intentional-keep): .planning/projects-input.md, Diagnostico_LinkedIn_*.docx, 14-PATTERNS.md
 Open PR: #2 junie-init only (foreign JetBrains scaffold — close if unused)
