@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v5
 milestone_name: Astro Migration
 status: executing
-stopped_at: Phase 21 UI-SPEC approved
-last_updated: "2026-07-19T19:33:12.944Z"
-last_activity: 2026-07-19 -- Phase 21 planning complete
+stopped_at: Completed 21-01-PLAN.md
+last_updated: "2026-07-19T19:43:25.126Z"
+last_activity: 2026-07-19
 progress:
   total_phases: 22
   completed_phases: 1
   total_plans: 14
-  completed_plans: 8
+  completed_plans: 9
   percent: 5
 ---
 
@@ -109,17 +109,17 @@ progress:
 See: .planning/PROJECT.md (refreshed 2026-07-19 — v5 Astro Migration milestone started)
 
 **Core value:** Hero + first impression must stop recruiters mid-scroll and convert visits into engineering conversations.
-**Current focus:** v5 Astro Migration — ROADMAP.md created (Phases 21-27), awaiting `/gsd:plan-phase 21`.
+**Current focus:** Phase 21 — Foundation — Astro scaffold, i18n routing & layout shell
 **Last shipped:** v4.1 tag (2026-06-16). v4.2 Content Polish continues in parallel on `main`, untouched by v5.
 
 ## Current Position
 
-Phase: 21 of 27 (Foundation — Astro scaffold, i18n routing & layout shell)
-Plan: TBD — not yet planned
-Status: Ready to execute
-Last activity: 2026-07-19 -- Phase 21 planning complete
+Phase: 21 (Foundation — Astro scaffold, i18n routing & layout shell) — EXECUTING
+Plan: 2 of 5
+Status: Plan 21-01 complete, ready to execute 21-02
+Last activity: 2026-07-19 -- Completed 21-01-PLAN.md (Astro scaffold & build tooling)
 
-Progress: [░░░░░░░░░░] 0%
+Progress: [██████░░░░] 64%
 
 ## Shipped Slices (v4.0, on main, in chronological + PR order)
 
@@ -191,9 +191,9 @@ Root cause closed: React SPA hydration was blocking the LCP critical path. Hero 
 
 ## Session Continuity
 
-Last session: 2026-07-19T18:57:18.860Z
-Stopped at: Phase 21 UI-SPEC approved
-Resume file: .planning/phases/21-foundation-astro-scaffold-i18n-routing-layout-shell/21-UI-SPEC.md
+Last session: 2026-07-19T19:43:25.120Z
+Stopped at: Completed 21-01-PLAN.md
+Resume file: None
 Untracked (intentional-keep): .planning/projects-input.md, Diagnostico_LinkedIn_*.docx, 14-PATTERNS.md
 Open PR: #2 junie-init only (foreign JetBrains scaffold — close if unused)
 

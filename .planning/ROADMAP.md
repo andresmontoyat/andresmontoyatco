@@ -69,7 +69,7 @@
   4. Theme flips before first paint via a blocking inline `<script is:inline>` in `BaseLayout.astro`'s `<head>` — zero FOUC on load or refresh, independent of React hydration timing.
   5. `vercel.json` no longer contains an SPA-fallback rewrite (a direct hit on a nonexistent path serves the authored `404.astro`, cache headers scoped to `/_astro/*` only); `package.json` has no `three` dependency and pins `engines.node >=22.12.0` matching the Vercel project's configured Node version.
 **Plans**: 5 plans
-  - [ ] 21-01-PLAN.md — Astro scaffold & build tooling: install astro/@astrojs/react, remove three, pin engines.node, swap scripts, astro:i18n config, vitest.config.ts (ROUTE-01, DEPLOY-01, DEPLOY-03)
+  - [x] 21-01-PLAN.md — Astro scaffold & build tooling: install astro/@astrojs/react, remove three, pin engines.node, swap scripts, astro:i18n config, vitest.config.ts (ROUTE-01, DEPLOY-01, DEPLOY-03)
   - [ ] 21-02-PLAN.md — BaseLayout.astro (head/meta/OG/JSON-LD/GA + hreflang/canonical + html lang + blocking cam-theme theme-flip script) + /en//es//  route tree (ROUTE-01, ROUTE-03, ROUTE-04, ISLAND-04)
   - [ ] 21-03-PLAN.md — vercel.json cleanup (no rewrites, framework astro, /_astro/* cache) + middleware.ts / redirect + cam-lang cookie refresh + open-redirect guard (ROUTE-02, DEPLOY-02)
   - [ ] 21-04-PLAN.md — 404.astro (bilingual, real dark-palette tokens, locale-inferred) + Astro Container API test harness proof-of-life (DEPLOY-02)
@@ -312,7 +312,7 @@ See [`milestones/v3.9-ROADMAP.md`](milestones/v3.9-ROADMAP.md) and [`milestones/
 | 18. Above-the-fold layout | v3.9 | 1/1 | ✓ Complete | 2026-06-08 |
 | 19. Never-static constellation | v3.9 | inline | ✓ Complete | 2026-06-08 |
 | 20. 3D Constellation | v3.10 | 4/4 | Complete    | 2026-06-10 |
-| 21. Foundation — Astro scaffold, routing & layout | v5 | 0/TBD | Not started | — |
+| 21. Foundation — Astro scaffold, routing & layout | v5 | 1/5 | In Progress | — |
 | 22. Nav island | v5 | 0/TBD | Not started | — |
 | 23. Static content sections | v5 | 0/TBD | Not started | — |
 | 24. Hero | v5 | 0/TBD | Not started | — |
