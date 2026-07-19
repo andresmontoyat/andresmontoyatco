@@ -1,6 +1,16 @@
 // @vitest-environment node
 //
-// src/pages/404.test.ts
+// src/pages/_404.test.ts
+// Underscore-prefixed per Astro's own pages-directory convention: any file
+// under src/pages/ that begins with `_` is excluded from route generation
+// (Astro's create-manifest.js: "Prefix filename with an underscore to ignore
+// this warning, or move the file outside of the pages directory"). Without
+// the prefix, `astro build` attempts to render this test file as a page and
+// crashes (TypeError: Cannot read properties of undefined (reading 'config')
+// in @vitest/runner's initSuite) — discovered live during Plan 21-05's build
+// sanity check. Phase 23 should reuse the underscore-prefix convention for
+// any further Container API test colocated inside src/pages/.
+//
 // Astro Container API proof-of-life (TEST-01 harness stand-up) — the first
 // `.astro` component test in the repo. `experimental_AstroContainer` is
 // experimental and subject to breaking changes even in minor/patch Astro
