@@ -1,0 +1,48 @@
+---
+// src/components/astro/Footer.astro
+// Zero-client-JS port of src/components/Footer.jsx (v5 STATIC-01).
+// No dedicated JSON file — sources copy from translations[locale].footer
+// (BaseLayout.astro's resolution idiom) and copies the hardcoded `social`
+// array verbatim (D-02). Copyright year read at build time instead of React
+// runtime (D-03).
+import translations from '../../i18n/translations.js'
+
+const { locale } = Astro.props
+const footerCopy = translations[locale]?.footer
+const year = new Date().getFullYear()
+
+const social = [
+  { name: 'GitHub', href: 'https://github.com/andresmontoyat', label: 'gh' },
+  { name: 'LinkedIn', href: 'https://www.linkedin.com/in/carlos-andres-montoya-tobon-8b508033/', label: 'in' },
+]
+---
+<footer class="border-t border-ink-400 py-10 mt-10">
+  <div class="max-w-6xl mx-auto px-6 text-center">
+    <div class="font-pixel text-[10px] mb-3">
+      <a
+        href="#hero"
+        class="inline-block text-text-primary hover:text-brand transition-colors duration-200 motion-safe:transition-transform motion-safe:hover:-translate-y-0.5"
+      >
+        &lt;<span class="text-brand">/</span>camt&gt;
+      </a>
+    </div>
+    <p class="font-pixel text-[11px] leading-[2] text-text-secondary mb-6">{footerCopy.tagline}</p>
+    <div class="flex justify-center gap-4 mb-6">
+      {social.map((s) => (
+        <a
+          href={s.href}
+          target="_blank"
+          rel="noreferrer"
+          title={s.name}
+          aria-label={s.name}
+          class="inline-flex items-center justify-center w-11 h-11 rounded-full border border-ink-400 text-text-secondary text-sm font-mono uppercase transition-all duration-200 hover:text-brand hover:border-brand hover:shadow-brand motion-safe:hover:-translate-y-1 hover:scale-105"
+        >
+          {s.label}
+        </a>
+      ))}
+    </div>
+    <div class="text-text-muted text-xs">
+      © {year} Carlos Andrés Montoya Tobón · {footerCopy.rights}
+    </div>
+  </div>
+</footer>
