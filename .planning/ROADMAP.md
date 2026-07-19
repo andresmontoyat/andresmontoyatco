@@ -97,7 +97,11 @@
   1. About, Skill, Footer, Projects, and Claude sections render correct bilingual content on `/en` and `/es` with zero client-side JS shipped for these components (verified in the browser network/JS panel) — including Claude, which the original design spec's island table omitted.
   2. Each of these five components reads directly from its existing `src/data/*.json` file with no data-shape changes.
   3. Each of these five components has an Astro Container API test (bilingual content + ARIA assertions preserved) replacing its former RTL test — assertions ported, not diluted; coverage parity spot-checked against the original RTL spec for at least one component.
-**Plans**: TBD
+**Plans**: 4 plans
+  - [ ] 23-01-PLAN.md — About.astro + Container API parity test (D-07 spot-check); count-up dropped per D-04 (STATIC-01, TEST-01)
+  - [ ] 23-02-PLAN.md — Skill.astro + Footer.astro (translations + build-time year) + Container API tests; Footer authored fresh (STATIC-01, TEST-01)
+  - [ ] 23-03-PLAN.md — Projects.astro + Claude.astro + Container API parity tests (STATIC-01, TEST-01)
+  - [ ] 23-04-PLAN.md — Mount all 5 in /en//es pages (D-05 order), build zero-JS verify + browser human-verify (STATIC-01)
 **UI hint**: yes
 
 ### Phase 24: Hero
