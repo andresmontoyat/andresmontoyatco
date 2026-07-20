@@ -10,6 +10,7 @@ import About from '../../components/astro/About.astro'
 import Skill from '../../components/astro/Skill.astro'
 import Projects from '../../components/astro/Projects.astro'
 import Claude from '../../components/astro/Claude.astro'
+import Contact from '../../components/astro/Contact.astro'
 import Footer from '../../components/astro/Footer.astro'
 import { getRelativeLocaleUrl } from 'astro:i18n'
 
@@ -27,6 +28,7 @@ const hrefEs = getRelativeLocaleUrl('es', path)
     <Skill locale={locale} />
     <Projects locale={locale} />
     <Claude locale={locale} />
-    <Footer locale={locale} />
+    <Contact locale={locale} />
   </main>
+  <Footer locale={locale} />
 </BaseLayout>

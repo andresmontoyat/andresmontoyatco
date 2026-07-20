@@ -1,0 +1,74 @@
+---
+// src/components/astro/Contact.astro
+// Zero-client-JS port of src/components/Contact.jsx.
+// HeroContact / RailItem sub-components inlined into templates (Astro
+// components cannot be invoked as plain JS functions the way React
+// sub-components were).
+import data from '../../data/contact.json'
+
+const { locale } = Astro.props
+
+function pick(field, lang) {
+  if (typeof field === 'string') return field
+  return field?.[lang] ?? field?.en ?? ''
+}
+
+function linkAttrs(card) {
+  return card.external ? { target: '_blank', rel: 'noopener noreferrer' } : {}
+}
+
+const hero = data.cards.find((c) => c.primary)
+const rail = data.cards.filter((c) => !c.primary)
+const heroLabel = pick(hero.kLabel, locale)
+const reachOut = locale === 'es' ? 'Escríbeme' : 'Reach out'
+---
+<section id="contact" class="py-20">
+  <div class="max-w-6xl mx-auto px-6">
+    <div class="font-pixel text-[10px] uppercase tracking-[1px] text-accent flex items-center gap-3 mb-4">
+      <span class="block w-10 h-0.5 bg-accent" /> {pick(data.label, locale)}
+    </div>
+    <h2 class="font-pixel text-lg sm:text-xl md:text-2xl font-extrabold tracking-normal text-text mb-4 leading-tight">
+      {pick(data.h2, locale)}
+    </h2>
+    <p class="text-muted max-w-[640px] mb-12 font-pixel text-[11px] leading-[2]">{pick(data.intro, locale)}</p>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <a
+        href={hero.href}
+        aria-label={`${heroLabel}: ${hero.value}`}
+        {...linkAttrs(hero)}
+        data-role="primary"
+        class="group flex flex-col gap-6 md:self-start bg-surface border border-accent/40 rounded-2xl p-8 transition-all duration-300 hover:-translate-y-1 hover:border-accent shadow-[0_0_30px_rgba(0,229,168,0.10)] hover:shadow-[0_0_45px_rgba(0,229,168,0.20)]"
+      >
+        <div class="text-5xl text-accent" aria-hidden="true">{hero.icon}</div>
+        <div>
+          <div class="text-xs uppercase tracking-widest text-muted mb-2">{heroLabel}</div>
+          <div class="text-2xl sm:text-3xl font-extrabold text-text break-all leading-tight">{hero.value}</div>
+        </div>
+        <span class="inline-flex items-center gap-2 text-accent text-sm font-mono transition-transform duration-300 group-hover:translate-x-1">
+          {reachOut} →
+        </span>
+      </a>
+      <div class="flex flex-col gap-3">
+        {rail.map((card) => {
+          const label = pick(card.kLabel, locale)
+          return (
+            <a
+              href={card.href}
+              aria-label={`${label}: ${card.value}`}
+              {...linkAttrs(card)}
+              data-role="rail"
+              class="group flex items-center gap-4 bg-surface border border-border rounded-xl px-5 py-4 transition-all duration-200 hover:-translate-y-0.5 hover:border-accent"
+            >
+              <span class="text-xl text-accent shrink-0 w-6 text-center" aria-hidden="true">{card.icon}</span>
+              <div class="min-w-0 flex-1">
+                <div class="text-[11px] uppercase tracking-widest text-muted">{label}</div>
+                <div class="text-sm font-semibold text-text truncate">{card.value}</div>
+              </div>
+              <span class="text-muted shrink-0 transition-all duration-200 group-hover:text-accent group-hover:translate-x-0.5">→</span>
+            </a>
+          )
+        })}
+      </div>
+    </div>
+  </div>
+</section>
