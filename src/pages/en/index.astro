@@ -4,6 +4,7 @@
 // Content-section components (Hero/About/etc.) migrate in Phase 23+.
 import BaseLayout from '../../layouts/BaseLayout.astro'
 import Nav from '../../components/react/Nav.jsx'
+import Hero from '../../components/astro/Hero.astro'
 import About from '../../components/astro/About.astro'
 import Skill from '../../components/astro/Skill.astro'
 import Projects from '../../components/astro/Projects.astro'
@@ -19,6 +20,7 @@ const hrefEs = getRelativeLocaleUrl('es', path)
 <BaseLayout>
   <Nav client:load locale={locale} hrefEn={hrefEn} hrefEs={hrefEs} />
   <main>
+    <Hero locale={locale} />
     <About locale={locale} />
     <Skill locale={locale} />
     <Projects locale={locale} />
