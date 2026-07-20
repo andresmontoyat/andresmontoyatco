@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v5
 milestone_name: Astro Migration
 status: executing
-stopped_at: Completed 24-04-PLAN.md
-last_updated: "2026-07-20T00:33:05.702Z"
+stopped_at: "Phase 24: plans 24-01..24-04 complete (130/130 tests), 24-05 checkpoint (cross-browser QA: Escape/outside-click on native <details>, typewriter, count-up timing, LCP) DEFERRED to end of v5 milestone alongside 21-05's live Vercel validation. Continuing to Phase 25 (SectionPager)."
+last_updated: "2026-07-20T00:37:38.153Z"
 last_activity: 2026-07-20
 progress:
   total_phases: 22
@@ -223,9 +223,9 @@ Root cause closed: React SPA hydration was blocking the LCP critical path. Hero 
 
 ## Session Continuity
 
-Last session: 2026-07-20T00:33:05.697Z
-Stopped at: Completed 24-04-PLAN.md
-Resume file: None
+Last session: 2026-07-20T00:37:38.143Z
+Stopped at: Phase 24: plans 24-01..24-04 complete (130/130 tests), 24-05 checkpoint (cross-browser QA: Escape/outside-click on native <details>, typewriter, count-up timing, LCP) DEFERRED to end of v5 milestone alongside 21-05's live Vercel validation. Continuing to Phase 25 (SectionPager).
+Resume file: .planning/phases/24-hero/24-05-PLAN.md
 Untracked (intentional-keep): .planning/projects-input.md, Diagnostico_LinkedIn_*.docx, 14-PATTERNS.md
 Open PR: #2 junie-init only (foreign JetBrains scaffold — close if unused)
 
