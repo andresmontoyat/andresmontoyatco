@@ -4,12 +4,12 @@ milestone: v5
 milestone_name: Astro Migration
 status: executing
 stopped_at: Phase 25 context gathered (--auto)
-last_updated: "2026-07-20T00:38:42.964Z"
-last_activity: 2026-07-20
+last_updated: "2026-07-20T00:47:39.010Z"
+last_activity: 2026-07-20 -- Phase 25 planning complete
 progress:
   total_phases: 22
   completed_phases: 3
-  total_plans: 25
+  total_plans: 26
   completed_plans: 22
   percent: 14
 ---
@@ -148,7 +148,7 @@ See: .planning/PROJECT.md (refreshed 2026-07-19 — v5 Astro Migration milestone
 Phase: 24 (Hero) — EXECUTING
 Plan: 5 of 5
 Status: Ready to execute
-Last activity: 2026-07-20
+Last activity: 2026-07-20 -- Phase 25 planning complete
 
 Progress: [█████████░] 88%
 
