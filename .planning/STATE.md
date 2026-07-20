@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v5
 milestone_name: Astro Migration
-status: executing
-stopped_at: Phase 25 context gathered (--auto)
-last_updated: "2026-07-20T00:47:39.010Z"
-last_activity: 2026-07-20 -- Phase 25 planning complete
+status: verifying
+stopped_at: Phase 25 (SectionPager) complete -- 25-01 executed, ISLAND-02 done
+last_updated: "2026-07-20T00:51:14.473Z"
+last_activity: 2026-07-20
 progress:
   total_phases: 22
-  completed_phases: 3
+  completed_phases: 4
   total_plans: 26
-  completed_plans: 22
-  percent: 14
+  completed_plans: 23
+  percent: 18
 ---
 
 # Project State
@@ -68,6 +68,12 @@ progress:
 - 24-04 (mount Hero.astro + delete deprecated React Hero): `src/pages/en/index.astro`/`src/pages/es/index.astro` now import and mount `<Hero locale={locale} />` as the first `<main>` child, before `<About>` — STATIC-02 (Hero half) is live on both routes. `src/components/Hero.jsx`/`src/components/Hero.test.jsx` deleted (fully replaced by `Hero.astro`/`Hero.test.ts`, 24-02). **Deviation (Rule 3 - blocking):** the legacy `src/App.jsx` (pre-Astro CRA/Vite-CSR entry point, whole-app removal deferred to Phase 27 per ROADMAP "CRA/Vite-CSR leftovers removed") still imported the deleted `Hero.jsx` — removed the dangling import + `<Hero />` usage from `App.jsx` and corrected `App.test.jsx`'s stale description so `npx vitest run` stays GREEN; the rest of the legacy React app (Nav/About/Skill/Experience/Projects/Claude/Contact/Footer .jsx + tests) is untouched, still Phase 27's scope. Also reworded `Hero.astro`'s header comment to drop the literal `components/Hero.jsx` substring (was tripping the plan's own no-dangling-import grep against a comment, not a real import — same technique 24-01/24-02 used). Production build verified: `dist/en`/`dist/es` each carry the `me-800.webp` LCP img, zero Hero-scoped `astro-island` (Nav's legitimate island unaffected), and `count-up.js`/`details-dismiss.js` render as deferred `type="module"` scripts well after `</head>` (not render-blocking, not `is:inline`). `npm run build` succeeds; 130/130 tests GREEN (140 baseline − 10 removed with the old RTL `Hero.test.jsx` suite).
 
 **Phase 24 progress: 4/5 plans complete.** Next step: Plan 24-05 (manual cross-browser QA gate — Escape/outside-click dismiss, `steps()` glyph alignment).
+
+**Phase 25 progress (complete):**
+
+- 25-01 (SectionPager island): `src/components/react/SectionPager.jsx` ports `src/components/SectionPager.jsx` (139 lines) verbatim except imports/signature (D-03) — `SECTION_IDS`/`SECTION_COLORS`, `prefersReducedMotion`/`scrollToY`/`scrollToId`, `ICONS`, `PagerButton`, `ProgressDial`, and the `requestAnimationFrame`-throttled scroll/resize `useEffect` carry zero logic changes. `useLanguage()`/`LanguageContext` replaced by a `locale` prop indexing `translations[locale]` directly, mirroring Phase 22's Nav pattern exactly (D-02) — second application confirms the Context→props idiom generalizes cleanly. `src/components/react/SectionPager.test.jsx` ports all 6 `it` blocks unchanged in assertions from the legacy RTL suite; `useActiveSection` mocked to `'hero'` (not `'about'` like Nav's test) to preserve the dial-color assertion's original `SECTION_IDS[0]`/`#00E5A8` semantics. TDD RED (import-resolution failure) → GREEN (6/6 passing) gate satisfied. `src/pages/en/index.astro`/`src/pages/es/index.astro` mount `<SectionPager client:visible locale={locale} />` immediately after `<Nav client:load .../>`, both outside `<main>` (D-04) — `client:visible` deliberately differs from Nav's `client:load` since SectionPager is scroll-gated (`window.scrollY > 320`), so deferred hydration loses nothing (D-01). `npm run build` verified: `dist/en/index.html`/`dist/es/index.html` both carry an `astro-island` with `client="visible"`. 136/136 tests GREEN (130 baseline + 6 new), zero regressions. **ISLAND-02 requirement complete.**
+
+**Phase 25 complete.** Next step: Phase 26 (Experience island, ISLAND-03, STATIC-02 Experience half).
 
 ## v4.2 Content Polish (IN PROGRESS — on main, no tag)
 
@@ -140,15 +146,15 @@ progress:
 See: .planning/PROJECT.md (refreshed 2026-07-19 — v5 Astro Migration milestone started)
 
 **Core value:** Hero + first impression must stop recruiters mid-scroll and convert visits into engineering conversations.
-**Current focus:** Phase 24 — Hero
+**Current focus:** Phase 26 — Experience island (ISLAND-03, STATIC-02 Experience half)
 **Last shipped:** v4.1 tag (2026-06-16). v4.2 Content Polish continues in parallel on `main`, untouched by v5.
 
 ## Current Position
 
-Phase: 24 (Hero) — EXECUTING
-Plan: 5 of 5
-Status: Ready to execute
-Last activity: 2026-07-20 -- Phase 25 planning complete
+Phase: 25 (SectionPager) — COMPLETE
+Plan: 1 of 1
+Status: Phase complete — ISLAND-02 shipped, ready for Phase 26
+Last activity: 2026-07-20 -- Phase 25 Plan 01 executed and closed
 
 Progress: [█████████░] 88%
 
@@ -223,9 +229,9 @@ Root cause closed: React SPA hydration was blocking the LCP critical path. Hero 
 
 ## Session Continuity
 
-Last session: 2026-07-20T00:38:42.957Z
-Stopped at: Phase 25 context gathered (--auto)
-Resume file: .planning/phases/25-sectionpager/25-CONTEXT.md
+Last session: 2026-07-20T00:51:14.468Z
+Stopped at: Phase 25 (SectionPager) complete -- 25-01 executed, ISLAND-02 done
+Resume file: None
 Untracked (intentional-keep): .planning/projects-input.md, Diagnostico_LinkedIn_*.docx, 14-PATTERNS.md
 Open PR: #2 junie-init only (foreign JetBrains scaffold — close if unused)
 

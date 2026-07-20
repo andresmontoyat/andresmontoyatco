@@ -128,7 +128,7 @@
   1. SectionPager hydrates as `client:visible` — confirmed in the network panel it does not download/execute until scrolled near, not `client:load`.
   2. Clicking a SectionPager control jumps to the correct section with unchanged active-state highlighting behavior.
 **Plans**: 1 plan
-  - [ ] 25-01-PLAN.md — Port SectionPager to client:visible island (Context→props) + RTL test + mount on /en//es (ISLAND-02)
+  - [x] 25-01-PLAN.md — Port SectionPager to client:visible island (Context→props) + RTL test + mount on /en//es (ISLAND-02)
 **UI hint**: yes
 
 ### Phase 26: Experience
@@ -328,7 +328,7 @@ See [`milestones/v3.9-ROADMAP.md`](milestones/v3.9-ROADMAP.md) and [`milestones/
 | 22. Nav island | v5 | 2/2 | Complete    | 2026-07-19 |
 | 23. Static content sections | v5 | 4/4 | Complete    | 2026-07-19 |
 | 24. Hero | v5 | 4/5 | In Progress|  |
-| 25. SectionPager | v5 | 0/TBD | Not started | — |
+| 25. SectionPager | v5 | 1/1 | Complete   | 2026-07-20 |
 | 26. Experience | v5 | 0/TBD | Not started | — |
 | 27. Lighthouse gate + cleanup | v5 | 0/TBD | Not started | — |
 

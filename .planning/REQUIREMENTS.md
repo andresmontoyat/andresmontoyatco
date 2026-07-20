@@ -20,7 +20,7 @@ Requirements for this milestone. Each maps to a v5 roadmap phase. All are requir
 ### ISLAND — React islands
 
 - [x] **ISLAND-01**: Nav (with nested ThemeToggle) hydrates as `client:load`; scroll-spy and theme flip behave identically to the current site
-- [ ] **ISLAND-02**: SectionPager hydrates as `client:visible`, unchanged behavior
+- [x] **ISLAND-02**: SectionPager hydrates as `client:visible`, unchanged behavior
 - [ ] **ISLAND-03**: Experience tech-chip filter implemented as a narrowly-scoped `client:visible` island or vanilla script — not `client:load`
 - [x] **ISLAND-04**: Theme flips before first paint via a blocking inline `<head>` script — zero FOUC on load or refresh
 
@@ -69,7 +69,7 @@ Deferred to a future release. Tracked but not in the v5 roadmap.
 | ROUTE-04 | Phase 21 | Complete |
 | ROUTE-05 | Phase 22 | Complete |
 | ISLAND-01 | Phase 22 | Complete |
-| ISLAND-02 | Phase 25 | Pending |
+| ISLAND-02 | Phase 25 | Complete |
 | ISLAND-03 | Phase 26 | Pending |
 | ISLAND-04 | Phase 21 | Complete |
 | STATIC-01 | Phase 23 | Complete |
