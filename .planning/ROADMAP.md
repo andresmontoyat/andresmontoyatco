@@ -127,7 +127,8 @@
 **Success Criteria** (what must be TRUE):
   1. SectionPager hydrates as `client:visible` — confirmed in the network panel it does not download/execute until scrolled near, not `client:load`.
   2. Clicking a SectionPager control jumps to the correct section with unchanged active-state highlighting behavior.
-**Plans**: TBD
+**Plans**: 1 plan
+  - [ ] 25-01-PLAN.md — Port SectionPager to client:visible island (Context→props) + RTL test + mount on /en//es (ISLAND-02)
 **UI hint**: yes
 
 ### Phase 26: Experience
