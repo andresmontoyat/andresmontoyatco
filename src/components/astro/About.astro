@@ -1,9 +1,9 @@
 ---
 // src/components/astro/About.astro
 // Zero-client-JS port of src/components/About.jsx (v5 STATIC-01).
-// Count-up animation (useCountUp/AnimatedValue) intentionally DROPPED per D-04 —
-// static values render verbatim; Phase 24 owns re-introducing count-up as a
-// shared vanilla <script> enhancer for both Hero and About.
+// Count-up animation re-added per D-03 — closes Phase 23's D-04 deferral by
+// wiring the numeric quick-fact (Experience) to the shared vanilla count-up
+// enhancer module, the same one Hero.astro uses (D-02).
 import data from '../../data/about.json'
 
 const { locale } = Astro.props
@@ -11,6 +11,14 @@ const { locale } = Astro.props
 function pick(field, lang) {
   if (typeof field === 'string') return field
   return field?.[lang] ?? field?.en ?? ''
+}
+
+function statParts(value) {
+  const match = value.match(/\d+/)
+  if (!match) return null
+  const target = Number(match[0])
+  const template = value.replace(/\d+/, '{n}')
+  return { target, template }
 }
 
 const { facts } = data
@@ -34,21 +42,31 @@ const { facts } = data
           <span class="text-accent">◆</span> {pick(data.quick, locale)}
         </h3>
         <ul class="text-base">
-          {facts.map((f, i) => (
-            <li
-              class={`group relative -mx-2 flex items-center justify-between gap-4 rounded-lg px-2 py-2.5 transition-all duration-200 hover:bg-accent/[0.07] motion-safe:hover:translate-x-0.5 ${i === facts.length - 1 ? '' : 'border-b border-border hover:border-transparent'}`}
-            >
-              <span class="flex items-center gap-2.5 text-muted transition-colors duration-200 group-hover:text-text">
-                <span aria-hidden="true" class="h-1.5 w-1.5 shrink-0 rounded-full bg-accent/40 transition-all duration-200 group-hover:scale-150 group-hover:bg-accent group-hover:shadow-[0_0_6px_var(--accent)]" />
-                {pick(f.kLabel, locale)}
-              </span>
-              <span class="text-right font-extrabold text-text transition-colors duration-200 group-hover:text-accent">
-                {pick(f.value, locale)}
-              </span>
-            </li>
-          ))}
+          {facts.map((f, i) => {
+            const value = pick(f.value, locale)
+            const parts = statParts(value)
+            return (
+              <li
+                class={`group relative -mx-2 flex items-center justify-between gap-4 rounded-lg px-2 py-2.5 transition-all duration-200 hover:bg-accent/[0.07] motion-safe:hover:translate-x-0.5 ${i === facts.length - 1 ? '' : 'border-b border-border hover:border-transparent'}`}
+              >
+                <span class="flex items-center gap-2.5 text-muted transition-colors duration-200 group-hover:text-text">
+                  <span aria-hidden="true" class="h-1.5 w-1.5 shrink-0 rounded-full bg-accent/40 transition-all duration-200 group-hover:scale-150 group-hover:bg-accent group-hover:shadow-[0_0_6px_var(--accent)]" />
+                  {pick(f.kLabel, locale)}
+                </span>
+                <span
+                  class="text-right font-extrabold text-text transition-colors duration-200 group-hover:text-accent"
+                  data-count-up={parts ? parts.target : undefined}
+                  data-count-up-template={parts ? parts.template : undefined}
+                >
+                  {value}
+                </span>
+              </li>
+            )
+          })}
         </ul>
       </aside>
     </div>
   </div>
 </section>
+
+<script src="../../scripts/count-up.js"></script>
