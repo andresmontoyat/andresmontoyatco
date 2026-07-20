@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v5
 milestone_name: Astro Migration
 status: executing
-stopped_at: Completed 24-01-PLAN.md
-last_updated: "2026-07-20T00:07:04.703Z"
+stopped_at: Completed 24-02-PLAN.md
+last_updated: "2026-07-20T00:19:11.230Z"
 last_activity: 2026-07-20
 progress:
   total_phases: 22
   completed_phases: 3
   total_plans: 25
-  completed_plans: 19
+  completed_plans: 20
   percent: 14
 ---
 
@@ -59,6 +59,13 @@ progress:
 - 23-03 (Projects.astro + Claude.astro): `Projects.astro` imports `projects.json` unchanged, ports `pick()`/featured-rest filter split verbatim; `FeaturedProjectCard`/`ProjectCard`/`TechTags` inlined into `featured.map()`/`rest.map()` template blocks, preserving `data-featured="true"/"false"`, the conditional CTA short-circuit, and `aria-hidden` decorative spans. `Projects.test.ts` ports all 8 `it` blocks from `Projects.test.jsx`. `Claude.astro` imports `claude.json` unchanged, ports `pick()` verbatim; `PitchHero`/`ValueCard`/`OfferingCard` inlined into the template and `data.values.map()`/`data.offerings.map()` blocks, preserving the split `h2Part1`/`h2Part2` heading structure. `Claude.test.ts` ports all 6 `it` blocks from `Claude.test.jsx`; two assertions adjusted for Astro's auto-escaped output (`&#39;`, `&amp;`). `src/components/Projects.test.jsx` and `src/components/Claude.test.jsx` removed. 115/115 tests GREEN (net zero change — 14 RTL specs removed, 14 Container API specs added). None of the 5 static components are mounted on any page yet — mounting (STATIC-01/TEST-01 completion gate) is Plan 23-04's scope.
 
 **Next step:** Plan 23-04 (mount all 5 static components into `en/index.astro` / `es/index.astro`).
+
+**Phase 24 progress:**
+
+- 24-01 (shared Hero enhancers): `src/scripts/count-up.js` — shared vanilla count-up enhancer (D-02), consolidating the old per-component `useCountUp`/`Stat` logic; IntersectionObserver-gated, `prefers-reduced-motion`-aware, cubic ease-out curve ported verbatim, exports `{ animate }` for testability. `src/scripts/details-dismiss.js` — generic Escape/outside-click enhancer for native `<details>` (D-06), zero section-specific identifiers, exports `{ initDismiss }`, reusable unmodified by Phase 26 (Experience). 7 new jsdom unit tests, 122/122 total suite GREEN.
+- 24-02 (Hero.astro): `src/components/astro/Hero.astro` — zero-island static port of `Hero.jsx`; char-reveal H1 middle line converted to a pure CSS `steps()` + `ch`-unit width animation (D-01, `.hero-reveal`/`--reveal-chars`, gated to full-text-immediately under `prefers-reduced-motion: reduce` via the existing global override, no cursor element, no JS); CV dropdown converted to native `<details class="details-dismiss relative group">`/`<summary>` with the ARIA menu/menuitem roles deliberately dropped (D-05, flagged inline) and wired to `details-dismiss.js` (D-06); hero photo ports directly as the server-rendered LCP element, no duplicate-DOM workaround (D-08); 4 stat spans carry `data-count-up`/`data-count-up-template` wired to `count-up.js` (D-02). `src/index.css` gained `.hero-reveal` + `hero-typewriter` keyframes + `summary` marker-removal rules. **Decision:** Astro Container API's `renderToString()` rewrites local `<script src>` references to dev-server virtual module URLs, losing the literal filename — `Hero.test.ts` asserts script-src wiring against the raw component source (`fs.readFileSync`) instead, a pattern future Container API tests asserting on `<script src="relative/path">` should reuse. `Hero.test.ts` — 14 Container API specs (coverage-parity port of `Hero.test.jsx` + new count-up/script-wiring/dropped-role/no-duplicate-photo regression guards). `npm run build` succeeds; 136/136 tests GREEN (122 baseline + 14 new). Not yet mounted into `en/index.astro`/`es/index.astro` (later plan's scope); STATIC-02 not marked complete in REQUIREMENTS.md — needs Hero's dropdown AND Experience's (Phase 26) both done.
+
+**Next step:** Plan 24-03 (About.astro count-up retrofit, closing Phase 23's D-04 deferral).
 
 ## v4.2 Content Polish (IN PROGRESS — on main, no tag)
 
@@ -137,11 +144,11 @@ See: .planning/PROJECT.md (refreshed 2026-07-19 — v5 Astro Migration milestone
 ## Current Position
 
 Phase: 24 (Hero) — EXECUTING
-Plan: 2 of 5
+Plan: 3 of 5
 Status: Ready to execute
 Last activity: 2026-07-20
 
-Progress: [████████░░] 76%
+Progress: [████████░░] 80%
 
 ## Shipped Slices (v4.0, on main, in chronological + PR order)
 
@@ -214,8 +221,8 @@ Root cause closed: React SPA hydration was blocking the LCP critical path. Hero 
 
 ## Session Continuity
 
-Last session: 2026-07-20T00:07:04.698Z
-Stopped at: Completed 24-01-PLAN.md
+Last session: 2026-07-20T00:19:11.224Z
+Stopped at: Completed 24-02-PLAN.md
 Resume file: None
 Untracked (intentional-keep): .planning/projects-input.md, Diagnostico_LinkedIn_*.docx, 14-PATTERNS.md
 Open PR: #2 junie-init only (foreign JetBrains scaffold — close if unused)
