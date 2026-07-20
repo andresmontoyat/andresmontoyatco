@@ -328,7 +328,7 @@ See [`milestones/v3.9-ROADMAP.md`](milestones/v3.9-ROADMAP.md) and [`milestones/
 | 22. Nav island | v5 | 2/2 | Complete    | 2026-07-19 |
 | 23. Static content sections | v5 | 4/4 | Complete    | 2026-07-19 |
 | 24. Hero | v5 | 4/5 | In Progress|  |
-| 25. SectionPager | v5 | 1/1 | Complete   | 2026-07-20 |
+| 25. SectionPager | v5 | 1/1 | Complete    | 2026-07-20 |
 | 26. Experience | v5 | 0/TBD | Not started | — |
 | 27. Lighthouse gate + cleanup | v5 | 0/TBD | Not started | — |
 
