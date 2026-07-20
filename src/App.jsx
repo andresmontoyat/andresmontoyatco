@@ -3,7 +3,6 @@ import React from 'react'
 import { LanguageProvider } from './i18n/LanguageContext'
 import { ThemeProvider } from './i18n/ThemeContext'
 import Nav from './components/Nav'
-import Hero from './components/Hero'
 import About from './components/About'
 import Skill from './components/Skill'
 import Experience from './components/Experience'
@@ -20,7 +19,6 @@ export default function App() {
         <div className="min-h-screen bg-bg text-text font-sans antialiased">
           <Nav />
           <main>
-            <Hero />
             <About />
             <Skill />
             <Experience />

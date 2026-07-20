@@ -4,7 +4,7 @@ import { render, screen } from '@testing-library/react'
 import App from './App'
 
 describe('App (v4.0 Slice 1 — purge)', () => {
-  it('renders Nav, Hero, and Footer without throwing', () => {
+  it('renders Nav, About, and Footer without throwing', () => {
     expect(() => render(<App />)).not.toThrow()
   })
 
