@@ -8,6 +8,7 @@ import SectionPager from '../../components/react/SectionPager.jsx'
 import Hero from '../../components/astro/Hero.astro'
 import About from '../../components/astro/About.astro'
 import Skill from '../../components/astro/Skill.astro'
+import Experience from '../../components/react/Experience.jsx'
 import Projects from '../../components/astro/Projects.astro'
 import Claude from '../../components/astro/Claude.astro'
 import Contact from '../../components/astro/Contact.astro'
@@ -26,6 +27,7 @@ const hrefEs = getRelativeLocaleUrl('es', path)
     <Hero locale={locale} />
     <About locale={locale} />
     <Skill locale={locale} />
+    <Experience client:visible locale={locale} />
     <Projects locale={locale} />
     <Claude locale={locale} />
     <Contact locale={locale} />
