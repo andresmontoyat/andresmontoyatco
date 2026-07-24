@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import data from '../../data/experience.json'
+import CareerGame from './CareerGame.jsx'
 
 // Props-based React island (locale via prop, not LanguageContext) — the
 // interactive Experience section: tech-chip filter with dimming + per-card
@@ -274,6 +275,9 @@ export default function Experience({ locale }) {
           {pick(data.h2, lang)}
         </h2>
         <p className="text-muted max-w-[640px] mb-8 font-pixel text-[11px] leading-[2]">{pick(data.intro, lang)}</p>
+        <div className="mb-10">
+          <CareerGame locale={locale} />
+        </div>
         <FilterBar
           lang={lang}
           activeTech={activeTech}
