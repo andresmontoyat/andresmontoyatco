@@ -1,0 +1,4 @@
+export const TUNING = {
+  GRAV: 0.7, MOVE: 0.7, MAXV: 4.4, FRICT: 0.82, JUMP: -13.2,
+  COYOTE: 6, BUFFER: 8, APEX_VY: 2.3, APEX_MULT: 0.55, MAX_FALL: 16,
+}
