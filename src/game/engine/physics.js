@@ -13,3 +13,23 @@ export function gravityStep(vy, t) {
 export function aabb(a, b) {
   return a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y
 }
+
+export function resolveHorizontal(p, solids) {
+  for (const s of solids) {
+    if (!aabb(p, s)) continue
+    if (p.vx > 0) p.x = s.x - p.w
+    else if (p.vx < 0) p.x = s.x + s.w
+    p.vx = 0
+  }
+}
+
+export function resolveVertical(p, solids) {
+  let landedOn = null, hitHead = null
+  p.onGround = false
+  for (const s of solids) {
+    if (!aabb(p, s)) continue
+    if (p.vy > 0) { p.y = s.y - p.h; p.vy = 0; p.onGround = true; landedOn = s }
+    else if (p.vy < 0) { p.y = s.y + s.h; p.vy = 0; hitHead = s }
+  }
+  return { landedOn, hitHead }
+}
