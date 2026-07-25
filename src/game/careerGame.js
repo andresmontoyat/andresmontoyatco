@@ -5,7 +5,7 @@ import { biomeForYear } from './world/biomes.js'
 import { mapExperienceToCompanies } from './world/companies.js'
 import { buildLevel } from './world/level.js'
 import { TUNING } from './engine/tuning.js'
-import { jumpVelocity, gravityStep, aabb, resolveHorizontal, resolveVertical } from './engine/physics.js'
+import { jumpVelocity, gravityStep, aabb, resolveHorizontal, resolveVertical, applyJumpCut, cornerCorrect } from './engine/physics.js'
 import { followCamera } from './engine/camera.js'
 import { createInput } from './engine/input.js'
 import { createPlayer, hurt, landReset } from './entities/player.js'
@@ -105,7 +105,7 @@ function applyRunAndJump(state) {
     burst(state.particles, p.x + p.w / 2, p.y + p.h, 1, { c: '#e8dcc0', spread: 1.5, up: 0.5, grav: 0.2, r: 2 })
   }
   if (p.buffer > 0) applyJump(state)
-  if (!keys.J && p.vy < -5) p.vy = -5
+  applyJumpCut(p, keys.J, t)
   p.vy = gravityStep(p.vy, t)
   p.buffer = Math.max(0, p.buffer - 1); p.coyote = Math.max(0, p.coyote - 1); p.inv = Math.max(0, p.inv - 1)
   p.sx += (1 - p.sx) * 0.2; p.sy += (1 - p.sy) * 0.2
@@ -151,6 +151,7 @@ function moveAndCollide(state, prevVy) {
   resolveHorizontal(p, solids)
 
   p.y += p.vy
+  cornerCorrect(p, solids, TUNING)
   const wasOn = p.onGround
   const { landedOn, hitHead } = resolveVertical(p, solids)
   if (landedOn && landedOn.mover) p.rideM = landedOn

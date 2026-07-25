@@ -23,6 +23,29 @@ export function resolveHorizontal(p, solids) {
   }
 }
 
+export function applyJumpCut(p, jHeld, t) {
+  if (!jHeld && p.vy < 0) p.vy *= t.JUMP_CUT
+  return p.vy
+}
+
+export function cornerCorrect(p, solids, t) {
+  if (p.vy >= 0) return false
+  for (const s of solids) {
+    if (!aabb(p, s)) continue
+    const overLeft = (p.x + p.w) - s.x
+    const overRight = (s.x + s.w) - p.x
+    if (overLeft > 0 && overLeft <= t.CORNER_PX && overLeft <= overRight) {
+      p.x = s.x - p.w
+      return true
+    }
+    if (overRight > 0 && overRight <= t.CORNER_PX && overRight < overLeft) {
+      p.x = s.x + s.w
+      return true
+    }
+  }
+  return false
+}
+
 export function resolveVertical(p, solids) {
   let landedOn = null, hitHead = null
   p.onGround = false
