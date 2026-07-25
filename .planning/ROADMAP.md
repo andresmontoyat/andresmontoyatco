@@ -27,7 +27,7 @@
 - [ ] **Phase 23: Static content sections** - About, Skill, Footer, Projects, Claude ship as zero-client-JS `.astro` components consuming existing `data/*.json` unchanged, each with an Astro Container API test
 - [ ] **Phase 24: Hero** - LCP-critical hero renders static HTML/CSS; CV dropdown converted to native `<details>`/`<summary>`; count-up animation consolidated
 - [ ] **Phase 25: SectionPager** - `client:visible` island, unchanged below-the-fold section-jump behavior
-- [ ] **Phase 26: Experience** - Native `<details>` expand/collapse (zero JS) + narrowly-scoped tech-chip filter island (`client:visible`, not `client:load`)
+- [x] **Phase 26: Experience** - Tech-chip filter shipped as `client:visible` React island (ISLAND-03 ✓); expand/collapse also in-island. **D-26-MEASURE-FIRST:** spec's native-`<details>` zero-JS letter NOT met for the Experience half — accepted as-is, Phase 27 Lighthouse gate is the judge (refactor only on gate failure). Island test debt closed (10 RTL specs). See `phases/26-experience/CONTEXT.md`.
 - [ ] **Phase 27: Lighthouse gate + cleanup** - Mobile hard gate (Perf ≥0.95, A11y/BP/SEO = 1.0) green on `/`, `/en`, AND `/es`; CRA/Vite-CSR leftovers removed; merge to `main`
 
 ### v4.2 Content Polish — 🟢 ACTIVE (slice-based, on main)

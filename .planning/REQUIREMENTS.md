@@ -21,13 +21,13 @@ Requirements for this milestone. Each maps to a v5 roadmap phase. All are requir
 
 - [x] **ISLAND-01**: Nav (with nested ThemeToggle) hydrates as `client:load`; scroll-spy and theme flip behave identically to the current site
 - [x] **ISLAND-02**: SectionPager hydrates as `client:visible`, unchanged behavior
-- [ ] **ISLAND-03**: Experience tech-chip filter implemented as a narrowly-scoped `client:visible` island or vanilla script — not `client:load`
+- [x] **ISLAND-03**: Experience tech-chip filter implemented as a narrowly-scoped `client:visible` island or vanilla script — not `client:load` *(Phase 26 — `<Experience client:visible>`; filter dimming + live match count under RTL coverage)*
 - [x] **ISLAND-04**: Theme flips before first paint via a blocking inline `<head>` script — zero FOUC on load or refresh
 
 ### STATIC — zero-JS components
 
 - [x] **STATIC-01**: About, Skill, Footer, Projects, Claude render as zero-client-JS `.astro` components, consuming existing `data/*.json` unchanged
-- [ ] **STATIC-02**: Experience expand/collapse and Hero's CV dropdown use native `<details>`/`<summary>`, zero JS
+- [~] **STATIC-02**: Experience expand/collapse and Hero's CV dropdown use native `<details>`/`<summary>`, zero JS *(Hero half delivered Phase 24 as native `<details>`. Experience half GATE-DEFERRED per D-26-MEASURE-FIRST: shipped as a React `client:visible` island, not native `<details>` — disposition resolved by the Phase 27 Lighthouse verdict, not by letter compliance. See `phases/26-experience/CONTEXT.md`.)*
 
 ### TEST — coverage gate
 
@@ -70,10 +70,10 @@ Deferred to a future release. Tracked but not in the v5 roadmap.
 | ROUTE-05 | Phase 22 | Complete |
 | ISLAND-01 | Phase 22 | Complete |
 | ISLAND-02 | Phase 25 | Complete |
-| ISLAND-03 | Phase 26 | Pending |
+| ISLAND-03 | Phase 26 | Complete |
 | ISLAND-04 | Phase 21 | Complete |
 | STATIC-01 | Phase 23 | Complete |
-| STATIC-02 | Phase 24 / Phase 26 | Pending |
+| STATIC-02 | Phase 24 / Phase 26 | Hero half Complete · Experience half gate-deferred (D-26 → Phase 27) |
 | TEST-01 | Phase 23 | Complete |
 | TEST-02 | Phase 22 | Complete |
 | DEPLOY-01 | Phase 21 | Complete |

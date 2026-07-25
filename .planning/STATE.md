@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v5
 milestone_name: Astro Migration
 status: planning
-stopped_at: "Phases 21-25 complete on v5-astro-migration branch (136/136 tests). Deferred: 21-05 (live Vercel validation, needs Protection Bypass secret), 24-05 (cross-browser QA for CV dropdown Escape/outside-click). Both to be resolved together at milestone end. Next: Phase 26 (Experience — ISLAND-03 tech-filter + STATIC-02 expand/collapse via native <details>)."
-last_updated: "2026-07-20T00:54:52.472Z"
-last_activity: 2026-07-20
+stopped_at: "Phases 21-26 complete on v5-astro-migration branch (195/195 tests). Phase 26 closed under D-26-MEASURE-FIRST: Experience shipped as client:visible React island (not native <details>); ISLAND-03 done, STATIC-02 Experience-half gate-deferred to Phase 27. Deferred to milestone end: 21-05 (live Vercel validation, needs Protection Bypass secret), 24-05 (CV dropdown cross-browser QA), STATIC-02 gate verdict. Next: Phase 27 (Lighthouse gate + CRA/Vite cleanup + merge to main)."
+last_updated: "2026-07-25T17:06:00.000Z"
+last_activity: 2026-07-25
 progress:
   total_phases: 22
   completed_phases: 4
@@ -74,6 +74,12 @@ progress:
 - 25-01 (SectionPager island): `src/components/react/SectionPager.jsx` ports `src/components/SectionPager.jsx` (139 lines) verbatim except imports/signature (D-03) — `SECTION_IDS`/`SECTION_COLORS`, `prefersReducedMotion`/`scrollToY`/`scrollToId`, `ICONS`, `PagerButton`, `ProgressDial`, and the `requestAnimationFrame`-throttled scroll/resize `useEffect` carry zero logic changes. `useLanguage()`/`LanguageContext` replaced by a `locale` prop indexing `translations[locale]` directly, mirroring Phase 22's Nav pattern exactly (D-02) — second application confirms the Context→props idiom generalizes cleanly. `src/components/react/SectionPager.test.jsx` ports all 6 `it` blocks unchanged in assertions from the legacy RTL suite; `useActiveSection` mocked to `'hero'` (not `'about'` like Nav's test) to preserve the dial-color assertion's original `SECTION_IDS[0]`/`#00E5A8` semantics. TDD RED (import-resolution failure) → GREEN (6/6 passing) gate satisfied. `src/pages/en/index.astro`/`src/pages/es/index.astro` mount `<SectionPager client:visible locale={locale} />` immediately after `<Nav client:load .../>`, both outside `<main>` (D-04) — `client:visible` deliberately differs from Nav's `client:load` since SectionPager is scroll-gated (`window.scrollY > 320`), so deferred hydration loses nothing (D-01). `npm run build` verified: `dist/en/index.html`/`dist/es/index.html` both carry an `astro-island` with `client="visible"`. 136/136 tests GREEN (130 baseline + 6 new), zero regressions. **ISLAND-02 requirement complete.**
 
 **Phase 25 complete.** Next step: Phase 26 (Experience island, ISLAND-03, STATIC-02 Experience half).
+
+**Phase 26 progress (complete):**
+
+- 26-01 (Experience island — close test debt + document divergence): Experience had already been restored on-branch as a **single full React island** (`src/components/react/Experience.jsx`, 312 LOC, `client:visible`) bundling tech-chip filter + React-`useState` expand/collapse + featured/compact variants + the lazy `CareerGame` canvas entry — diverging from the original spec's native-`<details>` zero-JS letter. **Decision D-26-MEASURE-FIRST (user):** accept the island as-is, no speculative `<details>` refactor; the Phase 27 Lighthouse mobile gate is the objective judge (the spec's "zero JS" was a *means* to that gate — if the island clears ≥0.95, STATIC-02's intent is satisfied; refactor only on gate failure). Closed the island's test debt: new `src/components/react/Experience.test.jsx` — 10 RTL specs (visible-flag filtering, bilingual copy, chip toggle → dimming + `aria-pressed` + live match count, clear reset, expand/collapse `aria-expanded` + bullets, featured/compact variants, active badge, CareerGame entry present). Data-derived `partialChip` guard (Java is on all 11 roles → dims nothing; suite auto-picks a partial-coverage chip). `npx vitest run` 195/195 GREEN (185 baseline + 10). `npm run build` succeeds (4 pages). REQUIREMENTS.md: ISLAND-03 → Complete, STATIC-02 → Hero-half Complete / Experience-half gate-deferred. **ISLAND-03 requirement complete; STATIC-02 Experience-half disposition deferred to Phase 27.**
+
+**Phase 26 complete.** Next step: Phase 27 (Lighthouse gate + cleanup + merge to `main`) — the milestone closer, which also resolves deferred 21-05 (live Vercel middleware validation) + 24-05 (CV dropdown cross-browser QA) + the STATIC-02 gate verdict.
 
 ## v4.2 Content Polish (IN PROGRESS — on main, no tag)
 
