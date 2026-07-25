@@ -21,7 +21,7 @@ const hrefEn = getRelativeLocaleUrl('en', path)
 const hrefEs = getRelativeLocaleUrl('es', path)
 ---
 <BaseLayout>
-  <Nav client:load locale={locale} hrefEn={hrefEn} hrefEs={hrefEs} />
+  <Nav client:idle locale={locale} hrefEn={hrefEn} hrefEs={hrefEs} />
   <SectionPager client:visible locale={locale} />
   <main>
     <Hero locale={locale} />
