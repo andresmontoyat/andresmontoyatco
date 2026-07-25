@@ -47,6 +47,7 @@ const ogImageUrl = new URL('/og-image.png', siteUrl).toString()
     <meta charset="utf-8" />
     <link rel="icon" href="/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin />
     <link
       rel="preload"
       as="image"
@@ -109,13 +110,22 @@ const ogImageUrl = new URL('/og-image.png', siteUrl).toString()
       }
     </script>
 
-    <!-- Google Analytics (D-09, verbatim) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-4TZJGR3MXR"></script>
+    <!-- Google Analytics — loaded AFTER the page load event so the ~50KB gtag.js
+         fetch stops competing with the LCP hero image on the throttled critical path.
+         dataLayer is primed synchronously so no events are lost before gtag arrives. -->
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-4TZJGR3MXR');
+      function loadGtag(){
+        var s = document.createElement('script');
+        s.async = true;
+        s.src = 'https://www.googletagmanager.com/gtag/js?id=G-4TZJGR3MXR';
+        document.head.appendChild(s);
+      }
+      if (document.readyState === 'complete') loadGtag();
+      else window.addEventListener('load', loadGtag);
     </script>
 
     <script is:inline>
