@@ -11,6 +11,13 @@ export default getViteConfig({
     },
     globals: true,
     setupFiles: ['./src/test/setup.jsx'],
+    exclude: [
+      '**/node_modules/**',
+      '**/dist/**',
+      '**/.{idea,git,cache,output,temp}/**',
+      '**/{karma,rollup,webpack,vite,vitest,jest,ava,babel,nyc,cypress,tsup,build}.config.*',
+      'tests/e2e/**',
+    ],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'lcov'],
