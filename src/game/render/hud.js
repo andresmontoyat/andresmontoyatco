@@ -72,9 +72,9 @@ export function drawToast(ctx, { W, toast, lang, nowMs }) {
   ctx.fillText((e.role[lang]||'').toUpperCase() + '  ·  ' + e.y, cx-cw/2+16, yy+16)
   ctx.fillStyle = '#eaf1ff'; ctx.font = '800 16px ui-monospace,monospace'
   ctx.fillText(e.co, cx-cw/2+16, yy+35)
-  if (e.metric && e.metric.v) {
+  if (e.metric && e.metric.value) {
     ctx.fillStyle = b.c; ctx.font = '800 15px ui-monospace,monospace'; ctx.textAlign = 'right'
-    ctx.fillText(e.metric.v, cx+cw/2-16, yy+31)
+    ctx.fillText(e.metric.value, cx+cw/2-16, yy+31)
   }
   ctx.fillStyle = 'rgba(200,214,240,.7)'; ctx.font = '600 8px ui-monospace,monospace'; ctx.textAlign = 'right'
   ctx.fillText(lang==='en' ? '↵ / tap for details' : '↵ / toca para detalle', cx+cw/2-16, yy+45)

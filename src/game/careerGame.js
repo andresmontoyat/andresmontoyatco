@@ -72,6 +72,14 @@ function openCompany(state, index, onOpenPanel) {
   if (onOpenPanel) onOpenPanel(state.level.companies[index])
 }
 
+// Single source of truth for "panel dismissed, engine resumes" — the Escape
+// keydown (engine/input.js onClose) and the React overlay's close button /
+// scrim both funnel through this so touch/mobile users (who never fire
+// Escape) aren't left with a permanently paused canvas after openCompany().
+function closePanel(state) {
+  state.paused = false
+}
+
 function win(state, tsMs) {
   if (!state.reduced) {
     for (let k = 0; k < 44; k++) {
@@ -286,7 +294,7 @@ function wireInput(state, canvas, onOpenPanel) {
   state.input.attach(window, {
     onJumpBuffer: () => { state.player.buffer = TUNING.BUFFER; initAudio(state.audio) },
     onOpenNearest: () => { if (!state.paused) openCompany(state, nearCastle(state), onOpenPanel) },
-    onClose: () => { state.paused = false },
+    onClose: () => closePanel(state),
   })
   const onTap = (e) => {
     if (state.paused) return
@@ -329,6 +337,7 @@ export function init(canvas, { locale = 'en', reduced = false, onOpenPanel } = {
     setMuted: (m) => setAudioMuted(state.audio, m),
     getState: () => state,
     tick: (tsMs) => runStep(state, tsMs),
+    close: () => closePanel(state),
   }
 
   // Dev-only handle for Playwright e2e assertions — never ships to production

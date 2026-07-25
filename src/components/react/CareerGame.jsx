@@ -197,7 +197,17 @@ export default function CareerGame({ locale }) {
       >
         {muted ? '🔇' : '🔊'}
       </button>
-      {panel && <RolePanel company={panel} lang={lang} copy={copy} onClose={() => setPanel(null)} />}
+      {panel && (
+        <RolePanel
+          company={panel}
+          lang={lang}
+          copy={copy}
+          onClose={() => {
+            gameRef.current?.close()
+            setPanel(null)
+          }}
+        />
+      )}
     </div>
   )
 }
