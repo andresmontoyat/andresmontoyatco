@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v5
 milestone_name: Astro Migration
 status: planning
-stopped_at: "Phases 21-26 + 27-01 cleanup done on v5-astro-migration (149/149 tests). Local QA (Playwright + Lighthouse on prod astro-preview) passed and fixed 2 pre-existing gate-blockers (commit 93450d3): Nav portal hydration mismatch #418 (SSR-safe mounted-gate → BP 100) + SectionPager aria-hidden-focus (ref .inert → A11y 100). Local mobile /en: Perf 97·A11y 100·BP 100·SEO 100. BLOCKED on operator for OFFICIAL DEPLOY-04: needs PUBLIC_SITE_URL in Vercel env + preview deploy + Protection Bypass secret (21-05) to run the gate on /,/en,/es → then merge to main (27-03) + resolve STATIC-02 (D-26). Residual non-blocking: label-content-name-mismatch (weight 0), astro dev _jsxDEV crash (dev-only)."
-last_updated: "2026-07-25T17:06:00.000Z"
-last_activity: 2026-07-25
+stopped_at: Phase 21 context gathered
+last_updated: "2026-07-19T18:22:46.607Z"
+last_activity: 2026-07-19 — ROADMAP.md + REQUIREMENTS.md traceability written for v5 (17/17 requirements mapped)
 progress:
   total_phases: 22
-  completed_phases: 4
-  total_plans: 26
-  completed_plans: 23
-  percent: 18
+  completed_phases: 1
+  total_plans: 9
+  completed_plans: 8
+  percent: 5
 ---
 
 # Project State
@@ -36,78 +36,7 @@ progress:
 
 **Locked decision carried from research:** Root `/` redirect uses Vercel-native Edge Middleware (`middleware.ts`, platform feature, no npm package) — NOT Astro's own middleware (confirmed inert under `output: 'static'`) and NOT `@astrojs/vercel`. This is the single highest-severity risk item, independently flagged by 3 of 4 research passes; must be validated against a real Vercel preview deploy in Phase 21, not just `astro dev`.
 
-**Phase 21 progress:**
-
-- 21-01 (build toolchain): Astro 7.1.1 + @astrojs/react installed, astro:i18n configured, Vitest migrated to `getViteConfig()`. 102/102 tests GREEN.
-- 21-02 (BaseLayout + /en /es route tree): `src/layouts/BaseLayout.astro` ships build-time `<html lang>`, per-locale title/description (D-07), canonical + hreflang (en/es/x-default) resolved from `PUBLIC_SITE_URL` (D-05/D-06), JSON-LD Person + GA verbatim (D-08/D-09), blocking `cam-theme` pre-paint script (ISLAND-04). `/en`, `/es`, bare `/` fallback all build-verified. **Decision:** `astro:i18n`'s `getAbsoluteLocaleUrl` has no `{ base }` option in astro@7.1.1 (confirmed via `node_modules/astro/dist/i18n/index.d.ts`) — use `getRelativeLocaleUrl(locale, path)` + `new URL(..., siteUrl)` instead; resolves 21-RESEARCH.md's Open Question 2. `PUBLIC_SITE_URL` still needs configuring in Vercel Project Settings (user_setup, not yet done) — a gitignored local `.env` unblocks builds on this machine meanwhile. 102/102 tests still GREEN.
-- 21-03 (vercel.json + middleware.ts): `vercel.json` rewritten for Astro static output — `rewrites` block removed entirely, `framework: "astro"`, cache headers scoped to single `/_astro/(.*)` rule (DEPLOY-02). `middleware.ts` authored at repo root — 302-redirects `/` to `/en`/`/es` (cam-lang cookie first, else Accept-Language substring heuristic, D-01/D-02/D-03), `isKnownLocale()` allowlist gate before the `Location` header (T-21-03-01 open-redirect mitigation), `cam-lang` cookie refresh on `/en/*`/`/es/*` (D-04). **Decision:** matcher uses a negative-lookahead excluding `/_astro/` + static-asset extensions instead of RESEARCH.md's literal `'/(.*)'` — narrows D-04's "every route" to "every page route"; flagged in 21-03-SUMMARY.md for user sign-off, not silently applied. Bare-200 pass-through (Assumption A2) implemented per spec but **not yet validated** — deferred to Plan 21-05's real Vercel preview deploy, no `@vercel/functions` added. Source-level verification assertions pass for both files; no live-deploy testing performed in this plan.
-- 21-04 (404.astro + Container API harness): `src/pages/404.astro` authored as a **standalone** `<html lang>` doc — deliberately NOT wrapped in `BaseLayout` (locale copy/CTA is inferred from `Astro.url.pathname`'s `/en`/`/es` prefix, but `BaseLayout`'s `Astro.currentLocale` is always `'en'` on this unprefixed catch-all route, and its canonical/hreflang/OG machinery assumes real indexable content). Real dark-palette tokens only (`bg-ink-900`, `text-text-primary`/`text-text-secondary`, `text-brand`, `border-ink-400`, `bg-brand-gradient`) — zero `text-neon`/`bg-grad-neon`/`shadow-neon` (DEPLOY-02). `astro build` verified: emits `dist/404.html`. `src/pages/404.test.ts` stands up the Astro Container API harness (first `.astro` component test in the repo) — `experimental_AstroContainer` + `renderToString()`. **Decision:** esbuild's startup invariant fails under the repo's default jsdom test environment when compiling `.astro` files, so `404.test.ts` forces `// @vitest-environment node` per-file (no change to `vitest.config.ts`'s repo-wide jsdom default) — this is the pattern Phase 23 should reuse for its own Container API tests. 104/104 tests GREEN (102 + 2 new).
-
-**Next step:** Plan 21-05 validates `middleware.ts` against a real Vercel preview deploy (bare-200 pass-through + live redirect behavior) — the only remaining Phase 21 scope.
-
-**Phase 22 progress:**
-
-- 22-01 (Nav island): `src/components/react/Nav.jsx` ported into a single `client:load` React island (D-01), `NAV_ITEMS`/`SECTION_IDS` unchanged module-level (D-07). `locale`/`hrefEn`/`hrefEs` arrive as props — `translations[locale]` replaces `useLanguage()`/`LanguageContext` entirely (D-02). `src/components/react/ThemeToggle.jsx` nested (not top-level) — local `useState` seeded from `document.documentElement.dataset.theme` (already correct pre-paint via Phase 21's blocking script, zero flicker), persists to `cam-theme` (D-03). `LangPill` EN/ES buttons rewritten as `<a>` links: `href` seeds from `hrefEn`/`hrefEs` props then syncs `window.location.hash` via `useEffect` + `hashchange` listener (ROUTE-05, D-04); `onClick` writes the `cam-lang` cookie with a hardcoded locale literal, never derived from input (D-05, open-redirect guard mirrors `middleware.ts`'s `isKnownLocale`). `ProgressBar`/`MobileMenu`/`useActiveSection` carried over with zero logic changes (D-06). `src/pages/en/index.astro` and `src/pages/es/index.astro` mount `<Nav client:load locale hrefEn hrefEs />`, computing hrefs via `getRelativeLocaleUrl(locale, path)` in frontmatter (server-only helper, not importable in island code). `astro build` verified: both `dist/en/index.html`/`dist/es/index.html` carry server-rendered Nav markup (locale-correct `Language`/`Idioma` labels) plus an `astro-island` element with `client="load"`. 104/104 tests still GREEN, zero regressions.
-- 22-02 (Nav island tests, TEST-02): `src/test/setup.jsx` gained a guarded no-op `IntersectionObserver` stub (mirrors the existing `HTMLCanvasElement` stub style) so `useActiveSection` mounts cleanly under jsdom. `src/components/react/Nav.test.jsx` — new 6-spec RTL suite rendering the island directly (`renderNav(locale)`, props-only, zero `LanguageProvider`): bilingual nav links (EN/ES), LangPill anchors (`role="group"` `Language`, ES href `/^\/es\//`, `aria-pressed` on active locale), active-section `border-brand` highlight (via `vi.mock('../../hooks/useActiveSection', () => ({ default: () => 'about' }))`), theme toggle `dataset.theme` flip, and `cam-lang` cookie write on LangPill click. `getAllByText`/`getAllByRole` used throughout since `MobileMenu` is always mounted (opacity-toggled, not conditionally rendered) — every interactive element exists twice in the DOM. 110/110 tests GREEN (104 baseline + 6 new), zero regressions.
-
-**Phase 22 complete.** Next step: Phase 23 (static content sections, STATIC-01/TEST-01).
-
-**Phase 23 progress:**
-
-- 23-01 (About.astro): `src/components/astro/` directory established (mirrors `src/components/react/` from Phase 22). `About.astro` imports `about.json` unchanged, ports `pick(field, lang)` verbatim, renders zero React/hooks/`client:` directives. `useCountUp`/`AnimatedValue` deliberately NOT ported (D-04) — static value strings render verbatim; count-up re-introduction deferred to Phase 24's shared vanilla enhancer. `About.test.ts` — first Astro Container API coverage-parity spot-check (D-07), ports all 7 `it` blocks from the former RTL spec via `renderToString()` + string assertions. `src/components/About.test.jsx` removed. 110/110 tests GREEN.
-- 23-02 (Skill.astro + Footer.astro): `Skill.astro` imports `skills.json` unchanged, ports `pick()`/`maxYears()` verbatim; the React `MeterRow`/`Category` sub-components (no logic beyond markup) are inlined into the template's `.map()` blocks rather than extracted as separate `.astro` partials — Astro components cannot be invoked as plain JS functions the way React sub-components were. `Skill.test.ts` ports all 9 `it` blocks from `Skill.test.jsx`; two assertions required matching Astro's auto-escaped HTML output (`&amp;`, not `&`) rather than the raw source string. `Footer.astro` has no dedicated JSON file (D-02) — sources `footerCopy = translations[locale]?.footer` (BaseLayout's established idiom) and copies the hardcoded `social` array verbatim; reads `new Date().getFullYear()` at build time instead of React runtime (D-03). `Footer.test.ts` authors 5 fresh Container API assertions (no prior RTL baseline existed for Footer). `src/components/Skill.test.jsx` removed. 115/115 tests GREEN (110 baseline − 9 removed + 9 + 5 new).
-- 23-03 (Projects.astro + Claude.astro): `Projects.astro` imports `projects.json` unchanged, ports `pick()`/featured-rest filter split verbatim; `FeaturedProjectCard`/`ProjectCard`/`TechTags` inlined into `featured.map()`/`rest.map()` template blocks, preserving `data-featured="true"/"false"`, the conditional CTA short-circuit, and `aria-hidden` decorative spans. `Projects.test.ts` ports all 8 `it` blocks from `Projects.test.jsx`. `Claude.astro` imports `claude.json` unchanged, ports `pick()` verbatim; `PitchHero`/`ValueCard`/`OfferingCard` inlined into the template and `data.values.map()`/`data.offerings.map()` blocks, preserving the split `h2Part1`/`h2Part2` heading structure. `Claude.test.ts` ports all 6 `it` blocks from `Claude.test.jsx`; two assertions adjusted for Astro's auto-escaped output (`&#39;`, `&amp;`). `src/components/Projects.test.jsx` and `src/components/Claude.test.jsx` removed. 115/115 tests GREEN (net zero change — 14 RTL specs removed, 14 Container API specs added). None of the 5 static components are mounted on any page yet — mounting (STATIC-01/TEST-01 completion gate) is Plan 23-04's scope.
-
-**Next step:** Plan 23-04 (mount all 5 static components into `en/index.astro` / `es/index.astro`).
-
-**Phase 24 progress:**
-
-- 24-01 (shared Hero enhancers): `src/scripts/count-up.js` — shared vanilla count-up enhancer (D-02), consolidating the old per-component `useCountUp`/`Stat` logic; IntersectionObserver-gated, `prefers-reduced-motion`-aware, cubic ease-out curve ported verbatim, exports `{ animate }` for testability. `src/scripts/details-dismiss.js` — generic Escape/outside-click enhancer for native `<details>` (D-06), zero section-specific identifiers, exports `{ initDismiss }`, reusable unmodified by Phase 26 (Experience). 7 new jsdom unit tests, 122/122 total suite GREEN.
-- 24-02 (Hero.astro): `src/components/astro/Hero.astro` — zero-island static port of `Hero.jsx`; char-reveal H1 middle line converted to a pure CSS `steps()` + `ch`-unit width animation (D-01, `.hero-reveal`/`--reveal-chars`, gated to full-text-immediately under `prefers-reduced-motion: reduce` via the existing global override, no cursor element, no JS); CV dropdown converted to native `<details class="details-dismiss relative group">`/`<summary>` with the ARIA menu/menuitem roles deliberately dropped (D-05, flagged inline) and wired to `details-dismiss.js` (D-06); hero photo ports directly as the server-rendered LCP element, no duplicate-DOM workaround (D-08); 4 stat spans carry `data-count-up`/`data-count-up-template` wired to `count-up.js` (D-02). `src/index.css` gained `.hero-reveal` + `hero-typewriter` keyframes + `summary` marker-removal rules. **Decision:** Astro Container API's `renderToString()` rewrites local `<script src>` references to dev-server virtual module URLs, losing the literal filename — `Hero.test.ts` asserts script-src wiring against the raw component source (`fs.readFileSync`) instead, a pattern future Container API tests asserting on `<script src="relative/path">` should reuse. `Hero.test.ts` — 14 Container API specs (coverage-parity port of `Hero.test.jsx` + new count-up/script-wiring/dropped-role/no-duplicate-photo regression guards). `npm run build` succeeds; 136/136 tests GREEN (122 baseline + 14 new). Not yet mounted into `en/index.astro`/`es/index.astro` (later plan's scope); STATIC-02 not marked complete in REQUIREMENTS.md — needs Hero's dropdown AND Experience's (Phase 26) both done.
-- 24-03 (About.astro count-up retrofit, D-03): `src/components/astro/About.astro` gained a local `statParts(value)` helper (identical regex shape to `Hero.astro`'s own copy) — the facts `.map()` loop computes the picked value once per fact and conditionally attaches `data-count-up`/`data-count-up-template` to the value `<span>` only when a digit is present (in practice, only the "Experience" fact — `"18+ years"`/`"+18 años"`); Location/Current role/Languages/Work mode render unchanged. One `<script src="../../scripts/count-up.js">` tag added, mirroring `Hero.astro`'s reference to the same shared module — **closes Phase 23's D-04 deferral and proves D-02's count-up consolidation works identically across two independent `.astro` components**. `About.test.ts` corrected its now-stale "no count-up on mount per D-04" comment and gained 4 new specs (count-up attrs present/absent, script referenced once in raw source, exactly 1 deferred module script rendered) — confirms Hero's raw-source script-src assertion technique (24-02) generalizes to a second component. `npm run build` succeeds; 140/140 tests GREEN (136 baseline + 4 new).
-- 24-04 (mount Hero.astro + delete deprecated React Hero): `src/pages/en/index.astro`/`src/pages/es/index.astro` now import and mount `<Hero locale={locale} />` as the first `<main>` child, before `<About>` — STATIC-02 (Hero half) is live on both routes. `src/components/Hero.jsx`/`src/components/Hero.test.jsx` deleted (fully replaced by `Hero.astro`/`Hero.test.ts`, 24-02). **Deviation (Rule 3 - blocking):** the legacy `src/App.jsx` (pre-Astro CRA/Vite-CSR entry point, whole-app removal deferred to Phase 27 per ROADMAP "CRA/Vite-CSR leftovers removed") still imported the deleted `Hero.jsx` — removed the dangling import + `<Hero />` usage from `App.jsx` and corrected `App.test.jsx`'s stale description so `npx vitest run` stays GREEN; the rest of the legacy React app (Nav/About/Skill/Experience/Projects/Claude/Contact/Footer .jsx + tests) is untouched, still Phase 27's scope. Also reworded `Hero.astro`'s header comment to drop the literal `components/Hero.jsx` substring (was tripping the plan's own no-dangling-import grep against a comment, not a real import — same technique 24-01/24-02 used). Production build verified: `dist/en`/`dist/es` each carry the `me-800.webp` LCP img, zero Hero-scoped `astro-island` (Nav's legitimate island unaffected), and `count-up.js`/`details-dismiss.js` render as deferred `type="module"` scripts well after `</head>` (not render-blocking, not `is:inline`). `npm run build` succeeds; 130/130 tests GREEN (140 baseline − 10 removed with the old RTL `Hero.test.jsx` suite).
-
-**Phase 24 progress: 4/5 plans complete.** Next step: Plan 24-05 (manual cross-browser QA gate — Escape/outside-click dismiss, `steps()` glyph alignment).
-
-**Phase 25 progress (complete):**
-
-- 25-01 (SectionPager island): `src/components/react/SectionPager.jsx` ports `src/components/SectionPager.jsx` (139 lines) verbatim except imports/signature (D-03) — `SECTION_IDS`/`SECTION_COLORS`, `prefersReducedMotion`/`scrollToY`/`scrollToId`, `ICONS`, `PagerButton`, `ProgressDial`, and the `requestAnimationFrame`-throttled scroll/resize `useEffect` carry zero logic changes. `useLanguage()`/`LanguageContext` replaced by a `locale` prop indexing `translations[locale]` directly, mirroring Phase 22's Nav pattern exactly (D-02) — second application confirms the Context→props idiom generalizes cleanly. `src/components/react/SectionPager.test.jsx` ports all 6 `it` blocks unchanged in assertions from the legacy RTL suite; `useActiveSection` mocked to `'hero'` (not `'about'` like Nav's test) to preserve the dial-color assertion's original `SECTION_IDS[0]`/`#00E5A8` semantics. TDD RED (import-resolution failure) → GREEN (6/6 passing) gate satisfied. `src/pages/en/index.astro`/`src/pages/es/index.astro` mount `<SectionPager client:visible locale={locale} />` immediately after `<Nav client:load .../>`, both outside `<main>` (D-04) — `client:visible` deliberately differs from Nav's `client:load` since SectionPager is scroll-gated (`window.scrollY > 320`), so deferred hydration loses nothing (D-01). `npm run build` verified: `dist/en/index.html`/`dist/es/index.html` both carry an `astro-island` with `client="visible"`. 136/136 tests GREEN (130 baseline + 6 new), zero regressions. **ISLAND-02 requirement complete.**
-
-**Phase 25 complete.** Next step: Phase 26 (Experience island, ISLAND-03, STATIC-02 Experience half).
-
-**Phase 26 progress (complete):**
-
-- 26-01 (Experience island — close test debt + document divergence): Experience had already been restored on-branch as a **single full React island** (`src/components/react/Experience.jsx`, 312 LOC, `client:visible`) bundling tech-chip filter + React-`useState` expand/collapse + featured/compact variants + the lazy `CareerGame` canvas entry — diverging from the original spec's native-`<details>` zero-JS letter. **Decision D-26-MEASURE-FIRST (user):** accept the island as-is, no speculative `<details>` refactor; the Phase 27 Lighthouse mobile gate is the objective judge (the spec's "zero JS" was a *means* to that gate — if the island clears ≥0.95, STATIC-02's intent is satisfied; refactor only on gate failure). Closed the island's test debt: new `src/components/react/Experience.test.jsx` — 10 RTL specs (visible-flag filtering, bilingual copy, chip toggle → dimming + `aria-pressed` + live match count, clear reset, expand/collapse `aria-expanded` + bullets, featured/compact variants, active badge, CareerGame entry present). Data-derived `partialChip` guard (Java is on all 11 roles → dims nothing; suite auto-picks a partial-coverage chip). `npx vitest run` 195/195 GREEN (185 baseline + 10). `npm run build` succeeds (4 pages). REQUIREMENTS.md: ISLAND-03 → Complete, STATIC-02 → Hero-half Complete / Experience-half gate-deferred. **ISLAND-03 requirement complete; STATIC-02 Experience-half disposition deferred to Phase 27.**
-
-**Phase 26 complete.** Next step: Phase 27 (Lighthouse gate + cleanup + merge to `main`) — the milestone closer, which also resolves deferred 21-05 (live Vercel middleware validation) + 24-05 (CV dropdown cross-browser QA) + the STATIC-02 gate verdict.
-
-**Phase 27 progress (27-01 cleanup DONE; 27-02 gate + 27-03 merge operator-gated):**
-
-- 27-01 (D-27-CLEANUP-SWEEP — remove CRA/Vite-CSR leftovers): deleted the entire dead React CSR surface (verified zero active imports) — `src/App.jsx`/`App.test.jsx`/`index.jsx`/`reportWebVitals.js`, the 9 legacy `src/components/*.jsx` sections + 3 legacy `.test.jsx` (Contact/Experience/SectionPager) + `src/components/_shared/` (SectionLabel/ThemeToggle); dead root `index.html` (CRA/Vite entry referencing the deleted `/src/index.jsx`); Vite-CSR bundle-gate tooling (`scripts/check-bundle-gate.mjs` + `.test.mjs`, `build:analyze`/`build:gate` npm scripts). `lighthouse:local`/`lighthouse:mobile` local fallback `vite preview` → `astro preview`. `src/components/` now holds only `astro/` + `react/`. **SEO guards preserved, not lost:** `src/seo/jsonld.test.js` repointed from the deleted `index.html` to `BaseLayout.astro` source (static JSON-LD block, same assertions, ASEO-01 intact); `src/seo/hero-photo.test.js` removed as redundant (tested the v4.1 `#hero-static` duotone architecture that Hero.astro replaced — LCP img now guarded by `Hero.test.ts`). **Coverage gap closed:** deleting legacy `Contact.test.jsx` exposed that `Contact.astro` (migrated without a REQ-ID, commit 2be792a) had no test — authored `src/components/astro/Contact.test.ts` (6 Container API specs); every `.astro` component now has a sibling test (TEST-01 satisfied). Test count 195 → 148 (all removed specs covered deleted CSR/Vite code; zero live-coverage loss). `npm run build` succeeds (4 pages); `npx vitest run` 148/148 GREEN; zero functional dangling references (3 grep hits are historical comments only).
-
-**Local QA + gate-blocker fixes (commit 93450d3, verified against the production `astro preview` build under Playwright + Lighthouse):**
-
-Driving the prod build surfaced two PRE-EXISTING issues that would fail DEPLOY-04's A11y/BP=1.0 (neither from Phase 26/27-01):
-- **Hydration mismatch (React #418→#423)** → Best Practices 96. Root cause: Nav's `MobileMenu` returned `null` on the server (typeof-document guard) but a `createPortal` on the client's first render → SSR/client divergence → React discarded the SSR tree and re-rendered the whole Nav island (also explains the transient nav/filter DOM detach seen in the QA probe, and the total `_jsxDEV`-crash in `astro dev`). Fixed with the canonical SSR-safe portal pattern (`mounted` state false→true in useEffect; first client render matches server null, portal mounts post-hydration). Console errors 2→0.
-- **aria-hidden-focus** → Accessibility 96. SectionPager's floating pager is `aria-hidden` at top-of-page but its buttons stayed focusable. React 18.3 doesn't render the `inert` prop, so set `.inert` DOM property via a ref-effect keyed on `visible` (preserves the slide-in transition, unlike a visibility:hidden swap). Guard test added.
-
-**Local Lighthouse mobile /en after fixes: Perf 97 · A11y 100 · BP 100 · SEO 100** (LCP 2.3s, CLS 0, TBT 0). 149/149 unit GREEN; QA driver ALL PASS (7 sections, nav 6 links, theme flip, CV dropdown Escape=24-05, filter dims 4, game entry, /es Spanish, mobile) with 0 hydration errors. **NOTE:** this is a local proxy — the OFFICIAL DEPLOY-04 gate still needs a real Vercel deploy on `/`, `/en`, `/es`.
-
-**Follow-up fixes (all committed):**
-- `6988222` — **transparent overlays/backdrops** (found while running the app): the `ink` scale is built from HEX CSS vars, so Tailwind opacity modifiers (`bg-ink-950/95`, `bg-ink-900/70`) compiled to nothing → the mobile-menu overlay + nav/pager/Hero-dropdown backdrops were transparent. Fixed at source with Tailwind's color-function form (opacity resolves via `color-mix`); plain utilities + direct var consumers untouched, both themes work. Also dropped the stale `./index.html` content-glob entry.
-- `5c06e31` — **label-content-name-mismatch** (WCAG 2.5.3) cleared to 0 items: dropped the Experience compact-row toggle's redundant aria-label (visible text becomes the name; aria-expanded keeps state); `aria-hidden` on the decorative Contact "Reach out →" affordance and the Footer "gh"/"in" glyphs (icon-link pattern).
-- `cd2c543` — **astro-dev `_jsxDEV` race** killed: `vite.optimizeDeps.include` pre-bundles the React JSX runtimes at dev-server start, so the first page load no longer races on-demand dep optimization. Dev-only; prod output unchanged. Verified via a cache-cleared cold first-load (0 console errors).
-
-No known residuals. label-content-name-mismatch now passes; both themes' overlays render; `astro dev` is clean.
-
-**27-02 / 27-03 remain OPERATOR-GATED (blocked, not startable in-session):**
-
-1. Set `PUBLIC_SITE_URL` in Vercel Project → Settings → Environment Variables (`https://andresmontoyat.co`).
-2. Deploy `v5-astro-migration` preview + Protection Bypass secret so external Lighthouse can reach it (closes deferred 21-05 middleware validation).
-3. Run `LIGHTHOUSE_TARGET_URL=<preview>/… npm run lighthouse:deployed && npm run lighthouse:check` on `/`, `/en`, `/es` (DEPLOY-04 / 27-02).
-   - **PASS** → STATIC-02 Experience-half satisfied (D-26); proceed to merge `v5-astro-migration` → `main` (27-03).
-   - **FAIL** → refactor Experience expand/collapse to native `<details>` (`details-dismiss.js` ready), re-gate.
-4. Close 24-05 (CV dropdown cross-browser QA — Escape/outside-click) during the live pass.
+**Next step:** `/gsd:plan-phase 21`
 
 ## v4.2 Content Polish (IN PROGRESS — on main, no tag)
 
@@ -180,17 +109,17 @@ No known residuals. label-content-name-mismatch now passes; both themes' overlay
 See: .planning/PROJECT.md (refreshed 2026-07-19 — v5 Astro Migration milestone started)
 
 **Core value:** Hero + first impression must stop recruiters mid-scroll and convert visits into engineering conversations.
-**Current focus:** Phase 999.4 — vis company logos
+**Current focus:** v5 Astro Migration — ROADMAP.md created (Phases 21-27), awaiting `/gsd:plan-phase 21`.
 **Last shipped:** v4.1 tag (2026-06-16). v4.2 Content Polish continues in parallel on `main`, untouched by v5.
 
 ## Current Position
 
-Phase: 999.4
-Plan: Not started
-Status: Ready to plan
-Last activity: 2026-07-20
+Phase: 21 of 27 (Foundation — Astro scaffold, i18n routing & layout shell)
+Plan: TBD — not yet planned
+Status: Roadmap created, ready to plan
+Last activity: 2026-07-19 — ROADMAP.md + REQUIREMENTS.md traceability written for v5 (17/17 requirements mapped)
 
-Progress: [█████████░] 88%
+Progress: [░░░░░░░░░░] 0%
 
 ## Shipped Slices (v4.0, on main, in chronological + PR order)
 
@@ -227,13 +156,12 @@ Progress: [█████████░] 88%
 
 ## Blockers / Concerns
 
-- **v5 root-redirect risk** — `middleware.ts` code now written (21-03: cookie/`Accept-Language` parsing + `isKnownLocale()` allowlist + 302 redirect + cookie refresh, source-verified). Still UNVALIDATED against a real deploy — the bare-200 pass-through assumption (Assumption A2) must be confirmed via a real Vercel preview before any later phase assumes it works (3 of 4 research passes flagged this independently; validation is Plan 21-05's job, not yet run).
+- **v5 root-redirect risk** — Vercel Edge Middleware cookie/`Accept-Language` parsing + allowlist validation is the least-certain, highest-consequence piece of Phase 21; must be validated against a real Vercel preview deploy before any later phase assumes it works (3 of 4 research passes flagged this independently).
 - **v5 Tailwind + Astro PostCSS pickup** — MEDIUM confidence combination per research STACK.md; validate with a build spike at the very start of Phase 21.
-- **v5 Astro Container API coverage parity** — harness stood up and proven working (21-04: `experimental_AstroContainer` + `renderToString()` against `404.astro`, forced to `@vitest-environment node` per-file to work around an esbuild/jsdom incompatibility). Full coverage-parity comparison against an original RTL spec still unresolved until a real content component is migrated (Phase 23); experimental API, breaking-change risk remains.
+- **v5 Astro Container API coverage parity** — unresolved until at least one static component is migrated and its assertions compared side-by-side with the original RTL spec (Phase 23); experimental API, breaking-change risk.
 - **Real-device UAT pending (v4.0/v4.1 lineage)** — Operator UAT (Chrome stable + Safari iOS + Android real device) not yet formally re-executed since v4.1 LCP fix; carries as background item, not a v5 blocker.
 - **18 stale dependabot PRs** open — None blocking; sweep opportunistically.
 - **Vercel production URL** — Site lives on `*.vercel.app`; custom domain `andresmontoyat.co` still deferred (carries through v4.1/v4.2, unrelated to v5).
-- **v5 `PUBLIC_SITE_URL` env var not yet configured on Vercel** — `src/layouts/BaseLayout.astro` (21-02) reads it at build time for canonical/hreflang/og:url; must be set in Vercel Project → Settings → Environment Variables (value: `https://andresmontoyat.co`) before any production/preview deploy of the v5 branch. Local dev/CI builds on this machine use a gitignored `.env` fallback.
 
 ## v4.1 SHIPPED (2026-06-13 → 2026-06-16)
 
@@ -263,9 +191,9 @@ Root cause closed: React SPA hydration was blocking the LCP critical path. Hero 
 
 ## Session Continuity
 
-Last session: 2026-07-20T00:54:52.466Z
-Stopped at: Phases 21-25 complete on v5-astro-migration branch (136/136 tests). Deferred: 21-05 (live Vercel validation, needs Protection Bypass secret), 24-05 (cross-browser QA for CV dropdown Escape/outside-click). Both to be resolved together at milestone end. Next: Phase 26 (Experience — ISLAND-03 tech-filter + STATIC-02 expand/collapse via native <details>).
-Resume file: .planning/ROADMAP.md
+Last session: 2026-07-19T18:22:46.601Z
+Stopped at: Phase 21 context gathered
+Resume file: .planning/phases/21-foundation-astro-scaffold-i18n-routing-layout-shell/21-CONTEXT.md
 Untracked (intentional-keep): .planning/projects-input.md, Diagnostico_LinkedIn_*.docx, 14-PATTERNS.md
 Open PR: #2 junie-init only (foreign JetBrains scaffold — close if unused)
 

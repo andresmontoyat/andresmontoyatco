@@ -27,8 +27,8 @@
 - [ ] **Phase 23: Static content sections** - About, Skill, Footer, Projects, Claude ship as zero-client-JS `.astro` components consuming existing `data/*.json` unchanged, each with an Astro Container API test
 - [ ] **Phase 24: Hero** - LCP-critical hero renders static HTML/CSS; CV dropdown converted to native `<details>`/`<summary>`; count-up animation consolidated
 - [ ] **Phase 25: SectionPager** - `client:visible` island, unchanged below-the-fold section-jump behavior
-- [x] **Phase 26: Experience** - Tech-chip filter shipped as `client:visible` React island (ISLAND-03 ✓); expand/collapse also in-island. **D-26-MEASURE-FIRST:** spec's native-`<details>` zero-JS letter NOT met for the Experience half — accepted as-is, Phase 27 Lighthouse gate is the judge (refactor only on gate failure). Island test debt closed (10 RTL specs). See `phases/26-experience/CONTEXT.md`.
-- [~] **Phase 27: Lighthouse gate + cleanup** - **27-01 cleanup DONE** (D-27-CLEANUP-SWEEP): legacy React CSR app + dead root `index.html` + Vite bundle-gate tooling removed; `src/components/` now only `astro/` + `react/`; SEO guards repointed (jsonld → BaseLayout, hero-photo redundant → dropped) + Contact.astro test gap closed; 148/148 tests GREEN, build ✓. **27-02 gate + 27-03 merge OPERATOR-GATED** — need `PUBLIC_SITE_URL` in Vercel env + preview deploy + Protection Bypass secret (21-05), then Lighthouse mobile HARD gate (Perf ≥0.95, A11y/BP/SEO = 1.0) on `/`, `/en`, `/es` → merge to `main`. Gate verdict also resolves STATIC-02 Experience-half (D-26). See `phases/27-lighthouse-gate-cleanup/CONTEXT.md`.
+- [ ] **Phase 26: Experience** - Native `<details>` expand/collapse (zero JS) + narrowly-scoped tech-chip filter island (`client:visible`, not `client:load`)
+- [ ] **Phase 27: Lighthouse gate + cleanup** - Mobile hard gate (Perf ≥0.95, A11y/BP/SEO = 1.0) green on `/`, `/en`, AND `/es`; CRA/Vite-CSR leftovers removed; merge to `main`
 
 ### v4.2 Content Polish — 🟢 ACTIVE (slice-based, on main)
 
@@ -68,12 +68,7 @@
   3. View-source on `/en` and `/es` shows correct `hreflang` alternate tags, a canonical `<link>`, and `<html lang="en">` / `<html lang="es">` set at build time (no runtime `document.documentElement.lang` mutation).
   4. Theme flips before first paint via a blocking inline `<script is:inline>` in `BaseLayout.astro`'s `<head>` — zero FOUC on load or refresh, independent of React hydration timing.
   5. `vercel.json` no longer contains an SPA-fallback rewrite (a direct hit on a nonexistent path serves the authored `404.astro`, cache headers scoped to `/_astro/*` only); `package.json` has no `three` dependency and pins `engines.node >=22.12.0` matching the Vercel project's configured Node version.
-**Plans**: 5 plans
-  - [x] 21-01-PLAN.md — Astro scaffold & build tooling: install astro/@astrojs/react, remove three, pin engines.node, swap scripts, astro:i18n config, vitest.config.ts (ROUTE-01, DEPLOY-01, DEPLOY-03)
-  - [x] 21-02-PLAN.md — BaseLayout.astro (head/meta/OG/JSON-LD/GA + hreflang/canonical + html lang + blocking cam-theme theme-flip script) + /en//es//  route tree (ROUTE-01, ROUTE-03, ROUTE-04, ISLAND-04)
-  - [x] 21-03-PLAN.md — vercel.json cleanup (no rewrites, framework astro, /_astro/* cache) + middleware.ts / redirect + cam-lang cookie refresh + open-redirect guard (ROUTE-02, DEPLOY-02)
-  - [x] 21-04-PLAN.md — 404.astro (bilingual, real dark-palette tokens, locale-inferred) + Astro Container API test harness proof-of-life (DEPLOY-02)
-  - [ ] 21-05-PLAN.md — Vercel preview deploy validation gate: live / redirect + /en//es pass-through + 404, @vercel/functions next() fallback if needed (ROUTE-02)
+**Plans**: TBD
 **UI hint**: yes
 
 ### Phase 22: Nav island — shell navigability
@@ -84,9 +79,7 @@
   1. Nav (with nested ThemeToggle, not a separate island) hydrates on `client:load` and is interactive immediately: scroll-spy highlights the active section, hamburger overlay opens/closes, exactly as on the current site.
   2. Clicking the language switcher on `/en#experience` navigates to `/es#experience` (or the reverse) — the current section hash is preserved across the locale switch, not reset to top.
   3. Nav's Vitest + React Testing Library suite passes with coverage equivalent to the pre-migration component — same assertions now targeting the island.
-**Plans**: 2 plans
-  - [x] 22-01-PLAN.md — Nav island port (ThemeToggle local-state + Context→props + LangPill hash-preserving links) mounted client:load on /en//es (ISLAND-01, ROUTE-05)
-  - [x] 22-02-PLAN.md — jsdom IntersectionObserver stub + Nav island RTL suite (bilingual, langpill hrefs, active highlight, theme toggle, cam-lang cookie) (TEST-02)
+**Plans**: TBD
 **UI hint**: yes
 
 ### Phase 23: Static content sections
@@ -97,11 +90,7 @@
   1. About, Skill, Footer, Projects, and Claude sections render correct bilingual content on `/en` and `/es` with zero client-side JS shipped for these components (verified in the browser network/JS panel) — including Claude, which the original design spec's island table omitted.
   2. Each of these five components reads directly from its existing `src/data/*.json` file with no data-shape changes.
   3. Each of these five components has an Astro Container API test (bilingual content + ARIA assertions preserved) replacing its former RTL test — assertions ported, not diluted; coverage parity spot-checked against the original RTL spec for at least one component.
-**Plans**: 4 plans
-  - [x] 23-01-PLAN.md — About.astro + Container API parity test (D-07 spot-check); count-up dropped per D-04 (STATIC-01, TEST-01)
-  - [x] 23-02-PLAN.md — Skill.astro + Footer.astro (translations + build-time year) + Container API tests; Footer authored fresh (STATIC-01, TEST-01)
-  - [x] 23-03-PLAN.md — Projects.astro + Claude.astro + Container API parity tests (STATIC-01, TEST-01)
-  - [x] 23-04-PLAN.md — Mount all 5 in /en//es pages (D-05 order), build zero-JS verify + browser human-verify (STATIC-01)
+**Plans**: TBD
 **UI hint**: yes
 
 ### Phase 24: Hero
@@ -112,12 +101,7 @@
   1. Hero's char-reveal H1 and entrance treatment render without waiting on React hydration; the hero photo remains the LCP candidate (LCP timing at or better than v4.1's 2.1s baseline).
   2. The CV download control uses native `<details>`/`<summary>` (zero JS) and works identically on `/en` and `/es`, keyboard-operable (Escape-key close cross-browser verified) and screen-reader-navigable.
   3. Any duplicated count-up animation logic (Hero + About) is consolidated into a single shared vanilla-script enhancer, not left duplicated per component.
-**Plans**: 5 plans
-  - [x] 24-01-PLAN.md — Shared vanilla enhancers: count-up.js (D-02) + details-dismiss.js (D-06) + jsdom tests (STATIC-02)
-  - [x] 24-02-PLAN.md — Hero.astro (CSS steps() typewriter D-01, native <details> CV dropdown roles-dropped D-05, direct photo D-08, count-up spans D-02) + index.css + Container API test (STATIC-02)
-  - [x] 24-03-PLAN.md — About.astro count-up retrofit via shared script (D-03) + extended test (STATIC-02)
-  - [x] 24-04-PLAN.md — Mount Hero on /en//es, delete deprecated Hero.jsx/test, build zero-JS/LCP verify (STATIC-02)
-  - [ ] 24-05-PLAN.md — Cross-browser manual QA gate: Escape/outside-click close in Chrome/Firefox/Safari (D-07) + typewriter/count-up/LCP (STATIC-02)
+**Plans**: TBD
 **UI hint**: yes
 
 ### Phase 25: SectionPager
@@ -127,8 +111,7 @@
 **Success Criteria** (what must be TRUE):
   1. SectionPager hydrates as `client:visible` — confirmed in the network panel it does not download/execute until scrolled near, not `client:load`.
   2. Clicking a SectionPager control jumps to the correct section with unchanged active-state highlighting behavior.
-**Plans**: 1 plan
-  - [x] 25-01-PLAN.md — Port SectionPager to client:visible island (Context→props) + RTL test + mount on /en//es (ISLAND-02)
+**Plans**: TBD
 **UI hint**: yes
 
 ### Phase 26: Experience
@@ -324,11 +307,11 @@ See [`milestones/v3.9-ROADMAP.md`](milestones/v3.9-ROADMAP.md) and [`milestones/
 | 18. Above-the-fold layout | v3.9 | 1/1 | ✓ Complete | 2026-06-08 |
 | 19. Never-static constellation | v3.9 | inline | ✓ Complete | 2026-06-08 |
 | 20. 3D Constellation | v3.10 | 4/4 | Complete    | 2026-06-10 |
-| 21. Foundation — Astro scaffold, routing & layout | v5 | 4/5 | In Progress|  |
-| 22. Nav island | v5 | 2/2 | Complete    | 2026-07-19 |
-| 23. Static content sections | v5 | 4/4 | Complete    | 2026-07-19 |
-| 24. Hero | v5 | 4/5 | In Progress|  |
-| 25. SectionPager | v5 | 1/1 | Complete    | 2026-07-20 |
+| 21. Foundation — Astro scaffold, routing & layout | v5 | 0/TBD | Not started | — |
+| 22. Nav island | v5 | 0/TBD | Not started | — |
+| 23. Static content sections | v5 | 0/TBD | Not started | — |
+| 24. Hero | v5 | 0/TBD | Not started | — |
+| 25. SectionPager | v5 | 0/TBD | Not started | — |
 | 26. Experience | v5 | 0/TBD | Not started | — |
 | 27. Lighthouse gate + cleanup | v5 | 0/TBD | Not started | — |
 

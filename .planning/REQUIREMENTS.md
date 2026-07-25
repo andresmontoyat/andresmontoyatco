@@ -11,34 +11,34 @@ Requirements for this milestone. Each maps to a v5 roadmap phase. All are requir
 
 ### ROUTE — i18n routing & SEO
 
-- [x] **ROUTE-01**: Site serves fully static content at `/en` and `/es` via `astro:i18n`, symmetric locale trees
-- [x] **ROUTE-02**: Visitor hitting `/` is redirected (302) to `/en` or `/es` — `cam-lang` cookie first, else `Accept-Language` header — via Vercel Edge Middleware (`middleware.ts`, platform-native, no Astro adapter)
-- [x] **ROUTE-03**: Each locale page carries correct `hreflang` + canonical tags in `<head>`
-- [x] **ROUTE-04**: `html lang` attribute set correctly per locale at build time (no runtime JS mutation)
-- [x] **ROUTE-05**: Language switcher navigates `/en` ↔ `/es` preserving the current section hash
+- [ ] **ROUTE-01**: Site serves fully static content at `/en` and `/es` via `astro:i18n`, symmetric locale trees
+- [ ] **ROUTE-02**: Visitor hitting `/` is redirected (302) to `/en` or `/es` — `cam-lang` cookie first, else `Accept-Language` header — via Vercel Edge Middleware (`middleware.ts`, platform-native, no Astro adapter)
+- [ ] **ROUTE-03**: Each locale page carries correct `hreflang` + canonical tags in `<head>`
+- [ ] **ROUTE-04**: `html lang` attribute set correctly per locale at build time (no runtime JS mutation)
+- [ ] **ROUTE-05**: Language switcher navigates `/en` ↔ `/es` preserving the current section hash
 
 ### ISLAND — React islands
 
-- [x] **ISLAND-01**: Nav (with nested ThemeToggle) hydrates as `client:load`; scroll-spy and theme flip behave identically to the current site
-- [x] **ISLAND-02**: SectionPager hydrates as `client:visible`, unchanged behavior
-- [x] **ISLAND-03**: Experience tech-chip filter implemented as a narrowly-scoped `client:visible` island or vanilla script — not `client:load` *(Phase 26 — `<Experience client:visible>`; filter dimming + live match count under RTL coverage)*
-- [x] **ISLAND-04**: Theme flips before first paint via a blocking inline `<head>` script — zero FOUC on load or refresh
+- [ ] **ISLAND-01**: Nav (with nested ThemeToggle) hydrates as `client:load`; scroll-spy and theme flip behave identically to the current site
+- [ ] **ISLAND-02**: SectionPager hydrates as `client:visible`, unchanged behavior
+- [ ] **ISLAND-03**: Experience tech-chip filter implemented as a narrowly-scoped `client:visible` island or vanilla script — not `client:load`
+- [ ] **ISLAND-04**: Theme flips before first paint via a blocking inline `<head>` script — zero FOUC on load or refresh
 
 ### STATIC — zero-JS components
 
-- [x] **STATIC-01**: About, Skill, Footer, Projects, Claude render as zero-client-JS `.astro` components, consuming existing `data/*.json` unchanged
-- [~] **STATIC-02**: Experience expand/collapse and Hero's CV dropdown use native `<details>`/`<summary>`, zero JS *(Hero half delivered Phase 24 as native `<details>`. Experience half GATE-DEFERRED per D-26-MEASURE-FIRST: shipped as a React `client:visible` island, not native `<details>` — disposition resolved by the Phase 27 Lighthouse verdict, not by letter compliance. See `phases/26-experience/CONTEXT.md`.)*
+- [ ] **STATIC-01**: About, Skill, Footer, Projects, Claude render as zero-client-JS `.astro` components, consuming existing `data/*.json` unchanged
+- [ ] **STATIC-02**: Experience expand/collapse and Hero's CV dropdown use native `<details>`/`<summary>`, zero JS
 
 ### TEST — coverage gate
 
-- [x] **TEST-01**: Every static `.astro` component has an Astro Container API test replacing its former RTL test (bilingual content + ARIA assertions preserved)
-- [x] **TEST-02**: Every React island keeps its Vitest + React Testing Library coverage unchanged
+- [ ] **TEST-01**: Every static `.astro` component has an Astro Container API test replacing its former RTL test (bilingual content + ARIA assertions preserved)
+- [ ] **TEST-02**: Every React island keeps its Vitest + React Testing Library coverage unchanged
 
 ### DEPLOY — cleanup & gate
 
-- [x] **DEPLOY-01**: `three` (unused dependency) removed from `package.json`
-- [x] **DEPLOY-02**: `vercel.json` SPA-fallback rewrite removed; explicit `404.astro` authored; cache headers scoped to `/_astro/*` only
-- [x] **DEPLOY-03**: `engines.node >=22.12.0` pinned in `package.json`; Vercel project Node version updated to match
+- [ ] **DEPLOY-01**: `three` (unused dependency) removed from `package.json`
+- [ ] **DEPLOY-02**: `vercel.json` SPA-fallback rewrite removed; explicit `404.astro` authored; cache headers scoped to `/_astro/*` only
+- [ ] **DEPLOY-03**: `engines.node >=22.12.0` pinned in `package.json`; Vercel project Node version updated to match
 - [ ] **DEPLOY-04**: Lighthouse mobile hard gate (Performance ≥0.95, Accessibility/Best Practices/SEO = 1.0) passes on all 3 target URLs (`/`, `/en`, `/es`) before merge to `main`
 
 ## v2 Requirements
@@ -63,22 +63,22 @@ Deferred to a future release. Tracked but not in the v5 roadmap.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| ROUTE-01 | Phase 21 | Complete |
-| ROUTE-02 | Phase 21 | Complete |
-| ROUTE-03 | Phase 21 | Complete |
-| ROUTE-04 | Phase 21 | Complete |
-| ROUTE-05 | Phase 22 | Complete |
-| ISLAND-01 | Phase 22 | Complete |
-| ISLAND-02 | Phase 25 | Complete |
-| ISLAND-03 | Phase 26 | Complete |
-| ISLAND-04 | Phase 21 | Complete |
-| STATIC-01 | Phase 23 | Complete |
-| STATIC-02 | Phase 24 / Phase 26 | Hero half Complete · Experience half gate-deferred (D-26 → Phase 27) |
-| TEST-01 | Phase 23 | Complete |
-| TEST-02 | Phase 22 | Complete |
-| DEPLOY-01 | Phase 21 | Complete |
-| DEPLOY-02 | Phase 21 | Complete |
-| DEPLOY-03 | Phase 21 | Complete |
+| ROUTE-01 | Phase 21 | Pending |
+| ROUTE-02 | Phase 21 | Pending |
+| ROUTE-03 | Phase 21 | Pending |
+| ROUTE-04 | Phase 21 | Pending |
+| ROUTE-05 | Phase 22 | Pending |
+| ISLAND-01 | Phase 22 | Pending |
+| ISLAND-02 | Phase 25 | Pending |
+| ISLAND-03 | Phase 26 | Pending |
+| ISLAND-04 | Phase 21 | Pending |
+| STATIC-01 | Phase 23 | Pending |
+| STATIC-02 | Phase 24 / Phase 26 | Pending |
+| TEST-01 | Phase 23 | Pending |
+| TEST-02 | Phase 22 | Pending |
+| DEPLOY-01 | Phase 21 | Pending |
+| DEPLOY-02 | Phase 21 | Pending |
+| DEPLOY-03 | Phase 21 | Pending |
 | DEPLOY-04 | Phase 27 | Pending |
 
 **Note on STATIC-02:** Requirement bundles two independent native-`<details>` conversions — Hero's CV dropdown (delivered Phase 24) and Experience's expand/collapse (delivered Phase 26). Traceability anchored at Phase 24 per "assign to the first phase that could deliver it"; Phase 26 completes the requirement's second half and is called out explicitly in its own Requirements line for full-coverage clarity.
