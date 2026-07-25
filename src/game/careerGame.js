@@ -315,7 +315,7 @@ export function init(canvas, { locale = 'en', reduced = false, onOpenPanel } = {
     tsMs => { state.tsMs = tsMs; drawScene(ctx, state) },
   )
 
-  return {
+  const game = {
     start: () => loop.start(),
     stop: () => {
       loop.stop()
@@ -328,4 +328,10 @@ export function init(canvas, { locale = 'en', reduced = false, onOpenPanel } = {
     getState: () => state,
     tick: (tsMs) => runStep(state, tsMs),
   }
+
+  // Dev-only handle for Playwright e2e assertions — never ships to production
+  // (import.meta.env.DEV is false under `astro build`).
+  if (import.meta.env.DEV) window.__career = game
+
+  return game
 }
