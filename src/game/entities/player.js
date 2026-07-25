@@ -8,4 +8,4 @@ export function hurt(p) {
   if (p.boots) { p.boots = false; return { lost:'boots' } }
   return { lost:null }
 }
-export function landReset(p) { p.jumps = 0; p.sx = 1.25; p.sy = 0.78 }
+export function landReset(p, squash = true) { p.jumps = 0; if (squash) { p.sx = 1.25; p.sy = 0.78 } }

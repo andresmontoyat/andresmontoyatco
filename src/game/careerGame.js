@@ -78,9 +78,9 @@ function win(state, tsMs) {
       burst(state.particles, state.player.x + state.player.w / 2, state.player.y - 10, 1,
         { c: WIN_COLORS[k % 5], spread: 6, up: 4.5, grav: 0.14, r: 3.6 })
     }
+    state.shake = Math.max(state.shake, 14)
   }
   sfx(state.audio, 'power')
-  state.shake = Math.max(state.shake, 14)
   state.toast = { i: -1, born: tsMs, until: tsMs + 6000, victory: 1 }
 }
 
@@ -109,12 +109,14 @@ function applyJump(state) {
   if (v === null) return
   if (p.onGround || p.coyote > 0) {
     p.vy = v; p.onGround = false; p.coyote = 0; p.buffer = 0; p.jumps = 1
-    p.sx = 0.82; p.sy = 1.26
+    if (!state.reduced) { p.sx = 0.82; p.sy = 1.26 }
     sfx(state.audio, 'jump')
   } else {
     p.vy = v; p.buffer = 0; p.jumps = 2
-    p.sx = 0.8; p.sy = 1.3
-    if (!state.reduced) burst(state.particles, p.x + p.w / 2, p.y + p.h, 10, { c: '#10b981', spread: 2.4, up: 1.5, grav: 0.25 })
+    if (!state.reduced) {
+      p.sx = 0.8; p.sy = 1.3
+      burst(state.particles, p.x + p.w / 2, p.y + p.h, 10, { c: '#10b981', spread: 2.4, up: 1.5, grav: 0.25 })
+    }
     sfx(state.audio, 'jump2')
   }
 }
@@ -147,7 +149,7 @@ function moveAndCollide(state, prevVy) {
   if (hitHead && hitHead.q) openQblock(state, hitHead.q)
 
   if (!wasOn && p.onGround) {
-    landReset(p)
+    landReset(p, !state.reduced)
     if (!state.reduced && prevVy > 6) {
       burst(state.particles, p.x + p.w / 2, p.y + p.h, 7, { c: '#e8dcc0', spread: 2.4, up: 0.6, grav: 0.2, r: 2.4 })
     }
@@ -207,9 +209,9 @@ function collectPowerups(state, tsMs) {
 function stompFx(state, en) {
   const p = state.player
   p.jumps = Math.min(p.jumps, 1); p.inv = Math.max(p.inv, 8)
-  state.hitstop = en.boss ? 7 : 4
-  state.shake = Math.max(state.shake, en.boss ? 11 : 7)
   if (!state.reduced) {
+    state.hitstop = en.boss ? 7 : 4
+    state.shake = Math.max(state.shake, en.boss ? 11 : 7)
     burst(state.particles, en.x + en.w / 2, en.y + 6, en.boss ? 24 : 16, { c: en.col, spread: en.boss ? 4.5 : 3.4 })
     burst(state.particles, en.x + en.w / 2, en.y, 6, { c: '#fff', spread: 2, up: 1 })
   }
@@ -219,7 +221,7 @@ function stompFx(state, en) {
 
 function hurtFx(state, tsMs) {
   const r = hurt(state.player)
-  state.shake = Math.max(state.shake, 6)
+  if (!state.reduced) state.shake = Math.max(state.shake, 6)
   sfx(state.audio, 'hurt')
   if (r.lost) state.toast = { i: -1, born: tsMs, until: tsMs + 2200, lost: r.lost }
 }

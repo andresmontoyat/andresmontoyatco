@@ -125,15 +125,19 @@ function drawPlayer(ctx, player) {
 }
 
 export function drawScene(ctx, state) {
-  const { W, H, player, level, cam, particles, coinCount, lang, shake } = state
+  const { W, H, player, level, cam, particles, coinCount, lang, shake, reduced } = state
   const tsMs = state.tsMs || 0
   const zones = computeZones(level.companies, level.levelW)
   const biome = biomeAtX(zones, player.x)
+  // Reduced motion: freeze the background-layer parallax drift (hills/clouds) at a static
+  // offset instead of tracking `cam.x` — the world-space camera translate below is untouched
+  // so gameplay/movement stays identical, only the cosmetic depth-drift is disabled.
+  const parCam = reduced ? 0 : cam.x
 
   drawSky(ctx, W, H, BIOMES[biome])
-  drawHills(ctx, BIOMES[biome].hill2, 0.25, 90, tsMs, { W, H, cam: cam.x })
-  drawHills(ctx, BIOMES[biome].hill, 0.5, 150, tsMs, { W, H, cam: cam.x })
-  drawClouds(ctx, W, cam.x)
+  drawHills(ctx, BIOMES[biome].hill2, 0.25, 90, tsMs, { W, H, cam: parCam })
+  drawHills(ctx, BIOMES[biome].hill, 0.5, 150, tsMs, { W, H, cam: parCam })
+  drawClouds(ctx, W, parCam)
 
   const { x: shx, y: shy } = shakeOffset(shake)
   ctx.save()

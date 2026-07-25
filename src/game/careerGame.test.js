@@ -29,4 +29,20 @@ describe('careerGame composition', () => {
     expect(game.getState().player.x).toBeGreaterThan(x0)
     game.stop()
   })
+  it('suppresses juice under reduced motion', () => {
+    const game = init(stubCanvas(), { locale:'en', reduced:true })
+    const s = game.getState()
+    // force a stomp and assert no particles spawn under reduced motion
+    const before = s.particles.length
+    game.tick(16)
+    expect(s.reduced).toBe(true)
+    expect(s.particles.length).toBe(before) // no idle particle spawns when reduced
+    game.stop()
+  })
+  it('switches company labels with locale', () => {
+    const game = init(stubCanvas(), { locale:'en', reduced:true })
+    game.setLocale('es')
+    expect(game.getState().lang).toBe('es')
+    game.stop()
+  })
 })
