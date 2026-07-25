@@ -28,7 +28,7 @@
 - [ ] **Phase 24: Hero** - LCP-critical hero renders static HTML/CSS; CV dropdown converted to native `<details>`/`<summary>`; count-up animation consolidated
 - [ ] **Phase 25: SectionPager** - `client:visible` island, unchanged below-the-fold section-jump behavior
 - [x] **Phase 26: Experience** - Tech-chip filter shipped as `client:visible` React island (ISLAND-03 ✓); expand/collapse also in-island. **D-26-MEASURE-FIRST:** spec's native-`<details>` zero-JS letter NOT met for the Experience half — accepted as-is, Phase 27 Lighthouse gate is the judge (refactor only on gate failure). Island test debt closed (10 RTL specs). See `phases/26-experience/CONTEXT.md`.
-- [ ] **Phase 27: Lighthouse gate + cleanup** - Mobile hard gate (Perf ≥0.95, A11y/BP/SEO = 1.0) green on `/`, `/en`, AND `/es`; CRA/Vite-CSR leftovers removed; merge to `main`
+- [~] **Phase 27: Lighthouse gate + cleanup** - **27-01 cleanup DONE** (D-27-CLEANUP-SWEEP): legacy React CSR app + dead root `index.html` + Vite bundle-gate tooling removed; `src/components/` now only `astro/` + `react/`; SEO guards repointed (jsonld → BaseLayout, hero-photo redundant → dropped) + Contact.astro test gap closed; 148/148 tests GREEN, build ✓. **27-02 gate + 27-03 merge OPERATOR-GATED** — need `PUBLIC_SITE_URL` in Vercel env + preview deploy + Protection Bypass secret (21-05), then Lighthouse mobile HARD gate (Perf ≥0.95, A11y/BP/SEO = 1.0) on `/`, `/en`, `/es` → merge to `main`. Gate verdict also resolves STATIC-02 Experience-half (D-26). See `phases/27-lighthouse-gate-cleanup/CONTEXT.md`.
 
 ### v4.2 Content Polish — 🟢 ACTIVE (slice-based, on main)
 

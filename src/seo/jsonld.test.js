@@ -2,10 +2,13 @@ import fs from 'fs'
 import path from 'path'
 import { describe, it, expect } from 'vitest'
 
-const html = fs.readFileSync(path.join(process.cwd(), 'index.html'), 'utf8')
+// v5 (Astro): the Person JSON-LD moved from the deleted CRA `index.html` into
+// BaseLayout.astro's <head> (static, English-only in both locales, D-08). Assert
+// against the layout source — the block is literal static JSON, no Astro interpolation.
+const html = fs.readFileSync(path.join(process.cwd(), 'src/layouts/BaseLayout.astro'), 'utf8')
 const match = html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)
 
-describe('index.html Person JSON-LD (ASEO-01)', () => {
+describe('BaseLayout Person JSON-LD (ASEO-01)', () => {
   it('embeds a static application/ld+json block in the head', () => {
     expect(match).toBeTruthy()
   })

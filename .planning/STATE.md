@@ -3,7 +3,7 @@ gsd_state_version: 1.0
 milestone: v5
 milestone_name: Astro Migration
 status: planning
-stopped_at: "Phases 21-26 complete on v5-astro-migration branch (195/195 tests). Phase 26 closed under D-26-MEASURE-FIRST: Experience shipped as client:visible React island (not native <details>); ISLAND-03 done, STATIC-02 Experience-half gate-deferred to Phase 27. Deferred to milestone end: 21-05 (live Vercel validation, needs Protection Bypass secret), 24-05 (CV dropdown cross-browser QA), STATIC-02 gate verdict. Next: Phase 27 (Lighthouse gate + CRA/Vite cleanup + merge to main)."
+stopped_at: "Phases 21-26 complete + Phase 27-01 cleanup DONE on v5-astro-migration (148/148 tests, build ✓). CRA/Vite-CSR leftovers purged (legacy React app, root index.html, Vite bundle-gate); SEO guards repointed to Astro; Contact.astro test gap closed. BLOCKED on operator: Phase 27-02 Lighthouse gate + 27-03 merge need PUBLIC_SITE_URL in Vercel env + preview deploy + Protection Bypass secret (21-05). Gate verdict on /,/en,/es resolves DEPLOY-04 + STATIC-02 Experience-half (D-26); then merge to main. Also close 24-05 (CV dropdown QA) in the live pass."
 last_updated: "2026-07-25T17:06:00.000Z"
 last_activity: 2026-07-25
 progress:
@@ -80,6 +80,19 @@ progress:
 - 26-01 (Experience island — close test debt + document divergence): Experience had already been restored on-branch as a **single full React island** (`src/components/react/Experience.jsx`, 312 LOC, `client:visible`) bundling tech-chip filter + React-`useState` expand/collapse + featured/compact variants + the lazy `CareerGame` canvas entry — diverging from the original spec's native-`<details>` zero-JS letter. **Decision D-26-MEASURE-FIRST (user):** accept the island as-is, no speculative `<details>` refactor; the Phase 27 Lighthouse mobile gate is the objective judge (the spec's "zero JS" was a *means* to that gate — if the island clears ≥0.95, STATIC-02's intent is satisfied; refactor only on gate failure). Closed the island's test debt: new `src/components/react/Experience.test.jsx` — 10 RTL specs (visible-flag filtering, bilingual copy, chip toggle → dimming + `aria-pressed` + live match count, clear reset, expand/collapse `aria-expanded` + bullets, featured/compact variants, active badge, CareerGame entry present). Data-derived `partialChip` guard (Java is on all 11 roles → dims nothing; suite auto-picks a partial-coverage chip). `npx vitest run` 195/195 GREEN (185 baseline + 10). `npm run build` succeeds (4 pages). REQUIREMENTS.md: ISLAND-03 → Complete, STATIC-02 → Hero-half Complete / Experience-half gate-deferred. **ISLAND-03 requirement complete; STATIC-02 Experience-half disposition deferred to Phase 27.**
 
 **Phase 26 complete.** Next step: Phase 27 (Lighthouse gate + cleanup + merge to `main`) — the milestone closer, which also resolves deferred 21-05 (live Vercel middleware validation) + 24-05 (CV dropdown cross-browser QA) + the STATIC-02 gate verdict.
+
+**Phase 27 progress (27-01 cleanup DONE; 27-02 gate + 27-03 merge operator-gated):**
+
+- 27-01 (D-27-CLEANUP-SWEEP — remove CRA/Vite-CSR leftovers): deleted the entire dead React CSR surface (verified zero active imports) — `src/App.jsx`/`App.test.jsx`/`index.jsx`/`reportWebVitals.js`, the 9 legacy `src/components/*.jsx` sections + 3 legacy `.test.jsx` (Contact/Experience/SectionPager) + `src/components/_shared/` (SectionLabel/ThemeToggle); dead root `index.html` (CRA/Vite entry referencing the deleted `/src/index.jsx`); Vite-CSR bundle-gate tooling (`scripts/check-bundle-gate.mjs` + `.test.mjs`, `build:analyze`/`build:gate` npm scripts). `lighthouse:local`/`lighthouse:mobile` local fallback `vite preview` → `astro preview`. `src/components/` now holds only `astro/` + `react/`. **SEO guards preserved, not lost:** `src/seo/jsonld.test.js` repointed from the deleted `index.html` to `BaseLayout.astro` source (static JSON-LD block, same assertions, ASEO-01 intact); `src/seo/hero-photo.test.js` removed as redundant (tested the v4.1 `#hero-static` duotone architecture that Hero.astro replaced — LCP img now guarded by `Hero.test.ts`). **Coverage gap closed:** deleting legacy `Contact.test.jsx` exposed that `Contact.astro` (migrated without a REQ-ID, commit 2be792a) had no test — authored `src/components/astro/Contact.test.ts` (6 Container API specs); every `.astro` component now has a sibling test (TEST-01 satisfied). Test count 195 → 148 (all removed specs covered deleted CSR/Vite code; zero live-coverage loss). `npm run build` succeeds (4 pages); `npx vitest run` 148/148 GREEN; zero functional dangling references (3 grep hits are historical comments only).
+
+**27-02 / 27-03 remain OPERATOR-GATED (blocked, not startable in-session):**
+
+1. Set `PUBLIC_SITE_URL` in Vercel Project → Settings → Environment Variables (`https://andresmontoyat.co`).
+2. Deploy `v5-astro-migration` preview + Protection Bypass secret so external Lighthouse can reach it (closes deferred 21-05 middleware validation).
+3. Run `LIGHTHOUSE_TARGET_URL=<preview>/… npm run lighthouse:deployed && npm run lighthouse:check` on `/`, `/en`, `/es` (DEPLOY-04 / 27-02).
+   - **PASS** → STATIC-02 Experience-half satisfied (D-26); proceed to merge `v5-astro-migration` → `main` (27-03).
+   - **FAIL** → refactor Experience expand/collapse to native `<details>` (`details-dismiss.js` ready), re-gate.
+4. Close 24-05 (CV dropdown cross-browser QA — Escape/outside-click) during the live pass.
 
 ## v4.2 Content Polish (IN PROGRESS — on main, no tag)
 
