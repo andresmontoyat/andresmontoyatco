@@ -3,6 +3,11 @@ import react from '@astrojs/react'
 
 export default defineConfig({
   output: 'static', // default, but explicit — no adapter installed
+  // Inline all component CSS into each page's <head> instead of emitting a single
+  // render-blocking <link> to the shared ~52KB Tailwind bundle. Removes the extra
+  // critical-path round-trip that delayed first paint (LCP == FCP is the hero image)
+  // on real Vercel latency, where local `astro preview` masked it (localhost = 0 RTT).
+  build: { inlineStylesheets: 'always' },
   integrations: [react()],
   vite: {
     // Eagerly pre-bundle React + its JSX runtimes so `astro dev`'s first page
