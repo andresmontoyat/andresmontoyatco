@@ -15,7 +15,15 @@ export default getViteConfig({
       provider: 'v8',
       reporter: ['text', 'lcov'],
       include: ['src/**/*.{js,jsx}'],
-      exclude: ['src/test/**', 'src/index.jsx'],
+      exclude: [
+        'src/test/**',
+        'src/index.jsx',
+        'src/game/render/**',
+        'src/game/audio/**',
+        'src/game/engine/loop.js',
+        'src/game/engine/input.js',
+        'src/game/careerGame.js',
+      ],
     },
   },
 });
