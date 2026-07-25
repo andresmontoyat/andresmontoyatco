@@ -243,6 +243,25 @@
     font-family: 'Press Start 2P', ui-monospace, 'JetBrains Mono', monospace;
   }
 
+  /* Phase 24 (D-01): Hero H1 char-reveal — CSS steps() + ch-unit typewriter.
+     --reveal-chars is set per-instance via inline style (build-time char count).
+     Animation itself lives outside @layer utilities, gated by prefers-reduced-motion
+     (see below), so it composes with Tailwind's cascade correctly. */
+  .hero-reveal {
+    width: 0;
+    vertical-align: bottom;
+  }
+
+  /* Phase 24 (D-05/D-06): native <details> marker removal — cross-browser,
+     both rules required together (::-webkit-details-marker is a separate,
+     non-standard pseudo-element from the list-style mechanism). */
+  summary {
+    list-style: none;
+  }
+  summary::-webkit-details-marker {
+    display: none;
+  }
+
   /* Subtle dot-grid overlay — replaces old neon grid lines */
   .bg-grid-subtle {
     background-image:
@@ -294,6 +313,20 @@
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
+}
+
+/* Phase 24 (D-01): Hero H1 char-reveal typewriter. Gated to no-preference —
+   prefers-reduced-motion: reduce already forces animation-duration: 0.01ms
+   globally below, so no separate reduced-motion override is needed here;
+   the width still animates to full but effectively instantly. */
+@media (prefers-reduced-motion: no-preference) {
+  .hero-reveal {
+    animation: hero-typewriter 1.2s steps(var(--reveal-chars), end) 300ms forwards;
+  }
+}
+@keyframes hero-typewriter {
+  from { width: 0; }
+  to   { width: calc(var(--reveal-chars) * 1ch); }
 }
 
 /* Phase 3: reduced-motion override for animate-on-scroll

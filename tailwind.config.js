@@ -1,6 +1,16 @@
 /** @type {import('tailwindcss').Config} */
+
+// The ink scale is owned by HEX CSS vars (e.g. --color-ink-950: #07091A). Tailwind's
+// default opacity modifier emits `rgb(var(--x) / <alpha>)`, which is invalid for a hex
+// var — so `bg-ink-950/95` etc. silently compiled to nothing (transparent). The function
+// form lets opacity modifiers work via color-mix while plain utilities stay unchanged.
+const inkVar = (shade) => ({ opacityValue } = {}) =>
+  opacityValue === undefined || opacityValue === 1
+    ? `var(--color-ink-${shade})`
+    : `color-mix(in srgb, var(--color-ink-${shade}) calc(${opacityValue} * 100%), transparent)`
+
 module.exports = {
-  content: ['./index.html', './src/**/*.{js,jsx,ts,tsx}'],
+  content: ['./src/**/*.{astro,js,jsx,ts,tsx,md,mdx}'],
   darkMode: 'class',
   theme: {
     extend: {
@@ -8,13 +18,13 @@ module.exports = {
         // Surface / background scale — values owned by CSS vars in src/index.css
         // (:root for dark, [data-theme="light"] for light). See Plan 07-01.
         ink: {
-          950: 'var(--color-ink-950)',
-          900: 'var(--color-ink-900)',
-          800: 'var(--color-ink-800)',
-          700: 'var(--color-ink-700)',
-          600: 'var(--color-ink-600)',
-          500: 'var(--color-ink-500)',
-          400: 'var(--color-ink-400)',
+          950: inkVar(950),
+          900: inkVar(900),
+          800: inkVar(800),
+          700: inkVar(700),
+          600: inkVar(600),
+          500: inkVar(500),
+          400: inkVar(400),
         },
         // Brand — identity governed by CSS vars (theme-aware)
         brand: {

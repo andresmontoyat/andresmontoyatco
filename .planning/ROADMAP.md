@@ -11,11 +11,24 @@
 - ✅ **v3.10 — 3D Constellation** *(SHIPPED 2026-06-10, tag `v3.10`/`v3.10.1`)* — Genuine 3D upgrade on desktop WebGL renderer: PerspectiveCamera(fov=55) + OrbitControls drag-to-rotate + category-z layout. 1 REQ (DEPTH-01) / Phase 20 / 4 plans. Mobile SVG path UNCHANGED. 293/293 tests GREEN. **Entire game-mode/WebGL lineage (v3.8–v3.10) superseded by v4.0 purge.** See [`milestones/v3.10-ROADMAP.md`](milestones/v3.10-ROADMAP.md).
 - ✅ **v4.0 — Portfolio Redesign (JSON-Driven Refactor)** *(SHIPPED 2026-06-13, tag `v4.0`)* — Purged game-mode/Mario-world/WebGL/ViewMode lineage; dark palette tokens (#0B1020/#00E5A8/#00C2FF); 7 sections refactored to `src/data/<section>.json` bilingual contracts + 7-spec test files (PRs #26–#32). Killed `dangerouslySetInnerHTML`. 57/57 tests GREEN.
 - ✅ **v4.1 — Deploy Polish (OG + LCP perf)** *(SHIPPED 2026-06-16, tag `v4.1`)* — Static hero `<img>` moved to index.html (kill React-hydration LCP delay) + LCP eligibility fix + OG refresh (PRs #33–#35). Prod Lighthouse mobile: Perf 0.84→**0.99**, LCP 4.0s→**2.1s**; A11y/BP/SEO 1.0.
-- 🟢 **v4.2 — Content Polish** *(IN PROGRESS, no tag)* — Recruiter-facing content quality. Experience copy rewrite (tNic template, 12 entries) + timeline UI polish (PRs #36–#37); projects 3-card redesign (emoji glyphs + gradient overlay + flexbox) + contact reorder (PR #38); npm audit fix (PR #39). 16 obsolete dependabot PRs closed (dead CRA toolchain). 57/57 tests GREEN. Backlog: VIS-05, DIAGRAMS-01, custom domain.
+- 🟢 **v4.2 — Content Polish** *(IN PROGRESS, no tag, on `main`)* — Recruiter-facing content quality. Experience copy rewrite (tNic template, 12 entries) + timeline UI polish (PRs #36–#37); projects 3-card redesign (emoji glyphs + gradient overlay + flexbox) + contact reorder (PR #38); npm audit fix (PR #39). 16 obsolete dependabot PRs closed (dead CRA toolchain). 57/57 tests GREEN. Backlog: VIS-05, DIAGRAMS-01, custom domain. **Untouched by v5** — separate branch.
+- 🟢 **v5 — Astro Migration** *(IN PROGRESS, opened 2026-07-19)* — Migrate from React CSR (Vite) to Astro SSG with React islands to clear the Lighthouse mobile hard gate (Performance ≥0.95, Accessibility/Best Practices/SEO = 1.0) blocked since v4.2 Phase 11. 17 REQs (ROUTE/ISLAND/STATIC/TEST/DEPLOY) across Phases 21–27. Root `/` redirect via Vercel-native Edge Middleware (`middleware.ts`) — not Astro's own middleware, not `@astrojs/vercel`. Separate branch; merges to `main` only when the Lighthouse gate is green. Source: `docs/superpowers/specs/2026-07-19-astro-migration-design.md` (commit `6a3bf4a`); research: `.planning/research/SUMMARY.md`.
 
 ---
 
 ## Phases
+
+### v5 Astro Migration (Phases 21-27) — 🟢 ACTIVE
+
+> React CSR (Vite) → Astro SSG with React islands. Every v1 requirement is required to close the milestone — there is no partial-migration shippable state (DEPLOY-04 needs everything else shipped first). Separate branch from `main`; does not touch v4.2 Content Polish in progress there. Derived from 4 independent research passes (`.planning/research/SUMMARY.md`), confidence HIGH.
+
+- [ ] **Phase 21: Foundation — Astro scaffold, i18n routing & layout shell** - Working `/en`/`/es` static route tree, root `/` redirect via Vercel Edge Middleware, `BaseLayout.astro` with hreflang/canonical, deploy cleanup (three removed, `vercel.json` SPA-rewrite removed, `engines.node` pinned)
+- [ ] **Phase 22: Nav island** - Nav + nested ThemeToggle hydrate as `client:load`; scroll-spy + hash-preserving locale switcher proven working; islands testing pattern established
+- [ ] **Phase 23: Static content sections** - About, Skill, Footer, Projects, Claude ship as zero-client-JS `.astro` components consuming existing `data/*.json` unchanged, each with an Astro Container API test
+- [ ] **Phase 24: Hero** - LCP-critical hero renders static HTML/CSS; CV dropdown converted to native `<details>`/`<summary>`; count-up animation consolidated
+- [ ] **Phase 25: SectionPager** - `client:visible` island, unchanged below-the-fold section-jump behavior
+- [ ] **Phase 26: Experience** - Native `<details>` expand/collapse (zero JS) + narrowly-scoped tech-chip filter island (`client:visible`, not `client:load`)
+- [ ] **Phase 27: Lighthouse gate + cleanup** - Mobile hard gate (Perf ≥0.95, A11y/BP/SEO = 1.0) green on `/`, `/en`, AND `/es`; CRA/Vite-CSR leftovers removed; merge to `main`
 
 ### v4.2 Content Polish — 🟢 ACTIVE (slice-based, on main)
 
@@ -40,6 +53,88 @@
 - [~] **Phase 11: Vercel auto-deploy + UAT pre-deploy gate** (DEPLOY-01) — auto-deploy live; Plan 11-05 Lighthouse gate verdict deferred
 - [ ] **Phase 12: Custom domain andresmontoyat.co + DNS** (DEPLOY-02) — deferred
 - [ ] **Phase 13: PR preview deploys + OG card validation** (DEPLOY-03) — deferred
+
+---
+
+## Phase Details (v5 — 🟢 ACTIVE)
+
+### Phase 21: Foundation — Astro scaffold, i18n routing & layout shell
+**Goal**: Visitor's request to any locale URL, or to the bare root, resolves to fully static, correctly-tagged bilingual HTML — and the deploy config matches the new static-first architecture. Every subsequent phase depends on this working two-locale route tree, base layout, and a resolved root-redirect strategy.
+**Depends on**: Nothing (first phase of milestone)
+**Requirements**: ROUTE-01, ROUTE-02, ROUTE-03, ROUTE-04, ISLAND-04, DEPLOY-01, DEPLOY-02, DEPLOY-03
+**Success Criteria** (what must be TRUE):
+  1. Visiting `/en` or `/es` in a production build serves fully static HTML with symmetric route trees (`astro:i18n`, `prefixDefaultLocale: true`).
+  2. Visiting `/` returns a redirect to `/en` or `/es` — `cam-lang` cookie first, else `Accept-Language` — executed via Vercel-native Edge Middleware (`middleware.ts`, no Astro adapter), verified against a real Vercel preview deploy, not just `astro dev`.
+  3. View-source on `/en` and `/es` shows correct `hreflang` alternate tags, a canonical `<link>`, and `<html lang="en">` / `<html lang="es">` set at build time (no runtime `document.documentElement.lang` mutation).
+  4. Theme flips before first paint via a blocking inline `<script is:inline>` in `BaseLayout.astro`'s `<head>` — zero FOUC on load or refresh, independent of React hydration timing.
+  5. `vercel.json` no longer contains an SPA-fallback rewrite (a direct hit on a nonexistent path serves the authored `404.astro`, cache headers scoped to `/_astro/*` only); `package.json` has no `three` dependency and pins `engines.node >=22.12.0` matching the Vercel project's configured Node version.
+**Plans**: TBD
+**UI hint**: yes
+
+### Phase 22: Nav island — shell navigability
+**Goal**: Every page has a working, testable navigation shell — proving the islands-architecture pattern (prop-serialization, no cross-island Context) before any content phase depends on it.
+**Depends on**: Phase 21
+**Requirements**: ISLAND-01, ROUTE-05, TEST-02
+**Success Criteria** (what must be TRUE):
+  1. Nav (with nested ThemeToggle, not a separate island) hydrates on `client:load` and is interactive immediately: scroll-spy highlights the active section, hamburger overlay opens/closes, exactly as on the current site.
+  2. Clicking the language switcher on `/en#experience` navigates to `/es#experience` (or the reverse) — the current section hash is preserved across the locale switch, not reset to top.
+  3. Nav's Vitest + React Testing Library suite passes with coverage equivalent to the pre-migration component — same assertions now targeting the island.
+**Plans**: TBD
+**UI hint**: yes
+
+### Phase 23: Static content sections
+**Goal**: The bulk of the page's content ships as zero-client-JS HTML, consuming the existing bilingual JSON data unchanged. No cross-dependencies among these five sections — lowest-risk phase, validates the Container API testing pattern before the remaining stateful islands.
+**Depends on**: Phase 21 (layout shell); Phase 22 (Nav shell provides in-page navigation context for manual verification)
+**Requirements**: STATIC-01, TEST-01
+**Success Criteria** (what must be TRUE):
+  1. About, Skill, Footer, Projects, and Claude sections render correct bilingual content on `/en` and `/es` with zero client-side JS shipped for these components (verified in the browser network/JS panel) — including Claude, which the original design spec's island table omitted.
+  2. Each of these five components reads directly from its existing `src/data/*.json` file with no data-shape changes.
+  3. Each of these five components has an Astro Container API test (bilingual content + ARIA assertions preserved) replacing its former RTL test — assertions ported, not diluted; coverage parity spot-checked against the original RTL spec for at least one component.
+**Plans**: TBD
+**UI hint**: yes
+
+### Phase 24: Hero
+**Goal**: The hero section — per PROJECT.md's Core Value, the single most important recruiter-facing moment — renders instantly as static HTML/CSS with zero LCP-blocking JS, and its one remaining stateful control (CV format dropdown) works with zero JavaScript. Isolated from the bulk static-content phase because it's LCP-critical and the source design spec under-scoped its hidden complexity (duplicated count-up logic, CV dropdown).
+**Depends on**: Phase 21 (layout shell, LCP preload patterns)
+**Requirements**: STATIC-02 (Hero CV-dropdown half; Experience expand/collapse half completes in Phase 26)
+**Success Criteria** (what must be TRUE):
+  1. Hero's char-reveal H1 and entrance treatment render without waiting on React hydration; the hero photo remains the LCP candidate (LCP timing at or better than v4.1's 2.1s baseline).
+  2. The CV download control uses native `<details>`/`<summary>` (zero JS) and works identically on `/en` and `/es`, keyboard-operable (Escape-key close cross-browser verified) and screen-reader-navigable.
+  3. Any duplicated count-up animation logic (Hero + About) is consolidated into a single shared vanilla-script enhancer, not left duplicated per component.
+**Plans**: TBD
+**UI hint**: yes
+
+### Phase 25: SectionPager
+**Goal**: The below-the-fold section-jump control works exactly as before, hydrated no earlier than necessary. Depends on `useActiveSection` logic already proven working in Phase 22; low risk, isolated component.
+**Depends on**: Phase 22 (Nav's `useActiveSection` logic proven working)
+**Requirements**: ISLAND-02
+**Success Criteria** (what must be TRUE):
+  1. SectionPager hydrates as `client:visible` — confirmed in the network panel it does not download/execute until scrolled near, not `client:load`.
+  2. Clicking a SectionPager control jumps to the correct section with unchanged active-state highlighting behavior.
+**Plans**: TBD
+**UI hint**: yes
+
+### Phase 26: Experience
+**Goal**: Recruiters can scan the full career timeline and expand any entry for detail, and can filter by tech chip — with expand/collapse costing zero JS and the filter scoped to the smallest possible island. The design spec under-scoped this component as having one stateful concern (expand/collapse); it actually has two (expand/collapse AND a tech-chip filter that dims non-matching cards).
+**Depends on**: Phase 23 (static-content Container API pattern); Phase 24 (native `<details>` pattern established on Hero's CV dropdown)
+**Requirements**: ISLAND-03, STATIC-02 (Experience expand/collapse half; Hero CV-dropdown half delivered Phase 24)
+**Success Criteria** (what must be TRUE):
+  1. Each experience entry expands/collapses via native `<details>`/`<summary>` with zero JavaScript, reusing the pattern proven in Phase 24.
+  2. Clicking a tech-chip filter dims non-matching experience cards; this behavior ships as a narrowly-scoped `client:visible` island or vanilla script — confirmed NOT `client:load` in the network panel.
+  3. The tech-filter interaction keeps behavior-equivalent Vitest + RTL (or DOM-script) test coverage for the filtering logic.
+**Plans**: TBD
+**UI hint**: yes
+
+### Phase 27: Lighthouse gate + cleanup
+**Goal**: The migration is verified complete against the exact metric that defined the milestone, on every meaningfully distinct URL a recruiter could land on. This is the milestone's true exit criterion — per REQUIREMENTS.md, there is no partial-migration shippable state.
+**Depends on**: Phases 21–26 (every other v5 requirement shipped first)
+**Requirements**: DEPLOY-04
+**Success Criteria** (what must be TRUE):
+  1. Lighthouse mobile audit passes the hard gate — Performance ≥0.95, Accessibility/Best Practices/SEO = 1.0 — on all three target URLs: `/`, `/en`, and `/es` (the redirect hop itself has a measurable performance cost invisible if only `/en`/`/es` are audited).
+  2. No remaining CRA/Vite-CSR leftovers (dead entry points, unused config, orphaned `LanguageContext`/`ThemeContext` providers) remain in the repo.
+  3. The v5 branch merges to `main` only after this gate is green — merge is the observable completion signal of the milestone.
+**Plans**: TBD
+**UI hint**: no
 
 ---
 
@@ -212,6 +307,13 @@ See [`milestones/v3.9-ROADMAP.md`](milestones/v3.9-ROADMAP.md) and [`milestones/
 | 18. Above-the-fold layout | v3.9 | 1/1 | ✓ Complete | 2026-06-08 |
 | 19. Never-static constellation | v3.9 | inline | ✓ Complete | 2026-06-08 |
 | 20. 3D Constellation | v3.10 | 4/4 | Complete    | 2026-06-10 |
+| 21. Foundation — Astro scaffold, routing & layout | v5 | 0/TBD | Not started | — |
+| 22. Nav island | v5 | 0/TBD | Not started | — |
+| 23. Static content sections | v5 | 0/TBD | Not started | — |
+| 24. Hero | v5 | 0/TBD | Not started | — |
+| 25. SectionPager | v5 | 0/TBD | Not started | — |
+| 26. Experience | v5 | 0/TBD | Not started | — |
+| 27. Lighthouse gate + cleanup | v5 | 0/TBD | Not started | — |
 
 ---
 

@@ -1,0 +1,17 @@
+---
+// src/pages/index.astro — minimal static fallback for bare "/".
+// NOT the redirect mechanism: Plan 21-03's middleware.ts (Vercel Edge
+// Middleware) owns the real cookie/Accept-Language redirect to /en or /es.
+// This file only exists because output: 'static' requires a build target
+// for "/"; it is reached only if the middleware fails to short-circuit.
+---
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Carlos Andrés Montoya Tobón</title>
+  </head>
+  <body>
+    <p>Please choose a language: <a href="/en">English</a> / <a href="/es">Español</a></p>
+  </body>
+</html>

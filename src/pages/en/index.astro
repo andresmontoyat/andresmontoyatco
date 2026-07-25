@@ -1,0 +1,36 @@
+---
+// src/pages/en/index.astro — thin locale entry, proves the /en route tree
+// resolves through BaseLayout (ROUTE-01). Mounts the Nav island (Phase 22).
+// Content-section components (Hero/About/etc.) migrate in Phase 23+.
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import Nav from '../../components/react/Nav.jsx'
+import SectionPager from '../../components/react/SectionPager.jsx'
+import Hero from '../../components/astro/Hero.astro'
+import About from '../../components/astro/About.astro'
+import Skill from '../../components/astro/Skill.astro'
+import Experience from '../../components/react/Experience.jsx'
+import Projects from '../../components/astro/Projects.astro'
+import Claude from '../../components/astro/Claude.astro'
+import Contact from '../../components/astro/Contact.astro'
+import Footer from '../../components/astro/Footer.astro'
+import { getRelativeLocaleUrl } from 'astro:i18n'
+
+const locale = Astro.currentLocale ?? 'en'
+const path = Astro.url.pathname.replace(/^\/(en|es)/, '') || '/'
+const hrefEn = getRelativeLocaleUrl('en', path)
+const hrefEs = getRelativeLocaleUrl('es', path)
+---
+<BaseLayout>
+  <Nav client:load locale={locale} hrefEn={hrefEn} hrefEs={hrefEs} />
+  <SectionPager client:visible locale={locale} />
+  <main>
+    <Hero locale={locale} />
+    <About locale={locale} />
+    <Skill locale={locale} />
+    <Experience client:visible locale={locale} />
+    <Projects locale={locale} />
+    <Claude locale={locale} />
+    <Contact locale={locale} />
+  </main>
+  <Footer locale={locale} />
+</BaseLayout>

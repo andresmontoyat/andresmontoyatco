@@ -1,0 +1,71 @@
+---
+// src/pages/404.astro
+// Custom bilingual 404 page (DEPLOY-02). Single generic route, no locale-prefixed
+// variants (D-10) — Astro always builds exactly one dist/404.html, served by the
+// host regardless of which broken URL triggered it.
+//
+// Standalone <html> doc, deliberately NOT wrapped in <BaseLayout> (decision
+// recorded in 21-04-SUMMARY.md): BaseLayout derives <html lang>, canonical, and
+// hreflang from Astro.currentLocale, which this route never sets (it lives
+// outside src/pages/en|es) — and its canonical/OG machinery assumes real page
+// content, which an error page does not have. D-11 calls for a minimal,
+// no-personality page, so a small self-contained doc (matching RESEARCH.md's
+// documented 404.astro convention) reuses only the real dark-palette tokens,
+// not head machinery built for a different purpose.
+
+const pathname = Astro.url.pathname
+const isEs = pathname.startsWith('/es')
+const isEn = pathname.startsWith('/en')
+const locale = isEs ? 'es' : 'en'
+const homeHref = isEs ? '/es' : isEn ? '/en' : '/'
+
+const copy = {
+  en: {
+    eyebrow: '404 · Not Found',
+    heading: 'Page not found',
+    body: "The page you're looking for doesn't exist or has moved. Let's get you back on track.",
+    cta: 'Back to home',
+  },
+  es: {
+    eyebrow: '404 · No encontrado',
+    heading: 'Página no encontrada',
+    body: 'La página que buscas no existe o fue movida. Volvamos al inicio.',
+    cta: 'Volver al inicio',
+  },
+}
+
+const t = copy[locale]
+---
+<html lang={locale}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0B1020" />
+    <title>{t.eyebrow} — Carlos Andrés Montoya Tobón</title>
+    <meta name="description" content={t.body} />
+    <meta name="robots" content="noindex" />
+  </head>
+  <body class="bg-ink-900">
+    <main class="min-h-screen flex items-center justify-center px-6 py-8 md:py-12">
+      <div class="max-w-lg mx-auto text-center">
+        <p class="font-mono uppercase tracking-wide text-xs font-extrabold text-text-secondary mb-2">
+          {t.eyebrow}
+        </p>
+        <p
+          class="text-6xl font-extrabold leading-none bg-brand-gradient bg-clip-text text-transparent mb-4"
+          aria-hidden="true"
+        >
+          404
+        </p>
+        <h1 class="text-2xl font-extrabold text-text-primary mb-4">{t.heading}</h1>
+        <p class="text-base text-text-secondary mb-6">{t.body}</p>
+        <a
+          href={homeHref}
+          class="inline-flex items-center justify-center min-h-[44px] px-6 py-3 rounded-full border border-ink-400 text-text-secondary transition-colors duration-200 hover:text-brand hover:border-brand focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-ink-900"
+        >
+          {t.cta}
+        </a>
+      </div>
+    </main>
+  </body>
+</html>
