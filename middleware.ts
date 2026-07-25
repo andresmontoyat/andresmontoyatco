@@ -9,16 +9,18 @@
 // D-02: Accept-Language heuristic mirrors src/i18n/LanguageContext.jsx readInitialLang —
 //       header.toLowerCase().includes('es') ? 'es' : 'en' — no q-value parser.
 // D-03: the "/" redirect uses 302 (temporary — destination is visitor-dependent, never 301).
-// D-04: runs on every page route; refreshes the cam-lang cookie on /en/* -> en, /es/* -> es.
 //
-// Matcher scoping (this plan's decision): a negative-lookahead excludes /_astro/ hashed
-// assets and common static-file extensions so the cookie refresh still runs on every real
-// page visit (D-04's actual purpose) without paying per-asset Edge invocations. Exact
-// matcher string recorded verbatim in 21-03-SUMMARY.md for user sign-off.
+// HOTFIX (2026-07-25): the matcher previously ran on every page route and returned a bare
+// `new Response(null, { status: 200 })` for /en, /es and the pass-through — Assumption A2.
+// On real Vercel that empty Response does NOT fall through to the static file; it IS the
+// response, so every page served a 0-byte body (the 21-05 risk that was never validated).
+// Fix: scope the matcher to ONLY "/" so middleware handles nothing but the root redirect;
+// /en, /es and every other route are served directly as static files, untouched by Edge.
+// D-04 (cookie refresh on every page visit) is dropped — the cookie is still set on the "/"
+// redirect and by the Nav LangPill click, so locale persistence is unaffected. A proper
+// per-visit refresh can return later via the `next()` helper from @vercel/functions.
 export const config = {
-  matcher: '/((?!_astro/|.*\\.(?:ico|png|jpg|jpeg|webp|svg|gif|woff|woff2|css|js|mjs|json|xml|txt|map)$).*)',
-  // runtime defaults to 'edge' — do not set runtime: 'nodejs' here, Edge is required for
-  // D-04's per-request cookie refresh to stay fast.
+  matcher: '/',
 }
 
 const KNOWN_LOCALES = ['en', 'es'] as const
@@ -54,38 +56,18 @@ function buildSetCookie(locale: Locale): string {
 }
 
 export default function middleware(request: Request): Response {
-  const url = new URL(request.url)
-  const pathLocale = url.pathname.match(/^\/(en|es)(\/|$)/)?.[1] as Locale | undefined
+  // The matcher scopes this to "/" only — every invocation is the root redirect.
+  // No page route reaches here, so there is no pass-through Response to get wrong.
   const cookieLocale = parseCookie(request.headers.get('cookie'), COOKIE_NAME)
+  const target = isKnownLocale(cookieLocale)
+    ? (cookieLocale as Locale)
+    : resolveLocaleFromAcceptLanguage(request.headers.get('accept-language'))
 
-  // D-04: refresh the cookie on every /en/* or /es/* visit, regardless of the "/" redirect.
-  if (pathLocale) {
-    // NOTE (Assumption A2 / Open Question 1, RESEARCH.md): a bare 200 Response is NOT yet
-    // confirmed to pass the request through to the underlying static file — this must be
-    // validated against a real Vercel preview deploy in Plan 21-05. If the preview shows
-    // the static page is NOT served (e.g. an empty body is returned instead), the documented
-    // fallback is the `next()` helper exported from Vercel's Edge Functions runtime helper
-    // package (see 21-RESEARCH.md). That dependency is intentionally NOT added in this plan
-    // — implement the bare-200 approach now.
-    const response = new Response(null, { status: 200 })
-    response.headers.append('Set-Cookie', buildSetCookie(pathLocale))
-    return response
-  }
-
-  if (url.pathname === '/') {
-    const target = isKnownLocale(cookieLocale)
-      ? (cookieLocale as Locale)
-      : resolveLocaleFromAcceptLanguage(request.headers.get('accept-language'))
-
-    return new Response(null, {
-      status: 302, // D-03: temporary — destination is visitor-dependent, never 301
-      headers: {
-        Location: `/${target}`,
-        'Set-Cookie': buildSetCookie(target),
-      },
-    })
-  }
-
-  // Same pass-through caveat as above applies here (Assumption A2) — validated in Plan 21-05.
-  return new Response(null, { status: 200 })
+  return new Response(null, {
+    status: 302, // D-03: temporary — destination is visitor-dependent, never 301
+    headers: {
+      Location: `/${target}`,
+      'Set-Cookie': buildSetCookie(target),
+    },
+  })
 }
