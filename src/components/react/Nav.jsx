@@ -191,6 +191,13 @@ function ProgressBar() {
 }
 
 function MobileMenu({ open, onClose, t, lang, hrefEn, hrefEs, activeSection }) {
+  // SSR-safe portal: render nothing until mounted so the first client render
+  // matches the server (both null) — a document-existence guard alone renders
+  // null on the server but a portal on the client's first (hydration) render,
+  // which is exactly the React #418 mismatch that forced a full island re-render.
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => setMounted(true), [])
+
   useEffect(() => {
     if (typeof document === 'undefined') return undefined
     document.body.style.overflow = open ? 'hidden' : ''
@@ -204,7 +211,7 @@ function MobileMenu({ open, onClose, t, lang, hrefEn, hrefEs, activeSection }) {
     }
   }, [open, onClose])
 
-  if (typeof document === 'undefined') return null
+  if (!mounted) return null
 
   const overlay = (
     <div

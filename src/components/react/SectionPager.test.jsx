@@ -54,4 +54,14 @@ describe('SectionPager', () => {
     expect(screen.getByRole('button', { name: /volver al inicio/i, hidden: true })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /ir al final/i, hidden: true })).toBeInTheDocument()
   })
+
+  it('marks the hidden pager inert so its buttons leave the tab order (aria-hidden-focus fix)', () => {
+    // scrollY is 0 in jsdom → visible=false → the effect sets nav.inert = true,
+    // keeping the aria-hidden pager's focusable buttons out of the a11y tree.
+    const { container } = renderPager('en')
+    const nav = container.querySelector('nav[aria-label]')
+    expect(nav).toBeInTheDocument()
+    expect(nav.inert).toBe(true)
+    expect(nav.getAttribute('aria-hidden')).toBe('true')
+  })
 })

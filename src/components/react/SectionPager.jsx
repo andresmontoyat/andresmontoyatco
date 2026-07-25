@@ -92,6 +92,15 @@ export default function SectionPager({ locale }) {
   const [visible, setVisible] = useState(false)
   const active = useActiveSection(SECTION_IDS)
   const tickingRef = useRef(false)
+  const navRef = useRef(null)
+
+  // React 18.3 does not render the `inert` prop, so set the DOM property
+  // directly — keeps the hidden pager's buttons out of the tab order and the
+  // a11y tree (fixes the aria-hidden-focus audit) without killing the
+  // slide-in transition that a `visibility:hidden` swap would.
+  useEffect(() => {
+    if (navRef.current) navRef.current.inert = !visible
+  }, [visible])
 
   useEffect(() => {
     function update() {
@@ -123,6 +132,7 @@ export default function SectionPager({ locale }) {
 
   return (
     <nav
+      ref={navRef}
       aria-label={t.nav.pagerGroup}
       aria-hidden={!visible}
       className={`fixed right-4 sm:right-6 bottom-6 z-40 flex flex-col items-center gap-0.5 rounded-full border border-ink-400 bg-ink-900/70 p-1.5 backdrop-blur-md shadow-brand transition-all duration-300 ${
