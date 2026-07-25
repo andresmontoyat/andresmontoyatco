@@ -3,11 +3,11 @@ import react from '@astrojs/react'
 
 export default defineConfig({
   output: 'static', // default, but explicit — no adapter installed
-  // Inline all component CSS into each page's <head> instead of emitting a single
-  // render-blocking <link> to the shared ~52KB Tailwind bundle. Removes the extra
-  // critical-path round-trip that delayed first paint (LCP == FCP is the hero image)
-  // on real Vercel latency, where local `astro preview` masked it (localhost = 0 RTT).
-  build: { inlineStylesheets: 'always' },
+  // Keep the default 'auto' (small CSS inlined, the shared bundle stays an external
+  // cacheable <link>). Forcing 'always' inlined the ~52KB Tailwind bundle into <head>,
+  // and parsing it synchronously on Lighthouse's 4x-throttled mobile CPU INCREASED the
+  // LCP render-delay (consistent ~83 vs the external build's up-to-100) — the round-trip
+  // it saved cost less than the main-thread parse it added. Measured, reverted.
   integrations: [react()],
   vite: {
     // Eagerly pre-bundle React + its JSX runtimes so `astro dev`'s first page
