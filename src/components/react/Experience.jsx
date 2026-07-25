@@ -142,7 +142,7 @@ function FeaturedCard({ entry, lang, isOpen, onToggle, expandLabel, collapseLabe
   )
 }
 
-function CompactRow({ entry, lang, isOpen, onToggle, expandLabel, collapseLabel, dimmed }) {
+function CompactRow({ entry, lang, isOpen, onToggle, dimmed }) {
   const active = isActiveRole(entry.date)
 
   return (
@@ -156,7 +156,6 @@ function CompactRow({ entry, lang, isOpen, onToggle, expandLabel, collapseLabel,
           type="button"
           onClick={onToggle}
           aria-expanded={isOpen}
-          aria-label={isOpen ? collapseLabel : expandLabel}
           className="flex w-full items-center gap-3 text-left"
         >
           <span className="font-mono text-xs text-accent shrink-0">{pick(entry.date, lang)}</span>

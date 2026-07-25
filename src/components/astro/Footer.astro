@@ -37,7 +37,7 @@ const social = [
           aria-label={s.name}
           class="inline-flex items-center justify-center w-11 h-11 rounded-full border border-ink-400 text-text-secondary text-sm font-mono uppercase transition-all duration-200 hover:text-brand hover:border-brand hover:shadow-brand motion-safe:hover:-translate-y-1 hover:scale-105"
         >
-          {s.label}
+          <span aria-hidden="true">{s.label}</span>
         </a>
       ))}
     </div>
