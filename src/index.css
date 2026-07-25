@@ -240,7 +240,7 @@
 @layer utilities {
   /* Retro pixel display font (Press Start 2P) — accent + titles only */
   .font-pixel {
-    font-family: 'Press Start 2P', ui-monospace, 'JetBrains Mono', monospace;
+    font-family: 'Press Start 2P', ui-monospace, 'SF Mono', 'Menlo', monospace;
   }
 
   /* Phase 24 (D-01): Hero H1 char-reveal — CSS steps() + ch-unit typewriter.
@@ -279,7 +279,7 @@
     padding: 0.75rem 1rem;
     background-color: var(--color-brand);
     color: var(--color-text-inverse, #fff);
-    font-family: 'JetBrains Mono', monospace;
+    font-family: ui-monospace, 'SF Mono', 'Menlo', monospace;
     font-size: 0.75rem;
     font-weight: 800;
     border-radius: 0 0 0.5rem 0;

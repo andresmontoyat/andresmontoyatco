@@ -92,7 +92,7 @@ module.exports = {
       },
       fontFamily: {
         sans: ['Inter', 'SF Pro Display', 'Segoe UI', 'system-ui', '-apple-system', 'sans-serif'],
-        mono: ['JetBrains Mono', 'Fira Code', 'ui-monospace', 'monospace'],
+        mono: ['ui-monospace', 'SF Mono', 'Menlo', 'monospace'],
         display: ['Inter', 'SF Pro Display', 'system-ui', 'sans-serif'],
       },
       backgroundImage: {
