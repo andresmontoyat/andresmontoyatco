@@ -3,8 +3,8 @@
   "h2": { "en": "Who I am", "es": "Quién soy" },
   "paragraphs": [
     {
-      "en": "I'm Carlos Andrés Montoya Tobón, a Solutions Architect and Senior Backend Engineer based in Medellín, Colombia. For the last 18+ years I've been designing and building Java-based platforms — from transportation management systems and telecom transactional portals to fintech PaaS and blockchain credentials.",
-      "es": "Soy Carlos Andrés Montoya Tobón, Arquitecto de Soluciones e Ingeniero Backend Senior radicado en Medellín, Colombia. Llevo más de 18 años diseñando y construyendo plataformas basadas en Java — desde sistemas de gestión de transporte y portales transaccionales de telecomunicaciones hasta PaaS financieros y credenciales blockchain."
+      "en": "I'm Carlos Andrés Montoya Tobón, a Senior Java Backend Engineer and Solutions Architect based in Medellín, Colombia. For the last 18+ years I've been designing and building Java-based platforms — from transportation management systems and telecom transactional portals to fintech PaaS and blockchain credentials.",
+      "es": "Soy Carlos Andrés Montoya Tobón, Ingeniero Java Backend Senior y Arquitecto de Soluciones radicado en Medellín, Colombia. Llevo más de 18 años diseñando y construyendo plataformas basadas en Java — desde sistemas de gestión de transporte y portales transaccionales de telecomunicaciones hasta PaaS financieros y credenciales blockchain."
     },
     {
       "en": "My specialty is the architecture and development of web applications with Spring Framework, microservices and event-driven systems deployed on AWS, GCP and Azure. I've led distributed teams of up to 45 engineers and helped organizations modernize their stacks and delivery pipelines.",

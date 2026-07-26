@@ -18,14 +18,14 @@ const photoUri = `data:image/webp;base64,${readFileSync(join(root, 'public/me-40
 
 const STR = {
   en: {
-    title: 'Solutions Architect & Senior Backend Engineer',
+    title: 'Senior Java Backend Engineer & Solutions Architect',
     stack: 'Core stack',
     summary: 'Professional Summary',
     experience: 'Experience',
     skills: 'Technical Skills',
   },
   es: {
-    title: 'Arquitecto de Soluciones e Ingeniero Backend Senior',
+    title: 'Ingeniero Java Backend Senior y Arquitecto de Soluciones',
     stack: 'Stack principal',
     summary: 'Perfil Profesional',
     experience: 'Experiencia',
