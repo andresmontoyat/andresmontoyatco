@@ -28,7 +28,7 @@ const translations = {
     },
     meta: {
       title: 'Carlos Andrés Montoya Tobón · Senior Java Backend Engineer & Solutions Architect',
-      description: 'Carlos Andrés Montoya Tobón — Senior Java Backend Engineer and Solutions Architect with 18+ years of experience in Java, Spring, microservices and cloud.',
+      description: 'Carlos Andrés Montoya Tobón — Senior Java Backend Engineer and Solutions Architect with 18+ years of experience in Java, Kotlin, Spring, microservices and cloud.',
     },
     hero: {
       status: 'Available for new opportunities',
@@ -81,7 +81,7 @@ const translations = {
     },
     meta: {
       title: 'Carlos Andrés Montoya Tobón · Ingeniero Java Backend Senior y Arquitecto de Soluciones',
-      description: 'Carlos Andrés Montoya Tobón — Ingeniero Java Backend Senior y Arquitecto de Soluciones con +18 años de experiencia en Java, Spring, microservicios y cloud.',
+      description: 'Carlos Andrés Montoya Tobón — Ingeniero Java Backend Senior y Arquitecto de Soluciones con +18 años de experiencia en Java, Kotlin, Spring, microservicios y cloud.',
     },
     hero: {
       status: 'Disponible para nuevas oportunidades',

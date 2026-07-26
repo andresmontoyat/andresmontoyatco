@@ -34,7 +34,7 @@ describe('About.astro (Container API coverage-parity spot-check — D-07)', () =
     expect(result).toContain('About')
     expect(result).toContain('Who I am')
     expect(result).toMatch(/Senior Java Backend Engineer and Solutions Architect/)
-    expect(result).toMatch(/Spring Framework/)
+    expect(result).toMatch(/Spring Boot/)
     expect(result).toMatch(/wife Viky/)
   })
 

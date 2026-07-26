@@ -38,10 +38,10 @@ describe('Skill.astro (Container API parity — D-01/D-06)', () => {
     expect(result).toContain('AI &amp; Productivity')
   })
 
-  it('renders every chip with its label (30 chips total)', async () => {
+  it('renders every chip with its label (33 chips total)', async () => {
     const result = await renderSkill('en')
     const allChips = data.categories.flatMap((c) => c.chips)
-    expect(allChips).toHaveLength(30)
+    expect(allChips).toHaveLength(33)
     for (const chip of allChips) {
       expect(result).toContain(chip.label)
     }

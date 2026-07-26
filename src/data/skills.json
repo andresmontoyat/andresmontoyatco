@@ -19,6 +19,8 @@
         { "label": "Spring Security", "years": 12 },
         { "label": "Hibernate", "years": 14 },
         { "label": "Kafka", "years": 6 },
+        { "label": "RabbitMQ", "years": 10 },
+        { "label": "Cassandra", "years": 7 },
         { "label": "REST / gRPC", "years": 12 },
         { "label": "Keycloak", "years": 6 }
       ]
@@ -51,7 +53,8 @@
         { "label": "Maven", "years": 15, "core": true },
         { "label": "PostgreSQL", "years": 10 },
         { "label": "MySQL", "years": 14 },
-        { "label": "Oracle SQL", "years": 12 }
+        { "label": "Oracle SQL", "years": 12 },
+        { "label": "Scrum Master", "years": 10 }
       ]
     },
     {
