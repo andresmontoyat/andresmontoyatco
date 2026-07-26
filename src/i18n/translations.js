@@ -33,7 +33,7 @@ const translations = {
     hero: {
       status: 'Available for new opportunities',
       h1a: 'Senior',
-      h1b: 'Java Backend Engineer',
+      h1b: 'Java Backend',
       h1c: '& Solutions Architect.',
       lead: 'I design and ship backend platforms that scale — clean hexagonal architecture, cloud-native, 18+ years, zero shortcuts.',
       cta1: 'Get in touch',
@@ -85,8 +85,8 @@ const translations = {
     },
     hero: {
       status: 'Disponible para nuevas oportunidades',
-      h1a: 'Ingeniero',
-      h1b: 'Java Backend Senior',
+      h1a: 'Senior',
+      h1b: 'Java Backend',
       h1c: 'y Arquitecto de Soluciones.',
       lead: 'Diseño y entrego plataformas backend que escalan — arquitectura hexagonal limpia, cloud-native, +18 años, cero atajos.',
       cta1: 'Contáctame',
