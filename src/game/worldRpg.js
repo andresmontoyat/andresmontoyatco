@@ -13,6 +13,7 @@ import { loadSprites } from './assets/loader.js'
 import { MANIFEST } from './assets/manifest.js'
 import { createParticles, burst } from './render/juice.js'
 import { createCritters, updateCritters } from './entities/critters.js'
+import { DAY_LEN } from './render/ambient.js'
 
 const STEP_RATE = 0.15
 
@@ -50,7 +51,9 @@ export function createWorldRpg({ canvas, experience, sideProjects = [], lang = '
     revealed: false,
     lang,
     sprites: null,
-    clock: 0,
+    // Start at midday (daylight() peaks at phase 0.5) — a recruiter's first view must be a
+    // bright, inviting world, not the dark half of the day/night cycle.
+    clock: DAY_LEN / 2,
     particles: createParticles(),
     shake: 0,
     critters: createCritters(world),

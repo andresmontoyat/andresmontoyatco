@@ -7,9 +7,11 @@ import { phaseOf, daylight } from './lighting.js'
 
 // Full day/night lap, in state.clock units. `update()` advances the clock by the same per-call
 // `dtChars` it feeds the dialog typewriter (~1.6/frame at the rAF ~60fps cadence), i.e. ~96
-// clock-units per real second — so DAY_LEN=7200 lands a full cycle at ~75 real seconds (60-90s
-// target). Retune this constant (not the increment site) if the frame cadence changes.
-export const DAY_LEN = 7200
+// clock-units per real second — so DAY_LEN=9600 lands a full cycle at ~100 real seconds (a slow
+// ambient drift, not a strobe — 90-120s target). Retune this constant (not the increment site)
+// if the frame cadence changes. The game starts at DAY_LEN/2 (see worldRpg.js) — `daylight()`
+// peaks at phase 0.5 — so a recruiter's first view is full daylight, not midnight.
+export const DAY_LEN = 9600
 
 const SWAY_TYPES = new Set(['tree', 'tree_small', 'bush'])
 const SWAY_SPEED = 1.4

@@ -1,6 +1,8 @@
 import { describe, it, expect } from 'vitest'
 import { createWorldRpg, update } from './worldRpg.js'
 import { doorPoint } from './entities/site.js'
+import { DAY_LEN } from './render/ambient.js'
+import { phaseOf, daylight } from './render/lighting.js'
 import experience from '../data/experience.json'
 
 describe('worldRpg core', () => {
@@ -8,6 +10,10 @@ describe('worldRpg core', () => {
     const g = createWorldRpg({ canvas: null, experience, sideProjects: [], lang: 'es' })
     expect(g.state.world.sites.length).toBeGreaterThan(0)
     expect(g.state.player).toBeTruthy()
+  })
+  it('starts the world clock at midday — a recruiter must see daylight on load, not night', () => {
+    const g = createWorldRpg({ canvas: null, experience, sideProjects: [], lang: 'es' })
+    expect(daylight(phaseOf(g.state.clock, DAY_LEN))).toBeGreaterThan(0.8)
   })
   it('builds state with sprites unset until start() loads them', () => {
     const g = createWorldRpg({ canvas: null, experience, sideProjects: [], lang: 'es' })

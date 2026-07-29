@@ -161,11 +161,17 @@ function drawParticles(ctx, state, cam) {
   })
 }
 
+// lighting.js's nightTint().a is unit-tested as-is (peaks at 0.55 at true midnight) — scaling it
+// down here, at the draw site, keeps that module untouched while making the darkest night read
+// as an atmospheric dusky blue instead of a near-opaque black-out over the world.
+const NIGHT_OVERLAY_STRENGTH = 0.55
+
 function drawNightOverlay(ctx, state) {
   const tint = nightTint(phaseOf(state.clock || 0, DAY_LEN))
-  if (tint.a <= 0) return
+  const alpha = tint.a * NIGHT_OVERLAY_STRENGTH
+  if (alpha <= 0) return
   ctx.save()
-  ctx.globalAlpha = tint.a
+  ctx.globalAlpha = alpha
   ctx.fillStyle = `rgb(${tint.r},${tint.g},${tint.b})`
   ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height)
   ctx.restore()
