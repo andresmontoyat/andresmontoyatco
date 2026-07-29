@@ -41,4 +41,11 @@ describe('createDialog', () => {
     for (let i = 0; i < 200; i++) d.tick(2)
     expect(d.state).toBe('waiting')
   })
+  it('reveals full Spanish text when ES is longer than EN', () => {
+    const esLong = { co: 'Soldife', title: { en: 'Arch', es: 'Arquitecto de Soluciones y Tech Lead' }, date: { en: '2026', es: '2026' }, metric: null, tech: ['Java'] }
+    const d = createDialog()
+    d.open(esLong)
+    d.advance()
+    expect(d.visibleText('es')).toBe(dialogLines(esLong, 'es').join('\n'))
+  })
 })

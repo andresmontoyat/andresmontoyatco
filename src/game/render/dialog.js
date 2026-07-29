@@ -9,7 +9,10 @@ export function createDialog() {
   let state = 'closed'
   let site = null
   let typed = 0
-  const full = () => dialogLines(site, 'en').join('\n').length
+  const full = () => Math.max(
+    dialogLines(site, 'en').join('\n').length,
+    dialogLines(site, 'es').join('\n').length,
+  )
   return {
     get state() { return state },
     open(s) { site = s; typed = 0; state = 'typing' },
