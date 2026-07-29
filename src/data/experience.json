@@ -84,23 +84,23 @@
       "tech": ["Java", "Spring Boot", "Microservices", "Hexagonal Architecture", "AWS", "PostgreSQL"]
     },
     {
-      "id": "source-meridian-2023",
+      "id": "blerify-2023",
       "visible": true,
-      "date": { "en": "Aug 2023 — Dec 2023", "es": "Ago 2023 — Dic 2023" },
+      "date": { "en": "Dec 2023 — Dec 2024", "es": "Dic 2023 — Dic 2024" },
       "title": { "en": "Backend Developer", "es": "Backend Developer" },
-      "company": "Source Meridian",
-      "location": { "en": "Medellín, Colombia", "es": "Medellín, Colombia" },
+      "company": "Blerify",
+      "location": { "en": "Remote", "es": "Remoto" },
       "bullets": {
         "en": [
-          "Designed and built components for the DraiverDO mobile app, including microservice integrations and security layers (Java · Spring Boot).",
-          "Led code reviews, bug resolution and continuous-improvement initiatives across the backend team."
+          "Built security components with Keycloak and implemented KrakenD as the platform's API gateway.",
+          "Developed a blockchain-based voucher/bond issuance component (Java · Vert.x · Kotlin · blockchain · Postgres on GCP/Kubernetes)."
         ],
         "es": [
-          "Diseñé y construí componentes para la app móvil DraiverDO, incluyendo integraciones de microservicios y capas de seguridad (Java · Spring Boot).",
-          "Lideré revisiones de código, resolución de bugs e iniciativas de mejora continua en el equipo backend."
+          "Construí componentes de seguridad con Keycloak e implementé KrakenD como API gateway de la plataforma.",
+          "Desarrollé un componente de emisión de bonos/vouchers sobre blockchain (Java · Vert.x · Kotlin · blockchain · Postgres sobre GCP/Kubernetes)."
         ]
       },
-      "tech": ["Java", "Spring Boot", "Microservices", "AWS"]
+      "tech": ["Java", "Vert.x", "Kotlin", "Keycloak", "KrakenD", "Blockchain", "PostgreSQL", "GCP", "Kubernetes"]
     },
     {
       "id": "tul-2022",
