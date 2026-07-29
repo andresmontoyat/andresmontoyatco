@@ -8,6 +8,10 @@ import { createKonami } from './input/konami.js'
 import { createTopdownInput } from './input/topdownInput.js'
 import { render2d, activeSites } from './render/scene2d.js'
 import { createLoop } from './engine/loop.js'
+import { loadSprites } from './assets/loader.js'
+import { MANIFEST } from './assets/manifest.js'
+
+const STEP_RATE = 0.15
 
 function buildingSolids(sites) {
   return sites.map(s => ({ x: s.cx - s.w / 2, y: s.cy, w: s.w, h: s.h }))
@@ -17,6 +21,7 @@ export function update(state, input, dtChars) {
   const frozen = state.dialog.isOpen()
   const r = stepMovement(state.player, { ...input, frozen }, buildingSolids(activeSites(state)), { w: state.world.worldW, h: state.world.worldH })
   state.player.x = r.x; state.player.y = r.y; state.player.dir = r.dir; state.player.moving = r.moving
+  state.player.step = r.moving ? state.player.step + STEP_RATE : 0
   state.dialog.tick(dtChars)
 }
 
@@ -24,11 +29,12 @@ export function createWorldRpg({ canvas, experience, sideProjects = [], lang = '
   const world = buildOverworld(experience, biomeForYear, sideProjects)
   const state = {
     world,
-    player: { x: world.farm.x, y: world.farm.y + 70, w: 24, h: 28, dir: 'down', moving: false },
+    player: { x: world.farm.x, y: world.farm.y + 70, w: 24, h: 28, dir: 'down', moving: false, step: 0 },
     cam: { x: 0, y: 0 },
     dialog: createDialog(),
     revealed: false,
     lang,
+    sprites: null,
   }
   const konami = createKonami()
   const input = createTopdownInput()
@@ -47,6 +53,7 @@ export function createWorldRpg({ canvas, experience, sideProjects = [], lang = '
       onLanguage: () => { state.lang = state.lang === 'es' ? 'en' : 'es' },
       onKey: k => { if (konami.push(k) && !state.revealed) reveal() },
     })
+    loadSprites(MANIFEST).then(sprites => { state.sprites = sprites })
     const ctx = canvas.getContext('2d')
     const step = () => update(state, input.state, 1.6)
     const draw = () => {

@@ -8,6 +8,10 @@ describe('worldRpg core', () => {
     expect(g.state.world.sites.length).toBeGreaterThan(0)
     expect(g.state.player).toBeTruthy()
   })
+  it('builds state with sprites unset until start() loads them', () => {
+    const g = createWorldRpg({ canvas: null, experience, sideProjects: [], lang: 'es' })
+    expect(g.state.sprites).toBe(null)
+  })
   it('update moves the player when input is held', () => {
     const g = createWorldRpg({ canvas: null, experience, sideProjects: [], lang: 'es' })
     const x0 = g.state.player.x
