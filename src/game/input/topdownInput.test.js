@@ -28,4 +28,23 @@ describe('createTopdownInput', () => {
     inp.setKey('ArrowUp', true)
     expect(onKey).toHaveBeenCalledWith('ArrowUp')
   })
+  it('handles uppercase WASD (Shift+A/D/W/S) via key normalization', () => {
+    const inp = createTopdownInput()
+    inp.setKey('D', true)
+    expect(inp.state.R).toBe(1)
+  })
+  it('attach registers keydown/keyup on a real element and detach removes them', () => {
+    const handlers = []
+    const el = {
+      addEventListener: (type, h) => handlers.push({ type, h, active: true }),
+      removeEventListener: (type, h) => { const f = handlers.find(x => x.type === type && x.h === h); if (f) f.active = false },
+    }
+    const inp = createTopdownInput()
+    inp.attach(el, {})
+    expect(handlers.filter(x => x.active).map(x => x.type).sort()).toEqual(['keydown', 'keyup'])
+    handlers.find(x => x.type === 'keydown').h({ key: 'ArrowRight', preventDefault() {} })
+    expect(inp.state.R).toBe(1)
+    inp.detach()
+    expect(handlers.every(x => !x.active)).toBe(true)
+  })
 })

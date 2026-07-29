@@ -8,7 +8,8 @@ export function createTopdownInput() {
   function press(kind, down) { state[kind] = down ? 1 : 0 }
 
   function setKey(key, down) {
-    const kind = MAP[key]
+    const mapKey = key.length === 1 ? key.toLowerCase() : key
+    const kind = MAP[mapKey]
     if (kind) press(kind, down)
     if (!down) return
     if (cb.onKey) cb.onKey(key)
