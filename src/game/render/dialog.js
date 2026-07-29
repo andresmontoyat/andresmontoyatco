@@ -1,6 +1,6 @@
 export function dialogLines(site, lang) {
   const L = [`${site.title[lang]}  ·  ${site.co}`, site.date[lang]]
-  if (site.metric) L.push(`★ ${site.metric.v ? `${site.metric.v}  ` : ''}${site.metric[lang]}`)
+  if (site.metric) L.push(`★ ${site.metric.value ? `${site.metric.value}  ` : ''}${site.metric.label[lang]}`)
   L.push(`‹tech› ${site.tech.slice(0, 5).join(' · ')}`)
   return L
 }

@@ -1,8 +1,9 @@
 import { describe, it, expect } from 'vitest'
 import { dialogLines, createDialog } from './dialog.js'
 
-const site = { co: 'TCS', title: { en: 'Tech Lead', es: 'Líder' }, date: { en: '2013', es: '2013' }, metric: { v: '45+', en: 'devs', es: 'devs' }, tech: ['Java', 'OSB'] }
+const site = { co: 'TCS', title: { en: 'Tech Lead', es: 'Líder' }, date: { en: '2013', es: '2013' }, metric: { value: '45+', label: { en: 'devs', es: 'devs' } }, tech: ['Java', 'OSB'] }
 const noMetric = { ...site, metric: null }
+const noValueMetric = { ...site, metric: { label: { en: 'B2B marketplace', es: 'Marketplace B2B' } } }
 
 describe('dialogLines', () => {
   it('builds title·company, date, metric, tech in the active language', () => {
@@ -10,6 +11,9 @@ describe('dialogLines', () => {
   })
   it('skips the metric line when absent', () => {
     expect(dialogLines(noMetric, 'en')).toEqual(['Tech Lead  ·  TCS', '2013', '‹tech› Java · OSB'])
+  })
+  it('renders the metric line without a leading number when value is absent', () => {
+    expect(dialogLines(noValueMetric, 'en')).toEqual(['Tech Lead  ·  TCS', '2013', '★ B2B marketplace', '‹tech› Java · OSB'])
   })
 })
 
