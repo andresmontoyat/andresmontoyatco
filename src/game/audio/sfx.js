@@ -20,4 +20,8 @@ export function sfx(a, t) {
   else if (t === 'stomp') beep(a, 200, 0.12, 'sawtooth', 0.06, 70)
   else if (t === 'power') [440,660,880,1180].forEach((f,i) => setTimeout(() => beep(a, f, 0.1, 'triangle', 0.05), i*55))
   else if (t === 'hurt') beep(a, 300, 0.22, 'sawtooth', 0.06, 90)
+  else if (t === 'confirm') beep(a, 660, 0.08, 'square', 0.045)
+  else if (t === 'discover') { beep(a, 700, 0.07, 'triangle', 0.045); setTimeout(() => beep(a, 1050, 0.09, 'triangle', 0.045), 70) }
+  else if (t === 'fanfare') [523,659,784,1047,1319].forEach((f,i) => setTimeout(() => beep(a, f, 0.14, 'triangle', 0.055), i*90))
+  else if (t === 'footstep') beep(a, 150, 0.045, 'square', 0.02)
 }

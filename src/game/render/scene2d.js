@@ -43,7 +43,9 @@ export function visibleTileRange(cam, vw, vh, tile) {
   }
 }
 
-function regionsWithFarm(world) {
+// Exported so worldRpg.js's region-music tracking (nearestBiome under the avatar) shares the
+// same farm-inclusive anchor list as ground-tile biome lookup, instead of re-deriving it.
+export function regionsWithFarm(world) {
   return world.regions.concat([{ bi: 'farm', x: world.farm.x, y: world.farm.y }])
 }
 
@@ -177,10 +179,39 @@ function drawNightOverlay(ctx, state) {
   ctx.restore()
 }
 
+// World-space Y offset (above the normal follow-cam) the intro's camera descends from — a
+// "sky" view of the farm before intro.camY() eases it down to the real cam.y over the intro's
+// duration (see intro.js's createIntro/camY).
+const INTRO_SKY_OFFSET = -420
+
+function introCamera(state, cam) {
+  if (!state.intro || state.intro.done()) return cam
+  return { x: cam.x, y: state.intro.camY(cam.y + INTRO_SKY_OFFSET, cam.y) }
+}
+
+function drawIntroTitle(ctx, state) {
+  const alpha = state.intro.titleAlpha()
+  if (alpha <= 0) return
+  const cx = ctx.canvas.width / 2
+  const cy = ctx.canvas.height / 2
+  ctx.save()
+  ctx.globalAlpha = alpha
+  ctx.textAlign = 'center'
+  ctx.fillStyle = '#eafff6'
+  ctx.font = 'bold 40px monospace'
+  ctx.fillText('World RPG', cx, cy - 10)
+  ctx.font = '16px monospace'
+  ctx.fillStyle = '#9fd8c4'
+  ctx.fillText('Carlos Montoya · Backend Engineer', cx, cy + 26)
+  ctx.restore()
+}
+
 export function render2d(ctx, state, cam) {
   const { sprites } = state
+  const introRunning = !!(state.intro && !state.intro.done())
   const shakeOff = shake2D(state.shake || 0)
-  const drawCam = { x: cam.x + shakeOff.x, y: cam.y + shakeOff.y }
+  const sceneCam = introCamera(state, cam)
+  const drawCam = { x: sceneCam.x + shakeOff.x, y: sceneCam.y + shakeOff.y }
   ctx.fillStyle = '#0B1020'
   ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height)
   if (!sprites) {
@@ -194,4 +225,5 @@ export function render2d(ctx, state, cam) {
     drawNightOverlay(ctx, state)
   }
   drawDialog(ctx, state)
+  if (introRunning) drawIntroTitle(ctx, state)
 }

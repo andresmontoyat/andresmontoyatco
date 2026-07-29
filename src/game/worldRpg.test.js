@@ -1,8 +1,9 @@
 import { describe, it, expect } from 'vitest'
-import { createWorldRpg, update } from './worldRpg.js'
+import { createWorldRpg, update, canControl } from './worldRpg.js'
 import { doorPoint } from './entities/site.js'
 import { DAY_LEN } from './render/ambient.js'
 import { phaseOf, daylight } from './render/lighting.js'
+import { createMusic } from './audio/music.js'
 import experience from '../data/experience.json'
 
 describe('worldRpg core', () => {
@@ -70,5 +71,52 @@ describe('worldRpg core', () => {
     const g = createWorldRpg({ canvas: null, experience, sideProjects: [], lang: 'es' })
     expect(() => update(g.state, {}, 1.6)).not.toThrow()
     expect(g.state.clock).toBeGreaterThan(0)
+  })
+
+  describe('intro sequence', () => {
+    it('exists and is not done at start, and skip() completes it', () => {
+      const g = createWorldRpg({ canvas: null, experience, sideProjects: [], lang: 'es' })
+      expect(g.state.intro).toBeTruthy()
+      expect(g.state.intro.done()).toBe(false)
+      g.state.intro.skip()
+      expect(g.state.intro.done()).toBe(true)
+    })
+    it('canControl gates on the intro: false while playing, true once done', () => {
+      const g = createWorldRpg({ canvas: null, experience, sideProjects: [], lang: 'es' })
+      expect(canControl(g.state)).toBe(false)
+      g.state.intro.skip()
+      expect(canControl(g.state)).toBe(true)
+    })
+  })
+
+  describe('audio wiring', () => {
+    it('state.music exists and is muted until a gesture arms it', () => {
+      const g = createWorldRpg({ canvas: null, experience, sideProjects: [], lang: 'es' })
+      expect(g.state.music).toBeTruthy()
+      expect(g.state.music.isMuted()).toBe(true)
+    })
+    it('createMusic(null) is muted and tolerates a null ctx — the pre-gesture no-op path', () => {
+      expect(createMusic(null).isMuted()).toBe(true)
+    })
+    it('update tracks the biome under the player for region-music switching, without throwing', () => {
+      const g = createWorldRpg({ canvas: null, experience, sideProjects: [], lang: 'es' })
+      expect(g.state.lastBiome).toBe(null)
+      expect(() => update(g.state, {}, 1.6)).not.toThrow()
+      expect(g.state.lastBiome).toBeTruthy()
+    })
+    it('walking throttles a footstep frame counter without throwing (no audio ctx in tests)', () => {
+      const g = createWorldRpg({ canvas: null, experience, sideProjects: [], lang: 'es' })
+      for (let i = 0; i < 20; i += 1) expect(() => update(g.state, { R: 1 }, 1.6)).not.toThrow()
+      expect(g.state.walkFrames).toBeGreaterThan(0)
+    })
+    it('reveal() and interact() never throw when firing their SFX hooks with no audio ctx', () => {
+      const g = createWorldRpg({ canvas: null, experience, sideProjects: [], lang: 'es' })
+      const site = g.state.world.sites[0]
+      const door = doorPoint(site)
+      g.state.player.x = door.x
+      g.state.player.y = door.y
+      expect(() => g.interact()).not.toThrow() // discover + confirm
+      expect(() => g.reveal()).not.toThrow() // fanfare
+    })
   })
 })
