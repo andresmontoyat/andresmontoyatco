@@ -1,5 +1,6 @@
 import { buildOverworld } from './world/overworld.js'
 import { biomeForYear } from './world/biomes.js'
+import { buildDecor } from './world/decor.js'
 import { stepMovement } from './engine/topdown.js'
 import { followCamera2D } from './engine/camera2d.js'
 import { nearestSite } from './entities/site.js'
@@ -17,9 +18,16 @@ function buildingSolids(sites) {
   return sites.map(s => ({ x: s.cx - s.w / 2, y: s.cy, w: s.w, h: s.h }))
 }
 
+// Small AABB around each solid decor item's ground-contact point (trunk/base width, not the
+// full canopy sprite) — keeps trees/rocks/fences blocking without making them feel oversized.
+function decorSolids(decor) {
+  return decor.filter(d => d.solid).map(d => ({ x: d.x - 10, y: d.y - 14, w: 20, h: 14 }))
+}
+
 export function update(state, input, dtChars) {
   const frozen = state.dialog.isOpen()
-  const r = stepMovement(state.player, { ...input, frozen }, buildingSolids(activeSites(state)), { w: state.world.worldW, h: state.world.worldH })
+  const solids = buildingSolids(activeSites(state)).concat(decorSolids(state.decor || []))
+  const r = stepMovement(state.player, { ...input, frozen }, solids, { w: state.world.worldW, h: state.world.worldH })
   state.player.x = r.x; state.player.y = r.y; state.player.dir = r.dir; state.player.moving = r.moving
   state.player.step = r.moving ? state.player.step + STEP_RATE : 0
   state.dialog.tick(dtChars)
@@ -29,6 +37,7 @@ export function createWorldRpg({ canvas, experience, sideProjects = [], lang = '
   const world = buildOverworld(experience, biomeForYear, sideProjects)
   const state = {
     world,
+    decor: buildDecor(world),
     player: { x: world.farm.x, y: world.farm.y + 70, w: 24, h: 28, dir: 'down', moving: false, step: 0 },
     cam: { x: 0, y: 0 },
     dialog: createDialog(),

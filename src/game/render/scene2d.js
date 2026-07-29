@@ -2,9 +2,12 @@ import { nearestBiome, tileNameFor, walkFrame } from './tiles.js'
 import { BIOMES } from '../world/biomes.js'
 
 const TILE = 32
-const AVATAR_W = 32
-const AVATAR_H = 36
-const CYBER_ERA_TINT_ALPHA = 0.35
+const AVATAR_W = 40
+const AVATAR_H = 44
+// cyber/castillo share the same "cliff" ground texture (see manifest.js) and are told apart
+// by this light per-biome color wash — kept low so the tile texture stays visible underneath,
+// unlike the old 0.35-alpha flat tint that read as a solid color block.
+const STONE_ERA_TINT_ALPHA = 0.12
 
 export function activeSites(state) {
   return state.revealed ? state.world.sites.concat(state.world.hiddenSites) : state.world.sites
@@ -56,7 +59,7 @@ function drawGround(ctx, state, cam, sprites) {
       sprites.draw(ctx, name, sx, sy, TILE, TILE)
       if (bi === 'cyber' || bi === 'castillo') {
         ctx.save()
-        ctx.globalAlpha = CYBER_ERA_TINT_ALPHA
+        ctx.globalAlpha = STONE_ERA_TINT_ALPHA
         ctx.fillStyle = BIOMES[bi].c
         ctx.fillRect(sx, sy, TILE, TILE)
         ctx.restore()
@@ -72,15 +75,6 @@ function drawBuildingLabel(ctx, s, bx, by) {
   if (s.seen) ctx.fillText('✓', bx + s.w - 10, by - 6)
 }
 
-function drawBuildings(ctx, state, cam, sprites) {
-  activeSites(state).forEach(s => {
-    const bx = s.cx - s.w / 2 - cam.x
-    const by = s.cy - cam.y
-    sprites.draw(ctx, s.type === 'castle' ? 'castle' : 'house', bx, by, s.w, s.h)
-    drawBuildingLabel(ctx, s, bx, by)
-  })
-}
-
 function drawAvatar(ctx, state, cam, sprites) {
   const { player } = state
   const name = walkFrame(player.dir === 'left' ? 'right' : player.dir, player.moving ? player.step : 0)
@@ -88,6 +82,48 @@ function drawAvatar(ctx, state, cam, sprites) {
   const dy = player.y - AVATAR_H / 2 - cam.y
   if (player.dir === 'left') sprites.drawFlipped(ctx, name, dx, dy, AVATAR_W, AVATAR_H)
   else sprites.draw(ctx, name, dx, dy, AVATAR_W, AVATAR_H)
+}
+
+// Ground-contact footprint (world w/h) per decor type — used both to size the sprite and to
+// bottom-anchor it at d.y, so d.y stays the item's "feet" for both placement and y-sorting.
+const DECOR_DIMS = {
+  tree: { w: 64, h: 80 },
+  tree_small: { w: 32, h: 48 },
+  bush: { w: 16, h: 16 },
+  rock: { w: 16, h: 16 },
+  flower: { w: 16, h: 16 },
+  fence: { w: 16, h: 32 },
+}
+
+function drawDecorItem(ctx, d, cam, sprites) {
+  const dim = DECOR_DIMS[d.type]
+  const dx = d.x - dim.w / 2 - cam.x
+  const dy = d.y - dim.h - cam.y
+  sprites.draw(ctx, d.type, dx, dy, dim.w, dim.h)
+}
+
+function buildingDrawable(s, cam) {
+  return {
+    baseY: s.cy + s.h,
+    draw: (ctx, sprites) => {
+      const bx = s.cx - s.w / 2 - cam.x
+      const by = s.cy - cam.y
+      sprites.draw(ctx, s.type === 'castle' ? 'castle' : 'house', bx, by, s.w, s.h)
+      drawBuildingLabel(ctx, s, bx, by)
+    },
+  }
+}
+
+// Buildings, decor, and the avatar all draw in one y-sorted pass (sorted by each item's
+// ground-contact baseY) so things nearer the bottom of the screen correctly occlude things
+// behind them, instead of buildings/avatar always drawing on top of decor regardless of depth.
+function depthSortedDrawables(state, cam) {
+  const buildings = activeSites(state).map(s => buildingDrawable(s, cam))
+  const drawOne = d => (ctx, sprites) => drawDecorItem(ctx, d, cam, sprites)
+  const decor = (state.decor || []).map(d => ({ baseY: d.y, draw: drawOne(d) }))
+  const { player } = state
+  const avatar = { baseY: player.y + player.h / 2, draw: (ctx, sprites) => drawAvatar(ctx, state, cam, sprites) }
+  return buildings.concat(decor, [avatar]).sort((a, b) => a.baseY - b.baseY)
 }
 
 function drawPlaceholderScene(ctx, state, cam) {
@@ -120,8 +156,7 @@ export function render2d(ctx, state, cam) {
     drawPlaceholderScene(ctx, state, cam)
   } else {
     drawGround(ctx, state, cam, sprites)
-    drawBuildings(ctx, state, cam, sprites)
-    drawAvatar(ctx, state, cam, sprites)
+    depthSortedDrawables(state, cam).forEach(item => item.draw(ctx, sprites))
   }
   drawDialog(ctx, state)
 }

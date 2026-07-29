@@ -18,17 +18,39 @@ export const MANIFEST = {
     cfPlayer: '/game/cute-fantasy/Player/Player.png',
     cfChicken: '/game/cute-fantasy/Animals/Chicken/Chicken.png',
     slGrass: '/game/sprout-lands-sprites/Tilesets/Grass.png',
+    slHills: '/game/sprout-lands-sprites/Tilesets/Hills.png',
+    slTilledDirt: '/game/sprout-lands-sprites/Tilesets/Tilled_Dirt.png',
+    slBiomThings: '/game/sprout-lands-sprites/Objects/Basic_Grass_Biom_things.png',
   },
   frames: {
-    // Ground per biome. 16x16 source tiles, reused across biomes where the packs have no
-    // native match. ground_cyber/ground_castillo intentionally reuse the neutral grass tile
-    // (see manifest header note above and ASSETS.md) — the renderer tints them per biome color.
+    // Ground per biome. Every rect below was chosen by viewing the sheet with the Read tool
+    // and cropping candidate cells — each lands on a fully-opaque, single-color-family 16x16
+    // interior cell (never a multi-cell autotile border, and never a transparent/padded area).
+    // _2/_3 suffixed frames are texture variants scattered in via a per-tile-coord hash
+    // (see render/tiles.js tileNameFor) so ground doesn't read as one flat color block.
     ground_farm: { img: 'cfFarmland', x: 16, y: 16, w: 16, h: 16 },
     ground_pradera: { img: 'cfGrass', x: 0, y: 0, w: 16, h: 16 },
-    ground_desierto: { img: 'cfBeach', x: 48, y: 0, w: 16, h: 16 },
-    ground_selva: { img: 'slGrass', x: 0, y: 64, w: 16, h: 16 },
-    ground_cyber: { img: 'cfGrass', x: 0, y: 0, w: 16, h: 16 },
-    ground_castillo: { img: 'cfGrass', x: 0, y: 0, w: 16, h: 16 },
+    ground_pradera_2: { img: 'slGrass', x: 0, y: 80, w: 16, h: 16 },
+    ground_pradera_3: { img: 'slGrass', x: 16, y: 80, w: 16, h: 16 },
+    // Beach_Tile.png is an 80x48 island autotile sheet (5x3 cells of 16px) — x=48,y=0 used to
+    // sample the blue pond-ring border (the "blue arches" artifact). x=16,y=16 is the solid
+    // sand fill at the center of the island's 3x3 autotile block.
+    ground_desierto: { img: 'cfBeach', x: 16, y: 16, w: 16, h: 16 },
+    ground_desierto_2: { img: 'slTilledDirt', x: 0, y: 80, w: 16, h: 16 },
+    // Grass.png x=0,y=64 sampled a mostly-transparent grass-tuft decoration cell (the
+    // "green/black checkered" artifact against the canvas background). x=16,y=16 is the
+    // solid-fill interior cell of the sheet's rounded grass-plateau autotile block.
+    ground_selva: { img: 'slGrass', x: 16, y: 16, w: 16, h: 16 },
+    ground_selva_2: { img: 'slGrass', x: 32, y: 80, w: 16, h: 16 },
+    ground_selva_3: { img: 'slHills', x: 112, y: 80, w: 16, h: 16 },
+    // cyber/castillo previously reused the flat grass tile under a 35%-alpha color tint,
+    // reading as one flat color block. Both now use the same Hills.png cliff-edge cell
+    // (grass top / dirt-cliff bottom — the closest "stone/cliff" texture in either pack)
+    // and are told apart at render time by a much lighter (~0.12 alpha) per-biome tint.
+    ground_cyber: { img: 'slHills', x: 16, y: 32, w: 16, h: 16 },
+    ground_cyber_2: { img: 'slHills', x: 16, y: 16, w: 16, h: 16 },
+    ground_castillo: { img: 'slHills', x: 16, y: 32, w: 16, h: 16 },
+    ground_castillo_2: { img: 'slHills', x: 16, y: 16, w: 16, h: 16 },
     path: { img: 'cfPath', x: 0, y: 0, w: 16, h: 16 },
     water: { img: 'cfWater', x: 0, y: 0, w: 16, h: 16 },
 
@@ -40,6 +62,9 @@ export const MANIFEST = {
     tree: { img: 'cfOakTree', x: 0, y: 0, w: 64, h: 80 },
     tree_small: { img: 'cfOakTreeSmall', x: 32, y: 0, w: 32, h: 48 },
     fence: { img: 'cfFences', x: 0, y: 0, w: 16, h: 32 },
+    bush: { img: 'slBiomThings', x: 0, y: 48, w: 16, h: 16 },
+    rock: { img: 'slBiomThings', x: 112, y: 16, w: 16, h: 16 },
+    flower: { img: 'slBiomThings', x: 112, y: 48, w: 16, h: 16 },
 
     // Avatar walk cycle. Player.png is 192x320, a 6-col x 10-row grid of 32x32 frames.
     // Confirmed by viewing: row 0 = down (front, face visible), row 2 = up (back of head),

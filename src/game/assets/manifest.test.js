@@ -2,10 +2,15 @@ import { describe, it, expect } from 'vitest'
 import { MANIFEST } from './manifest.js'
 
 const REQUIRED_FRAMES = [
-  'ground_farm', 'ground_pradera', 'ground_desierto', 'ground_selva', 'ground_cyber', 'ground_castillo',
+  'ground_farm',
+  'ground_pradera', 'ground_pradera_2', 'ground_pradera_3',
+  'ground_desierto', 'ground_desierto_2',
+  'ground_selva', 'ground_selva_2', 'ground_selva_3',
+  'ground_cyber', 'ground_cyber_2',
+  'ground_castillo', 'ground_castillo_2',
   'path', 'water',
   'house', 'castle',
-  'tree', 'tree_small', 'fence',
+  'tree', 'tree_small', 'fence', 'bush', 'rock', 'flower',
   'carlos_down_0', 'carlos_down_1', 'carlos_down_2',
   'carlos_up_0', 'carlos_up_1', 'carlos_up_2',
   'carlos_left_0', 'carlos_left_1', 'carlos_left_2',
@@ -29,6 +34,9 @@ const REAL_IMAGE_SIZE = {
   cfPlayer: { w: 192, h: 320 },
   cfChicken: { w: 64, h: 64 },
   slGrass: { w: 176, h: 112 },
+  slHills: { w: 176, h: 144 },
+  slTilledDirt: { w: 176, h: 112 },
+  slBiomThings: { w: 144, h: 80 },
 }
 
 describe('MANIFEST integrity', () => {

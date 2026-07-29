@@ -17,6 +17,15 @@ describe('tileNameFor', () => {
   it('returns a biome ground tile off the path', () => {
     expect(tileNameFor('cyber', 0, 0, 200)).toBe('ground_cyber')
   })
+  it('is deterministic — the same tile coord always returns the same variant', () => {
+    expect(tileNameFor('pradera', 500, 900, 200)).toBe(tileNameFor('pradera', 500, 900, 200))
+  })
+  it('scatters more than one ground variant across nearby tiles', () => {
+    const names = new Set()
+    for (let tx = 0; tx < 12; tx += 1) names.add(tileNameFor('pradera', tx * 32 + 16, 16, 200))
+    expect(names.size).toBeGreaterThan(1)
+    names.forEach(n => expect(n.startsWith('ground_pradera')).toBe(true))
+  })
 })
 
 describe('walkFrame', () => {
