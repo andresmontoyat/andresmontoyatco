@@ -11,6 +11,8 @@ import { render2d, activeSites } from './render/scene2d.js'
 import { createLoop } from './engine/loop.js'
 import { loadSprites } from './assets/loader.js'
 import { MANIFEST } from './assets/manifest.js'
+import { createParticles, burst } from './render/juice.js'
+import { createCritters, updateCritters } from './entities/critters.js'
 
 const STEP_RATE = 0.15
 
@@ -31,6 +33,10 @@ export function update(state, input, dtChars) {
   state.player.x = r.x; state.player.y = r.y; state.player.dir = r.dir; state.player.moving = r.moving
   state.player.step = r.moving ? state.player.step + STEP_RATE : 0
   state.dialog.tick(dtChars)
+  state.clock += dtChars
+  state.particles.update(1)
+  state.shake *= 0.9
+  state.critters = updateCritters(state.critters, dtChars, state.clock)
 }
 
 export function createWorldRpg({ canvas, experience, sideProjects = [], lang = 'es' }) {
@@ -44,15 +50,22 @@ export function createWorldRpg({ canvas, experience, sideProjects = [], lang = '
     revealed: false,
     lang,
     sprites: null,
+    clock: 0,
+    particles: createParticles(),
+    shake: 0,
+    critters: createCritters(world),
   }
   const konami = createKonami()
   const input = createTopdownInput()
 
-  function reveal() { state.revealed = true }
+  function reveal() { state.revealed = true; state.shake = 8 }
   function interact() {
     if (state.dialog.isOpen()) { state.dialog.advance(); return }
     const s = nearestSite(state.player, activeSites(state))
-    if (s) { s.seen = true; state.dialog.open(s) }
+    if (!s) return
+    if (!s.seen) burst(state.particles, s.cx, s.cy, 14)
+    s.seen = true
+    state.dialog.open(s)
   }
 
   let loop = null

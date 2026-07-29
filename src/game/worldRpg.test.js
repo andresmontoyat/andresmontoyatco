@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { createWorldRpg, update } from './worldRpg.js'
+import { doorPoint } from './entities/site.js'
 import experience from '../data/experience.json'
 
 describe('worldRpg core', () => {
@@ -30,5 +31,38 @@ describe('worldRpg core', () => {
     expect(g.activeSites().length).toBe(g.state.world.sites.length)
     g.reveal()
     expect(g.activeSites().length).toBe(g.state.world.sites.length + 1)
+  })
+  it('first read of a site emits a discovery particle burst', () => {
+    const g = createWorldRpg({ canvas: null, experience, sideProjects: [], lang: 'es' })
+    const site = g.state.world.sites[0]
+    const door = doorPoint(site)
+    g.state.player.x = door.x
+    g.state.player.y = door.y
+    g.interact()
+    expect(g.state.particles.alive().length).toBeGreaterThan(0)
+  })
+  it('re-reading an already-seen site does not emit another burst', () => {
+    const g = createWorldRpg({ canvas: null, experience, sideProjects: [], lang: 'es' })
+    const site = g.state.world.sites[0]
+    const door = doorPoint(site)
+    g.state.player.x = door.x
+    g.state.player.y = door.y
+    g.interact() // closed -> opens (typing) + bursts on first read
+    g.state.particles.update(1000) // let the discovery burst fully expire
+    g.interact() // typing -> waiting
+    g.interact() // waiting -> closed
+    g.interact() // closed -> reopens the now-seen site: no burst this time
+    expect(g.state.particles.alive().length).toBe(0)
+  })
+  it('the Konami reveal sets a screen-shake impulse', () => {
+    const g = createWorldRpg({ canvas: null, experience, sideProjects: [], lang: 'es' })
+    expect(g.state.shake).toBe(0)
+    g.reveal()
+    expect(g.state.shake).toBeGreaterThan(0)
+  })
+  it('update advances the world clock and never throws without a canvas', () => {
+    const g = createWorldRpg({ canvas: null, experience, sideProjects: [], lang: 'es' })
+    expect(() => update(g.state, {}, 1.6)).not.toThrow()
+    expect(g.state.clock).toBeGreaterThan(0)
   })
 })

@@ -1,5 +1,9 @@
 import { nearestBiome, tileNameFor, walkFrame } from './tiles.js'
 import { BIOMES } from '../world/biomes.js'
+import { drawAmbient, swayOffset, DAY_LEN } from './ambient.js'
+import { critterDrawables } from '../entities/critters.js'
+import { shake2D } from '../engine/camera2d.js'
+import { phaseOf, nightTint } from './lighting.js'
 
 const TILE = 32
 const AVATAR_W = 40
@@ -95,9 +99,9 @@ const DECOR_DIMS = {
   fence: { w: 16, h: 32 },
 }
 
-function drawDecorItem(ctx, d, cam, sprites) {
+function drawDecorItem(ctx, d, cam, sprites, t) {
   const dim = DECOR_DIMS[d.type]
-  const dx = d.x - dim.w / 2 - cam.x
+  const dx = d.x - dim.w / 2 - cam.x + swayOffset(d, t)
   const dy = d.y - dim.h - cam.y
   sprites.draw(ctx, d.type, dx, dy, dim.w, dim.h)
 }
@@ -117,13 +121,14 @@ function buildingDrawable(s, cam) {
 // Buildings, decor, and the avatar all draw in one y-sorted pass (sorted by each item's
 // ground-contact baseY) so things nearer the bottom of the screen correctly occlude things
 // behind them, instead of buildings/avatar always drawing on top of decor regardless of depth.
-function depthSortedDrawables(state, cam) {
+function depthSortedDrawables(state, cam, t) {
   const buildings = activeSites(state).map(s => buildingDrawable(s, cam))
-  const drawOne = d => (ctx, sprites) => drawDecorItem(ctx, d, cam, sprites)
+  const drawOne = d => (ctx, sprites) => drawDecorItem(ctx, d, cam, sprites, t)
   const decor = (state.decor || []).map(d => ({ baseY: d.y, draw: drawOne(d) }))
+  const critters = critterDrawables(state, cam, t)
   const { player } = state
   const avatar = { baseY: player.y + player.h / 2, draw: (ctx, sprites) => drawAvatar(ctx, state, cam, sprites) }
-  return buildings.concat(decor, [avatar]).sort((a, b) => a.baseY - b.baseY)
+  return buildings.concat(decor, critters, [avatar]).sort((a, b) => a.baseY - b.baseY)
 }
 
 function drawPlaceholderScene(ctx, state, cam) {
@@ -148,15 +153,39 @@ function drawDialog(ctx, state) {
   dialog.visibleText(lang).split('\n').forEach((ln, i) => ctx.fillText(ln, 40, ctx.canvas.height - 120 + i * 22))
 }
 
+function drawParticles(ctx, state, cam) {
+  const particles = state.particles ? state.particles.alive() : []
+  particles.forEach(p => {
+    ctx.fillStyle = p.color
+    ctx.fillRect(p.x - cam.x - 2, p.y - cam.y - 2, 4, 4)
+  })
+}
+
+function drawNightOverlay(ctx, state) {
+  const tint = nightTint(phaseOf(state.clock || 0, DAY_LEN))
+  if (tint.a <= 0) return
+  ctx.save()
+  ctx.globalAlpha = tint.a
+  ctx.fillStyle = `rgb(${tint.r},${tint.g},${tint.b})`
+  ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height)
+  ctx.restore()
+}
+
 export function render2d(ctx, state, cam) {
   const { sprites } = state
+  const shakeOff = shake2D(state.shake || 0)
+  const drawCam = { x: cam.x + shakeOff.x, y: cam.y + shakeOff.y }
   ctx.fillStyle = '#0B1020'
   ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height)
   if (!sprites) {
-    drawPlaceholderScene(ctx, state, cam)
+    drawPlaceholderScene(ctx, state, drawCam)
   } else {
-    drawGround(ctx, state, cam, sprites)
-    depthSortedDrawables(state, cam).forEach(item => item.draw(ctx, sprites))
+    const t = state.clock || 0
+    drawGround(ctx, state, drawCam, sprites)
+    depthSortedDrawables(state, drawCam, t).forEach(item => item.draw(ctx, sprites))
+    drawAmbient(ctx, state, drawCam, t)
+    drawParticles(ctx, state, drawCam)
+    drawNightOverlay(ctx, state)
   }
   drawDialog(ctx, state)
 }
