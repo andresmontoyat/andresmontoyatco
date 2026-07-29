@@ -159,13 +159,19 @@
       "location": { "en": "Medellín, Colombia", "es": "Medellín, Colombia" },
       "bullets": {
         "en": [
-          "Solutions Architect designing and evolving backend architectures on the Spring ecosystem over a four-year engagement."
+          "Solutions Architect designing and evolving backend architectures on the Spring ecosystem over a four-year engagement.",
+          "Designed multiple architectures and systems for the Mayor's Office of Medellín — among them Atenea and Tienda Virtual — applying hexagonal architecture, design patterns and security.",
+          "Built components to migrate legacy systems to new architectures for Universidad de Medellín.",
+          "Delivered the same legacy-to-modern architecture migration for the Colombian Air Force (FAC)."
         ],
         "es": [
-          "Arquitecto de Soluciones diseñando y evolucionando arquitecturas backend sobre el ecosistema Spring durante cuatro años."
+          "Arquitecto de Soluciones diseñando y evolucionando arquitecturas backend sobre el ecosistema Spring durante cuatro años.",
+          "Diseñé múltiples arquitecturas y sistemas para la Alcaldía de Medellín — entre ellos Atenea y Tienda Virtual — aplicando arquitectura hexagonal, patrones de diseño y seguridad.",
+          "Construí componentes para migrar sistemas legados a nuevas arquitecturas para la Universidad de Medellín.",
+          "Realicé la misma migración de arquitecturas legadas a modernas para la Fuerza Aérea Colombiana (FAC)."
         ]
       },
-      "tech": ["Java", "Spring Boot"]
+      "tech": ["Kotlin", "Java", "Spring Boot", "PostgreSQL", "React", "Angular", "Keycloak", "Hexagonal"]
     },
     {
       "id": "software-estrategico-2015",
