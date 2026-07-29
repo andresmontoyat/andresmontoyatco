@@ -179,6 +179,40 @@ function drawNightOverlay(ctx, state) {
   ctx.restore()
 }
 
+// Translucent rounded chip behind HUD text so era/progress readouts stay legible over any
+// biome's ground color (bright pradera green vs dark castillo purple) without a pixel test —
+// just enough contrast, not a full opaque bar.
+function drawHudChip(ctx, text, x, align) {
+  ctx.save()
+  ctx.font = 'bold 12px monospace'
+  ctx.textBaseline = 'middle'
+  const padX = 10
+  const h = 24
+  const w = ctx.measureText(text).width + padX * 2
+  const chipX = align === 'right' ? x - w : x
+  ctx.fillStyle = 'rgba(11,16,32,0.65)'
+  ctx.fillRect(chipX, 10, w, h)
+  ctx.fillStyle = '#eafff6'
+  ctx.textAlign = 'left'
+  ctx.fillText(text, chipX + padX, 10 + h / 2)
+  ctx.restore()
+}
+
+// Top-left: current era label (biome under the avatar). Top-right: discovery progress —
+// visible sites seen so far, plus a "+K🔓" once the Konami reveal has unlocked the hidden
+// sideProjects sites, so recruiters get a sense of completion/discoverability at a glance.
+function drawHud(ctx, state) {
+  const { world, lang } = state
+  const bi = nearestBiome(regionsWithFarm(world), state.player.x, state.player.y)
+  const era = BIOMES[bi].label[lang] ?? BIOMES[bi].label.en
+  drawHudChip(ctx, era, 10, 'left')
+
+  const total = world.sites.length
+  const seen = world.sites.filter(s => s.seen).length
+  const unlocked = state.revealed ? `  +${world.hiddenSites.length}\u{1F513}` : ''
+  drawHudChip(ctx, `sites ${seen}/${total}${unlocked}`, ctx.canvas.width - 10, 'right')
+}
+
 // World-space Y offset (above the normal follow-cam) the intro's camera descends from — a
 // "sky" view of the farm before intro.camY() eases it down to the real cam.y over the intro's
 // duration (see intro.js's createIntro/camY).
@@ -223,6 +257,7 @@ export function render2d(ctx, state, cam) {
     drawAmbient(ctx, state, drawCam, t)
     drawParticles(ctx, state, drawCam)
     drawNightOverlay(ctx, state)
+    drawHud(ctx, state)
   }
   drawDialog(ctx, state)
   if (introRunning) drawIntroTitle(ctx, state)

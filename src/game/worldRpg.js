@@ -98,6 +98,10 @@ export function createWorldRpg({ canvas, experience, sideProjects = [], lang = '
   }
   const konami = createKonami()
   const input = createTopdownInput()
+  // Exposed so a hosting UI (the WorldRpg React island) can wire its own touch D-pad to the
+  // same input.state the keyboard writes to — start() only attaches window keyboard listeners,
+  // it never covers pointer/touch, so touch parity needs direct access to input.press(kind, down).
+  state.input = input
 
   function reveal() { state.revealed = true; state.shake = 8; sfx(state.audio, 'fanfare') }
   function interact() {
@@ -172,5 +176,7 @@ export function createWorldRpg({ canvas, experience, sideProjects = [], lang = '
     if (detachPointer) detachPointer()
   }
 
-  return { state, start, stop, reveal, interact, activeSites: () => activeSites(state) }
+  return {
+    state, start, stop, reveal, interact, toggleMute, activeSites: () => activeSites(state),
+  }
 }

@@ -9,6 +9,7 @@ import Hero from '../../components/astro/Hero.astro'
 import About from '../../components/astro/About.astro'
 import Skill from '../../components/astro/Skill.astro'
 import Experience from '../../components/react/Experience.jsx'
+import WorldRpg from '../../components/react/WorldRpg.jsx'
 import Projects from '../../components/astro/Projects.astro'
 import Claude from '../../components/astro/Claude.astro'
 import Contact from '../../components/astro/Contact.astro'
@@ -28,6 +29,9 @@ const hrefEs = getRelativeLocaleUrl('es', path)
     <About locale={locale} />
     <Skill locale={locale} />
     <Experience client:visible locale={locale} />
+    <section id="world-rpg" class="py-20">
+      <WorldRpg client:visible locale={locale} />
+    </section>
     <Projects locale={locale} />
     <Claude locale={locale} />
     <Contact locale={locale} />
