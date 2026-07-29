@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { nearestPathDist, visibleTileRange } from './scene2d.js'
+import { nearestPathDist, visibleTileRange, eraLabel } from './scene2d.js'
 
 const path = [{ x: 0, y: 0 }, { x: 100, y: 0 }]
 
@@ -22,5 +22,20 @@ describe('visibleTileRange', () => {
     expect(r.y0).toBe(1)
     expect(r.x1).toBe(13)
     expect(r.y1).toBe(13)
+  })
+})
+
+describe('eraLabel', () => {
+  it('returns the bilingual BIOMES label for a known biome', () => {
+    expect(eraLabel('pradera', 'en')).toBe('Java / JEE Legacy')
+    expect(eraLabel('castillo', 'es')).toBe('Claude Code / IA')
+  })
+  it('falls back to a farm label instead of throwing — the player spawns on the farm anchor, which has no BIOMES entry', () => {
+    expect(eraLabel('farm', 'en')).toBe('The Farm')
+    expect(eraLabel('farm', 'es')).toBe('La Granja')
+  })
+  it('never throws for an unknown biome id', () => {
+    expect(() => eraLabel('nonexistent', 'en')).not.toThrow()
+    expect(eraLabel('nonexistent', 'en')).toBe('nonexistent')
   })
 })

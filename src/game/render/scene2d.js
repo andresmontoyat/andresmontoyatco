@@ -198,14 +198,27 @@ function drawHudChip(ctx, text, x, align) {
   ctx.restore()
 }
 
+// regionsWithFarm() (used by both drawGround's tile lookup and worldRpg.js's region-music
+// tracking) adds a synthetic { bi: 'farm', ... } anchor that has NO entry in BIOMES — the
+// player spawns there, so nearestBiome() returns 'farm' on frame 1. BIOMES[bi] would then be
+// undefined and BIOMES[bi].label throw immediately (crashing every render frame). Exported so
+// this fallback is independently testable without a canvas.
+const FARM_LABEL = { en: 'The Farm', es: 'La Granja' }
+
+export function eraLabel(bi, lang) {
+  const biome = BIOMES[bi]
+  if (biome) return biome.label[lang] ?? biome.label.en
+  if (bi === 'farm') return FARM_LABEL[lang] ?? FARM_LABEL.en
+  return bi
+}
+
 // Top-left: current era label (biome under the avatar). Top-right: discovery progress —
 // visible sites seen so far, plus a "+K🔓" once the Konami reveal has unlocked the hidden
 // sideProjects sites, so recruiters get a sense of completion/discoverability at a glance.
 function drawHud(ctx, state) {
   const { world, lang } = state
   const bi = nearestBiome(regionsWithFarm(world), state.player.x, state.player.y)
-  const era = BIOMES[bi].label[lang] ?? BIOMES[bi].label.en
-  drawHudChip(ctx, era, 10, 'left')
+  drawHudChip(ctx, eraLabel(bi, lang), 10, 'left')
 
   const total = world.sites.length
   const seen = world.sites.filter(s => s.seen).length

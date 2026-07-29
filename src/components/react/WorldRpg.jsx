@@ -123,6 +123,10 @@ export default function WorldRpg({ locale }) {
         lang,
       })
       gameRef.current = game
+      // Dev-only handle for Playwright e2e assertions — never ships to production
+      // (import.meta.env.DEV is false under `astro build`). Mirrors careerGame.js's
+      // window.__career handle.
+      if (import.meta.env.DEV) window.__worldRpg = game
       if (prefersReducedMotion()) game.state.intro.skip()
       game.start()
       canvasRef.current.focus()
@@ -165,6 +169,7 @@ export default function WorldRpg({ locale }) {
         gameRef.current.stop()
         gameRef.current = null
       }
+      if (import.meta.env.DEV) window.__worldRpg = null
     }
   }, [started, lang])
 
