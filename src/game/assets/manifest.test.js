@@ -2,9 +2,9 @@ import { describe, it, expect } from 'vitest'
 import { MANIFEST } from './manifest.js'
 
 const REQUIRED_FRAMES = [
-  'ground_farm',
+  'ground_farm', 'ground_farm_2', 'ground_farm_3',
   'ground_pradera', 'ground_pradera_2', 'ground_pradera_3',
-  'ground_desierto', 'ground_desierto_2',
+  'ground_desierto', 'ground_desierto_2', 'ground_desierto_3',
   'ground_selva', 'ground_selva_2', 'ground_selva_3',
   'ground_cyber', 'ground_cyber_2',
   'ground_castillo', 'ground_castillo_2',
@@ -25,7 +25,6 @@ const REAL_IMAGE_SIZE = {
   cfGrass: { w: 16, h: 16 },
   cfPath: { w: 16, h: 16 },
   cfWater: { w: 16, h: 16 },
-  cfFarmland: { w: 48, h: 48 },
   cfBeach: { w: 80, h: 48 },
   cfHouse: { w: 96, h: 128 },
   cfOakTree: { w: 64, h: 80 },

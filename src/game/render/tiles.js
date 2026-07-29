@@ -19,16 +19,36 @@ function hashTile(tx, ty) {
 // Index 0 is always the biome's original frame name — keeps tileNameFor('cyber', 0, 0, ...)
 // deterministic at the world origin, since hashTile(0, 0) === 0.
 const GROUND_VARIANTS = {
+  farm: ['ground_farm', 'ground_farm_2', 'ground_farm_3'],
   pradera: ['ground_pradera', 'ground_pradera_2', 'ground_pradera_3'],
-  desierto: ['ground_desierto', 'ground_desierto_2'],
+  desierto: ['ground_desierto', 'ground_desierto_2', 'ground_desierto_3'],
   selva: ['ground_selva', 'ground_selva_2', 'ground_selva_3'],
   cyber: ['ground_cyber', 'ground_cyber_2'],
   castillo: ['ground_castillo', 'ground_castillo_2'],
 }
 
+// Per-biome bias, aligned by index to GROUND_VARIANTS[bi]. farm/pradera's accent cells (paler
+// Sprout Lands tufts) are a much lighter tone than the saturated cute-fantasy base grass, so an
+// even split there reads as a harsh checkerboard — weighting the base heavily makes the accent
+// an occasional fleck instead. Biomes not listed here fall back to an even split, which is fine
+// where every variant is already the same tone family (selva, desierto) or where the "base" cell
+// isn't the visually-dominant one (cyber/castillo's cliff cell already carries the dirt band).
+const GROUND_WEIGHTS = {
+  farm: [4, 1, 1],
+  pradera: [4, 1, 1],
+}
+
+function weighted(list, weights) {
+  return list.flatMap((name, i) => Array((weights && weights[i]) || 1).fill(name))
+}
+
+const WEIGHTED_GROUND_VARIANTS = Object.fromEntries(
+  Object.entries(GROUND_VARIANTS).map(([bi, list]) => [bi, weighted(list, GROUND_WEIGHTS[bi])]),
+)
+
 export function tileNameFor(bi, wx, wy, nearPathDist) {
   if (nearPathDist < 30) return 'path'
-  const variants = GROUND_VARIANTS[bi] || [`ground_${bi}`]
+  const variants = WEIGHTED_GROUND_VARIANTS[bi] || [`ground_${bi}`]
   const tx = Math.floor(wx / 32)
   const ty = Math.floor(wy / 32)
   return variants[hashTile(tx, ty) % variants.length]

@@ -26,6 +26,23 @@ describe('tileNameFor', () => {
     expect(names.size).toBeGreaterThan(1)
     names.forEach(n => expect(n.startsWith('ground_pradera')).toBe(true))
   })
+  it('gives the farm ground a grass frame instead of the old tilled-dirt frame', () => {
+    expect(tileNameFor('farm', 0, 0, 200)).toBe('ground_farm')
+  })
+  it('scatters 3 sand variants across nearby desert tiles', () => {
+    const names = new Set()
+    for (let tx = 0; tx < 12; tx += 1) names.add(tileNameFor('desierto', tx * 32 + 16, 16, 200))
+    expect(names.size).toBeGreaterThan(1)
+  })
+  it('biases pradera/farm toward the base tile so accents read as occasional, not 50/50', () => {
+    const counts = {}
+    for (let tx = 0; tx < 240; tx += 1) {
+      const name = tileNameFor('pradera', tx * 32 + 16, 5000, 200)
+      counts[name] = (counts[name] || 0) + 1
+    }
+    expect(counts.ground_pradera).toBeGreaterThan((counts.ground_pradera_2 || 0) * 1.5)
+    expect(counts.ground_pradera).toBeGreaterThan((counts.ground_pradera_3 || 0) * 1.5)
+  })
 })
 
 describe('walkFrame', () => {

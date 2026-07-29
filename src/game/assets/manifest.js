@@ -9,7 +9,6 @@ export const MANIFEST = {
     cfGrass: '/game/cute-fantasy/Tiles/Grass_Middle.png',
     cfPath: '/game/cute-fantasy/Tiles/Path_Middle.png',
     cfWater: '/game/cute-fantasy/Tiles/Water_Middle.png',
-    cfFarmland: '/game/cute-fantasy/Tiles/FarmLand_Tile.png',
     cfBeach: '/game/cute-fantasy/Tiles/Beach_Tile.png',
     cfHouse: '/game/cute-fantasy/Outdoor%20decoration/House_1_Wood_Base_Blue.png',
     cfOakTree: '/game/cute-fantasy/Outdoor%20decoration/Oak_Tree.png',
@@ -28,15 +27,23 @@ export const MANIFEST = {
     // interior cell (never a multi-cell autotile border, and never a transparent/padded area).
     // _2/_3 suffixed frames are texture variants scattered in via a per-tile-coord hash
     // (see render/tiles.js tileNameFor) so ground doesn't read as one flat color block.
-    ground_farm: { img: 'cfFarmland', x: 16, y: 16, w: 16, h: 16 },
+    // Farm ground is grass (same cells as pradera) — the avatar spawns here, and bare tilled
+    // dirt read wrong for a spawn point. A tilled-earth look belongs in a future decor/farm-plot
+    // layer, not the base ground tile.
+    ground_farm: { img: 'cfGrass', x: 0, y: 0, w: 16, h: 16 },
+    ground_farm_2: { img: 'slGrass', x: 0, y: 80, w: 16, h: 16 },
+    ground_farm_3: { img: 'slGrass', x: 16, y: 80, w: 16, h: 16 },
     ground_pradera: { img: 'cfGrass', x: 0, y: 0, w: 16, h: 16 },
     ground_pradera_2: { img: 'slGrass', x: 0, y: 80, w: 16, h: 16 },
     ground_pradera_3: { img: 'slGrass', x: 16, y: 80, w: 16, h: 16 },
     // Beach_Tile.png is an 80x48 island autotile sheet (5x3 cells of 16px) — x=48,y=0 used to
     // sample the blue pond-ring border (the "blue arches" artifact). x=16,y=16 is the solid
-    // sand fill at the center of the island's 3x3 autotile block.
+    // sand fill at the center of the island's 3x3 autotile block. Beach_Tile has no further
+    // texture cells (the rest of the sheet is saturated water blue), so the _2/_3 accents come
+    // from Tilled_Dirt.png's speckled dirt-patch cells — a close, still-sandy tan family.
     ground_desierto: { img: 'cfBeach', x: 16, y: 16, w: 16, h: 16 },
     ground_desierto_2: { img: 'slTilledDirt', x: 0, y: 80, w: 16, h: 16 },
+    ground_desierto_3: { img: 'slTilledDirt', x: 16, y: 96, w: 16, h: 16 },
     // Grass.png x=0,y=64 sampled a mostly-transparent grass-tuft decoration cell (the
     // "green/black checkered" artifact against the canvas background). x=16,y=16 is the
     // solid-fill interior cell of the sheet's rounded grass-plateau autotile block.
