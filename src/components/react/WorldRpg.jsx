@@ -173,11 +173,21 @@ export default function WorldRpg({ locale }) {
           [upRef.current, 'U'], [downRef.current, 'D'], [leftRef.current, 'L'], [rightRef.current, 'R'],
         ].filter(([el]) => el)
         const bound = dirs.map(([el, kind]) => {
-          const down = (e) => { e.preventDefault(); game.state.input.press(kind, true) }
+          // Capture the pointer on press so pointerup/cancel always fire on THIS button even
+          // when the finger drifts off it before lifting — without capture, an off-button
+          // release lands on the document and the key sticks (avatar walks forever).
+          const down = (e) => {
+            e.preventDefault()
+            if (e.pointerId != null && el.setPointerCapture) {
+              try { el.setPointerCapture(e.pointerId) } catch (_) { /* capture unsupported */ }
+            }
+            game.state.input.press(kind, true)
+          }
           const up = (e) => { e.preventDefault(); game.state.input.press(kind, false) }
           el.addEventListener('pointerdown', down)
           el.addEventListener('pointerup', up)
-          el.addEventListener('pointerleave', up)
+          el.addEventListener('pointercancel', up)
+          el.addEventListener('lostpointercapture', up)
           return { el, down, up }
         })
         const onAction = (e) => {
@@ -190,7 +200,8 @@ export default function WorldRpg({ locale }) {
           bound.forEach(({ el, down, up }) => {
             el.removeEventListener('pointerdown', down)
             el.removeEventListener('pointerup', up)
-            el.removeEventListener('pointerleave', up)
+            el.removeEventListener('pointercancel', up)
+            el.removeEventListener('lostpointercapture', up)
           })
           if (actionRef.current) actionRef.current.removeEventListener('pointerdown', onAction)
         }
