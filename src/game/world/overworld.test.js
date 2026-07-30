@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest'
-import { startYear, buildOverworld } from './overworld.js'
+import { startYear, buildOverworld, projectOntoSpine } from './overworld.js'
 import { biomeForYear } from './biomes.js'
+import { doorPoint } from '../entities/site.js'
 
 const JSON_FIXTURE = {
   entries: [
@@ -53,5 +54,65 @@ describe('buildOverworld', () => {
     const w3 = buildOverworld(JSON_FIXTURE, biomeForYear, [{ co: 'Mr. Yoker', title: { en: 'Indie', es: 'Indie' }, date: { en: 'side', es: 'propio' }, tech: ['Astro'] }])
     expect(w3.hiddenSites).toHaveLength(1)
     expect(w3.hiddenSites[0].hidden).toBe(true)
+  })
+})
+
+describe('roads', () => {
+  const SIDE_PROJECTS = [{ co: 'Mr. Yoker', title: { en: 'Indie', es: 'Indie' }, date: { en: 'side', es: 'propio' }, tech: ['Astro'] }]
+  const wr = buildOverworld(JSON_FIXTURE, biomeForYear, SIDE_PROJECTS)
+
+  it('exposes a non-empty roads array alongside the spine path', () => {
+    expect(Array.isArray(wr.roads)).toBe(true)
+    expect(wr.roads.length).toBeGreaterThan(0)
+    expect(wr.path.length).toBeGreaterThan(1)
+  })
+
+  it('includes the spine itself as consecutive, non-hidden segments', () => {
+    for (let i = 0; i < wr.path.length - 1; i += 1) {
+      const seg = wr.roads.find(r => r.a === wr.path[i] && r.b === wr.path[i + 1])
+      expect(seg, `missing spine segment ${i}`).toBeDefined()
+      expect(seg.hidden).toBeFalsy()
+    }
+  })
+
+  it('gives every visible site a non-hidden spur segment whose one endpoint is its doorPoint', () => {
+    wr.sites.forEach(s => {
+      const door = doorPoint(s)
+      const spur = wr.roads.find(r => !r.hidden && r.a.x === door.x && r.a.y === door.y)
+      expect(spur, `no spur found for site ${s.id}`).toBeDefined()
+    })
+  })
+
+  it('gives every hidden POI a loop of two hidden segments that touch the spine at distinct points', () => {
+    wr.hiddenSites.forEach(hs => {
+      const door = doorPoint(hs)
+      const legs = wr.roads.filter(r => r.hidden
+        && ((r.a.x === door.x && r.a.y === door.y) || (r.b.x === door.x && r.b.y === door.y)))
+      expect(legs).toHaveLength(2)
+      const spineTouch = leg => (leg.a.x === door.x && leg.a.y === door.y ? leg.b : leg.a)
+      const [t1, t2] = legs.map(spineTouch)
+      expect(t1).not.toEqual(t2)
+      expect(wr.path).toContainEqual(t1)
+      expect(wr.path).toContainEqual(t2)
+    })
+  })
+
+  it('is deterministic — rebuilding the same input yields identical road segments', () => {
+    const wr2 = buildOverworld(JSON_FIXTURE, biomeForYear, SIDE_PROJECTS)
+    expect(wr2.roads).toEqual(wr.roads)
+  })
+})
+
+describe('projectOntoSpine', () => {
+  const spine = [{ x: 0, y: 0 }, { x: 100, y: 0 }, { x: 100, y: 100 }]
+
+  it('projects onto the nearest segment, perpendicular to it', () => {
+    expect(projectOntoSpine({ x: 50, y: 30 }, spine)).toEqual({ x: 50, y: 0 })
+  })
+  it('clamps to a segment endpoint when the point is beyond it', () => {
+    expect(projectOntoSpine({ x: -20, y: 0 }, spine)).toEqual({ x: 0, y: 0 })
+  })
+  it('picks whichever of several segments is actually closest', () => {
+    expect(projectOntoSpine({ x: 120, y: 50 }, spine)).toEqual({ x: 100, y: 50 })
   })
 })

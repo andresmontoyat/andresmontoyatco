@@ -63,6 +63,23 @@ export function nearestPathDist(path, wx, wy) {
   return min
 }
 
+// Same idea as nearestPathDist, but over world.roads' segment SET ({a,b,hidden?} objects, not a
+// consecutive-point polyline) — the full road graph (spine + every site's door spur + each
+// hidden POI's rejoin loop) built by overworld.js's buildRoads. `hidden` loop segments (the POI
+// detours) are skipped unless `revealed` is true, mirroring how hidden sites themselves only
+// render once state.revealed flips — so the road to a not-yet-discovered POI doesn't spoil it by
+// being visible on the ground first. No allocations beyond the running `min`.
+export function nearestRoadDist(roads = [], wx, wy, revealed) {
+  let min = Infinity
+  for (let i = 0; i < roads.length; i += 1) {
+    const r = roads[i]
+    if (r.hidden && !revealed) continue
+    const d = distToSegment(wx, wy, r.a.x, r.a.y, r.b.x, r.b.y)
+    if (d < min) min = d
+  }
+  return min
+}
+
 export function visibleTileRange(cam, vw, vh, tile) {
   return {
     x0: Math.floor(cam.x / tile) - 1,
@@ -82,9 +99,12 @@ export function regionsWithFarm(world) {
 // the 9 real Path_Tile.png frames by checking whether the tile's 4 grid-neighbors are also on
 // path, so straight road runs and turns get a grass-blended border (pathTileName in tiles.js)
 // instead of the old flat rectangle. Neighbor checks only run for tiles that are actually on
-// path (the minority), so this stays cheap in the hot per-tile loop.
-function resolvePathFrame(world, tx, ty) {
-  const onPath = (nx, ny) => nearestPathDist(world.path, nx * TILE + TILE / 2, ny * TILE + TILE / 2) < PATH_THRESHOLD
+// path (the minority), so this stays cheap in the hot per-tile loop. Generalizes to every road
+// segment (spine + door spurs + POI loops) for free since it's built on nearestRoadDist.
+function resolvePathFrame(world, tx, ty, revealed) {
+  const onPath = (nx, ny) => (
+    nearestRoadDist(world.roads, nx * TILE + TILE / 2, ny * TILE + TILE / 2, revealed) < PATH_THRESHOLD
+  )
   return pathTileName(onPath(tx, ty - 1), onPath(tx + 1, ty), onPath(tx, ty + 1), onPath(tx - 1, ty))
 }
 
@@ -98,9 +118,9 @@ function drawGround(ctx, state, cam, sprites) {
       const wx = tx * TILE + TILE / 2
       const wy = ty * TILE + TILE / 2
       const bi = nearestBiome(anchors, wx, wy)
-      const dist = nearestPathDist(world.path, wx, wy)
+      const dist = nearestRoadDist(world.roads, wx, wy, state.revealed)
       let name = tileNameFor(bi, wx, wy, dist)
-      if (name === 'path') name = resolvePathFrame(world, tx, ty)
+      if (name === 'path') name = resolvePathFrame(world, tx, ty, state.revealed)
       const sx = tx * TILE - cam.x
       const sy = ty * TILE - cam.y
       sprites.draw(ctx, name, sx, sy, TILE, TILE)
