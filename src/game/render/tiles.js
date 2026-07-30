@@ -9,8 +9,11 @@ export function nearestBiome(regions, wx, wy) {
 }
 
 // Deterministic per-tile hash — same (tx,ty) always yields the same variant, so ground
-// texture doesn't flicker as the camera moves, but adjacent tiles still differ.
-function hashTile(tx, ty) {
+// texture doesn't flicker as the camera moves, but adjacent tiles still differ. Exported so
+// scene2d.js's cyber/castillo era-tint wash can scatter its shade variants off the SAME hash
+// (same tile always gets the same frame variant AND the same tint shade), instead of re-deriving
+// a second, uncoordinated hash.
+export function hashTile(tx, ty) {
   let h = (tx * 374761393 + ty * 668265263) | 0
   h = Math.imul(h ^ (h >>> 13), 1274126177)
   return (h ^ (h >>> 16)) >>> 0
@@ -28,14 +31,16 @@ const GROUND_VARIANTS = {
 }
 
 // Per-biome bias, aligned by index to GROUND_VARIANTS[bi]. farm/pradera's accent cells (paler
-// Sprout Lands tufts) are a much lighter tone than the saturated cute-fantasy base grass, so an
-// even split there reads as a harsh checkerboard — weighting the base heavily makes the accent
-// an occasional fleck instead. Biomes not listed here fall back to an even split, which is fine
-// where every variant is already the same tone family (selva, desierto) or where the "base" cell
-// isn't the visually-dominant one (cyber/castillo's cliff cell already carries the dirt band).
+// Sprout Lands tufts) are a much lighter tone than the saturated cute-fantasy base grass — even
+// a 4:1 split still read as a visible checker at a glance (polish-pass screenshot review), so the
+// base is weighted further: base:accent is now 6:1 per accent cell, making each accent a rare
+// fleck of texture rather than a repeating pattern. Biomes not listed here fall back to an even
+// split, which is fine where every variant is already the same tone family (selva, desierto) or
+// where the "base" cell isn't the visually-dominant one (cyber/castillo's cliff cell already
+// carries the dirt band).
 const GROUND_WEIGHTS = {
-  farm: [4, 1, 1],
-  pradera: [4, 1, 1],
+  farm: [6, 1, 1],
+  pradera: [6, 1, 1],
 }
 
 function weighted(list, weights) {

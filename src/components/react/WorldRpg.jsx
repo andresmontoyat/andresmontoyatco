@@ -242,7 +242,12 @@ export default function WorldRpg({ locale }) {
         ref={canvasRef}
         data-testid="world-rpg-canvas"
         tabIndex={0}
-        className="block w-full h-[70vh] max-h-[640px] outline-none [image-rendering:pixelated]"
+        // h-[70vh] max-h-[640px] left too little room for the bezel's title row + the control
+        // legend below it on standard viewport heights — the legend read as clipped under the
+        // canvas (polish-pass screenshot review). Trimmed the vh share and the cap so the full
+        // device (bezel + title + canvas + legend) fits within one viewport on common desktop
+        // heights, with min-h as a floor so very short viewports don't collapse the canvas.
+        className="block w-full h-[56vh] max-h-[520px] min-h-[320px] outline-none [image-rendering:pixelated]"
       />
       <TouchControls copy={copy} upRef={upRef} downRef={downRef} leftRef={leftRef} rightRef={rightRef} actionRef={actionRef} />
       <button

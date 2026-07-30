@@ -1,4 +1,4 @@
-import { nearestBiome, tileNameFor, walkFrame } from './tiles.js'
+import { nearestBiome, tileNameFor, walkFrame, hashTile } from './tiles.js'
 import { BIOMES } from '../world/biomes.js'
 import { drawAmbient, swayOffset, DAY_LEN } from './ambient.js'
 import { critterDrawables } from '../entities/critters.js'
@@ -8,10 +8,22 @@ import { phaseOf, nightTint } from './lighting.js'
 const TILE = 32
 const AVATAR_W = 40
 const AVATAR_H = 44
-// cyber/castillo share the same "cliff" ground texture (see manifest.js) and are told apart
-// by this light per-biome color wash — kept low so the tile texture stays visible underneath,
-// unlike the old 0.35-alpha flat tint that read as a solid color block.
-const STONE_ERA_TINT_ALPHA = 0.12
+// cyber/castillo share the same Hills.png "cliff" ground texture (see manifest.js) — there is no
+// dedicated stone/paved tile in either free asset pack (Cute Fantasy / Sprout Lands); a Tiny
+// Swords-style tileset would be the real fix for a true rocky/paved read. Until then the two
+// biomes are told apart by a per-biome color wash. A 0.12-alpha version of this read as a flat,
+// barely-tinted band (polish-pass screenshot review), especially since ground_cyber_2/
+// ground_castillo_2 point at a plain grass cell nearly indistinguishable from every other grass
+// biome — so the wash is bumped much stronger, and scattered across 3 shades per biome (same
+// hashTile() used for frame-variant selection) so it isn't one flat color block either.
+const ERA_TINT_ALPHA = 0.34
+const ERA_TINTS = {
+  // Cool cyan-blue family, keyed off the site's --color-accent token (not BIOMES.cyber.c, which
+  // stays reserved for building-marker/company-list color elsewhere — see companies.js, sprites.js).
+  cyber: ['#00C2FF', '#2f8fd6', '#5aa8e0'],
+  // Violet family toward the AI-era castillo biome color (BIOMES.castillo.c).
+  castillo: ['#a855f7', '#8b5fbf', '#c084fc'],
+}
 
 export function activeSites(state) {
   return state.revealed ? state.world.sites.concat(state.world.hiddenSites) : state.world.sites
@@ -79,10 +91,11 @@ function drawGround(ctx, state, cam, sprites) {
       const sx = tx * TILE - cam.x
       const sy = ty * TILE - cam.y
       sprites.draw(ctx, name, sx, sy, TILE, TILE)
-      if (bi === 'cyber' || bi === 'castillo') {
+      const tints = ERA_TINTS[bi]
+      if (tints) {
         ctx.save()
-        ctx.globalAlpha = STONE_ERA_TINT_ALPHA
-        ctx.fillStyle = BIOMES[bi].c
+        ctx.globalAlpha = ERA_TINT_ALPHA
+        ctx.fillStyle = tints[hashTile(tx, ty) % tints.length]
         ctx.fillRect(sx, sy, TILE, TILE)
         ctx.restore()
       }
