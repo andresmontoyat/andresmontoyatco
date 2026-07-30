@@ -12,7 +12,7 @@ import Nav from './Nav'
 vi.mock('../../hooks/useActiveSection', () => ({ default: () => 'about' }))
 
 function renderNav(locale = 'en') {
-  return render(<Nav locale={locale} hrefEn="/en/" hrefEs="/es/" />)
+  return render(<Nav locale={locale} hrefEn="/en/" hrefEs="/es/" hrefGame={`/${locale}/game`} />)
 }
 
 beforeEach(() => {
@@ -73,5 +73,12 @@ describe('Nav island (Phase 22 Plan 1)', () => {
     const esAnchor = screen.getAllByRole('link', { name: 'Switch to Spanish' })[0]
     fireEvent.click(esAnchor)
     expect(document.cookie).toContain('cam-lang=es')
+  })
+
+  it('renders the Career World route link pointing at hrefGame', () => {
+    renderNav('en')
+    const links = screen.getAllByText(/Career World/)
+    expect(links.length).toBeGreaterThan(0)
+    expect(links[0].closest('a').getAttribute('href')).toBe('/en/game')
   })
 })

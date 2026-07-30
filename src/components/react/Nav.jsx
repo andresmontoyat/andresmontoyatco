@@ -16,7 +16,9 @@ const NAV_ITEMS = [
 ]
 const SECTION_IDS = NAV_ITEMS.map((item) => item.id)
 
-export default function Nav({ locale, hrefEn, hrefEs }) {
+export default function Nav({
+  locale, hrefEn, hrefEs, hrefGame,
+}) {
   const lang = locale
   const t = translations[locale]
   const [menuOpen, setMenuOpen] = useState(false)
@@ -27,7 +29,7 @@ export default function Nav({ locale, hrefEn, hrefEs }) {
       <ProgressBar />
       <div className="max-w-6xl mx-auto flex items-center justify-between px-6 py-4">
         <Logomark />
-        <DesktopNav t={t} activeSection={activeSection} />
+        <DesktopNav t={t} activeSection={activeSection} hrefGame={hrefGame} />
         <div className="hidden md:flex items-center gap-2">
           <ThemeToggle t={t} />
           <LangPill lang={lang} t={t} hrefEn={hrefEn} hrefEs={hrefEs} />
@@ -54,6 +56,7 @@ export default function Nav({ locale, hrefEn, hrefEs }) {
         lang={lang}
         hrefEn={hrefEn}
         hrefEs={hrefEs}
+        hrefGame={hrefGame}
         activeSection={activeSection}
       />
     </header>
@@ -71,9 +74,13 @@ function Logomark() {
   )
 }
 
-function DesktopNav({ t, activeSection }) {
+// Career World is a real route (/game), not a hash-scroll SECTIONS entry — it
+// deliberately lives outside NAV_ITEMS/useActiveSection so it never fights the
+// scroll-spy for "active" styling. Rendered as an accent CTA pill so it reads
+// as "play", not as another passive nav label.
+function DesktopNav({ t, activeSection, hrefGame }) {
   return (
-    <nav className="hidden md:flex gap-7 text-xs font-mono">
+    <nav className="hidden md:flex items-center gap-7 text-xs font-mono">
       {NAV_ITEMS.map((item) => {
         const isActive = activeSection === item.id
         const cls = isActive
@@ -85,6 +92,14 @@ function DesktopNav({ t, activeSection }) {
           </a>
         )
       })}
+      {hrefGame && (
+        <a
+          href={hrefGame}
+          className="px-3 py-1.5 rounded-full bg-brand-gradient text-ink-900 font-extrabold normal-case tracking-normal hover:opacity-90 transition-opacity duration-200"
+        >
+          ▶ {t.nav.careerWorld}
+        </a>
+      )}
     </nav>
   )
 }
@@ -190,7 +205,9 @@ function ProgressBar() {
   )
 }
 
-function MobileMenu({ open, onClose, t, lang, hrefEn, hrefEs, activeSection }) {
+function MobileMenu({
+  open, onClose, t, lang, hrefEn, hrefEs, hrefGame, activeSection,
+}) {
   // SSR-safe portal: render nothing until mounted so the first client render
   // matches the server (both null) — a document-existence guard alone renders
   // null on the server but a portal on the client's first (hydration) render,
@@ -253,6 +270,15 @@ function MobileMenu({ open, onClose, t, lang, hrefEn, hrefEs, activeSection }) {
             </a>
           )
         })}
+        {hrefGame && (
+          <a
+            href={hrefGame}
+            onClick={onClose}
+            className="px-6 py-3 rounded-full bg-brand-gradient text-ink-900 text-xl font-extrabold"
+          >
+            ▶ {t.nav.careerWorld}
+          </a>
+        )}
       </div>
     </div>
   )

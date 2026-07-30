@@ -9,7 +9,6 @@ import Hero from '../../components/astro/Hero.astro'
 import About from '../../components/astro/About.astro'
 import Skill from '../../components/astro/Skill.astro'
 import Experience from '../../components/react/Experience.jsx'
-import WorldRpg from '../../components/react/WorldRpg.jsx'
 import Projects from '../../components/astro/Projects.astro'
 import Claude from '../../components/astro/Claude.astro'
 import Contact from '../../components/astro/Contact.astro'
@@ -20,18 +19,16 @@ const locale = Astro.currentLocale ?? 'en'
 const path = Astro.url.pathname.replace(/^\/(en|es)/, '') || '/'
 const hrefEn = getRelativeLocaleUrl('en', path)
 const hrefEs = getRelativeLocaleUrl('es', path)
+const hrefGame = getRelativeLocaleUrl(locale, '/game')
 ---
 <BaseLayout>
-  <Nav client:load locale={locale} hrefEn={hrefEn} hrefEs={hrefEs} />
+  <Nav client:load locale={locale} hrefEn={hrefEn} hrefEs={hrefEs} hrefGame={hrefGame} />
   <SectionPager client:visible locale={locale} />
   <main>
     <Hero locale={locale} />
     <About locale={locale} />
     <Skill locale={locale} />
     <Experience client:visible locale={locale} />
-    <section id="world-rpg" class="py-20">
-      <WorldRpg client:visible locale={locale} />
-    </section>
     <Projects locale={locale} />
     <Claude locale={locale} />
     <Contact locale={locale} />

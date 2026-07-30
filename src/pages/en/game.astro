@@ -1,0 +1,63 @@
+---
+// src/pages/en/game.astro — dedicated, full-screen /game route.
+// The World RPG island used to live inline in the homepage scroll (a <section
+// id="world-rpg"> between Experience and Projects). It now gets its own route:
+// arriving here IS the point of the visit, so the island mounts client:load
+// (not client:visible) — no reason to defer hydration on a page that exists
+// only to run the game. The full section-scroll Nav is deliberately NOT reused
+// here (D: its NAV_ITEMS are #hash links into the homepage's sections, which
+// don't exist on this route) — a minimal top bar (back-to-portfolio + EN/ES
+// switch) replaces it, mirroring Nav's own LangPill styling for visual
+// continuity without importing Nav's scroll-spy coupling.
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import WorldRpg from '../../components/react/WorldRpg.jsx'
+import { getRelativeLocaleUrl } from 'astro:i18n'
+
+const locale = Astro.currentLocale ?? 'en'
+const hrefHome = getRelativeLocaleUrl(locale, '/')
+const hrefEn = getRelativeLocaleUrl('en', '/game')
+const hrefEs = getRelativeLocaleUrl('es', '/game')
+
+const copy = {
+  title: 'Career World — Carlos Montoya',
+  description: 'An interactive top-down RPG through Carlos Montoya’s engineering career — walk the map, talk to NPCs, and uncover the timeline.',
+  back: '← Back to portfolio',
+  eyebrow: 'Career World',
+  tagline: 'An 18-year backend career, explored one tile at a time.',
+}
+
+const langBase = 'px-3 py-1.5 rounded-full transition-colors duration-150 font-mono text-xs'
+const langActive = 'bg-brand-gradient text-ink-900 font-extrabold'
+const langInactive = 'text-text-secondary font-normal'
+---
+<BaseLayout title={copy.title} description={copy.description}>
+  <div class="min-h-screen flex flex-col bg-ink-900">
+    <header class="flex items-center justify-between px-6 py-4 border-b border-ink-600">
+      <a
+        href={hrefHome}
+        class="font-mono text-sm text-text-secondary hover:text-brand transition-colors duration-150"
+      >
+        {copy.back}
+      </a>
+      <div
+        role="group"
+        aria-label="Language"
+        class="flex gap-0.5 bg-ink-500 border border-ink-400 rounded-full p-0.5"
+      >
+        <a href={hrefEn} aria-pressed="true" class={`${langBase} ${langActive}`}>EN</a>
+        <a href={hrefEs} aria-pressed="false" class={`${langBase} ${langInactive}`}>ES</a>
+      </div>
+    </header>
+    <main class="flex-1 flex flex-col items-center justify-center gap-6 px-4 py-10">
+      <div class="text-center">
+        <p class="font-mono uppercase tracking-wide text-xs font-extrabold text-text-secondary mb-2">
+          {copy.eyebrow}
+        </p>
+        <p class="text-sm text-text-secondary max-w-md mx-auto">{copy.tagline}</p>
+      </div>
+      <div class="w-full max-w-5xl">
+        <WorldRpg client:load locale={locale} />
+      </div>
+    </main>
+  </div>
+</BaseLayout>
