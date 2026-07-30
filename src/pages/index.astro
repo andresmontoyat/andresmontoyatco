@@ -1,17 +1,37 @@
 ---
-// src/pages/index.astro — minimal static fallback for bare "/".
-// NOT the redirect mechanism: Plan 21-03's middleware.ts (Vercel Edge
-// Middleware) owns the real cookie/Accept-Language redirect to /en or /es.
-// This file only exists because output: 'static' requires a build target
-// for "/"; it is reached only if the middleware fails to short-circuit.
+// src/pages/index.astro — bare "/" entry. In production the Vercel Edge
+// Middleware (Plan 21-03's middleware.ts) owns the cookie/Accept-Language
+// redirect to /en or /es and short-circuits before this file. This file is
+// the fallback reached when the middleware doesn't run — notably `astro dev`
+// / `astro preview` (Edge Middleware is inert there) and any static host
+// without the edge layer. Because output is 'static', it can't read
+// Accept-Language at request time, so it detects the language client-side
+// (persisted choice → navigator.language → English default) and redirects.
+// <noscript> keeps a working manual picker when JS is off.
 ---
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
+    <meta name="robots" content="noindex" />
     <title>Carlos Andrés Montoya Tobón</title>
+    <script is:inline>
+      (function () {
+        try {
+          var stored = localStorage.getItem('cam-lang')
+          var lang = stored === 'es' || stored === 'en'
+            ? stored
+            : ((navigator.language || navigator.userLanguage || 'en').toLowerCase().indexOf('es') === 0 ? 'es' : 'en')
+          location.replace('/' + lang + '/')
+        } catch (e) {
+          location.replace('/en/')
+        }
+      })()
+    </script>
   </head>
   <body>
-    <p>Please choose a language: <a href="/en">English</a> / <a href="/es">Español</a></p>
+    <noscript>
+      <p>Choose a language / Elige un idioma: <a href="/en/">English</a> · <a href="/es/">Español</a></p>
+    </noscript>
   </body>
 </html>
