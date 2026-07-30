@@ -9,6 +9,7 @@ const exp = read('experience.json')
 const skills = read('skills.json')
 const about = read('about.json')
 const contact = read('contact.json')
+const projects = read('projects.json')
 
 const pick = (f, lang) => (typeof f === 'string' ? f : f?.[lang] ?? f?.en ?? '')
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
@@ -23,6 +24,7 @@ const STR = {
     summary: 'Professional Summary',
     experience: 'Experience',
     skills: 'Technical Skills',
+    sites: 'Live Sites',
   },
   es: {
     title: 'Ingeniero Java Backend Senior y Arquitecto de Soluciones',
@@ -30,8 +32,11 @@ const STR = {
     summary: 'Perfil Profesional',
     experience: 'Experiencia',
     skills: 'Habilidades Técnicas',
+    sites: 'Sitios en Vivo',
   },
 }
+
+const cleanHost = (u) => String(u).replace(/^https?:\/\//, '').replace(/\/$/, '')
 
 export function buildHtml(lang) {
   const s = STR[lang]
@@ -59,6 +64,14 @@ export function buildHtml(lang) {
         <ul>${bullets}</ul>
         ${tech ? `<div class="tech">${tech}</div>` : ''}
       </div>`
+    })
+    .join('')
+
+  const siteRows = (projects.projects || [])
+    .filter((p) => p.liveUrl)
+    .map((p) => {
+      const host = cleanHost(p.liveUrl)
+      return `<div class="site-row"><span class="site-name">${esc(pick(p.title, lang))}</span> ${link(p.liveUrl, host)} <span class="site-desc">— ${esc(pick(p.desc, lang))}</span></div>`
     })
     .join('')
 
@@ -99,6 +112,10 @@ export function buildHtml(lang) {
     .skill-cat { font-weight: bold; min-width: 150px; color: #0b1020; }
     .skill-items { color: #333; }
     .skill-items strong { color: #00708a; }
+    .site-row { margin-bottom: 3px; }
+    .site-name { font-weight: bold; color: #0b1020; }
+    .site-row a { color: #00708a; text-decoration: none; font-weight: bold; }
+    .site-desc { color: #333; }
   </style></head><body>
     <div class="head">
       <div class="head-text">
@@ -113,6 +130,7 @@ export function buildHtml(lang) {
     <div class="summary">${summary}</div>
     <h2>${s.experience}</h2>
     ${roles}
+    ${siteRows ? `<h2>${s.sites}</h2>${siteRows}` : ''}
     <h2>${s.skills}</h2>
     ${skillBlocks}
   </body></html>`

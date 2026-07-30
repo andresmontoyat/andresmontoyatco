@@ -56,6 +56,20 @@ const rest = data.projects.filter((p) => !p.featured)
                     </span>
                   ))}
                 </div>
+                {(project.liveUrl || project.githubUrl) && (
+                  <div class="flex gap-3 mt-5">
+                    {project.liveUrl && (
+                      <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" class="text-sm font-semibold text-accent hover:underline">
+                        {ctaLive}
+                      </a>
+                    )}
+                    {project.githubUrl && (
+                      <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" class="text-sm font-semibold text-text hover:text-accent hover:underline">
+                        {ctaGithub}
+                      </a>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
           </article>

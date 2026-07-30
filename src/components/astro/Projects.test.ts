@@ -58,9 +58,14 @@ describe('Projects.astro (Container API parity — D-06)', () => {
     }
   })
 
-  it('no live/github CTAs render when URLs are null (current data state)', async () => {
+  it('renders a View Live CTA for each project with a liveUrl, and none without', async () => {
     const result = await renderProjects('en')
-    expect(result).not.toContain('View Live')
+    const withLive = data.projects.filter((p) => p.liveUrl)
+    const liveCtas = result.match(/>View Live</g) || []
+    expect(liveCtas).toHaveLength(withLive.length)
+    for (const p of withLive) {
+      expect(result).toContain(p.liveUrl)
+    }
     expect(result).not.toContain('>GitHub<')
   })
 
@@ -69,7 +74,7 @@ describe('Projects.astro (Container API parity — D-06)', () => {
     expect(data.projects[0].id).toBe('mr-yoker')
     expect(data.projects[0].featured).toBe(true)
     const featuredMatches = result.match(/data-featured="true"/g) || []
-    expect(featuredMatches).toHaveLength(1)
+    expect(featuredMatches).toHaveLength(data.projects.filter((p) => p.featured).length)
     const featuredIndex = result.indexOf('data-featured="true"')
     const restIndex = result.indexOf('data-featured="false"')
     const featuredBlock = result.slice(featuredIndex, restIndex === -1 ? undefined : restIndex)

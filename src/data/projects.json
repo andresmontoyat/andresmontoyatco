@@ -57,6 +57,31 @@
       "tech": ["Java", "Spring Framework", "Asterisk", "PostgreSQL"],
       "liveUrl": null,
       "githubUrl": null
+    },
+    {
+      "id": "mypipelines",
+      "icon": "🚀",
+      "title": { "en": "MyPipelines", "es": "MyPipelines" },
+      "desc": {
+        "en": "Reusable CI/CD pipeline library — parameterized GitHub Actions workflows (build, tag-filtered tests, JaCoCo coverage, OWASP scan, ArchUnit, Spotless) shared across JVM, KrakenD and NGINX projects.",
+        "es": "Librería de pipelines CI/CD reutilizables — workflows de GitHub Actions parametrizados (build, tests por tag, cobertura JaCoCo, OWASP, ArchUnit, Spotless) compartidos entre proyectos JVM, KrakenD y NGINX."
+      },
+      "tech": ["GitHub Actions", "CI/CD", "Reusable Workflows", "OWASP", "ArchUnit"],
+      "liveUrl": "https://mypipelines.andresmontoyat.co/",
+      "githubUrl": null
+    },
+    {
+      "id": "myguidelines",
+      "icon": "📐",
+      "featured": true,
+      "title": { "en": "MyGuidelines — Engineering Standards", "es": "MyGuidelines — Estándares de Ingeniería" },
+      "desc": {
+        "en": "My engineering playbook, codified — the architecture, testing, security and clean-code standards I hold every project to, and the trade-offs behind them. Hexagonal + DDD for JVM microservices, written to be executable by engineers and AI coding agents.",
+        "es": "Mi criterio de ingeniería, codificado — los estándares de arquitectura, testing, seguridad y clean code a los que exijo cada proyecto, y los trade-offs detrás de ellos. Hexagonal + DDD para microservicios JVM, ejecutables por ingenieros y agentes de IA."
+      },
+      "tech": ["Hexagonal Architecture", "DDD", "Clean Code", "Testing", "Security"],
+      "liveUrl": "https://myguidelines.andresmontoyat.co/",
+      "githubUrl": null
     }
   ]
 }
