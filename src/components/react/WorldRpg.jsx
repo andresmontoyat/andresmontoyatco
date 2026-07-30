@@ -65,6 +65,30 @@ function isTouchDevice() {
   return typeof navigator !== 'undefined' && (navigator.maxTouchPoints || 0) > 0
 }
 
+// ROOT CAUSE of the "too zoomed / blurry" bug: a <canvas> never given explicit width/height
+// attributes defaults its drawing BUFFER to 300x150, no matter how big CSS stretches it on
+// screen — so the game rendered into 300x150 and the browser upscaled that ~3x, and
+// worldRpg.js's camera (which reads canvas.width/height) thought the viewport was 300x150,
+// showing only a handful of tiles. This sizes the buffer to the canvas's actual CSS-displayed
+// size (via getBoundingClientRect) scaled by devicePixelRatio, so retina screens still render
+// at native resolution, and stamps the un-multiplied CSS size onto canvas.logicalWidth/
+// logicalHeight so the camera + HUD (scene2d.js's viewportOf) use logical px, not the
+// dpr-multiplied buffer. Resizing canvas.width/height resets ALL context state (transform,
+// imageSmoothingEnabled), so both must be reapplied every call — including on window resize.
+function sizeCanvasBuffer(canvas) {
+  const rect = canvas.getBoundingClientRect()
+  const dpr = (typeof window !== 'undefined' && window.devicePixelRatio) || 1
+  canvas.width = Math.max(1, Math.round(rect.width * dpr))
+  canvas.height = Math.max(1, Math.round(rect.height * dpr))
+  canvas.logicalWidth = rect.width
+  canvas.logicalHeight = rect.height
+  const ctx = canvas.getContext('2d')
+  if (!ctx) return
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+  // Keep the upscaled 16px sprite art crisp/pixelated rather than blurred by bilinear filtering.
+  ctx.imageSmoothingEnabled = false
+}
+
 function PadButton({ innerRef, label, glyph, className }) {
   return (
     <button
@@ -113,6 +137,7 @@ export default function WorldRpg({ locale }) {
     if (!started) return undefined
     let cancelled = false
     let unbindTouch = null
+    let detachResize = null
 
     async function mount() {
       const [{ createWorldRpg, canControl }, { default: experience }] = await Promise.all([
@@ -120,6 +145,12 @@ export default function WorldRpg({ locale }) {
         import('../../data/experience.json'),
       ])
       if (cancelled || !canvasRef.current) return
+      // Must run before game.start() sizes anything off the buffer (the camera's first frame
+      // reads canvas.width/height) — see sizeCanvasBuffer's comment for the root-cause zoom bug.
+      sizeCanvasBuffer(canvasRef.current)
+      const onResize = () => { if (canvasRef.current) sizeCanvasBuffer(canvasRef.current) }
+      window.addEventListener('resize', onResize)
+      detachResize = () => window.removeEventListener('resize', onResize)
       setUiLang(lang)
       const game = createWorldRpg({
         canvas: canvasRef.current,
@@ -170,6 +201,7 @@ export default function WorldRpg({ locale }) {
 
     return () => {
       cancelled = true
+      if (detachResize) detachResize()
       if (unbindTouch) unbindTouch()
       if (gameRef.current) {
         gameRef.current.stop()
@@ -186,9 +218,12 @@ export default function WorldRpg({ locale }) {
     })
   }
 
+  // No border/rounded/bg-surface here — this component is "the screen", framed by the
+  // retro-console bezel one level up (src/pages/*/game.astro). A second nested border here
+  // would compete with the bezel's own inset neon ring instead of reading as one device.
   if (!started) {
     return (
-      <div className="world-rpg-cover relative flex flex-col items-center justify-center gap-3 rounded-xl border border-border bg-surface py-20">
+      <div className="world-rpg-cover relative flex flex-col items-center justify-center gap-3 bg-ink-950 py-20">
         <button
           type="button"
           onClick={() => setStarted(true)}
@@ -202,12 +237,12 @@ export default function WorldRpg({ locale }) {
   }
 
   return (
-    <div className="world-rpg relative overflow-hidden rounded-xl border border-border bg-surface">
+    <div className="world-rpg relative overflow-hidden bg-ink-950">
       <canvas
         ref={canvasRef}
         data-testid="world-rpg-canvas"
         tabIndex={0}
-        className="block w-full h-[70vh] max-h-[640px] outline-none"
+        className="block w-full h-[70vh] max-h-[640px] outline-none [image-rendering:pixelated]"
       />
       <TouchControls copy={copy} upRef={upRef} downRef={downRef} leftRef={leftRef} rightRef={rightRef} actionRef={actionRef} />
       <button

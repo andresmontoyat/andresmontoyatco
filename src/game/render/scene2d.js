@@ -17,6 +17,21 @@ export function activeSites(state) {
   return state.revealed ? state.world.sites.concat(state.world.hiddenSites) : state.world.sites
 }
 
+// Logical (CSS-px) viewport size — WorldRpg.jsx sizes the canvas DRAWING BUFFER to
+// devicePixelRatio × the CSS-displayed size (so pixel art stays crisp on retina) and then
+// applies ctx.setTransform(dpr, 0, 0, dpr, 0, 0), so every draw call already operates in
+// logical/CSS px. Reading the raw ctx.canvas.width/height here (the dpr-multiplied buffer)
+// would place screen-space geometry — the HUD chips, dialog box, night overlay, tile-visibility
+// range — off by a factor of dpr. WorldRpg.jsx annotates canvas.logicalWidth/logicalHeight with
+// the CSS size before that transform; this falls back to the raw buffer when unset (unit tests,
+// or a canvas that was never dpr-sized) so existing callers stay unaffected.
+export function viewportOf(ctx) {
+  return {
+    w: ctx.canvas.logicalWidth || ctx.canvas.width,
+    h: ctx.canvas.logicalHeight || ctx.canvas.height,
+  }
+}
+
 function distToSegment(px, py, ax, ay, bx, by) {
   const abx = bx - ax
   const aby = by - ay
@@ -52,7 +67,8 @@ export function regionsWithFarm(world) {
 function drawGround(ctx, state, cam, sprites) {
   const { world } = state
   const anchors = regionsWithFarm(world)
-  const { x0, y0, x1, y1 } = visibleTileRange(cam, ctx.canvas.width, ctx.canvas.height, TILE)
+  const { w: vw, h: vh } = viewportOf(ctx)
+  const { x0, y0, x1, y1 } = visibleTileRange(cam, vw, vh, TILE)
   for (let ty = y0; ty < y1; ty += 1) {
     for (let tx = x0; tx < x1; tx += 1) {
       const wx = tx * TILE + TILE / 2
@@ -149,10 +165,11 @@ function drawPlaceholderScene(ctx, state, cam) {
 function drawDialog(ctx, state) {
   const { dialog, lang } = state
   if (!dialog.isOpen()) return
+  const { w, h } = viewportOf(ctx)
   ctx.fillStyle = '#0d1730f2'
-  ctx.fillRect(20, ctx.canvas.height - 150, ctx.canvas.width - 40, 120)
+  ctx.fillRect(20, h - 150, w - 40, 120)
   ctx.fillStyle = '#dfeaff'
-  dialog.visibleText(lang).split('\n').forEach((ln, i) => ctx.fillText(ln, 40, ctx.canvas.height - 120 + i * 22))
+  dialog.visibleText(lang).split('\n').forEach((ln, i) => ctx.fillText(ln, 40, h - 120 + i * 22))
 }
 
 function drawParticles(ctx, state, cam) {
@@ -172,27 +189,45 @@ function drawNightOverlay(ctx, state) {
   const tint = nightTint(phaseOf(state.clock || 0, DAY_LEN))
   const alpha = tint.a * NIGHT_OVERLAY_STRENGTH
   if (alpha <= 0) return
+  const { w, h } = viewportOf(ctx)
   ctx.save()
   ctx.globalAlpha = alpha
   ctx.fillStyle = `rgb(${tint.r},${tint.g},${tint.b})`
-  ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height)
+  ctx.fillRect(0, 0, w, h)
   ctx.restore()
 }
 
-// Translucent rounded chip behind HUD text so era/progress readouts stay legible over any
-// biome's ground color (bright pradera green vs dark castillo purple) without a pixel test —
-// just enough contrast, not a full opaque bar.
+// Dark ink-950 chip with a thin brand-neon border — echoes the retro-console bezel around the
+// canvas (src/pages/*/game.astro) so the in-canvas HUD reads as part of the same "device" rather
+// than a flat, mismatched dark bar. Colors are canvas fillStyle strings (2D context can't consume
+// CSS custom properties), hand-matched to --color-ink-950 (#07091A) and --color-brand (#00E5A8)
+// in src/index.css — keep these two in sync if either token changes.
+const HUD_CHIP_BG = 'rgba(7,9,26,0.72)'
+const HUD_CHIP_BORDER = 'rgba(0,229,168,0.55)'
+const HUD_CHIP_TEXT = '#00E5A8'
+
 function drawHudChip(ctx, text, x, align) {
   ctx.save()
-  ctx.font = 'bold 12px monospace'
+  ctx.font = 'bold 11px monospace'
   ctx.textBaseline = 'middle'
   const padX = 10
-  const h = 24
+  const h = 22
+  const r = h / 2
   const w = ctx.measureText(text).width + padX * 2
   const chipX = align === 'right' ? x - w : x
-  ctx.fillStyle = 'rgba(11,16,32,0.65)'
-  ctx.fillRect(chipX, 10, w, h)
-  ctx.fillStyle = '#eafff6'
+  ctx.beginPath()
+  ctx.moveTo(chipX + r, 10)
+  ctx.arcTo(chipX + w, 10, chipX + w, 10 + h, r)
+  ctx.arcTo(chipX + w, 10 + h, chipX, 10 + h, r)
+  ctx.arcTo(chipX, 10 + h, chipX, 10, r)
+  ctx.arcTo(chipX, 10, chipX + w, 10, r)
+  ctx.closePath()
+  ctx.fillStyle = HUD_CHIP_BG
+  ctx.fill()
+  ctx.lineWidth = 1
+  ctx.strokeStyle = HUD_CHIP_BORDER
+  ctx.stroke()
+  ctx.fillStyle = HUD_CHIP_TEXT
   ctx.textAlign = 'left'
   ctx.fillText(text, chipX + padX, 10 + h / 2)
   ctx.restore()
@@ -223,7 +258,7 @@ function drawHud(ctx, state) {
   const total = world.sites.length
   const seen = world.sites.filter(s => s.seen).length
   const unlocked = state.revealed ? `  +${world.hiddenSites.length}\u{1F513}` : ''
-  drawHudChip(ctx, `sites ${seen}/${total}${unlocked}`, ctx.canvas.width - 10, 'right')
+  drawHudChip(ctx, `sites ${seen}/${total}${unlocked}`, viewportOf(ctx).w - 10, 'right')
 }
 
 // World-space Y offset (above the normal follow-cam) the intro's camera descends from — a
@@ -239,8 +274,9 @@ function introCamera(state, cam) {
 function drawIntroTitle(ctx, state) {
   const alpha = state.intro.titleAlpha()
   if (alpha <= 0) return
-  const cx = ctx.canvas.width / 2
-  const cy = ctx.canvas.height / 2
+  const { w, h } = viewportOf(ctx)
+  const cx = w / 2
+  const cy = h / 2
   ctx.save()
   ctx.globalAlpha = alpha
   ctx.textAlign = 'center'
@@ -259,8 +295,9 @@ export function render2d(ctx, state, cam) {
   const shakeOff = shake2D(state.shake || 0)
   const sceneCam = introCamera(state, cam)
   const drawCam = { x: sceneCam.x + shakeOff.x, y: sceneCam.y + shakeOff.y }
+  const { w: bgW, h: bgH } = viewportOf(ctx)
   ctx.fillStyle = '#0B1020'
-  ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height)
+  ctx.fillRect(0, 0, bgW, bgH)
   if (!sprites) {
     drawPlaceholderScene(ctx, state, drawCam)
   } else {

@@ -9,6 +9,14 @@
 // don't exist on this route) — a minimal top bar (back-to-portfolio + EN/ES
 // switch) replaces it, mirroring Nav's own LangPill styling for visual
 // continuity without importing Nav's scroll-spy coupling.
+//
+// Chrome signature — bezel-as-console: the pixel canvas is "the screen," set
+// into an ink-950 device bezel with a thin inset neon (brand) border/glow, a
+// pulsing power LED, and the game title silk-screened in .font-pixel. This is
+// the ONE bold decoration on the page — the top bar, subtitle, and control
+// legend all stay quiet (font-sans/mono, text-muted) so the bezel reads as the
+// single focal object bridging the cozy pixel-art canvas with the dark-tech
+// portfolio shell.
 import BaseLayout from '../../layouts/BaseLayout.astro'
 import WorldRpg from '../../components/react/WorldRpg.jsx'
 import { getRelativeLocaleUrl } from 'astro:i18n'
@@ -22,20 +30,29 @@ const copy = {
   title: 'Career World — Carlos Montoya',
   description: 'An interactive top-down RPG through Carlos Montoya’s engineering career — walk the map, talk to NPCs, and uncover the timeline.',
   back: '← Back to portfolio',
-  eyebrow: 'Career World',
-  tagline: 'An 18-year backend career, explored one tile at a time.',
+  consoleTitle: 'Career World',
+  tagline: 'Walk my 18-year backend career — one company at a time.',
 }
+
+// Control legend, styled as console button caps below the screen. Hidden on small screens —
+// the in-canvas D-pad already covers touch input there, and there's no room for both.
+const legend = [
+  { keys: '◄►▲▼', label: 'move' },
+  { keys: 'E', label: 'talk' },
+  { keys: 'L', label: 'language' },
+  { keys: '↑↑↓↓←→←→BA', label: 'secret', hint: true },
+]
 
 const langBase = 'px-3 py-1.5 rounded-full transition-colors duration-150 font-mono text-xs'
 const langActive = 'bg-brand-gradient text-ink-900 font-extrabold'
-const langInactive = 'text-text-secondary font-normal'
+const langInactive = 'text-muted font-normal'
 ---
 <BaseLayout title={copy.title} description={copy.description}>
   <div class="min-h-screen flex flex-col bg-ink-900">
     <header class="flex items-center justify-between px-6 py-4 border-b border-ink-600">
       <a
         href={hrefHome}
-        class="font-mono text-sm text-text-secondary hover:text-brand transition-colors duration-150"
+        class="text-sm text-muted hover:text-brand transition-colors duration-150"
       >
         {copy.back}
       </a>
@@ -48,15 +65,27 @@ const langInactive = 'text-text-secondary font-normal'
         <a href={hrefEs} aria-pressed="false" class={`${langBase} ${langInactive}`}>ES</a>
       </div>
     </header>
-    <main class="flex-1 flex flex-col items-center justify-center gap-6 px-4 py-10">
-      <div class="text-center">
-        <p class="font-mono uppercase tracking-wide text-xs font-extrabold text-text-secondary mb-2">
-          {copy.eyebrow}
-        </p>
-        <p class="text-sm text-text-secondary max-w-md mx-auto">{copy.tagline}</p>
+
+    <main class="flex-1 flex flex-col items-center justify-center gap-5 px-4 py-8 sm:py-10">
+      <p class="text-sm text-muted max-w-md text-center">{copy.tagline}</p>
+
+      <div class="relative w-full max-w-4xl rounded-2xl sm:rounded-[28px] border border-brand/25 bg-ink-950 p-2.5 sm:p-4 shadow-[0_0_60px_-15px_var(--color-brand-muted)]">
+        <div class="flex items-center justify-center gap-2 pb-2 sm:pb-3">
+          <span aria-hidden="true" class="h-1.5 w-1.5 rounded-full bg-brand motion-safe:animate-pulse2"></span>
+          <span class="font-pixel text-[9px] sm:text-[10px] tracking-[2px] text-brand uppercase">{copy.consoleTitle}</span>
+        </div>
+        <div class="rounded-xl sm:rounded-2xl overflow-hidden ring-1 ring-inset ring-brand/15">
+          <WorldRpg client:load locale={locale} />
+        </div>
       </div>
-      <div class="w-full max-w-5xl">
-        <WorldRpg client:load locale={locale} />
+
+      <div class="hidden sm:flex flex-wrap items-center justify-center gap-2 max-w-2xl">
+        {legend.map((k) => (
+          <span class={`inline-flex items-center gap-1.5 rounded-md border border-ink-500 px-2.5 py-1 font-mono text-[10px] ${k.hint ? 'text-ink-400' : 'text-muted'}`}>
+            <span class="font-pixel text-[9px] text-brand/80">{k.keys}</span>
+            {k.label}
+          </span>
+        ))}
       </div>
     </main>
   </div>

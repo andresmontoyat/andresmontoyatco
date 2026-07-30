@@ -166,7 +166,13 @@ export function createWorldRpg({
       update(state, input.state, 1.6)
     }
     const draw = () => {
-      followCamera2D(state.cam, state.player.x, state.player.y, canvas.width, canvas.height, world.worldW, world.worldH)
+      // WorldRpg.jsx sizes canvas.width/height to devicePixelRatio × the CSS-displayed size (so
+      // pixel art renders crisp on retina) and annotates canvas.logicalWidth/logicalHeight with
+      // the un-multiplied CSS size — the camera needs that logical size, not the dpr-scaled
+      // buffer, or it would think the viewport is dpr× larger than what's actually on screen.
+      const vw = canvas.logicalWidth || canvas.width
+      const vh = canvas.logicalHeight || canvas.height
+      followCamera2D(state.cam, state.player.x, state.player.y, vw, vh, world.worldW, world.worldH)
       render2d(ctx, state, state.cam)
     }
     loop = createLoop(step, draw)

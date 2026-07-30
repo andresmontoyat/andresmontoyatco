@@ -2,7 +2,9 @@
 // src/pages/es/game.astro — versión localizada (ES) de la ruta dedicada /game.
 // Ver src/pages/en/game.astro para el razonamiento completo (D: por qué no se
 // reutiliza el Nav de scroll-por-secciones, por qué client:load en vez de
-// client:visible).
+// client:visible, y la firma de diseño "bezel-as-console": el canvas es "la
+// pantalla" enmarcada en un bisel ink-950 con borde/resplandor neón (brand) y
+// un LED de encendido pulsante — la única decoración fuerte de la página).
 import BaseLayout from '../../layouts/BaseLayout.astro'
 import WorldRpg from '../../components/react/WorldRpg.jsx'
 import { getRelativeLocaleUrl } from 'astro:i18n'
@@ -16,20 +18,29 @@ const copy = {
   title: 'Mundo de Carrera — Carlos Montoya',
   description: 'Un RPG interactivo de vista superior a través de la carrera de Carlos Montoya — recorre el mapa, habla con los NPC y descubre la línea de tiempo.',
   back: '← Volver al portafolio',
-  eyebrow: 'Mundo de Carrera',
-  tagline: '18 años de carrera backend, explorados una casilla a la vez.',
+  consoleTitle: 'Mundo de Carrera',
+  tagline: 'Recorre mis 18 años de backend — empresa por empresa.',
 }
+
+// Leyenda de controles, estilo teclas de consola, bajo la pantalla. Se oculta en móvil — el
+// D-pad en pantalla ya cubre el control táctil ahí y no hay espacio para ambos.
+const legend = [
+  { keys: '◄►▲▼', label: 'mover' },
+  { keys: 'E', label: 'hablar' },
+  { keys: 'L', label: 'idioma' },
+  { keys: '↑↑↓↓←→←→BA', label: 'secreto', hint: true },
+]
 
 const langBase = 'px-3 py-1.5 rounded-full transition-colors duration-150 font-mono text-xs'
 const langActive = 'bg-brand-gradient text-ink-900 font-extrabold'
-const langInactive = 'text-text-secondary font-normal'
+const langInactive = 'text-muted font-normal'
 ---
 <BaseLayout title={copy.title} description={copy.description}>
   <div class="min-h-screen flex flex-col bg-ink-900">
     <header class="flex items-center justify-between px-6 py-4 border-b border-ink-600">
       <a
         href={hrefHome}
-        class="font-mono text-sm text-text-secondary hover:text-brand transition-colors duration-150"
+        class="text-sm text-muted hover:text-brand transition-colors duration-150"
       >
         {copy.back}
       </a>
@@ -42,15 +53,27 @@ const langInactive = 'text-text-secondary font-normal'
         <a href={hrefEs} aria-pressed="true" class={`${langBase} ${langActive}`}>ES</a>
       </div>
     </header>
-    <main class="flex-1 flex flex-col items-center justify-center gap-6 px-4 py-10">
-      <div class="text-center">
-        <p class="font-mono uppercase tracking-wide text-xs font-extrabold text-text-secondary mb-2">
-          {copy.eyebrow}
-        </p>
-        <p class="text-sm text-text-secondary max-w-md mx-auto">{copy.tagline}</p>
+
+    <main class="flex-1 flex flex-col items-center justify-center gap-5 px-4 py-8 sm:py-10">
+      <p class="text-sm text-muted max-w-md text-center">{copy.tagline}</p>
+
+      <div class="relative w-full max-w-4xl rounded-2xl sm:rounded-[28px] border border-brand/25 bg-ink-950 p-2.5 sm:p-4 shadow-[0_0_60px_-15px_var(--color-brand-muted)]">
+        <div class="flex items-center justify-center gap-2 pb-2 sm:pb-3">
+          <span aria-hidden="true" class="h-1.5 w-1.5 rounded-full bg-brand motion-safe:animate-pulse2"></span>
+          <span class="font-pixel text-[9px] sm:text-[10px] tracking-[2px] text-brand uppercase">{copy.consoleTitle}</span>
+        </div>
+        <div class="rounded-xl sm:rounded-2xl overflow-hidden ring-1 ring-inset ring-brand/15">
+          <WorldRpg client:load locale={locale} />
+        </div>
       </div>
-      <div class="w-full max-w-5xl">
-        <WorldRpg client:load locale={locale} />
+
+      <div class="hidden sm:flex flex-wrap items-center justify-center gap-2 max-w-2xl">
+        {legend.map((k) => (
+          <span class={`inline-flex items-center gap-1.5 rounded-md border border-ink-500 px-2.5 py-1 font-mono text-[10px] ${k.hint ? 'text-ink-400' : 'text-muted'}`}>
+            <span class="font-pixel text-[9px] text-brand/80">{k.keys}</span>
+            {k.label}
+          </span>
+        ))}
       </div>
     </main>
   </div>
