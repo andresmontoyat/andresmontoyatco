@@ -1,4 +1,6 @@
-import { nearestBiome, tileNameFor, walkFrame, hashTile } from './tiles.js'
+import {
+  nearestBiome, tileNameFor, walkFrame, hashTile, pathTileName, PATH_THRESHOLD,
+} from './tiles.js'
 import { BIOMES } from '../world/biomes.js'
 import { drawAmbient, swayOffset, DAY_LEN } from './ambient.js'
 import { critterDrawables } from '../entities/critters.js'
@@ -76,6 +78,16 @@ export function regionsWithFarm(world) {
   return world.regions.concat([{ bi: 'farm', x: world.farm.x, y: world.farm.y }])
 }
 
+// tileNameFor() returns the sentinel 'path' for any on-path tile — resolved here into one of
+// the 9 real Path_Tile.png frames by checking whether the tile's 4 grid-neighbors are also on
+// path, so straight road runs and turns get a grass-blended border (pathTileName in tiles.js)
+// instead of the old flat rectangle. Neighbor checks only run for tiles that are actually on
+// path (the minority), so this stays cheap in the hot per-tile loop.
+function resolvePathFrame(world, tx, ty) {
+  const onPath = (nx, ny) => nearestPathDist(world.path, nx * TILE + TILE / 2, ny * TILE + TILE / 2) < PATH_THRESHOLD
+  return pathTileName(onPath(tx, ty - 1), onPath(tx + 1, ty), onPath(tx, ty + 1), onPath(tx - 1, ty))
+}
+
 function drawGround(ctx, state, cam, sprites) {
   const { world } = state
   const anchors = regionsWithFarm(world)
@@ -87,7 +99,8 @@ function drawGround(ctx, state, cam, sprites) {
       const wy = ty * TILE + TILE / 2
       const bi = nearestBiome(anchors, wx, wy)
       const dist = nearestPathDist(world.path, wx, wy)
-      const name = tileNameFor(bi, wx, wy, dist)
+      let name = tileNameFor(bi, wx, wy, dist)
+      if (name === 'path') name = resolvePathFrame(world, tx, ty)
       const sx = tx * TILE - cam.x
       const sy = ty * TILE - cam.y
       sprites.draw(ctx, name, sx, sy, TILE, TILE)
@@ -130,11 +143,27 @@ const DECOR_DIMS = {
   fence: { w: 16, h: 32 },
 }
 
+// Base-pivoted skew, not a translate: swayOffset(d,t) is now a small horizontal shear factor
+// (see ambient.js), applied via ctx.transform() around the sprite's ground-contact point
+// (baseX, baseY — d.y is already the item's "feet", per DECOR_DIMS's comment). At the local
+// origin (y=0, the base) the shear leaves x unchanged, so the trunk/base stays planted while
+// the canopy above it (negative local y) leans — reads as wind, not the old whole-sprite
+// translate, which shimmered/vibrated once combined with pixelated rendering + a
+// fractional-pixel offset changing every frame.
 function drawDecorItem(ctx, d, cam, sprites, t) {
   const dim = DECOR_DIMS[d.type]
-  const dx = d.x - dim.w / 2 - cam.x + swayOffset(d, t)
-  const dy = d.y - dim.h - cam.y
-  sprites.draw(ctx, d.type, dx, dy, dim.w, dim.h)
+  const baseX = d.x - cam.x
+  const baseY = d.y - cam.y
+  const skew = swayOffset(d, t)
+  if (!skew) {
+    sprites.draw(ctx, d.type, baseX - dim.w / 2, baseY - dim.h, dim.w, dim.h)
+    return
+  }
+  ctx.save()
+  ctx.translate(baseX, baseY)
+  ctx.transform(1, 0, skew, 1, 0, 0)
+  sprites.draw(ctx, d.type, -dim.w / 2, -dim.h, dim.w, dim.h)
+  ctx.restore()
 }
 
 function buildingDrawable(s, cam) {

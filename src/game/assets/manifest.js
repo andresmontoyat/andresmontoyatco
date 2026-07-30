@@ -7,7 +7,7 @@
 export const MANIFEST = {
   images: {
     cfGrass: '/game/cute-fantasy/Tiles/Grass_Middle.png',
-    cfPath: '/game/cute-fantasy/Tiles/Path_Middle.png',
+    cfPathTile: '/game/cute-fantasy/Tiles/Path_Tile.png',
     cfWater: '/game/cute-fantasy/Tiles/Water_Middle.png',
     cfBeach: '/game/cute-fantasy/Tiles/Beach_Tile.png',
     cfHouse: '/game/cute-fantasy/Outdoor%20decoration/House_1_Wood_Base_Blue.png',
@@ -58,7 +58,24 @@ export const MANIFEST = {
     ground_cyber_2: { img: 'slHills', x: 16, y: 16, w: 16, h: 16 },
     ground_castillo: { img: 'slHills', x: 16, y: 32, w: 16, h: 16 },
     ground_castillo_2: { img: 'slHills', x: 16, y: 16, w: 16, h: 16 },
-    path: { img: 'cfPath', x: 0, y: 0, w: 16, h: 16 },
+    // Path_Tile.png (48x96) is a rounded-island autotile block, same family as Beach_Tile.png's
+    // island layout above: a 3x3 grid of corner/edge/center cells at its top-left (the rest of
+    // the sheet is a second, unrelated "grass hole" shape and a row of pebble-decorated variants
+    // — not used). Verified by viewing a scaled+gridded render of the sheet: (16,16) is the
+    // solid tan interior; (16,0)/(16,32)/(0,16)/(32,16) are the N/S/W/E straight edges (grass
+    // fringe on that side, tan on the rest); (0,0)/(32,0)/(0,32)/(32,32) are the four outer
+    // corners (grass wraps two adjacent sides). tiles.js's pathTileName() picks among these 9
+    // by checking which of a road tile's 4 grid-neighbors are also on-path, so the road gets a
+    // grass-blended border instead of the old flat-rectangle 'path' cell (Path_Middle.png).
+    path_center: { img: 'cfPathTile', x: 16, y: 16, w: 16, h: 16 },
+    path_n: { img: 'cfPathTile', x: 16, y: 0, w: 16, h: 16 },
+    path_s: { img: 'cfPathTile', x: 16, y: 32, w: 16, h: 16 },
+    path_w: { img: 'cfPathTile', x: 0, y: 16, w: 16, h: 16 },
+    path_e: { img: 'cfPathTile', x: 32, y: 16, w: 16, h: 16 },
+    path_nw: { img: 'cfPathTile', x: 0, y: 0, w: 16, h: 16 },
+    path_ne: { img: 'cfPathTile', x: 32, y: 0, w: 16, h: 16 },
+    path_sw: { img: 'cfPathTile', x: 0, y: 32, w: 16, h: 16 },
+    path_se: { img: 'cfPathTile', x: 32, y: 32, w: 16, h: 16 },
     water: { img: 'cfWater', x: 0, y: 0, w: 16, h: 16 },
 
     // Buildings. castle reuses the house sprite (no castle asset in these two packs).

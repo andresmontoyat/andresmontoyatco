@@ -8,7 +8,8 @@ const REQUIRED_FRAMES = [
   'ground_selva', 'ground_selva_2', 'ground_selva_3',
   'ground_cyber', 'ground_cyber_2',
   'ground_castillo', 'ground_castillo_2',
-  'path', 'water',
+  'path_center', 'path_n', 'path_s', 'path_w', 'path_e', 'path_nw', 'path_ne', 'path_sw', 'path_se',
+  'water',
   'house', 'castle',
   'tree', 'tree_small', 'fence', 'bush', 'rock', 'flower',
   'carlos_down_0', 'carlos_down_1', 'carlos_down_2',
@@ -23,7 +24,7 @@ const REQUIRED_FRAMES = [
 // frame rects drifting outside the actual sprite sheet bounds.
 const REAL_IMAGE_SIZE = {
   cfGrass: { w: 16, h: 16 },
-  cfPath: { w: 16, h: 16 },
+  cfPathTile: { w: 48, h: 96 },
   cfWater: { w: 16, h: 16 },
   cfBeach: { w: 80, h: 48 },
   cfHouse: { w: 96, h: 128 },

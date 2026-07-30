@@ -14,8 +14,21 @@ import { phaseOf, daylight } from './lighting.js'
 export const DAY_LEN = 9600
 
 const SWAY_TYPES = new Set(['tree', 'tree_small', 'bush'])
-const SWAY_SPEED = 1.4
-const SWAY_AMPLITUDE = 3
+// ROOT CAUSE of the reported "vibration": `t` here is `state.clock`, which advances ~96
+// units/sec (see DAY_LEN's comment above — NOT real seconds). The old SWAY_SPEED=1.4 assumed
+// `t` was real seconds, so the actual angular velocity was 1.4 * 96 ≈ 134 rad/sec — over 21 full
+// sine cycles per second, aliased by the ~60fps frame rate into a visible tremble instead of a
+// sway. Retuned so a full lean cycle takes ~5.5 real seconds against the clock's real rate:
+// 2*PI / (SWAY_SPEED * ~96/sec) ≈ 5.5s.
+const SWAY_SPEED = 0.012
+// swayOffset() returns a horizontal SHEAR FACTOR (dimensionless slope), not a pixel offset —
+// scene2d.js's drawDecorItem applies it as a base-pivoted ctx.transform() skew, so the
+// trunk/ground-contact point stays fixed and only the canopy leans (see its comment). At this
+// amplitude a ~80px-tall tree's canopy top drifts at most amplitude*80 ≈ 4px either way — a
+// gentle lean, not a wiggle. Bushes (only 16px tall) use a smaller amplitude on top of their
+// own height already limiting the visible drift, per the task's "even subtler" ask.
+const SWAY_SKEW = 0.05
+const SWAY_SKEW_BUSH = 0.02
 
 // Deterministic per-element phase seeded from its world position — same tree always sways the
 // same way, neighboring trees don't sway in lockstep.
@@ -25,7 +38,8 @@ function phaseFor(x, y) {
 
 export function swayOffset(d, t) {
   if (!SWAY_TYPES.has(d.type)) return 0
-  return Math.sin(t * SWAY_SPEED + phaseFor(d.x, d.y)) * SWAY_AMPLITUDE
+  const amplitude = d.type === 'bush' ? SWAY_SKEW_BUSH : SWAY_SKEW
+  return Math.sin(t * SWAY_SPEED + phaseFor(d.x, d.y)) * amplitude
 }
 
 function inView(cam, vw, vh, x, y, pad) {

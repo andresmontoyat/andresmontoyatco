@@ -1,5 +1,7 @@
 import { describe, it, expect } from 'vitest'
-import { nearestBiome, tileNameFor, walkFrame } from './tiles.js'
+import {
+  nearestBiome, tileNameFor, walkFrame, pathTileName,
+} from './tiles.js'
 
 const regions = [{ bi: 'pradera', x: 0, y: 0 }, { bi: 'cyber', x: 1000, y: 0 }]
 
@@ -42,6 +44,32 @@ describe('tileNameFor', () => {
     }
     expect(counts.ground_pradera).toBeGreaterThan((counts.ground_pradera_2 || 0) * 1.5)
     expect(counts.ground_pradera).toBeGreaterThan((counts.ground_pradera_3 || 0) * 1.5)
+  })
+})
+
+describe('pathTileName', () => {
+  it('picks the solid center when all 4 neighbors are on path', () => {
+    expect(pathTileName(true, true, true, true)).toBe('path_center')
+  })
+  it('picks a straight edge when exactly one neighbor is off path', () => {
+    expect(pathTileName(false, true, true, true)).toBe('path_n')
+    expect(pathTileName(true, true, false, true)).toBe('path_s')
+    expect(pathTileName(true, true, true, false)).toBe('path_w')
+    expect(pathTileName(true, false, true, true)).toBe('path_e')
+  })
+  it('picks an outer corner when two ADJACENT neighbors are off path', () => {
+    expect(pathTileName(false, true, true, false)).toBe('path_nw')
+    expect(pathTileName(false, false, true, true)).toBe('path_ne')
+    expect(pathTileName(true, true, false, false)).toBe('path_sw')
+    expect(pathTileName(true, false, false, true)).toBe('path_se')
+  })
+  it('falls back to center for shapes a 9-cell autotile cannot represent', () => {
+    // Two OPPOSITE sides off path (an isolated one-tile sliver) — no single matching cell.
+    expect(pathTileName(false, true, false, true)).toBe('path_center')
+    expect(pathTileName(true, false, true, false)).toBe('path_center')
+    // 3+ sides off path (a lone tip) — same fallback.
+    expect(pathTileName(false, false, false, true)).toBe('path_center')
+    expect(pathTileName(false, false, false, false)).toBe('path_center')
   })
 })
 

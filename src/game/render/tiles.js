@@ -51,12 +51,40 @@ const WEIGHTED_GROUND_VARIANTS = Object.fromEntries(
   Object.entries(GROUND_VARIANTS).map(([bi, list]) => [bi, weighted(list, GROUND_WEIGHTS[bi])]),
 )
 
+// Distance (world px) from the path polyline within which a tile counts as "on path" — shared
+// by tileNameFor's own on/off-path decision and scene2d.js's 4-neighbor edge check, so both
+// agree on exactly the same road footprint.
+export const PATH_THRESHOLD = 30
+
 export function tileNameFor(bi, wx, wy, nearPathDist) {
-  if (nearPathDist < 30) return 'path'
+  if (nearPathDist < PATH_THRESHOLD) return 'path'
   const variants = WEIGHTED_GROUND_VARIANTS[bi] || [`ground_${bi}`]
   const tx = Math.floor(wx / 32)
   const ty = Math.floor(wy / 32)
   return variants[hashTile(tx, ty) % variants.length]
+}
+
+// Picks which of the 9-cell Path_Tile.png autotile frames (manifest.js's path_center/_n/_s/_w/
+// _e/_nw/_ne/_sw/_se) a road tile should draw, given whether its 4 grid neighbors are also
+// "on path" (nearestPathDist < PATH_THRESHOLD there too). This is a lightweight edge-picker, not
+// a full 16-tile bitmask autotile: it recognizes the plain interior, a single straight edge, and
+// an outer corner (two ADJACENT off-path sides) — the shapes the road's own polyline actually
+// produces (straight runs + turns). A grass-fringe on 3+ sides, or on two OPPOSITE sides (an
+// isolated one-tile-wide sliver), has no single matching cell in a 9-frame set; falling back to
+// the solid center reads as "still road" rather than a mismatched edge, which is the safer
+// choice for an approximation this simple.
+export function pathTileName(n, e, s, w) {
+  const offN = !n; const offE = !e; const offS = !s; const offW = !w
+  if (!offN && !offE && !offS && !offW) return 'path_center'
+  if (offN && offW && !offE && !offS) return 'path_nw'
+  if (offN && offE && !offW && !offS) return 'path_ne'
+  if (offS && offW && !offE && !offN) return 'path_sw'
+  if (offS && offE && !offW && !offN) return 'path_se'
+  if (offN && !offE && !offS && !offW) return 'path_n'
+  if (offS && !offE && !offN && !offW) return 'path_s'
+  if (offW && !offN && !offE && !offS) return 'path_w'
+  if (offE && !offN && !offS && !offW) return 'path_e'
+  return 'path_center'
 }
 
 export function walkFrame(dir, step) {
