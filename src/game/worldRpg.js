@@ -1,0 +1,184 @@
+import { buildOverworld } from './world/overworld.js'
+import { biomeForYear } from './world/biomes.js'
+import { buildDecor } from './world/decor.js'
+import { stepMovement } from './engine/topdown.js'
+import { followCamera2D } from './engine/camera2d.js'
+import { nearestSite } from './entities/site.js'
+import { createDialog } from './render/dialog.js'
+import { createKonami } from './input/konami.js'
+import { createTopdownInput } from './input/topdownInput.js'
+import { render2d, activeSites, regionsWithFarm } from './render/scene2d.js'
+import { nearestBiome } from './render/tiles.js'
+import { createLoop } from './engine/loop.js'
+import { loadSprites } from './assets/loader.js'
+import { MANIFEST } from './assets/manifest.js'
+import { createParticles, burst } from './render/juice.js'
+import { createCritters, updateCritters } from './entities/critters.js'
+import { DAY_LEN } from './render/ambient.js'
+import { createIntro } from './intro.js'
+import { createMusic } from './audio/music.js'
+import { createAudio, initAudio, setMuted, sfx } from './audio/sfx.js'
+
+const STEP_RATE = 0.15
+const FOOTSTEP_EVERY = 14
+
+// Loop-step/input-wiring gate (not baked into the pure `update()`): while the intro plays,
+// start()'s step skips calling update() and the input callbacks ignore movement/interact —
+// this predicate is the single source of truth both sides check.
+export function canControl(state) { return state.intro.done() }
+
+function buildingSolids(sites) {
+  return sites.map(s => ({ x: s.cx - s.w / 2, y: s.cy, w: s.w, h: s.h }))
+}
+
+// Small AABB around each solid decor item's ground-contact point (trunk/base width, not the
+// full canopy sprite) — keeps trees/rocks/fences blocking without making them feel oversized.
+function decorSolids(decor) {
+  return decor.filter(d => d.solid).map(d => ({ x: d.x - 10, y: d.y - 14, w: 20, h: 14 }))
+}
+
+// Throttled footstep SFX while walking — a beep every FOOTSTEP_EVERY frames of movement,
+// silent (and counter reset) the instant the player stops.
+function updateFootsteps(state, moving) {
+  if (!moving) { state.walkFrames = 0; return }
+  state.walkFrames += 1
+  if (state.walkFrames % FOOTSTEP_EVERY === 0) sfx(state.audio, 'footstep')
+}
+
+// Region-music crossfade trigger — only calls into music.setRegion() when the biome under the
+// avatar actually changes, so setRegion isn't spammed every frame.
+function updateRegionMusic(state) {
+  const bi = nearestBiome(regionsWithFarm(state.world), state.player.x, state.player.y)
+  if (bi === state.lastBiome) return
+  state.lastBiome = bi
+  state.music.setRegion(bi)
+}
+
+export function update(state, input, dtChars) {
+  const frozen = state.dialog.isOpen()
+  const solids = buildingSolids(activeSites(state)).concat(decorSolids(state.decor || []))
+  const r = stepMovement(state.player, { ...input, frozen }, solids, { w: state.world.worldW, h: state.world.worldH })
+  state.player.x = r.x; state.player.y = r.y; state.player.dir = r.dir; state.player.moving = r.moving
+  state.player.step = r.moving ? state.player.step + STEP_RATE : 0
+  updateFootsteps(state, r.moving)
+  updateRegionMusic(state)
+  state.dialog.tick(dtChars)
+  state.clock += dtChars
+  state.particles.update(1)
+  state.shake *= 0.9
+  state.critters = updateCritters(state.critters, dtChars, state.clock)
+}
+
+export function createWorldRpg({
+  canvas, experience, sideProjects = [], lang = 'es', onLangChange,
+}) {
+  const world = buildOverworld(experience, biomeForYear, sideProjects)
+  const state = {
+    world,
+    decor: buildDecor(world),
+    player: { x: world.farm.x, y: world.farm.y + 70, w: 24, h: 28, dir: 'down', moving: false, step: 0 },
+    cam: { x: 0, y: 0 },
+    dialog: createDialog(),
+    revealed: false,
+    lang,
+    sprites: null,
+    // Start at midday (daylight() peaks at phase 0.5) — a recruiter's first view must be a
+    // bright, inviting world, not the dark half of the day/night cycle.
+    clock: DAY_LEN / 2,
+    particles: createParticles(),
+    shake: 0,
+    critters: createCritters(world),
+    // 3s cold-open cutscene: camera descends from the sky to the farm while a title card fades
+    // in/out (see scene2d.js's introCamera/drawIntroTitle).
+    intro: createIntro(3),
+    audio: createAudio(),
+    music: createMusic(null), // no-op (muted) until the first user gesture arms real playback
+    lastBiome: null,
+    walkFrames: 0,
+  }
+  const konami = createKonami()
+  const input = createTopdownInput()
+  // Exposed so a hosting UI (the WorldRpg React island) can wire its own touch D-pad to the
+  // same input.state the keyboard writes to — start() only attaches canvas keyboard listeners,
+  // it never covers pointer/touch, so touch parity needs direct access to input.press(kind, down).
+  state.input = input
+
+  function reveal() { state.revealed = true; state.shake = 8; sfx(state.audio, 'fanfare') }
+  function interact() {
+    if (state.dialog.isOpen()) { state.dialog.advance(); return }
+    const s = nearestSite(state.player, activeSites(state))
+    if (!s) return
+    if (!s.seen) { burst(state.particles, s.cx, s.cy, 14); sfx(state.audio, 'discover') }
+    s.seen = true
+    state.dialog.open(s)
+    sfx(state.audio, 'confirm')
+  }
+
+  function toggleMute() {
+    const next = !state.music.isMuted()
+    state.music.mute(next)
+    setMuted(state.audio, next)
+  }
+
+  // Browsers block audio until a real user gesture — the first keydown/pointerdown resumes/
+  // creates the AudioContext and swaps in a "live" music instance bound to it. A no-op (and
+  // safe to call repeatedly) if AudioContext is unavailable or already armed.
+  function armAudio() {
+    if (state.audio.ctx) return
+    initAudio(state.audio)
+    if (!state.audio.ctx) return
+    state.music = createMusic(state.audio.ctx)
+    state.music.mute(false)
+    setMuted(state.audio, false)
+    if (state.lastBiome) state.music.setRegion(state.lastBiome)
+  }
+
+  let loop = null
+  let lastTs = null
+  let detachPointer = null
+  function start() {
+    input.attach(canvas, {
+      onInteract: () => { if (canControl(state)) interact() },
+      onLanguage: () => {
+        state.lang = state.lang === 'es' ? 'en' : 'es'
+        if (onLangChange) onLangChange(state.lang)
+      },
+      onKey: k => {
+        armAudio()
+        if (!canControl(state)) { state.intro.skip(); return }
+        const key = k.length === 1 ? k.toLowerCase() : k
+        if (key === 'm') toggleMute()
+        if (konami.push(k) && !state.revealed) reveal()
+      },
+    })
+    const onPointer = () => armAudio()
+    canvas.addEventListener('pointerdown', onPointer)
+    detachPointer = () => canvas.removeEventListener('pointerdown', onPointer)
+    loadSprites(MANIFEST).then(sprites => { state.sprites = sprites })
+    const ctx = canvas.getContext('2d')
+    const step = ts => {
+      if (!state.intro.done()) {
+        state.intro.update(lastTs == null ? 0 : (ts - lastTs) / 1000)
+        lastTs = ts
+        return
+      }
+      lastTs = ts
+      update(state, input.state, 1.6)
+    }
+    const draw = () => {
+      followCamera2D(state.cam, state.player.x, state.player.y, canvas.width, canvas.height, world.worldW, world.worldH)
+      render2d(ctx, state, state.cam)
+    }
+    loop = createLoop(step, draw)
+    loop.start()
+  }
+  function stop() {
+    if (loop) loop.stop()
+    input.detach()
+    if (detachPointer) detachPointer()
+  }
+
+  return {
+    state, start, stop, reveal, interact, toggleMute, activeSites: () => activeSites(state),
+  }
+}

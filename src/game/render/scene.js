@@ -11,6 +11,7 @@ import {
   drawShieldHex, drawBoot, drawBug, drawMascot,
 } from './sprites.js'
 import { drawParticles } from './particles.js'
+import { drawPopups } from './popups.js'
 import { drawHud, drawToast } from './hud.js'
 
 // Prototype's `zones`/`biomeAtX`: one contiguous x-range per run of same-biome companies, boundary
@@ -125,7 +126,7 @@ function drawPlayer(ctx, player) {
 }
 
 export function drawScene(ctx, state) {
-  const { W, H, player, level, cam, particles, coinCount, lang, shake, reduced } = state
+  const { W, H, player, level, cam, particles, popups, coinCount, lang, shake, reduced } = state
   const tsMs = state.tsMs || 0
   const zones = computeZones(level.companies, level.levelW)
   const biome = biomeAtX(zones, player.x)
@@ -152,6 +153,7 @@ export function drawScene(ctx, state) {
   drawEnemies(ctx, level.enemies, cam.x, W, lang)
   drawPlayer(ctx, player)
   drawParticles(ctx, particles)
+  drawPopups(ctx, popups)
 
   ctx.restore()
 

@@ -1,0 +1,223 @@
+import React, { useEffect, useRef, useState } from 'react'
+
+// Props-based React island (locale via prop, matching CareerGame/Experience islands) — the
+// World RPG top-down explorer. Ships as a click-to-load cover so the game engine (rAF loop,
+// audio, sprite loading, canvas rendering) never enters the initial bundle or executes until
+// the visitor opts in. On click it dynamically imports src/game/worldRpg.js + the experience
+// data, mounts a <canvas>, and starts the game. Touch users get an on-screen D-pad + interact
+// button wired directly to the exposed `state.input.press(kind, down)` (see worldRpg.js) —
+// state.input is the same object the keyboard writes to, so touch and keyboard drive identical
+// movement state. The `state.intro` cutscene is skipped outright under prefers-reduced-motion.
+
+const COPY = {
+  en: {
+    play: '▶ Explore my career world',
+    hint: 'Arrows/WASD move · E interact · L language',
+    up: 'Move up',
+    down: 'Move down',
+    left: 'Move left',
+    right: 'Move right',
+    action: 'Interact',
+    mute: 'Mute',
+    unmute: 'Unmute',
+  },
+  es: {
+    play: '▶ Explora mi mundo de carrera',
+    hint: 'Flechas/WASD mover · E interactuar · L idioma',
+    up: 'Mover arriba',
+    down: 'Mover abajo',
+    left: 'Mover a la izquierda',
+    right: 'Mover a la derecha',
+    action: 'Interactuar',
+    mute: 'Silenciar',
+    unmute: 'Activar sonido',
+  },
+}
+
+// Same two hidden sites the game-dev.astro QA harness used — Konami-revealed sideProjects,
+// not part of experience.json (kept out of the accessible timeline on purpose).
+const SIDE_PROJECTS = [
+  {
+    id: 'mryoker',
+    co: 'Mr. Yoker',
+    title: { en: 'Indie', es: 'Indie' },
+    date: { en: 'side project', es: 'proyecto propio' },
+    metric: null,
+    tech: ['Astro'],
+  },
+  {
+    id: 'codehunters',
+    co: 'Codehunters',
+    title: { en: 'Indie', es: 'Indie' },
+    date: { en: 'side project', es: 'proyecto propio' },
+    metric: null,
+    tech: ['React'],
+  },
+]
+
+function prefersReducedMotion() {
+  return typeof window !== 'undefined'
+    && typeof window.matchMedia === 'function'
+    && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+}
+
+function isTouchDevice() {
+  return typeof navigator !== 'undefined' && (navigator.maxTouchPoints || 0) > 0
+}
+
+function PadButton({ innerRef, label, glyph, className }) {
+  return (
+    <button
+      ref={innerRef}
+      type="button"
+      aria-label={label}
+      className={`w-12 h-12 rounded-full border border-border bg-bg/80 text-lg text-text flex items-center justify-center touch-none select-none hover:border-accent active:bg-accent/20 ${className}`}
+    >
+      {glyph}
+    </button>
+  )
+}
+
+function TouchControls({ copy, upRef, downRef, leftRef, rightRef, actionRef }) {
+  return (
+    <div className="absolute bottom-4 inset-x-4 flex items-end justify-between sm:hidden">
+      <div className="relative w-40 h-28">
+        <PadButton innerRef={upRef} label={copy.up} glyph="▲" className="absolute top-0 left-1/2 -translate-x-1/2" />
+        <PadButton innerRef={leftRef} label={copy.left} glyph="◀" className="absolute bottom-0 left-0" />
+        <PadButton innerRef={rightRef} label={copy.right} glyph="▶" className="absolute bottom-0 right-0" />
+        <PadButton innerRef={downRef} label={copy.down} glyph="▼" className="absolute bottom-0 left-1/2 -translate-x-1/2" />
+      </div>
+      <PadButton innerRef={actionRef} label={copy.action} glyph="A" className="!w-14 !h-14" />
+    </div>
+  )
+}
+
+export default function WorldRpg({ locale }) {
+  const lang = locale
+  const [started, setStarted] = useState(false)
+  const [muted, setMuted] = useState(false)
+  // Tracks the in-game language, which can flip independently of the `locale` prop via the
+  // in-game L shortcut (see worldRpg.js's onLanguage callback) — keeps cover copy, D-pad
+  // aria-labels, and the mute label in sync with what the player actually toggled to.
+  const [uiLang, setUiLang] = useState(locale)
+  const copy = COPY[uiLang] || COPY.en
+  const canvasRef = useRef(null)
+  const gameRef = useRef(null)
+  const upRef = useRef(null)
+  const downRef = useRef(null)
+  const leftRef = useRef(null)
+  const rightRef = useRef(null)
+  const actionRef = useRef(null)
+
+  useEffect(() => {
+    if (!started) return undefined
+    let cancelled = false
+    let unbindTouch = null
+
+    async function mount() {
+      const [{ createWorldRpg, canControl }, { default: experience }] = await Promise.all([
+        import('../../game/worldRpg.js'),
+        import('../../data/experience.json'),
+      ])
+      if (cancelled || !canvasRef.current) return
+      setUiLang(lang)
+      const game = createWorldRpg({
+        canvas: canvasRef.current,
+        experience,
+        sideProjects: SIDE_PROJECTS,
+        lang,
+        onLangChange: setUiLang,
+      })
+      gameRef.current = game
+      // Dev-only handle for Playwright e2e assertions — never ships to production
+      // (import.meta.env.DEV is false under `astro build`). Mirrors careerGame.js's
+      // window.__career handle.
+      if (import.meta.env.DEV) window.__worldRpg = game
+      if (prefersReducedMotion()) game.state.intro.skip()
+      game.start()
+      canvasRef.current.focus()
+
+      if (isTouchDevice()) {
+        const dirs = [
+          [upRef.current, 'U'], [downRef.current, 'D'], [leftRef.current, 'L'], [rightRef.current, 'R'],
+        ].filter(([el]) => el)
+        const bound = dirs.map(([el, kind]) => {
+          const down = (e) => { e.preventDefault(); game.state.input.press(kind, true) }
+          const up = (e) => { e.preventDefault(); game.state.input.press(kind, false) }
+          el.addEventListener('pointerdown', down)
+          el.addEventListener('pointerup', up)
+          el.addEventListener('pointerleave', up)
+          return { el, down, up }
+        })
+        const onAction = (e) => {
+          e.preventDefault()
+          if (!canControl(game.state)) { game.state.intro.skip(); return }
+          game.interact()
+        }
+        if (actionRef.current) actionRef.current.addEventListener('pointerdown', onAction)
+        unbindTouch = () => {
+          bound.forEach(({ el, down, up }) => {
+            el.removeEventListener('pointerdown', down)
+            el.removeEventListener('pointerup', up)
+            el.removeEventListener('pointerleave', up)
+          })
+          if (actionRef.current) actionRef.current.removeEventListener('pointerdown', onAction)
+        }
+      }
+    }
+
+    mount()
+
+    return () => {
+      cancelled = true
+      if (unbindTouch) unbindTouch()
+      if (gameRef.current) {
+        gameRef.current.stop()
+        gameRef.current = null
+      }
+      if (import.meta.env.DEV) window.__worldRpg = null
+    }
+  }, [started, lang])
+
+  function toggleMute() {
+    setMuted((prev) => {
+      gameRef.current?.toggleMute()
+      return !prev
+    })
+  }
+
+  if (!started) {
+    return (
+      <div className="world-rpg-cover relative flex flex-col items-center justify-center gap-3 rounded-xl border border-border bg-surface py-20">
+        <button
+          type="button"
+          onClick={() => setStarted(true)}
+          className="font-pixel text-xs sm:text-sm uppercase tracking-[2px] rounded-full border border-accent px-6 py-3 text-accent hover:bg-accent hover:text-bg transition-colors duration-150"
+        >
+          {copy.play}
+        </button>
+        <p className="font-mono text-xs text-muted">{copy.hint}</p>
+      </div>
+    )
+  }
+
+  return (
+    <div className="world-rpg relative overflow-hidden rounded-xl border border-border bg-surface">
+      <canvas
+        ref={canvasRef}
+        data-testid="world-rpg-canvas"
+        tabIndex={0}
+        className="block w-full h-[70vh] max-h-[640px] outline-none"
+      />
+      <TouchControls copy={copy} upRef={upRef} downRef={downRef} leftRef={leftRef} rightRef={rightRef} actionRef={actionRef} />
+      <button
+        type="button"
+        onClick={toggleMute}
+        aria-label={muted ? copy.unmute : copy.mute}
+        className="absolute top-3 right-3 w-9 h-9 rounded-full border border-border bg-bg/80 text-text flex items-center justify-center hover:border-accent"
+      >
+        {muted ? '🔇' : '🔊'}
+      </button>
+    </div>
+  )
+}

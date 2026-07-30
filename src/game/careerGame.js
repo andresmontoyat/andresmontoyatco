@@ -5,7 +5,7 @@ import { biomeForYear } from './world/biomes.js'
 import { mapExperienceToCompanies } from './world/companies.js'
 import { buildLevel } from './world/level.js'
 import { TUNING } from './engine/tuning.js'
-import { jumpVelocity, gravityStep, aabb, resolveHorizontal, resolveVertical } from './engine/physics.js'
+import { jumpVelocity, gravityStep, aabb, resolveHorizontal, resolveVertical, applyJumpCut, cornerCorrect } from './engine/physics.js'
 import { followCamera } from './engine/camera.js'
 import { createInput } from './engine/input.js'
 import { createPlayer, hurt, landReset } from './entities/player.js'
@@ -13,6 +13,8 @@ import { patrolStep, resolveContact } from './entities/enemy.js'
 import { applyPowerup } from './entities/powerup.js'
 import { moverDelta } from './entities/mover.js'
 import { createParticles, burst, updateParticles } from './render/particles.js'
+import { createPopups, addPopup, updatePopups } from './render/popups.js'
+import { comboScore } from './entities/combo.js'
 import { createAudio, initAudio, sfx, setMuted as setAudioMuted } from './audio/sfx.js'
 import { drawScene } from './render/scene.js'
 import { createLoop } from './engine/loop.js'
@@ -39,6 +41,8 @@ function buildState({ locale, reduced }) {
     hitstop: 0,
     shake: 0,
     particles: createParticles(),
+    popups: createPopups(),
+    combo: 0,
     audio: createAudio(),
     input: createInput(),
     lang: locale,
@@ -100,12 +104,13 @@ function applyRunAndJump(state) {
   if (keys.L) { p.vx -= t.MOVE; p.face = -1 }
   if (keys.R) { p.vx += t.MOVE; p.face = 1 }
   if (!keys.L && !keys.R) p.vx *= t.FRICT
+  if (p.onGround && wasSkid) p.vx *= t.SKID
   p.vx = Math.max(-t.MAXV, Math.min(t.MAXV, p.vx))
   if (!state.reduced && wasSkid && p.onGround && Math.random() < 0.4) {
     burst(state.particles, p.x + p.w / 2, p.y + p.h, 1, { c: '#e8dcc0', spread: 1.5, up: 0.5, grav: 0.2, r: 2 })
   }
   if (p.buffer > 0) applyJump(state)
-  if (!keys.J && p.vy < -5) p.vy = -5
+  applyJumpCut(p, keys.J, t)
   p.vy = gravityStep(p.vy, t)
   p.buffer = Math.max(0, p.buffer - 1); p.coyote = Math.max(0, p.coyote - 1); p.inv = Math.max(0, p.inv - 1)
   p.sx += (1 - p.sx) * 0.2; p.sy += (1 - p.sy) * 0.2
@@ -151,6 +156,7 @@ function moveAndCollide(state, prevVy) {
   resolveHorizontal(p, solids)
 
   p.y += p.vy
+  cornerCorrect(p, solids, TUNING)
   const wasOn = p.onGround
   const { landedOn, hitHead } = resolveVertical(p, solids)
   if (landedOn && landedOn.mover) p.rideM = landedOn
@@ -158,6 +164,7 @@ function moveAndCollide(state, prevVy) {
 
   if (!wasOn && p.onGround) {
     landReset(p, !state.reduced)
+    state.combo = 0
     if (!state.reduced && prevVy > 6) {
       burst(state.particles, p.x + p.w / 2, p.y + p.h, 7, { c: '#e8dcc0', spread: 2.4, up: 0.6, grav: 0.2, r: 2.4 })
     }
@@ -174,6 +181,7 @@ function openQblock(state, q) {
   state.level.coins.push({ x: q.x + 10, y: q.y - 28, got: false, pop: 14 })
   if (!state.reduced) burst(state.particles, q.x + q.w / 2, q.y, 8, { c: '#ffd94a', up: 2 })
   sfx(state.audio, 'coin')
+  addPopup(state.popups, q.x + q.w / 2, q.y - 6, '+100')
 }
 
 function clampToLevel(state) {
@@ -195,6 +203,7 @@ function collectCoins(state) {
       state.coinCount += 1
       if (!state.reduced) burst(state.particles, c.x, c.y, 6, { c: '#ffd94a', up: 1.6 })
       sfx(state.audio, 'coin')
+      addPopup(state.popups, c.x, c.y - 6, '+100')
     }
   }
 }
@@ -209,6 +218,7 @@ function collectPowerups(state, tsMs) {
     const isShield = pu.type === 'shield'
     applyPowerup(p, pu.type)
     if (!state.reduced) burst(state.particles, pu.x + 13, pu.y + 13, 18, { c: isShield ? '#4bb8e6' : '#10b981', spread: 3, up: 2 })
+    if (!state.reduced) state.hitstop = Math.max(state.hitstop, 2)
     sfx(state.audio, 'power')
     state.toast = { i: -1, born: tsMs, until: tsMs + 2600, pu: isShield ? 'shield' : 'boots' }
   }
@@ -223,7 +233,10 @@ function stompFx(state, en) {
     burst(state.particles, en.x + en.w / 2, en.y + 6, en.boss ? 24 : 16, { c: en.col, spread: en.boss ? 4.5 : 3.4 })
     burst(state.particles, en.x + en.w / 2, en.y, 6, { c: '#fff', spread: 2, up: 1 })
   }
-  state.coinCount += 1
+  state.combo += 1
+  const gained = comboScore(state.combo)
+  state.coinCount += Math.round(gained / 100)
+  addPopup(state.popups, en.x + en.w / 2, en.y - 8, '+' + gained)
   sfx(state.audio, 'stomp')
 }
 
@@ -275,6 +288,7 @@ function stepPhysics(state, tsMs) {
   resolveEnemies(state, tsMs)
   updateToastsAndProgress(state, tsMs)
   updateParticles(state.particles)
+  updatePopups(state.popups, state.reduced)
   if (state.shake > 0) state.shake *= 0.85
   if (state.shake < 0.3) state.shake = 0
   followCamera(state.cam, state.player.x, state.W, state.level.levelW)
@@ -291,7 +305,7 @@ function runStep(state, tsMs) {
 }
 
 function wireInput(state, canvas, onOpenPanel) {
-  state.input.attach(window, {
+  state.input.attach(canvas, {
     onJumpBuffer: () => { state.player.buffer = TUNING.BUFFER; initAudio(state.audio) },
     onOpenNearest: () => { if (!state.paused) openCompany(state, nearCastle(state), onOpenPanel) },
     onClose: () => closePanel(state),

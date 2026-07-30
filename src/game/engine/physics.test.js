@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { TUNING } from './tuning.js'
-import { jumpVelocity, gravityStep, aabb, resolveHorizontal, resolveVertical } from './physics.js'
+import { jumpVelocity, gravityStep, aabb, resolveHorizontal, resolveVertical, applyJumpCut, cornerCorrect } from './physics.js'
 
 const P = (o) => ({ onGround:false, coyote:0, jumps:0, boots:false, ...o })
 
@@ -57,5 +57,41 @@ describe('collision', () => {
     resolveHorizontal(p, [wall])
     expect(p.x).toBe(wall.x - p.w) // 30
     expect(p.vx).toBe(0)
+  })
+})
+
+describe('applyJumpCut', () => {
+  it('scales upward velocity down when jump released while rising', () => {
+    const p = { vy: -13.2 }
+    applyJumpCut(p, 0, TUNING)
+    expect(p.vy).toBeCloseTo(-13.2 * TUNING.JUMP_CUT)
+  })
+  it('does nothing while the jump key is held', () => {
+    const p = { vy: -13.2 }
+    applyJumpCut(p, 1, TUNING)
+    expect(p.vy).toBe(-13.2)
+  })
+  it('does nothing while falling (vy >= 0)', () => {
+    const p = { vy: 3 }
+    applyJumpCut(p, 0, TUNING)
+    expect(p.vy).toBe(3)
+  })
+})
+
+describe('cornerCorrect', () => {
+  const t = { CORNER_PX: 6 }
+  const solid = { x: 100, y: 0, w: 40, h: 20 } // ceiling block, bottom at y=20
+  it('nudges the player out when only a small sliver overlaps the left edge', () => {
+    const p = { x: 100 - 26 + 4, y: 10, w: 26, h: 36, vy: -8 }
+    expect(cornerCorrect(p, [solid], t)).toBe(true)
+    expect(p.x).toBe(solid.x - p.w)
+  })
+  it('does NOT nudge when the overlap is a real ceiling (deep)', () => {
+    const p = { x: 110, y: 10, w: 26, h: 36, vy: -8 }
+    expect(cornerCorrect(p, [solid], t)).toBe(false)
+  })
+  it('does nothing while falling', () => {
+    const p = { x: 100 - 26 + 4, y: 10, w: 26, h: 36, vy: 5 }
+    expect(cornerCorrect(p, [solid], t)).toBe(false)
   })
 })
