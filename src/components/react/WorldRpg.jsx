@@ -94,9 +94,13 @@ function TouchControls({ copy, upRef, downRef, leftRef, rightRef, actionRef }) {
 
 export default function WorldRpg({ locale }) {
   const lang = locale
-  const copy = COPY[lang] || COPY.en
   const [started, setStarted] = useState(false)
   const [muted, setMuted] = useState(false)
+  // Tracks the in-game language, which can flip independently of the `locale` prop via the
+  // in-game L shortcut (see worldRpg.js's onLanguage callback) — keeps cover copy, D-pad
+  // aria-labels, and the mute label in sync with what the player actually toggled to.
+  const [uiLang, setUiLang] = useState(locale)
+  const copy = COPY[uiLang] || COPY.en
   const canvasRef = useRef(null)
   const gameRef = useRef(null)
   const upRef = useRef(null)
@@ -116,11 +120,13 @@ export default function WorldRpg({ locale }) {
         import('../../data/experience.json'),
       ])
       if (cancelled || !canvasRef.current) return
+      setUiLang(lang)
       const game = createWorldRpg({
         canvas: canvasRef.current,
         experience,
         sideProjects: SIDE_PROJECTS,
         lang,
+        onLangChange: setUiLang,
       })
       gameRef.current = game
       // Dev-only handle for Playwright e2e assertions — never ships to production

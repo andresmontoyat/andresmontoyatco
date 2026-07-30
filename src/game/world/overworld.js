@@ -1,5 +1,3 @@
-import { BIOMES } from './biomes.js'
-
 const ANCHORS = {
   farm: { x: 360, y: 1120 },
   pradera: { x: 380, y: 700 },
@@ -49,5 +47,5 @@ export function buildOverworld(json, biomeForYear, sideProjects = []) {
     toSite(sp, 'cyber', { cx: HIDDEN_POS[i % HIDDEN_POS.length].x, cy: HIDDEN_POS[i % HIDDEN_POS.length].y }, true))
   const regions = Object.keys(ANCHORS).filter(k => k !== 'farm').map(k => ({ bi: k, ...ANCHORS[k] }))
   const path = [ANCHORS.farm, ANCHORS.pradera, ANCHORS.desierto, ANCHORS.selva, ANCHORS.cyber, ANCHORS.castillo]
-  return { farm: ANCHORS.farm, regions, sites, hiddenSites, worldW: WORLD_W, worldH: WORLD_H, path, biomeColor: bi => BIOMES[bi].c }
+  return { farm: ANCHORS.farm, regions, sites, hiddenSites, worldW: WORLD_W, worldH: WORLD_H, path }
 }

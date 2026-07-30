@@ -69,7 +69,9 @@ export function update(state, input, dtChars) {
   state.critters = updateCritters(state.critters, dtChars, state.clock)
 }
 
-export function createWorldRpg({ canvas, experience, sideProjects = [], lang = 'es' }) {
+export function createWorldRpg({
+  canvas, experience, sideProjects = [], lang = 'es', onLangChange,
+}) {
   const world = buildOverworld(experience, biomeForYear, sideProjects)
   const state = {
     world,
@@ -87,10 +89,8 @@ export function createWorldRpg({ canvas, experience, sideProjects = [], lang = '
     shake: 0,
     critters: createCritters(world),
     // 3s cold-open cutscene: camera descends from the sky to the farm while a title card fades
-    // in/out (see scene2d.js's introCamera/drawIntroTitle). introDone mirrors intro.done() for
-    // callers that want a plain boolean without invoking the intro object.
+    // in/out (see scene2d.js's introCamera/drawIntroTitle).
     intro: createIntro(3),
-    introDone: false,
     audio: createAudio(),
     music: createMusic(null), // no-op (muted) until the first user gesture arms real playback
     lastBiome: null,
@@ -99,7 +99,7 @@ export function createWorldRpg({ canvas, experience, sideProjects = [], lang = '
   const konami = createKonami()
   const input = createTopdownInput()
   // Exposed so a hosting UI (the WorldRpg React island) can wire its own touch D-pad to the
-  // same input.state the keyboard writes to — start() only attaches window keyboard listeners,
+  // same input.state the keyboard writes to — start() only attaches canvas keyboard listeners,
   // it never covers pointer/touch, so touch parity needs direct access to input.press(kind, down).
   state.input = input
 
@@ -137,9 +137,12 @@ export function createWorldRpg({ canvas, experience, sideProjects = [], lang = '
   let lastTs = null
   let detachPointer = null
   function start() {
-    input.attach(window, {
+    input.attach(canvas, {
       onInteract: () => { if (canControl(state)) interact() },
-      onLanguage: () => { state.lang = state.lang === 'es' ? 'en' : 'es' },
+      onLanguage: () => {
+        state.lang = state.lang === 'es' ? 'en' : 'es'
+        if (onLangChange) onLangChange(state.lang)
+      },
       onKey: k => {
         armAudio()
         if (!canControl(state)) { state.intro.skip(); return }
@@ -149,14 +152,13 @@ export function createWorldRpg({ canvas, experience, sideProjects = [], lang = '
       },
     })
     const onPointer = () => armAudio()
-    window.addEventListener('pointerdown', onPointer)
-    detachPointer = () => window.removeEventListener('pointerdown', onPointer)
+    canvas.addEventListener('pointerdown', onPointer)
+    detachPointer = () => canvas.removeEventListener('pointerdown', onPointer)
     loadSprites(MANIFEST).then(sprites => { state.sprites = sprites })
     const ctx = canvas.getContext('2d')
     const step = ts => {
       if (!state.intro.done()) {
         state.intro.update(lastTs == null ? 0 : (ts - lastTs) / 1000)
-        state.introDone = state.intro.done()
         lastTs = ts
         return
       }

@@ -305,7 +305,7 @@ function runStep(state, tsMs) {
 }
 
 function wireInput(state, canvas, onOpenPanel) {
-  state.input.attach(window, {
+  state.input.attach(canvas, {
     onJumpBuffer: () => { state.player.buffer = TUNING.BUFFER; initAudio(state.audio) },
     onOpenNearest: () => { if (!state.paused) openCompany(state, nearCastle(state), onOpenPanel) },
     onClose: () => closePanel(state),

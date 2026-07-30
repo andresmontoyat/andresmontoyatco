@@ -145,6 +145,7 @@ export default function CareerGame({ locale }) {
         if (jumpRef.current) input.bindTouch(jumpRef.current, 'J')
       }
       game.start()
+      canvasRef.current.focus()
     }
 
     mount()
