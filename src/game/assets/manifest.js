@@ -28,6 +28,13 @@ export const MANIFEST = {
     cfOutdoorDecor: '/game/cute-fantasy/Outdoor%20decoration/Outdoor_Decor.png',
     cfFlowers: '/game/cute-fantasy/Outdoor%20decoration/Flowers.png',
     cfPlayer: '/game/cute-fantasy/Player/Player_Base/Player_Base_animations.png',
+    // Modular armor layers — same 576x3584 grid as the base body (verified: every layer PNG in the
+    // Player/ modular system shares the base's cell layout), so a layer's walk cells sit at the
+    // exact same {x,y,w,h} as the base's carlos_* frames and composite pixel-perfect when stacked
+    // in drawAvatar. Iron palette = neutral steel grey (fits the brand's cool cyber/AI eras).
+    cfHelm: '/game/cute-fantasy/Player/Head/Plate_Helmet_1/Plate_Helmet_1_Iron.png',
+    cfChest: '/game/cute-fantasy/Player/Chest/Plate_Chest/Plate_Chest_Iron.png',
+    cfLegs: '/game/cute-fantasy/Player/Legs/Plate_Legs/Plate_Legs_Iron.png',
     cfChicken: '/game/cute-fantasy/Animals/Chicken/Chicken_01.png',
   },
   frames: {
@@ -132,6 +139,38 @@ export const MANIFEST = {
     carlos_left_0: { img: 'cfPlayer', x: 0, y: 256, w: 64, h: 64 },
     carlos_left_1: { img: 'cfPlayer', x: 128, y: 256, w: 64, h: 64 },
     carlos_left_2: { img: 'cfPlayer', x: 256, y: 256, w: 64, h: 64 },
+
+    // Armor overlay frames — identical rects to the carlos_* base frames above, one set per layer
+    // (legs → chest → helm draw order). drawAvatar (scene2d.js) stacks base + these three at the
+    // same dx,dy so the modular parts land exactly over the body. Left reuses the right-facing rects
+    // (drawAvatar mirrors 'left' to 'right' before lookup, same as the base), so no _left set here.
+    legs_down_0: { img: 'cfLegs', x: 0, y: 192, w: 64, h: 64 },
+    legs_down_1: { img: 'cfLegs', x: 128, y: 192, w: 64, h: 64 },
+    legs_down_2: { img: 'cfLegs', x: 256, y: 192, w: 64, h: 64 },
+    legs_up_0: { img: 'cfLegs', x: 0, y: 320, w: 64, h: 64 },
+    legs_up_1: { img: 'cfLegs', x: 128, y: 320, w: 64, h: 64 },
+    legs_up_2: { img: 'cfLegs', x: 256, y: 320, w: 64, h: 64 },
+    legs_right_0: { img: 'cfLegs', x: 0, y: 256, w: 64, h: 64 },
+    legs_right_1: { img: 'cfLegs', x: 128, y: 256, w: 64, h: 64 },
+    legs_right_2: { img: 'cfLegs', x: 256, y: 256, w: 64, h: 64 },
+    chest_down_0: { img: 'cfChest', x: 0, y: 192, w: 64, h: 64 },
+    chest_down_1: { img: 'cfChest', x: 128, y: 192, w: 64, h: 64 },
+    chest_down_2: { img: 'cfChest', x: 256, y: 192, w: 64, h: 64 },
+    chest_up_0: { img: 'cfChest', x: 0, y: 320, w: 64, h: 64 },
+    chest_up_1: { img: 'cfChest', x: 128, y: 320, w: 64, h: 64 },
+    chest_up_2: { img: 'cfChest', x: 256, y: 320, w: 64, h: 64 },
+    chest_right_0: { img: 'cfChest', x: 0, y: 256, w: 64, h: 64 },
+    chest_right_1: { img: 'cfChest', x: 128, y: 256, w: 64, h: 64 },
+    chest_right_2: { img: 'cfChest', x: 256, y: 256, w: 64, h: 64 },
+    helm_down_0: { img: 'cfHelm', x: 0, y: 192, w: 64, h: 64 },
+    helm_down_1: { img: 'cfHelm', x: 128, y: 192, w: 64, h: 64 },
+    helm_down_2: { img: 'cfHelm', x: 256, y: 192, w: 64, h: 64 },
+    helm_up_0: { img: 'cfHelm', x: 0, y: 320, w: 64, h: 64 },
+    helm_up_1: { img: 'cfHelm', x: 128, y: 320, w: 64, h: 64 },
+    helm_up_2: { img: 'cfHelm', x: 256, y: 320, w: 64, h: 64 },
+    helm_right_0: { img: 'cfHelm', x: 0, y: 256, w: 64, h: 64 },
+    helm_right_1: { img: 'cfHelm', x: 128, y: 256, w: 64, h: 64 },
+    helm_right_2: { img: 'cfHelm', x: 256, y: 256, w: 64, h: 64 },
 
     // Farm animal. Chicken_01.png (256x512) is a 32px-cell, 8-col x 16-row modular sheet (this
     // pack ships 18 chicken color recolors as separate files; _01 is the default white). Row 2

@@ -1,5 +1,5 @@
 import {
-  nearestBiome, tileNameFor, walkFrame, hashTile, pathTileName, PATH_THRESHOLD,
+  nearestBiome, tileNameFor, avatarFrame, hashTile, pathTileName, PATH_THRESHOLD, AVATAR_LAYERS,
 } from './tiles.js'
 import { BIOMES } from '../world/biomes.js'
 import { drawAmbient, swayOffset, DAY_LEN } from './ambient.js'
@@ -143,13 +143,18 @@ function drawBuildingLabel(ctx, s, bx, by) {
   if (s.seen) ctx.fillText('✓', bx + s.w - 10, by - 6)
 }
 
+// Carlos is drawn as a stack of modular sprites (bare base + Iron-plate legs/chest/helm — see
+// AVATAR_LAYERS), each layer sharing the base's frame rects so they land pixel-aligned. There's no
+// dedicated left-facing row in the sheet, so 'left' reuses the right-facing frames mirrored via
+// drawFlipped (same substitution the base used before this became layered).
 function drawAvatar(ctx, state, cam, sprites) {
   const { player } = state
-  const name = walkFrame(player.dir === 'left' ? 'right' : player.dir, player.moving ? player.step : 0)
+  const dir = player.dir === 'left' ? 'right' : player.dir
+  const step = player.moving ? player.step : 0
   const dx = player.x - AVATAR_W / 2 - cam.x
   const dy = player.y - AVATAR_H / 2 - cam.y
-  if (player.dir === 'left') sprites.drawFlipped(ctx, name, dx, dy, AVATAR_W, AVATAR_H)
-  else sprites.draw(ctx, name, dx, dy, AVATAR_W, AVATAR_H)
+  const paint = player.dir === 'left' ? sprites.drawFlipped : sprites.draw
+  AVATAR_LAYERS.forEach(layer => paint(ctx, avatarFrame(layer, dir, step), dx, dy, AVATAR_W, AVATAR_H))
 }
 
 // Ground-contact footprint (world w/h) per decor type — used both to size the sprite and to

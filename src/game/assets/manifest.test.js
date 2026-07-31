@@ -16,6 +16,15 @@ const REQUIRED_FRAMES = [
   'carlos_up_0', 'carlos_up_1', 'carlos_up_2',
   'carlos_left_0', 'carlos_left_1', 'carlos_left_2',
   'carlos_right_0', 'carlos_right_1', 'carlos_right_2',
+  'legs_down_0', 'legs_down_1', 'legs_down_2',
+  'legs_up_0', 'legs_up_1', 'legs_up_2',
+  'legs_right_0', 'legs_right_1', 'legs_right_2',
+  'chest_down_0', 'chest_down_1', 'chest_down_2',
+  'chest_up_0', 'chest_up_1', 'chest_up_2',
+  'chest_right_0', 'chest_right_1', 'chest_right_2',
+  'helm_down_0', 'helm_down_1', 'helm_down_2',
+  'helm_up_0', 'helm_up_1', 'helm_up_2',
+  'helm_right_0', 'helm_right_1', 'helm_right_2',
   'chicken_0', 'chicken_1',
 ]
 
@@ -40,6 +49,9 @@ const REAL_IMAGE_SIZE = {
   cfOutdoorDecor: { w: 144, h: 416 },
   cfFlowers: { w: 160, h: 160 },
   cfPlayer: { w: 576, h: 3584 },
+  cfHelm: { w: 576, h: 3584 },
+  cfChest: { w: 576, h: 3584 },
+  cfLegs: { w: 576, h: 3584 },
   cfChicken: { w: 256, h: 512 },
 }
 

@@ -87,6 +87,15 @@ export function pathTileName(n, e, s, w) {
   return 'path_center'
 }
 
+// Avatar draw order, bottom → top: bare base body, then the modular Iron-plate armor layers.
+// drawAvatar (scene2d.js) draws avatarFrame(layer, dir, step) for each, stacked at the same
+// dx,dy — the layer frames share the base's rects (see manifest.js) so they composite exactly.
+export const AVATAR_LAYERS = ['carlos', 'legs', 'chest', 'helm']
+
+export function avatarFrame(layer, dir, step) {
+  return `${layer}_${dir}_${Math.floor(step) % 3}`
+}
+
 export function walkFrame(dir, step) {
-  return `carlos_${dir}_${Math.floor(step) % 3}`
+  return avatarFrame('carlos', dir, step)
 }

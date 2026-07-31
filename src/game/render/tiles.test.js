@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import {
-  nearestBiome, tileNameFor, walkFrame, pathTileName,
+  nearestBiome, tileNameFor, walkFrame, pathTileName, avatarFrame, AVATAR_LAYERS,
 } from './tiles.js'
 
 const regions = [{ bi: 'pradera', x: 0, y: 0 }, { bi: 'cyber', x: 1000, y: 0 }]
@@ -77,5 +77,16 @@ describe('walkFrame', () => {
   it('cycles 3 frames per direction', () => {
     expect(walkFrame('down', 0)).toBe('carlos_down_0')
     expect(walkFrame('left', 5)).toBe(`carlos_left_${5 % 3}`)
+  })
+})
+
+describe('avatarFrame', () => {
+  it('names a frame per layer, direction and 3-step cycle', () => {
+    expect(avatarFrame('helm', 'up', 4)).toBe('helm_up_1')
+    expect(avatarFrame('carlos', 'down', 0)).toBe('carlos_down_0')
+  })
+
+  it('layers the bare base below the three armor pieces, top piece last', () => {
+    expect(AVATAR_LAYERS).toEqual(['carlos', 'legs', 'chest', 'helm'])
   })
 })
