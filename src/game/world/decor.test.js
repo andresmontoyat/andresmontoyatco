@@ -10,8 +10,8 @@ const world = {
   ponds: [{ x: 1200, y: 400, r: 80 }],
 }
 
-const LAND_TYPES = ['tree', 'tree_small', 'bush', 'rock', 'flower', 'fence']
-const AQUATIC_TYPES = ['lilypad', 'cattail', 'kapybara']
+const LAND_TYPES = ['tree', 'tree_small', 'tree_birch', 'tree_spruce', 'tree_fruit', 'bush', 'rock', 'flower', 'fence']
+const AQUATIC_TYPES = ['lilypad', 'cattail', 'kapybara', 'frog']
 const ALLOWED_TYPES = [...LAND_TYPES, ...AQUATIC_TYPES]
 
 describe('buildDecor', () => {

@@ -12,9 +12,11 @@ const KINDS = {
   chicken: { frames: ['chicken_0', 'chicken_1'], size: 20, ticks: 12, ampX: 45, ampY: 26, speed: 0.5 },
   duck: { frames: ['duck_0', 'duck_1'], size: 20, ticks: 11, ampX: 52, ampY: 22, speed: 0.42 },
   cow: { frames: ['cow_0', 'cow_1'], size: 30, ticks: 26, ampX: 34, ampY: 16, speed: 0.24 },
+  pig: { frames: ['pig_0', 'pig_1'], size: 26, ticks: 22, ampX: 40, ampY: 20, speed: 0.3 },
+  sheep: { frames: ['sheep_0', 'sheep_1'], size: 26, ticks: 24, ampX: 36, ampY: 18, speed: 0.27 },
 }
-// The farm's critter roster — a lively mix, not four identical chickens.
-const ROSTER = ['chicken', 'chicken', 'duck', 'duck', 'cow', 'chicken']
+// The farm's critter roster — a lively barnyard mix, not four identical chickens.
+const ROSTER = ['chicken', 'chicken', 'duck', 'duck', 'cow', 'pig', 'sheep', 'chicken']
 
 export function createCritters(world, seed = 0) {
   const { farm } = world

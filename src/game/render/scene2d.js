@@ -201,9 +201,13 @@ const DECOR_DIMS = {
   rock: { w: 16, h: 16 },
   flower: { w: 16, h: 16 },
   fence: { w: 16, h: 32 },
+  tree_birch: { w: 32, h: 48 },
+  tree_spruce: { w: 32, h: 48 },
+  tree_fruit: { w: 32, h: 64 },
   lilypad: { w: 16, h: 16 },
   cattail: { w: 16, h: 16 },
   kapybara: { w: 28, h: 28 },
+  frog: { w: 16, h: 16 },
 }
 
 // Base-pivoted skew, not a translate: swayOffset(d,t) is now a small horizontal shear factor
@@ -221,6 +225,7 @@ const ANIM_DECOR = {
   lilypad: { base: 'lilypad', count: 8, ticks: 16 },
   cattail: { base: 'cattail', count: 8, ticks: 18 },
   kapybara: { base: 'kapybara', count: 9, ticks: 22 },
+  frog: { base: 'frog', count: 2, ticks: 30 },
 }
 
 function decorFrameName(d, t) {

@@ -17,14 +17,14 @@ const REQUIRED_FRAMES = [
   'house', 'house_wood_red', 'house_stone_blue', 'house_stone_red', 'house_lime_blue', 'house_lime_red',
   'church', 'inn', 'blacksmith', 'barn',
   'windmill_tower', 'windmillsail_0', 'windmillsail_1', 'windmillsail_2', 'windmillsail_3',
-  'tree', 'tree_small', 'fence', 'bush', 'rock',
+  'tree', 'tree_small', 'tree_birch', 'tree_spruce', 'tree_fruit', 'fence', 'bush', 'rock',
   'flowerwind_0', 'flowerwind_1', 'flowerwind_2', 'flowerwind_3',
   'flowerwind_4', 'flowerwind_5', 'flowerwind_6', 'flowerwind_7',
   // Modular avatar frames (carlos/legs/feet/chest/hair × down/right/up × 6 walk + 2 idle) are
   // generated in manifest.js; regenerate the expected names from that single source of truth.
   ...Object.keys(AVATAR_FRAMES),
   'chicken_0', 'chicken_1',
-  'duck_0', 'duck_1', 'cow_0', 'cow_1',
+  'duck_0', 'duck_1', 'cow_0', 'cow_1', 'pig_0', 'pig_1', 'sheep_0', 'sheep_1', 'frog_0', 'frog_1',
   // Ambient NPC frames (npc_<type>_0/1) generated in manifest.js — same source of truth.
   ...Object.keys(NPC_FRAMES),
 ]
@@ -61,6 +61,9 @@ const REAL_IMAGE_SIZE = {
   cfWindmillSail: { w: 256, h: 80 },
   cfBigOak: { w: 192, h: 80 },
   cfMedOak: { w: 96, h: 48 },
+  cfMedBirch: { w: 96, h: 48 },
+  cfMedSpruce: { w: 96, h: 48 },
+  cfMedFruit: { w: 96, h: 64 },
   cfFences: { w: 64, h: 64 },
   cfOutdoorDecor: { w: 144, h: 416 },
   cfFlowerWind: { w: 128, h: 16 },
@@ -72,6 +75,9 @@ const REAL_IMAGE_SIZE = {
   cfChicken: { w: 256, h: 512 },
   cfDuck: { w: 256, h: 640 },
   cfCow: { w: 256, h: 480 },
+  cfPig: { w: 288, h: 480 },
+  cfSheep: { w: 256, h: 480 },
+  cfFrog: { w: 320, h: 128 },
   cfNpcFarmer: { w: 384, h: 832 },
   cfNpcMiner: { w: 384, h: 640 },
   cfNpcChef: { w: 384, h: 448 },

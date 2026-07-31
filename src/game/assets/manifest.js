@@ -97,6 +97,11 @@ export const MANIFEST = {
     cfWindmillSail: '/game/cute-fantasy/Buildings/Buildings/Unique_Buildings/Windmill/Windmill_Sail_Anim.png',
     cfBigOak: '/game/cute-fantasy/Trees/Big_Oak_Tree.png',
     cfMedOak: '/game/cute-fantasy/Trees/Medium_Oak_Tree.png',
+    // Tree variety — each Medium_*_Tree is a 3-cell strip (stump / grown / grown); the middle cell
+    // is the grown tree, same layout as Medium_Oak. Birch/Spruce are 96x48, Fruit 96x64.
+    cfMedBirch: '/game/cute-fantasy/Trees/Medium_Birch_Tree.png',
+    cfMedSpruce: '/game/cute-fantasy/Trees/Medium_Spruce_Tree.png',
+    cfMedFruit: '/game/cute-fantasy/Trees/Medium_Fruit_Tree.png',
     cfFences: '/game/cute-fantasy/Outdoor%20decoration/Fences.png',
     cfOutdoorDecor: '/game/cute-fantasy/Outdoor%20decoration/Outdoor_Decor.png',
     // Flower_Grass_1_Anim.png (128x16) is an 8-frame horizontal wind-sway strip (16px cells) of a
@@ -119,6 +124,11 @@ export const MANIFEST = {
     // row 3 (y96).
     cfDuck: '/game/cute-fantasy/Animals/Duck/Duck_01.png',
     cfCow: '/game/cute-fantasy/Animals/Cow/Cow_01.png',
+    // Pig + sheep join the farm herd (same 32px grid: side-walk row 3, y96). Frog sits by the pond
+    // (front-facing row 0). Verified rows by viewing each sheet.
+    cfPig: '/game/cute-fantasy/Animals/Pig/Pig_01.png',
+    cfSheep: '/game/cute-fantasy/Animals/Sheep/Sheep_01.png',
+    cfFrog: '/game/cute-fantasy/Animals/Frog/Frog_01.png',
     // Premade ambient NPCs (see NPC_FRAMES). Each is one complete character sheet; only row 0
     // (front-facing walk, cols 0/3) is used. Space in the folder name is URL-encoded for public/.
     cfNpcFarmer: '/game/cute-fantasy/NPCs%20(Premade)/Farmer_Bob.png',
@@ -247,6 +257,10 @@ export const MANIFEST = {
     // cell is used for both, matching the old single-tree assets' footprint exactly.
     tree: { img: 'cfBigOak', x: 64, y: 0, w: 64, h: 80 },
     tree_small: { img: 'cfMedOak', x: 32, y: 0, w: 32, h: 48 },
+    // Grown-tree (middle) cell of each Medium variant, mixed into the decor scatter for variety.
+    tree_birch: { img: 'cfMedBirch', x: 32, y: 0, w: 32, h: 48 },
+    tree_spruce: { img: 'cfMedSpruce', x: 32, y: 0, w: 32, h: 48 },
+    tree_fruit: { img: 'cfMedFruit', x: 32, y: 0, w: 32, h: 64 },
     fence: { img: 'cfFences', x: 0, y: 0, w: 16, h: 32 },
     // Outdoor_Decor.png (144x416) is a 9-col x 26-row catalog of 16px decor icons (verified by
     // grid overlay + crop). bush = a clean round green bush ball (row5,col5); rock = a plain grey
@@ -289,6 +303,14 @@ export const MANIFEST = {
     // Cow walk cycle, right-facing side-view row 3 (y96); cols 0 and 4 are two stride poses.
     cow_0: { img: 'cfCow', x: 0, y: 96, w: 32, h: 32 },
     cow_1: { img: 'cfCow', x: 128, y: 96, w: 32, h: 32 },
+    // Pig + sheep side-walk (row 3, y96, cols 0/4) — same layout as the cow.
+    pig_0: { img: 'cfPig', x: 0, y: 96, w: 32, h: 32 },
+    pig_1: { img: 'cfPig', x: 128, y: 96, w: 32, h: 32 },
+    sheep_0: { img: 'cfSheep', x: 0, y: 96, w: 32, h: 32 },
+    sheep_1: { img: 'cfSheep', x: 128, y: 96, w: 32, h: 32 },
+    // Frog — front-facing sitting frog (row 0, cols 0/1), a 2-frame idle for the pond bank.
+    frog_0: { img: 'cfFrog', x: 0, y: 0, w: 32, h: 32 },
+    frog_1: { img: 'cfFrog', x: 32, y: 0, w: 32, h: 32 },
   },
 }
 

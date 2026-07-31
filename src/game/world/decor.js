@@ -2,8 +2,8 @@
 // Pure — no canvas, no Math.random. Seeded with a small mulberry32 PRNG so the same
 // (world, seed) pair always yields the same layout.
 
-const TYPES = ['tree', 'tree_small', 'bush', 'rock', 'flower', 'fence']
-const SOLID_TYPES = new Set(['tree', 'tree_small', 'rock', 'fence'])
+const TYPES = ['tree', 'tree_small', 'tree_birch', 'tree_spruce', 'tree_fruit', 'bush', 'rock', 'flower', 'fence']
+const SOLID_TYPES = new Set(['tree', 'tree_small', 'tree_birch', 'tree_spruce', 'tree_fruit', 'rock', 'fence'])
 const DENSITY = 1 / 20000 // ~1 decor item per 20000 sq px of world area
 const FARM_CLEAR_RADIUS = 110
 const BUILDING_PAD = 24
@@ -62,6 +62,9 @@ function buildPondLife(ponds, rand) {
     }
     const ka = rand() * Math.PI * 2
     life.push({ x: p.x + Math.cos(ka) * p.r * 0.3, y: p.y + Math.sin(ka) * p.r * 0.3, type: 'kapybara', solid: false })
+    // A frog on the bank (transparent sprite, so the grass shows through — unlike the kapybara).
+    const fr = rand() * Math.PI * 2
+    life.push({ x: p.x + Math.cos(fr) * p.r * 0.92, y: p.y + Math.sin(fr) * p.r * 0.92, type: 'frog', solid: false })
     return life
   })
 }

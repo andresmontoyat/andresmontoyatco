@@ -13,7 +13,7 @@ import { phaseOf, daylight } from './lighting.js'
 // peaks at phase 0.5 — so a recruiter's first view is full daylight, not midnight.
 export const DAY_LEN = 9600
 
-const SWAY_TYPES = new Set(['tree', 'tree_small', 'bush'])
+const SWAY_TYPES = new Set(['tree', 'tree_small', 'tree_birch', 'tree_spruce', 'tree_fruit', 'bush'])
 // ROOT CAUSE of the reported "vibration": `t` here is `state.clock`, which advances ~96
 // units/sec (see DAY_LEN's comment above — NOT real seconds). The old SWAY_SPEED=1.4 assumed
 // `t` was real seconds, so the actual angular velocity was 1.4 * 96 ≈ 134 rad/sec — over 21 full
