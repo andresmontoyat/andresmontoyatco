@@ -3,6 +3,7 @@ import {
 } from './tiles.js'
 import { BIOMES } from '../world/biomes.js'
 import { drawAmbient, swayOffset, DAY_LEN } from './ambient.js'
+import { animFrame } from './anim.js'
 import { critterDrawables } from '../entities/critters.js'
 import { shake2D } from '../engine/camera2d.js'
 import { phaseOf, nightTint } from './lighting.js'
@@ -175,19 +176,32 @@ const DECOR_DIMS = {
 // the canopy above it (negative local y) leans — reads as wind, not the old whole-sprite
 // translate, which shimmered/vibrated once combined with pixelated rendering + a
 // fractional-pixel offset changing every frame.
+// Frame-animated decor: type → its baked wind strip. The per-item clock offset (a stable hash of
+// world position) desyncs neighboring flowers so they don't sway in lockstep. Static types (trees,
+// rocks, …) fall through to their single frame name.
+const ANIM_DECOR = { flower: { base: 'flowerwind', count: 8, ticks: 14 } }
+
+function decorFrameName(d, t) {
+  const a = ANIM_DECOR[d.type]
+  if (!a) return d.type
+  const offset = (Math.floor(d.x) * 13 + Math.floor(d.y) * 7) % (a.ticks * a.count)
+  return animFrame(a.base, t + offset, a.ticks, a.count)
+}
+
 function drawDecorItem(ctx, d, cam, sprites, t) {
   const dim = DECOR_DIMS[d.type]
+  const name = decorFrameName(d, t)
   const baseX = d.x - cam.x
   const baseY = d.y - cam.y
   const skew = swayOffset(d, t)
   if (!skew) {
-    sprites.draw(ctx, d.type, baseX - dim.w / 2, baseY - dim.h, dim.w, dim.h)
+    sprites.draw(ctx, name, baseX - dim.w / 2, baseY - dim.h, dim.w, dim.h)
     return
   }
   ctx.save()
   ctx.translate(baseX, baseY)
   ctx.transform(1, 0, skew, 1, 0, 0)
-  sprites.draw(ctx, d.type, -dim.w / 2, -dim.h, dim.w, dim.h)
+  sprites.draw(ctx, name, -dim.w / 2, -dim.h, dim.w, dim.h)
   ctx.restore()
 }
 

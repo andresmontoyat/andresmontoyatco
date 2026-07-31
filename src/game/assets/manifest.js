@@ -41,7 +41,10 @@ export const MANIFEST = {
     cfMedOak: '/game/cute-fantasy/Trees/Medium_Oak_Tree.png',
     cfFences: '/game/cute-fantasy/Outdoor%20decoration/Fences.png',
     cfOutdoorDecor: '/game/cute-fantasy/Outdoor%20decoration/Outdoor_Decor.png',
-    cfFlowers: '/game/cute-fantasy/Outdoor%20decoration/Flowers.png',
+    // Flower_Grass_1_Anim.png (128x16) is an 8-frame horizontal wind-sway strip (16px cells) of a
+    // flower on a grass tuft — the pack's built-in wind loop. Replaces the old static flower with
+    // real frame animation (see render/anim.js), so decor flowers breathe instead of sitting frozen.
+    cfFlowerWind: '/game/cute-fantasy/Outdoor%20decoration/Outdoor_Decor_Animations/Grass_Animations/Flower_Grass_1_Anim.png',
     cfPlayer: '/game/cute-fantasy/Player/Player_Base/Player_Base_animations.png',
     // Modular armor layers — same 576x3584 grid as the base body (verified: every layer PNG in the
     // Player/ modular system shares the base's cell layout), so a layer's walk cells sit at the
@@ -133,9 +136,17 @@ export const MANIFEST = {
     // variants in the same sheet, which read as water-adjacent rather than generic ground decor.
     bush: { img: 'cfOutdoorDecor', x: 80, y: 80, w: 16, h: 16 },
     rock: { img: 'cfOutdoorDecor', x: 0, y: 80, w: 16, h: 16 },
-    // Flowers.png (160x160) is a 10x10 catalog of single-flower/potted-flower icons; (0,0) is a
-    // clean standalone red flower with its own grass tuft and shadow, fully inside its 16x16 cell.
-    flower: { img: 'cfFlowers', x: 0, y: 0, w: 16, h: 16 },
+    // Animated flower — the 8 wind-sway frames of cfFlowerWind (16x16 each, left to right).
+    // render/anim.js's animFrame('flowerwind', clock, …) picks the live frame; the old static
+    // cfFlowers red-flower cell is retired in favor of this breathing one.
+    flowerwind_0: { img: 'cfFlowerWind', x: 0, y: 0, w: 16, h: 16 },
+    flowerwind_1: { img: 'cfFlowerWind', x: 16, y: 0, w: 16, h: 16 },
+    flowerwind_2: { img: 'cfFlowerWind', x: 32, y: 0, w: 16, h: 16 },
+    flowerwind_3: { img: 'cfFlowerWind', x: 48, y: 0, w: 16, h: 16 },
+    flowerwind_4: { img: 'cfFlowerWind', x: 64, y: 0, w: 16, h: 16 },
+    flowerwind_5: { img: 'cfFlowerWind', x: 80, y: 0, w: 16, h: 16 },
+    flowerwind_6: { img: 'cfFlowerWind', x: 96, y: 0, w: 16, h: 16 },
+    flowerwind_7: { img: 'cfFlowerWind', x: 112, y: 0, w: 16, h: 16 },
 
     // Avatar walk cycle. Player_Base_animations.png (576x3584) is the new MODULAR base-body sheet
     // (skin only — clothing/hair are separate layered PNGs the renderer doesn't composite yet).
