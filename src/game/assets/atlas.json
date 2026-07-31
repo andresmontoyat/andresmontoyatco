@@ -409,261 +409,289 @@
       "w": 32,
       "h": 32
     },
-    "fence": {
+    "cow_0": {
       "img": "atlas",
       "x": 32,
+      "y": 784,
+      "w": 32,
+      "h": 32
+    },
+    "cow_1": {
+      "img": "atlas",
+      "x": 64,
+      "y": 784,
+      "w": 32,
+      "h": 32
+    },
+    "duck_0": {
+      "img": "atlas",
+      "x": 96,
+      "y": 784,
+      "w": 32,
+      "h": 32
+    },
+    "duck_1": {
+      "img": "atlas",
+      "x": 128,
+      "y": 784,
+      "w": 32,
+      "h": 32
+    },
+    "fence": {
+      "img": "atlas",
+      "x": 160,
       "y": 784,
       "w": 16,
       "h": 32
     },
     "bush": {
       "img": "atlas",
-      "x": 48,
+      "x": 176,
       "y": 784,
       "w": 16,
       "h": 16
     },
     "flowerwind_0": {
       "img": "atlas",
-      "x": 64,
+      "x": 192,
       "y": 784,
       "w": 16,
       "h": 16
     },
     "flowerwind_1": {
       "img": "atlas",
-      "x": 80,
+      "x": 208,
       "y": 784,
       "w": 16,
       "h": 16
     },
     "flowerwind_2": {
       "img": "atlas",
-      "x": 96,
+      "x": 224,
       "y": 784,
       "w": 16,
       "h": 16
     },
     "flowerwind_3": {
       "img": "atlas",
-      "x": 112,
+      "x": 240,
       "y": 784,
       "w": 16,
       "h": 16
     },
     "flowerwind_4": {
       "img": "atlas",
-      "x": 128,
+      "x": 256,
       "y": 784,
       "w": 16,
       "h": 16
     },
     "flowerwind_5": {
       "img": "atlas",
-      "x": 144,
+      "x": 272,
       "y": 784,
       "w": 16,
       "h": 16
     },
     "flowerwind_6": {
       "img": "atlas",
-      "x": 160,
+      "x": 288,
       "y": 784,
       "w": 16,
       "h": 16
     },
     "flowerwind_7": {
       "img": "atlas",
-      "x": 176,
+      "x": 304,
       "y": 784,
       "w": 16,
       "h": 16
     },
     "ground_castillo": {
       "img": "atlas",
-      "x": 192,
+      "x": 320,
       "y": 784,
       "w": 16,
       "h": 16
     },
     "ground_castillo_2": {
       "img": "atlas",
-      "x": 208,
+      "x": 336,
       "y": 784,
       "w": 16,
       "h": 16
     },
     "ground_cyber": {
       "img": "atlas",
-      "x": 224,
+      "x": 352,
       "y": 784,
       "w": 16,
       "h": 16
     },
     "ground_cyber_2": {
       "img": "atlas",
-      "x": 240,
+      "x": 368,
       "y": 784,
       "w": 16,
       "h": 16
     },
     "ground_desierto": {
       "img": "atlas",
-      "x": 256,
+      "x": 384,
       "y": 784,
       "w": 16,
       "h": 16
     },
     "ground_desierto_2": {
       "img": "atlas",
-      "x": 272,
+      "x": 400,
       "y": 784,
       "w": 16,
       "h": 16
     },
     "ground_desierto_3": {
       "img": "atlas",
-      "x": 288,
+      "x": 416,
       "y": 784,
       "w": 16,
       "h": 16
     },
     "ground_farm": {
       "img": "atlas",
-      "x": 304,
+      "x": 432,
       "y": 784,
       "w": 16,
       "h": 16
     },
     "ground_pradera_3": {
       "img": "atlas",
-      "x": 304,
+      "x": 432,
       "y": 784,
       "w": 16,
       "h": 16
     },
     "ground_selva_2": {
       "img": "atlas",
-      "x": 304,
+      "x": 432,
       "y": 784,
       "w": 16,
       "h": 16
     },
     "ground_farm_2": {
       "img": "atlas",
-      "x": 320,
+      "x": 448,
       "y": 784,
       "w": 16,
       "h": 16
     },
     "ground_pradera_2": {
       "img": "atlas",
-      "x": 320,
+      "x": 448,
       "y": 784,
       "w": 16,
       "h": 16
     },
     "ground_selva_3": {
       "img": "atlas",
-      "x": 320,
+      "x": 448,
       "y": 784,
       "w": 16,
       "h": 16
     },
     "ground_farm_3": {
       "img": "atlas",
-      "x": 336,
+      "x": 464,
       "y": 784,
       "w": 16,
       "h": 16
     },
     "ground_pradera": {
       "img": "atlas",
-      "x": 336,
+      "x": 464,
       "y": 784,
       "w": 16,
       "h": 16
     },
     "ground_selva": {
       "img": "atlas",
-      "x": 352,
+      "x": 480,
       "y": 784,
       "w": 16,
       "h": 16
     },
     "path_center": {
       "img": "atlas",
-      "x": 368,
+      "x": 496,
       "y": 784,
       "w": 16,
       "h": 16
     },
     "path_e": {
       "img": "atlas",
-      "x": 384,
-      "y": 784,
+      "x": 0,
+      "y": 816,
       "w": 16,
       "h": 16
     },
     "path_n": {
       "img": "atlas",
-      "x": 400,
-      "y": 784,
+      "x": 16,
+      "y": 816,
       "w": 16,
       "h": 16
     },
     "path_ne": {
       "img": "atlas",
-      "x": 416,
-      "y": 784,
+      "x": 32,
+      "y": 816,
       "w": 16,
       "h": 16
     },
     "path_nw": {
       "img": "atlas",
-      "x": 432,
-      "y": 784,
+      "x": 48,
+      "y": 816,
       "w": 16,
       "h": 16
     },
     "path_s": {
       "img": "atlas",
-      "x": 448,
-      "y": 784,
+      "x": 64,
+      "y": 816,
       "w": 16,
       "h": 16
     },
     "path_se": {
       "img": "atlas",
-      "x": 464,
-      "y": 784,
+      "x": 80,
+      "y": 816,
       "w": 16,
       "h": 16
     },
     "path_sw": {
       "img": "atlas",
-      "x": 480,
-      "y": 784,
+      "x": 96,
+      "y": 816,
       "w": 16,
       "h": 16
     },
     "path_w": {
       "img": "atlas",
-      "x": 496,
-      "y": 784,
+      "x": 112,
+      "y": 816,
       "w": 16,
       "h": 16
     },
     "rock": {
       "img": "atlas",
-      "x": 0,
+      "x": 128,
       "y": 816,
       "w": 16,
       "h": 16
     },
     "water": {
       "img": "atlas",
-      "x": 16,
+      "x": 144,
       "y": 816,
       "w": 16,
       "h": 16

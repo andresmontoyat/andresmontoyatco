@@ -30,6 +30,7 @@ const REQUIRED_FRAMES = [
   'helm_up_0', 'helm_up_1', 'helm_up_2',
   'helm_right_0', 'helm_right_1', 'helm_right_2',
   'chicken_0', 'chicken_1',
+  'duck_0', 'duck_1', 'cow_0', 'cow_1',
 ]
 
 // Real pixel dimensions of each source PNG, captured with
@@ -68,6 +69,8 @@ const REAL_IMAGE_SIZE = {
   cfChest: { w: 576, h: 3584 },
   cfLegs: { w: 576, h: 3584 },
   cfChicken: { w: 256, h: 512 },
+  cfDuck: { w: 256, h: 640 },
+  cfCow: { w: 256, h: 480 },
 }
 
 describe('MANIFEST integrity', () => {

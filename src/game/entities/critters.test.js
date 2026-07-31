@@ -36,4 +36,10 @@ describe('critters', () => {
       expect(c.y).toBe(world.farm.y)
     })
   })
+
+  it('spawns a mix of species, not one repeated kind', () => {
+    const kinds = new Set(createCritters(world).map(c => c.kind))
+    expect(kinds.size).toBeGreaterThan(1)
+    expect(kinds.has('chicken')).toBe(true)
+  })
 })

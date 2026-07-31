@@ -60,6 +60,11 @@ export const MANIFEST = {
     cfChest: '/game/cute-fantasy/Player/Chest/Plate_Chest/Plate_Chest_Iron.png',
     cfLegs: '/game/cute-fantasy/Player/Legs/Plate_Legs/Plate_Legs_Iron.png',
     cfChicken: '/game/cute-fantasy/Animals/Chicken/Chicken_01.png',
+    // More farm critters. Same 32px-cell modular grid as the chicken; the right-facing walk row
+    // differs per species (measured by viewing each sheet): duck walks in row 1 (y32), cow in
+    // row 3 (y96).
+    cfDuck: '/game/cute-fantasy/Animals/Duck/Duck_01.png',
+    cfCow: '/game/cute-fantasy/Animals/Cow/Cow_01.png',
   },
   frames: {
     // Ground per biome. Grass_1..4_Middle.png are each a single fully-opaque 16x16 tile (no
@@ -228,6 +233,12 @@ export const MANIFEST = {
     // that cycle, giving 2 visually distinct walk poses.
     chicken_0: { img: 'cfChicken', x: 0, y: 64, w: 32, h: 32 },
     chicken_1: { img: 'cfChicken', x: 128, y: 64, w: 32, h: 32 },
+    // Duck walk cycle, right-facing row 1 (y32); cols 0 and 3 are two distinct stride poses.
+    duck_0: { img: 'cfDuck', x: 0, y: 32, w: 32, h: 32 },
+    duck_1: { img: 'cfDuck', x: 96, y: 32, w: 32, h: 32 },
+    // Cow walk cycle, right-facing side-view row 3 (y96); cols 0 and 4 are two stride poses.
+    cow_0: { img: 'cfCow', x: 0, y: 96, w: 32, h: 32 },
+    cow_1: { img: 'cfCow', x: 128, y: 96, w: 32, h: 32 },
   },
 }
 
