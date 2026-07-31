@@ -70,6 +70,23 @@ async function extractBuffer(rect) {
   return sharp(file).extract({ left: rect.sx, top: rect.sy, width: rect.w, height: rect.h }).png().toBuffer()
 }
 
+// The home-page entry-splash shows a single standing avatar thumbnail. It used to point at a raw
+// pack file (Player.png) that the migration removed and that the atlas pipeline no longer ships —
+// so bake a self-contained 64x64 PNG of the dressed hero (idle-down frame: base + Iron plate
+// legs/chest/helm) that DOES ship in public/game/, and repoint both index.astro imgs at it.
+const AVATAR_PREVIEW_LAYERS = ['cfPlayer', 'cfLegs', 'cfChest', 'cfHelm']
+const OUT_AVATAR = path.join(ROOT, 'public', 'game', 'avatar-preview.png')
+
+async function buildAvatarPreview() {
+  const cell = { left: 0, top: 0, width: 64, height: 64 } // idle-down, standing
+  const layers = await Promise.all(AVATAR_PREVIEW_LAYERS.map(
+    key => sharp(sourceFileFor(key)).extract(cell).png().toBuffer(),
+  ))
+  await sharp({ create: { width: 64, height: 64, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0 } } })
+    .composite(layers.map(input => ({ input }))).png().toFile(OUT_AVATAR)
+  console.log(`wrote ${path.relative(ROOT, OUT_AVATAR)}`)
+}
+
 async function buildAtlas() {
   const uniqueRects = dedupeFrames(MANIFEST.frames)
   const { placed, atlasWidth, atlasHeight } = shelfPack(uniqueRects)
@@ -104,7 +121,7 @@ async function buildAtlas() {
   console.log(`wrote ${path.relative(ROOT, OUT_JSON_PUBLIC)}`)
 }
 
-buildAtlas().catch(err => {
+buildAtlas().then(buildAvatarPreview).catch(err => {
   console.error(err)
   process.exit(1)
 })

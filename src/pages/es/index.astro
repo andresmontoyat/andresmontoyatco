@@ -42,17 +42,16 @@ const t = translations[locale].entry
     class="fixed inset-0 z-[200] flex items-center justify-center p-6 bg-ink-950/90 backdrop-blur-md motion-safe:animate-fade-in"
   >
     <div class="w-full max-w-md rounded-2xl border border-ink-500 bg-surface p-8 text-center shadow-brand-lg">
-      <!-- Player.png is a 192x320, 6-col x 10-row sheet of 32x32 frames (see
-           src/game/assets/manifest.js — carlos_down_0, front-facing, is the
-           x:0 y:0 frame). A 64x64 overflow-hidden crop of the 2x-scaled sheet
-           shows exactly that top-left frame — no offset math needed. -->
+      <!-- avatar-preview.png is a self-contained 64x64 render of the dressed hero (base + Iron
+           plate legs/chest/helm), baked by scripts/pack-atlas.mjs so it ships in public/game/
+           (the raw pack is gitignored). Regenerate with `npm run assets:pack`. -->
       <div class="mx-auto mb-4 h-16 w-16 overflow-hidden rounded-lg border border-ink-500 bg-ink-900" aria-hidden="true">
         <img
-          src="/game/cute-fantasy/Player/Player.png"
+          src="/game/avatar-preview.png"
           alt=""
           loading="lazy"
           decoding="async"
-          class="h-[640px] w-[384px] max-w-none [image-rendering:pixelated]"
+          class="h-16 w-16 max-w-none [image-rendering:pixelated]"
         />
       </div>
       <div class="font-pixel text-[10px] uppercase tracking-[1px] text-accent flex items-center justify-center gap-3 mb-4">
