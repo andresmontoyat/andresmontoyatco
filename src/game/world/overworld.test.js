@@ -71,6 +71,13 @@ describe('buildOverworld', () => {
     expect(w.farmBuilding.building).toBe('barn')
     expect(w.farmBuilding.w).toBeGreaterThan(0)
   })
+  it('places an animated windmill at the farm, clear of the spawn column', () => {
+    expect(w.farmWindmill.w).toBeGreaterThan(0)
+    expect(w.farmWindmill.h).toBeGreaterThan(0)
+    // its tower footprint must not overlap the player spawn (farm.x, farm.y + 70)
+    const towerRight = w.farmWindmill.cx - w.farmWindmill.w / 2 + w.farmWindmill.w * (69 / 128)
+    expect(towerRight < w.farm.x - 12 || w.farmWindmill.cx - w.farmWindmill.w / 2 > w.farm.x + 12).toBe(true)
+  })
   it('flags injected side-projects as hidden', () => {
     const w3 = buildOverworld(JSON_FIXTURE, biomeForYear, [{ co: 'Mr. Yoker', title: { en: 'Indie', es: 'Indie' }, date: { en: 'side', es: 'propio' }, tech: ['Astro'] }])
     expect(w3.hiddenSites).toHaveLength(1)

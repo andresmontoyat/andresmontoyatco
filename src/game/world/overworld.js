@@ -153,7 +153,12 @@ export function buildOverworld(json, biomeForYear, sideProjects = []) {
   const farmBuilding = {
     building: 'barn', cx: ANCHORS.farm.x - 100, cy: ANCHORS.farm.y - 110, ...BUILDING_DIMS.barn,
   }
+  // Animated windmill on the other side of the spawn from the barn, footprint clear of both the
+  // spawn box and the barn (drawn specially by scene2d — static tower + rotating sail overlay).
+  const farmWindmill = {
+    cx: ANCHORS.farm.x + 130, cy: ANCHORS.farm.y - 70, w: 112, h: 98,
+  }
   return {
-    farm: ANCHORS.farm, regions, sites, hiddenSites, farmBuilding, worldW: WORLD_W, worldH: WORLD_H, path, roads,
+    farm: ANCHORS.farm, regions, sites, hiddenSites, farmBuilding, farmWindmill, worldW: WORLD_W, worldH: WORLD_H, path, roads,
   }
 }

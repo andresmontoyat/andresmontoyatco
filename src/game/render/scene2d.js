@@ -217,6 +217,30 @@ function buildingDrawable(s, cam) {
   }
 }
 
+// The windmill is a composite: a sail-free tower (native x0..69 of the 128-wide sprite) plus the
+// rotating sail wheel drawn over its upper-right face. Both scale by k = drawWidth/128; the wheel's
+// native offset (SAIL_DX, SAIL_DY) was tuned by screenshot so its hub sits on the tower's mount and
+// the arms spread across the face (not detached beside it). The sails cycle 4 frames off the clock
+// (ticks 22 ≈ a lazy ~1s rotation); frame 0 is the tower's original static pose, so the loop wraps
+// seamlessly, and the sail-free tower crop means no static "+" ever peeks behind the rotation.
+const WINDMILL_SAIL = { base: 'windmillsail', count: 4, ticks: 22 }
+const SAIL_DX = 34
+const SAIL_DY = -6
+
+function windmillDrawable(wm, cam, t) {
+  const k = wm.w / 128
+  return {
+    baseY: wm.cy + wm.h,
+    draw: (ctx, sprites) => {
+      const bx = wm.cx - wm.w / 2 - cam.x
+      const by = wm.cy - cam.y
+      sprites.draw(ctx, 'windmill_tower', bx, by, 69 * k, 112 * k)
+      const sail = animFrame(WINDMILL_SAIL.base, t, WINDMILL_SAIL.ticks, WINDMILL_SAIL.count)
+      sprites.draw(ctx, sail, bx + SAIL_DX * k, by + SAIL_DY * k, 64 * k, 80 * k)
+    },
+  }
+}
+
 // Buildings, decor, and the avatar all draw in one y-sorted pass (sorted by each item's
 // ground-contact baseY) so things nearer the bottom of the screen correctly occlude things
 // behind them, instead of buildings/avatar always drawing on top of decor regardless of depth.
@@ -226,9 +250,10 @@ function depthSortedDrawables(state, cam, t) {
   const drawOne = d => (ctx, sprites) => drawDecorItem(ctx, d, cam, sprites, t)
   const decor = (state.decor || []).map(d => ({ baseY: d.y, draw: drawOne(d) }))
   const critters = critterDrawables(state, cam, t)
+  const windmill = state.world.farmWindmill ? [windmillDrawable(state.world.farmWindmill, cam, t)] : []
   const { player } = state
   const avatar = { baseY: player.y + player.h / 2, draw: (ctx, sprites) => drawAvatar(ctx, state, cam, sprites) }
-  return buildings.concat(decor, critters, [avatar]).sort((a, b) => a.baseY - b.baseY)
+  return buildings.concat(decor, critters, windmill, [avatar]).sort((a, b) => a.baseY - b.baseY)
 }
 
 function drawPlaceholderScene(ctx, state, cam) {

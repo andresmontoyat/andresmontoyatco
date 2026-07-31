@@ -31,11 +31,16 @@ function solidOf(s) {
   return { x: s.cx - s.w / 2, y: s.cy, w: s.w, h: s.h }
 }
 
-// Building collision boxes: every company structure plus the farm barn (a landmark with a
-// footprint but no dialog), so the player can't walk through any of them.
-function buildingSolids(sites, farmBuilding) {
+// Building collision boxes: every company structure plus the farm landmarks (barn + windmill —
+// footprints with no dialog), so the player can't walk through any of them. The windmill's solid
+// is its tower only (left 69/128 of its width); the overhanging sails are non-blocking air.
+function buildingSolids(sites, farmBuilding, farmWindmill) {
   const solids = sites.map(solidOf)
   if (farmBuilding) solids.push(solidOf(farmBuilding))
+  if (farmWindmill) {
+    const tw = farmWindmill.w * (69 / 128)
+    solids.push({ x: farmWindmill.cx - farmWindmill.w / 2, y: farmWindmill.cy, w: tw, h: farmWindmill.h })
+  }
   return solids
 }
 
@@ -64,7 +69,8 @@ function updateRegionMusic(state) {
 
 export function update(state, input, dtChars) {
   const frozen = state.dialog.isOpen()
-  const solids = buildingSolids(activeSites(state), state.world.farmBuilding).concat(decorSolids(state.decor || []))
+  const solids = buildingSolids(activeSites(state), state.world.farmBuilding, state.world.farmWindmill)
+    .concat(decorSolids(state.decor || []))
   const r = stepMovement(state.player, { ...input, frozen }, solids, { w: state.world.worldW, h: state.world.worldH })
   state.player.x = r.x; state.player.y = r.y; state.player.dir = r.dir; state.player.moving = r.moving
   state.player.step = r.moving ? state.player.step + STEP_RATE : 0

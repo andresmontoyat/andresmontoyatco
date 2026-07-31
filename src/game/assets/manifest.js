@@ -37,6 +37,12 @@ export const MANIFEST = {
     cfInn: '/game/cute-fantasy/Buildings/Buildings/Unique_Buildings/Inn/Inn_Red.png',
     cfBlacksmith: '/game/cute-fantasy/Buildings/Buildings/Unique_Buildings/Blacksmith_House/Blacksmith_House_Blue.png',
     cfBarn: '/game/cute-fantasy/Buildings/Buildings/Unique_Buildings/Barn/Barn_Base_Red.png',
+    // Windmill = a static tower (128x112) with a sail wheel mounted upper-right, plus a separate
+    // 4-frame rotating-sail strip (256x80 → 64px frames). The tower's own static sails occupy only
+    // native x69..122 (alpha-measured), so cropping the tower frame to x0..69 yields a sail-free
+    // base; the animated wheel is then drawn over the mount so no static sails peek behind it.
+    cfWindmill: '/game/cute-fantasy/Buildings/Buildings/Unique_Buildings/Windmill/Windmill.png',
+    cfWindmillSail: '/game/cute-fantasy/Buildings/Buildings/Unique_Buildings/Windmill/Windmill_Sail_Anim.png',
     cfBigOak: '/game/cute-fantasy/Trees/Big_Oak_Tree.png',
     cfMedOak: '/game/cute-fantasy/Trees/Medium_Oak_Tree.png',
     cfFences: '/game/cute-fantasy/Outdoor%20decoration/Fences.png',
@@ -123,6 +129,14 @@ export const MANIFEST = {
     inn: { img: 'cfInn', x: 0, y: 0, w: 240, h: 192 },
     blacksmith: { img: 'cfBlacksmith', x: 0, y: 0, w: 160, h: 128 },
     barn: { img: 'cfBarn', x: 0, y: 0, w: 128, h: 144 },
+    // Windmill tower cropped sail-free (x0..69); animated sail wheel drawn over its mount by
+    // scene2d's drawWindmill using animFrame('windmillsail', …). Frame 0 matches the tower's
+    // original static-sail pose, so the loop starts seamless.
+    windmill_tower: { img: 'cfWindmill', x: 0, y: 0, w: 69, h: 112 },
+    windmillsail_0: { img: 'cfWindmillSail', x: 0, y: 0, w: 64, h: 80 },
+    windmillsail_1: { img: 'cfWindmillSail', x: 64, y: 0, w: 64, h: 80 },
+    windmillsail_2: { img: 'cfWindmillSail', x: 128, y: 0, w: 64, h: 80 },
+    windmillsail_3: { img: 'cfWindmillSail', x: 192, y: 0, w: 64, h: 80 },
 
     // Decor. Big_Oak_Tree.png (192x80) and Medium_Oak_Tree.png (96x48) are each a 3-cell strip —
     // stump / grown-tree-with-ground-shadow / grown-tree-no-shadow — so the middle (shadowed)
