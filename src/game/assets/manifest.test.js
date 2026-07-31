@@ -23,20 +23,24 @@ const REQUIRED_FRAMES = [
 // `sips -g pixelWidth -g pixelHeight <file>` while building the manifest. Guards against
 // frame rects drifting outside the actual sprite sheet bounds.
 const REAL_IMAGE_SIZE = {
-  cfGrass: { w: 16, h: 16 },
-  cfPathTile: { w: 48, h: 96 },
+  cfGrass1: { w: 16, h: 16 },
+  cfGrass2: { w: 16, h: 16 },
+  cfGrass3: { w: 16, h: 16 },
+  cfGrass4: { w: 16, h: 16 },
+  cfBeach: { w: 480, h: 48 },
+  cfFarmland: { w: 112, h: 128 },
+  cfStoneCliff1: { w: 224, h: 96 },
+  cfStoneCliff3: { w: 224, h: 96 },
+  cfCobbleRoad: { w: 48, h: 80 },
   cfWater: { w: 16, h: 16 },
-  cfBeach: { w: 80, h: 48 },
   cfHouse: { w: 96, h: 128 },
-  cfOakTree: { w: 64, h: 80 },
-  cfOakTreeSmall: { w: 96, h: 48 },
+  cfBigOak: { w: 192, h: 80 },
+  cfMedOak: { w: 96, h: 48 },
   cfFences: { w: 64, h: 64 },
-  cfPlayer: { w: 192, h: 320 },
-  cfChicken: { w: 64, h: 64 },
-  slGrass: { w: 176, h: 112 },
-  slHills: { w: 176, h: 144 },
-  slTilledDirt: { w: 176, h: 112 },
-  slBiomThings: { w: 144, h: 80 },
+  cfOutdoorDecor: { w: 144, h: 416 },
+  cfFlowers: { w: 160, h: 160 },
+  cfPlayer: { w: 576, h: 3584 },
+  cfChicken: { w: 256, h: 512 },
 }
 
 describe('MANIFEST integrity', () => {

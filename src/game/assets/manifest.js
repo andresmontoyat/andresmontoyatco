@@ -3,114 +3,143 @@
 // frames: named sub-rects the renderer looks up by name. Every frame.img must exist in images,
 // and every {x,y,w,h} must fall within that image's real pixel dimensions (verified by viewing
 // the sheets with the Read tool + `sips -g pixelWidth -g pixelHeight` before writing coordinates).
+//
+// M1 (Cute Fantasy full-pack re-map): the free "Cute Fantasy RPG" + Sprout Lands duo was replaced
+// by the paid, full "Cute Fantasy" pack (all assets now live under public/game/cute-fantasy/, in
+// its own reorganized folder tree). Every frame name below is unchanged from before this re-map —
+// only img/{x,y,w,h} moved — so scene2d.js/tiles.js/ambient.js keep working untouched.
 
 export const MANIFEST = {
   images: {
-    cfGrass: '/game/cute-fantasy/Tiles/Grass_Middle.png',
-    cfPathTile: '/game/cute-fantasy/Tiles/Path_Tile.png',
-    cfWater: '/game/cute-fantasy/Tiles/Water_Middle.png',
-    cfBeach: '/game/cute-fantasy/Tiles/Beach_Tile.png',
-    cfHouse: '/game/cute-fantasy/Outdoor%20decoration/House_1_Wood_Base_Blue.png',
-    cfOakTree: '/game/cute-fantasy/Outdoor%20decoration/Oak_Tree.png',
-    cfOakTreeSmall: '/game/cute-fantasy/Outdoor%20decoration/Oak_Tree_Small.png',
+    cfGrass1: '/game/cute-fantasy/Tiles/Grass/Grass_1_Middle.png',
+    cfGrass2: '/game/cute-fantasy/Tiles/Grass/Grass_2_Middle.png',
+    cfGrass3: '/game/cute-fantasy/Tiles/Grass/Grass_3_Middle.png',
+    cfGrass4: '/game/cute-fantasy/Tiles/Grass/Grass_4_Middle.png',
+    cfBeach: '/game/cute-fantasy/Tiles/Beach/Beach_Tiles.png',
+    cfFarmland: '/game/cute-fantasy/Tiles/FarmLand/FarmLand_Tile.png',
+    cfStoneCliff1: '/game/cute-fantasy/Tiles/Cliff/Stone_Cliff_1_Tile.png',
+    cfStoneCliff3: '/game/cute-fantasy/Tiles/Cliff/Stone_Cliff_3_Tile.png',
+    cfCobbleRoad: '/game/cute-fantasy/Tiles/Cobble_Road/Cobble_Road_1.png',
+    cfWater: '/game/cute-fantasy/Tiles/Water/Water_Middle.png',
+    cfHouse: '/game/cute-fantasy/Buildings/Buildings/Houses/Wood/House_1_Wood_Base_Blue.png',
+    cfBigOak: '/game/cute-fantasy/Trees/Big_Oak_Tree.png',
+    cfMedOak: '/game/cute-fantasy/Trees/Medium_Oak_Tree.png',
     cfFences: '/game/cute-fantasy/Outdoor%20decoration/Fences.png',
-    cfPlayer: '/game/cute-fantasy/Player/Player.png',
-    cfChicken: '/game/cute-fantasy/Animals/Chicken/Chicken.png',
-    slGrass: '/game/sprout-lands-sprites/Tilesets/Grass.png',
-    slHills: '/game/sprout-lands-sprites/Tilesets/Hills.png',
-    slTilledDirt: '/game/sprout-lands-sprites/Tilesets/Tilled_Dirt.png',
-    slBiomThings: '/game/sprout-lands-sprites/Objects/Basic_Grass_Biom_things.png',
+    cfOutdoorDecor: '/game/cute-fantasy/Outdoor%20decoration/Outdoor_Decor.png',
+    cfFlowers: '/game/cute-fantasy/Outdoor%20decoration/Flowers.png',
+    cfPlayer: '/game/cute-fantasy/Player/Player_Base/Player_Base_animations.png',
+    cfChicken: '/game/cute-fantasy/Animals/Chicken/Chicken_01.png',
   },
   frames: {
-    // Ground per biome. Every rect below was chosen by viewing the sheet with the Read tool
-    // and cropping candidate cells — each lands on a fully-opaque, single-color-family 16x16
-    // interior cell (never a multi-cell autotile border, and never a transparent/padded area).
-    // _2/_3 suffixed frames are texture variants scattered in via a per-tile-coord hash
-    // (see render/tiles.js tileNameFor) so ground doesn't read as one flat color block.
-    // Farm ground is grass (same cells as pradera) — the avatar spawns here, and bare tilled
-    // dirt read wrong for a spawn point. A tilled-earth look belongs in a future decor/farm-plot
-    // layer, not the base ground tile.
-    ground_farm: { img: 'cfGrass', x: 0, y: 0, w: 16, h: 16 },
-    ground_farm_2: { img: 'slGrass', x: 0, y: 80, w: 16, h: 16 },
-    ground_farm_3: { img: 'slGrass', x: 16, y: 80, w: 16, h: 16 },
-    ground_pradera: { img: 'cfGrass', x: 0, y: 0, w: 16, h: 16 },
-    ground_pradera_2: { img: 'slGrass', x: 0, y: 80, w: 16, h: 16 },
-    ground_pradera_3: { img: 'slGrass', x: 16, y: 80, w: 16, h: 16 },
-    // Beach_Tile.png is an 80x48 island autotile sheet (5x3 cells of 16px) — x=48,y=0 used to
-    // sample the blue pond-ring border (the "blue arches" artifact). x=16,y=16 is the solid
-    // sand fill at the center of the island's 3x3 autotile block. Beach_Tile has no further
-    // texture cells (the rest of the sheet is saturated water blue), so the _2/_3 accents come
-    // from Tilled_Dirt.png's speckled dirt-patch cells — a close, still-sandy tan family.
+    // Ground per biome. Grass_1..4_Middle.png are each a single fully-opaque 16x16 tile (no
+    // autotile border to dodge), verified by per-pixel alpha scan — so every rect below is just
+    // (0,0,16,16) on a different source file. _2/_3 suffixed frames are texture variants scattered
+    // in via a per-tile-coord hash (see render/tiles.js tileNameFor) so ground doesn't read as one
+    // flat color block. farm/pradera/selva are three shades of the same 4-tile grass family
+    // (Grass_1=dark green, _2=mid green, _3=olive, _4=teal), each biome leaning on a different
+    // tile as its dominant (weight-6) base per GROUND_WEIGHTS in tiles.js.
+    ground_farm: { img: 'cfGrass1', x: 0, y: 0, w: 16, h: 16 },
+    ground_farm_2: { img: 'cfGrass2', x: 0, y: 0, w: 16, h: 16 },
+    ground_farm_3: { img: 'cfGrass3', x: 0, y: 0, w: 16, h: 16 },
+    ground_pradera: { img: 'cfGrass3', x: 0, y: 0, w: 16, h: 16 },
+    ground_pradera_2: { img: 'cfGrass2', x: 0, y: 0, w: 16, h: 16 },
+    ground_pradera_3: { img: 'cfGrass1', x: 0, y: 0, w: 16, h: 16 },
+    ground_selva: { img: 'cfGrass4', x: 0, y: 0, w: 16, h: 16 },
+    ground_selva_2: { img: 'cfGrass1', x: 0, y: 0, w: 16, h: 16 },
+    ground_selva_3: { img: 'cfGrass2', x: 0, y: 0, w: 16, h: 16 },
+    // Beach_Tiles.png (480x48) is a rounded-island autotile strip, 10 islands of 48x48 each (one
+    // per sand/water ratio); (16,16) of the first island is verified fully opaque solid sand
+    // (228,166,114) — no water bleed. desierto_2/_3 borrow two FarmLand_Tile.png cells that happen
+    // to share that exact (228,166,114) fleck color (verified by exact RGBA match), so the accent
+    // reads as sandy speckle rather than a mismatched dirt patch; both cells confirmed fully opaque.
     ground_desierto: { img: 'cfBeach', x: 16, y: 16, w: 16, h: 16 },
-    ground_desierto_2: { img: 'slTilledDirt', x: 0, y: 80, w: 16, h: 16 },
-    ground_desierto_3: { img: 'slTilledDirt', x: 16, y: 96, w: 16, h: 16 },
-    // Grass.png x=0,y=64 sampled a mostly-transparent grass-tuft decoration cell (the
-    // "green/black checkered" artifact against the canvas background). x=16,y=16 is the
-    // solid-fill interior cell of the sheet's rounded grass-plateau autotile block.
-    ground_selva: { img: 'slGrass', x: 16, y: 16, w: 16, h: 16 },
-    ground_selva_2: { img: 'slGrass', x: 32, y: 80, w: 16, h: 16 },
-    ground_selva_3: { img: 'slHills', x: 112, y: 80, w: 16, h: 16 },
-    // cyber/castillo previously reused the flat grass tile under a 35%-alpha color tint,
-    // reading as one flat color block. Both now use the same Hills.png cliff-edge cell
-    // (grass top / dirt-cliff bottom — the closest "stone/cliff" texture in either pack)
-    // and are told apart at render time by a much lighter (~0.12 alpha) per-biome tint.
-    ground_cyber: { img: 'slHills', x: 16, y: 32, w: 16, h: 16 },
-    ground_cyber_2: { img: 'slHills', x: 16, y: 16, w: 16, h: 16 },
-    ground_castillo: { img: 'slHills', x: 16, y: 32, w: 16, h: 16 },
-    ground_castillo_2: { img: 'slHills', x: 16, y: 16, w: 16, h: 16 },
-    // Path_Tile.png (48x96) is a rounded-island autotile block, same family as Beach_Tile.png's
-    // island layout above: a 3x3 grid of corner/edge/center cells at its top-left (the rest of
-    // the sheet is a second, unrelated "grass hole" shape and a row of pebble-decorated variants
-    // — not used). Verified by viewing a scaled+gridded render of the sheet: (16,16) is the
-    // solid tan interior; (16,0)/(16,32)/(0,16)/(32,16) are the N/S/W/E straight edges (grass
-    // fringe on that side, tan on the rest); (0,0)/(32,0)/(0,32)/(32,32) are the four outer
-    // corners (grass wraps two adjacent sides). tiles.js's pathTileName() picks among these 9
-    // by checking which of a road tile's 4 grid-neighbors are also on-path, so the road gets a
-    // grass-blended border instead of the old flat-rectangle 'path' cell (Path_Middle.png).
-    path_center: { img: 'cfPathTile', x: 16, y: 16, w: 16, h: 16 },
-    path_n: { img: 'cfPathTile', x: 16, y: 0, w: 16, h: 16 },
-    path_s: { img: 'cfPathTile', x: 16, y: 32, w: 16, h: 16 },
-    path_w: { img: 'cfPathTile', x: 0, y: 16, w: 16, h: 16 },
-    path_e: { img: 'cfPathTile', x: 32, y: 16, w: 16, h: 16 },
-    path_nw: { img: 'cfPathTile', x: 0, y: 0, w: 16, h: 16 },
-    path_ne: { img: 'cfPathTile', x: 32, y: 0, w: 16, h: 16 },
-    path_sw: { img: 'cfPathTile', x: 0, y: 32, w: 16, h: 16 },
-    path_se: { img: 'cfPathTile', x: 32, y: 32, w: 16, h: 16 },
+    ground_desierto_2: { img: 'cfFarmland', x: 64, y: 16, w: 16, h: 16 },
+    ground_desierto_3: { img: 'cfFarmland', x: 64, y: 48, w: 16, h: 16 },
+    // cyber/castillo previously reused a flat grass tile under a color tint (no real stone asset
+    // existed). The full pack ships real Stone_Cliff_N_Tile.png sheets (224x96): each contains a
+    // rounded cobble-pile pillar (x16-63) and a separate horizontal brick-striped wall block
+    // (x128-175) — same grey-blue stone palette, two distinct patterns. cyber gets the striped
+    // block (Stone_Cliff_1, reads as a paved/plated surface — fits the "cyber" era read); castillo
+    // gets the cobble-pile pillar (Stone_Cliff_3, reads as rough fortress stone). Different source
+    // files AND different patterns, so the two biomes are visually distinct from each other even
+    // before the renderer's existing per-biome tint is applied. All 4 rects verified fully opaque.
+    ground_cyber: { img: 'cfStoneCliff1', x: 136, y: 44, w: 16, h: 16 },
+    ground_cyber_2: { img: 'cfStoneCliff1', x: 152, y: 44, w: 16, h: 16 },
+    ground_castillo: { img: 'cfStoneCliff3', x: 20, y: 52, w: 16, h: 16 },
+    ground_castillo_2: { img: 'cfStoneCliff3', x: 36, y: 52, w: 16, h: 16 },
+    // Cobble_Road_1.png (48x80) is the same rounded-island autotile family as Beach_Tiles.png
+    // above: a 3x3 grid of 16px corner/edge/center cells at its top-left 48x48 (verified by
+    // sampling stone-vs-sand pixel ratios per cell — center is 100% stone, the 4 straight edges
+    // are ~50/50 stone/sand, the 4 corners are mostly sand with a small stone wedge — exactly the
+    // shape a rounded island autotile produces). Replaces the old flat dirt path with real
+    // cobblestone; tiles.js's pathTileName() picks among these 9 by checking which of a road
+    // tile's 4 grid-neighbors are also on-path, same as before this re-map.
+    path_center: { img: 'cfCobbleRoad', x: 16, y: 16, w: 16, h: 16 },
+    path_n: { img: 'cfCobbleRoad', x: 16, y: 0, w: 16, h: 16 },
+    path_s: { img: 'cfCobbleRoad', x: 16, y: 32, w: 16, h: 16 },
+    path_w: { img: 'cfCobbleRoad', x: 0, y: 16, w: 16, h: 16 },
+    path_e: { img: 'cfCobbleRoad', x: 32, y: 16, w: 16, h: 16 },
+    path_nw: { img: 'cfCobbleRoad', x: 0, y: 0, w: 16, h: 16 },
+    path_ne: { img: 'cfCobbleRoad', x: 32, y: 0, w: 16, h: 16 },
+    path_sw: { img: 'cfCobbleRoad', x: 0, y: 32, w: 16, h: 16 },
+    path_se: { img: 'cfCobbleRoad', x: 32, y: 32, w: 16, h: 16 },
     water: { img: 'cfWater', x: 0, y: 0, w: 16, h: 16 },
 
-    // Buildings. castle reuses the house sprite (no castle asset in these two packs).
+    // Buildings. castle reuses the house sprite (no castle asset in this pack yet — M2 will give
+    // featured companies a unique building).
     house: { img: 'cfHouse', x: 0, y: 0, w: 96, h: 128 },
     castle: { img: 'cfHouse', x: 0, y: 0, w: 96, h: 128 },
 
-    // Decor.
-    tree: { img: 'cfOakTree', x: 0, y: 0, w: 64, h: 80 },
-    tree_small: { img: 'cfOakTreeSmall', x: 32, y: 0, w: 32, h: 48 },
+    // Decor. Big_Oak_Tree.png (192x80) and Medium_Oak_Tree.png (96x48) are each a 3-cell strip —
+    // stump / grown-tree-with-ground-shadow / grown-tree-no-shadow — so the middle (shadowed)
+    // cell is used for both, matching the old single-tree assets' footprint exactly.
+    tree: { img: 'cfBigOak', x: 64, y: 0, w: 64, h: 80 },
+    tree_small: { img: 'cfMedOak', x: 32, y: 0, w: 32, h: 48 },
     fence: { img: 'cfFences', x: 0, y: 0, w: 16, h: 32 },
-    bush: { img: 'slBiomThings', x: 0, y: 48, w: 16, h: 16 },
-    rock: { img: 'slBiomThings', x: 112, y: 16, w: 16, h: 16 },
-    flower: { img: 'slBiomThings', x: 112, y: 48, w: 16, h: 16 },
+    // Outdoor_Decor.png (144x416) is a 9-col x 26-row catalog of 16px decor icons (verified by
+    // grid overlay + crop). bush = a clean round green bush ball (row5,col5); rock = a plain grey
+    // boulder with a grass tuft (row5,col0) — chosen over several blue-outlined "shore rock"
+    // variants in the same sheet, which read as water-adjacent rather than generic ground decor.
+    bush: { img: 'cfOutdoorDecor', x: 80, y: 80, w: 16, h: 16 },
+    rock: { img: 'cfOutdoorDecor', x: 0, y: 80, w: 16, h: 16 },
+    // Flowers.png (160x160) is a 10x10 catalog of single-flower/potted-flower icons; (0,0) is a
+    // clean standalone red flower with its own grass tuft and shadow, fully inside its 16x16 cell.
+    flower: { img: 'cfFlowers', x: 0, y: 0, w: 16, h: 16 },
 
-    // Avatar walk cycle. Player.png is 192x320, a 6-col x 10-row grid of 32x32 frames.
-    // Confirmed by viewing: row 0 = down (front, face visible), row 2 = up (back of head),
-    // row 4 = right-facing side profile. Frame columns 0/2/4 give a clear 3-pose stride
-    // (contact / passing / contact). carlos_left reuses the right-row rects — the renderer
-    // is expected to mirror them horizontally via drawFlipped.
-    carlos_down_0: { img: 'cfPlayer', x: 0, y: 0, w: 32, h: 32 },
-    carlos_down_1: { img: 'cfPlayer', x: 64, y: 0, w: 32, h: 32 },
-    carlos_down_2: { img: 'cfPlayer', x: 128, y: 0, w: 32, h: 32 },
-    carlos_up_0: { img: 'cfPlayer', x: 0, y: 64, w: 32, h: 32 },
-    carlos_up_1: { img: 'cfPlayer', x: 64, y: 64, w: 32, h: 32 },
-    carlos_up_2: { img: 'cfPlayer', x: 128, y: 64, w: 32, h: 32 },
-    carlos_right_0: { img: 'cfPlayer', x: 0, y: 128, w: 32, h: 32 },
-    carlos_right_1: { img: 'cfPlayer', x: 64, y: 128, w: 32, h: 32 },
-    carlos_right_2: { img: 'cfPlayer', x: 128, y: 128, w: 32, h: 32 },
-    carlos_left_0: { img: 'cfPlayer', x: 0, y: 128, w: 32, h: 32 },
-    carlos_left_1: { img: 'cfPlayer', x: 64, y: 128, w: 32, h: 32 },
-    carlos_left_2: { img: 'cfPlayer', x: 128, y: 128, w: 32, h: 32 },
+    // Avatar walk cycle. Player_Base_animations.png (576x3584) is the new MODULAR base-body sheet
+    // (skin only — clothing/hair are separate layered PNGs the renderer doesn't composite yet).
+    // Grid: 64x64 cells, 9 cols. Content-mapped by per-cell alpha scan + zoomed visual read: every
+    // animation occupies 3 consecutive rows in the fixed order [down, right, up] (confirmed by
+    // silhouette — row0-family shows front-facing eyes, row1-family shows a single side-profile
+    // eye facing right, row2-family shows a featureless back-of-head) — there is no dedicated left
+    // row anywhere in the sheet. Rows 0-2 are "Idle" (near-static across all 6 frames — used
+    // nowhere here). Rows 3-5 are "Walk" (visible per-frame leg-cross motion) — that's what's
+    // mapped below. Columns 0/2/4 of the 6-frame walk cycle give a contact/passing/contact stride,
+    // matching the previous sheet's 3-pose approach. carlos_left reuses the right-row rects, same
+    // as before this re-map — the renderer's drawFlipped() mirrors them horizontally (in fact
+    // scene2d.js's drawAvatar already substitutes 'right' for the frame lookup whenever
+    // player.dir === 'left', so these rects are never read standalone at runtime — kept only so
+    // the manifest/tiles.js walkFrame() contract stays complete).
+    carlos_down_0: { img: 'cfPlayer', x: 0, y: 192, w: 64, h: 64 },
+    carlos_down_1: { img: 'cfPlayer', x: 128, y: 192, w: 64, h: 64 },
+    carlos_down_2: { img: 'cfPlayer', x: 256, y: 192, w: 64, h: 64 },
+    carlos_up_0: { img: 'cfPlayer', x: 0, y: 320, w: 64, h: 64 },
+    carlos_up_1: { img: 'cfPlayer', x: 128, y: 320, w: 64, h: 64 },
+    carlos_up_2: { img: 'cfPlayer', x: 256, y: 320, w: 64, h: 64 },
+    carlos_right_0: { img: 'cfPlayer', x: 0, y: 256, w: 64, h: 64 },
+    carlos_right_1: { img: 'cfPlayer', x: 128, y: 256, w: 64, h: 64 },
+    carlos_right_2: { img: 'cfPlayer', x: 256, y: 256, w: 64, h: 64 },
+    carlos_left_0: { img: 'cfPlayer', x: 0, y: 256, w: 64, h: 64 },
+    carlos_left_1: { img: 'cfPlayer', x: 128, y: 256, w: 64, h: 64 },
+    carlos_left_2: { img: 'cfPlayer', x: 256, y: 256, w: 64, h: 64 },
 
-    // Farm animal. Chicken.png is 64x64, a 2x2 grid of 32x32 frames.
-    chicken_0: { img: 'cfChicken', x: 0, y: 0, w: 32, h: 32 },
-    chicken_1: { img: 'cfChicken', x: 32, y: 0, w: 32, h: 32 },
+    // Farm animal. Chicken_01.png (256x512) is a 32px-cell, 8-col x 16-row modular sheet (this
+    // pack ships 18 chicken color recolors as separate files; _01 is the default white). Row 2
+    // (y=64) is an 8-frame side-view walk cycle facing right (confirmed by viewing the row —
+    // clear alternating leg positions frame to frame); columns 0 and 4 are opposite phases of
+    // that cycle, giving 2 visually distinct walk poses.
+    chicken_0: { img: 'cfChicken', x: 0, y: 64, w: 32, h: 32 },
+    chicken_1: { img: 'cfChicken', x: 128, y: 64, w: 32, h: 32 },
   },
 }
 
