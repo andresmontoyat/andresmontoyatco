@@ -22,6 +22,21 @@ export const MANIFEST = {
     cfCobbleRoad: '/game/cute-fantasy/Tiles/Cobble_Road/Cobble_Road_1.png',
     cfWater: '/game/cute-fantasy/Tiles/Water/Water_Middle.png',
     cfHouse: '/game/cute-fantasy/Buildings/Buildings/Houses/Wood/House_1_Wood_Base_Blue.png',
+    // Regular-company house variants — all House_1_* are the same 96x128 single-building footprint
+    // across three wall materials × two roof colors, so they're drop-in distinct sprites for the
+    // deterministic per-company pick (overworld.js HOUSES) with no footprint change.
+    cfHouseWoodRed: '/game/cute-fantasy/Buildings/Buildings/Houses/Wood/House_1_Wood_Base_Red.png',
+    cfHouseStoneBlue: '/game/cute-fantasy/Buildings/Buildings/Houses/Stone/House_1_Stone_Base_Blue.png',
+    cfHouseStoneRed: '/game/cute-fantasy/Buildings/Buildings/Houses/Stone/House_1_Stone_Base_Red.png',
+    cfHouseLimeBlue: '/game/cute-fantasy/Buildings/Buildings/Houses/Limestone/House_1_Limestone_Base_Blue.png',
+    cfHouseLimeRed: '/game/cute-fantasy/Buildings/Buildings/Houses/Limestone/House_1_Limestone_Base_Red.png',
+    // Featured-company landmarks + the farm barn (Unique_Buildings). Church_Blue is a 4-frame
+    // door/window-lit strip (448x144 → 112px frames); frame 0 is the closed, unlit church. Inn and
+    // Blacksmith are single buildings; Barn marks the farm spawn.
+    cfChurch: '/game/cute-fantasy/Buildings/Buildings/Unique_Buildings/Church/Church_Blue.png',
+    cfInn: '/game/cute-fantasy/Buildings/Buildings/Unique_Buildings/Inn/Inn_Red.png',
+    cfBlacksmith: '/game/cute-fantasy/Buildings/Buildings/Unique_Buildings/Blacksmith_House/Blacksmith_House_Blue.png',
+    cfBarn: '/game/cute-fantasy/Buildings/Buildings/Unique_Buildings/Barn/Barn_Base_Red.png',
     cfBigOak: '/game/cute-fantasy/Trees/Big_Oak_Tree.png',
     cfMedOak: '/game/cute-fantasy/Trees/Medium_Oak_Tree.png',
     cfFences: '/game/cute-fantasy/Outdoor%20decoration/Fences.png',
@@ -92,10 +107,19 @@ export const MANIFEST = {
     path_se: { img: 'cfCobbleRoad', x: 32, y: 32, w: 16, h: 16 },
     water: { img: 'cfWater', x: 0, y: 0, w: 16, h: 16 },
 
-    // Buildings. castle reuses the house sprite (no castle asset in this pack yet — M2 will give
-    // featured companies a unique building).
+    // Buildings. Every regular company draws one of these six single-house sprites (whole PNG is
+    // one 96x128 building); every featured company draws a landmark (church frame 0 / inn /
+    // blacksmith); the farm spawn draws the barn. overworld.js assigns the frame per site.
     house: { img: 'cfHouse', x: 0, y: 0, w: 96, h: 128 },
-    castle: { img: 'cfHouse', x: 0, y: 0, w: 96, h: 128 },
+    house_wood_red: { img: 'cfHouseWoodRed', x: 0, y: 0, w: 96, h: 128 },
+    house_stone_blue: { img: 'cfHouseStoneBlue', x: 0, y: 0, w: 96, h: 128 },
+    house_stone_red: { img: 'cfHouseStoneRed', x: 0, y: 0, w: 96, h: 128 },
+    house_lime_blue: { img: 'cfHouseLimeBlue', x: 0, y: 0, w: 96, h: 128 },
+    house_lime_red: { img: 'cfHouseLimeRed', x: 0, y: 0, w: 96, h: 128 },
+    church: { img: 'cfChurch', x: 0, y: 0, w: 112, h: 144 },
+    inn: { img: 'cfInn', x: 0, y: 0, w: 240, h: 192 },
+    blacksmith: { img: 'cfBlacksmith', x: 0, y: 0, w: 160, h: 128 },
+    barn: { img: 'cfBarn', x: 0, y: 0, w: 128, h: 144 },
 
     // Decor. Big_Oak_Tree.png (192x80) and Medium_Oak_Tree.png (96x48) are each a 3-cell strip —
     // stump / grown-tree-with-ground-shadow / grown-tree-no-shadow — so the middle (shadowed)

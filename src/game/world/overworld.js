@@ -24,13 +24,40 @@ function ringPos(center, i, n) {
   return { cx: center.x + Math.cos(ang) * 155 + (i - (n - 1) / 2) * 18, cy: center.y + Math.sin(ang) * 108 - 40 }
 }
 
+// Regular companies each get one of these six single-house sprites; featured companies get a
+// landmark. The sprite is chosen by a stable hash of the entry's id (falling back to company name)
+// so the same company always reads as the same building regardless of sort order or how many
+// others share its biome — no positional index, so reordering the data never reshuffles the town.
+const HOUSES = ['house', 'house_wood_red', 'house_stone_blue', 'house_stone_red', 'house_lime_blue', 'house_lime_red']
+const LANDMARKS = ['church', 'inn', 'blacksmith']
+// Draw footprint per building frame — each is the sprite's native aspect scaled to world size, so
+// nothing stretches. Also the collision box + label anchor (buildingSolids / doorPoint read w,h).
+const BUILDING_DIMS = {
+  house: { w: 66, h: 88 }, house_wood_red: { w: 66, h: 88 }, house_stone_blue: { w: 66, h: 88 },
+  house_stone_red: { w: 66, h: 88 }, house_lime_blue: { w: 66, h: 88 }, house_lime_red: { w: 66, h: 88 },
+  church: { w: 98, h: 126 }, inn: { w: 150, h: 120 }, blacksmith: { w: 120, h: 96 }, barn: { w: 104, h: 117 },
+}
+
+function hashStr(s) {
+  let h = 0
+  for (let i = 0; i < s.length; i += 1) h = (Math.imul(h, 31) + s.charCodeAt(i)) | 0
+  return h >>> 0
+}
+
+export function buildingFor(e) {
+  const set = e.featured ? LANDMARKS : HOUSES
+  return set[hashStr(String(e.id || e.co || e.company || '')) % set.length]
+}
+
 function toSite(e, bi, pos, hidden) {
   const featured = !!e.featured
+  const building = buildingFor(e)
+  const dim = BUILDING_DIMS[building]
   return {
     id: e.id, co: e.company || e.co, title: e.title, date: e.date,
     metric: e.metric || null, tech: e.tech || [], bi,
-    type: featured ? 'castle' : 'house',
-    cx: pos.cx, cy: pos.cy, w: featured ? 92 : 66, h: featured ? 104 : 78,
+    type: featured ? 'castle' : 'house', building,
+    cx: pos.cx, cy: pos.cy, w: dim.w, h: dim.h,
     seen: false, hidden: !!hidden,
   }
 }
@@ -119,7 +146,14 @@ export function buildOverworld(json, biomeForYear, sideProjects = []) {
   // `path` is kept as-is (the intro camera / other callers may still want the plain spine
   // polyline) — `roads` is the full graph (spine + door spurs + POI loops) scene2d.js renders.
   const roads = buildRoads(path, sites, hiddenSites)
+  // The farm spawn gets a real Barn landmark (not a company — no dialog/label). Placed up-left with
+  // its whole footprint clear of the player's spawn box (spawn is at farm.x, farm.y + 70): the
+  // barn's right edge (cx + w/2) stays left of the spawn column so its collision solid never traps
+  // the player on frame 1.
+  const farmBuilding = {
+    building: 'barn', cx: ANCHORS.farm.x - 100, cy: ANCHORS.farm.y - 110, ...BUILDING_DIMS.barn,
+  }
   return {
-    farm: ANCHORS.farm, regions, sites, hiddenSites, worldW: WORLD_W, worldH: WORLD_H, path, roads,
+    farm: ANCHORS.farm, regions, sites, hiddenSites, farmBuilding, worldW: WORLD_W, worldH: WORLD_H, path, roads,
   }
 }

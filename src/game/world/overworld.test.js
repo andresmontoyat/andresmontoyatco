@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { startYear, buildOverworld, projectOntoSpine } from './overworld.js'
+import { startYear, buildOverworld, projectOntoSpine, buildingFor } from './overworld.js'
 import { biomeForYear } from './biomes.js'
 import { doorPoint } from '../entities/site.js'
 
@@ -49,6 +49,27 @@ describe('buildOverworld', () => {
       expect(s.cy).toBeGreaterThanOrEqual(0)
       expect(s.cy).toBeLessThanOrEqual(w.worldH)
     }
+  })
+  it('gives featured sites a landmark building and regular sites a house', () => {
+    const HOUSES = ['house', 'house_wood_red', 'house_stone_blue', 'house_stone_red', 'house_lime_blue', 'house_lime_red']
+    const LANDMARKS = ['church', 'inn', 'blacksmith']
+    expect(LANDMARKS).toContain(w.sites.find(s => s.id === 'a').building)
+    expect(HOUSES).toContain(w.sites.find(s => s.id === 'b').building)
+  })
+  it('assigns each building deterministically from the entry id', () => {
+    expect(w.sites.find(s => s.id === 'a').building).toBe(buildingFor({ id: 'a', featured: true }))
+    expect(w.sites.find(s => s.id === 'b').building).toBe(buildingFor({ id: 'b' }))
+  })
+  it('sizes each site footprint to its building', () => {
+    const inn = buildOverworld({ entries: [{ id: 'inn-co', visible: true, featured: true, date: { en: '2026' }, title: {}, company: 'X' }] }, biomeForYear)
+    const s = inn.sites[0]
+    if (s.building === 'inn') { expect(s.w).toBe(150); expect(s.h).toBe(120) }
+    expect(s.w).toBeGreaterThan(0)
+    expect(s.h).toBeGreaterThan(0)
+  })
+  it('places a barn landmark at the farm spawn', () => {
+    expect(w.farmBuilding.building).toBe('barn')
+    expect(w.farmBuilding.w).toBeGreaterThan(0)
   })
   it('flags injected side-projects as hidden', () => {
     const w3 = buildOverworld(JSON_FIXTURE, biomeForYear, [{ co: 'Mr. Yoker', title: { en: 'Indie', es: 'Indie' }, date: { en: 'side', es: 'propio' }, tech: ['Astro'] }])

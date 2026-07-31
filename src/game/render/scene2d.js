@@ -197,8 +197,8 @@ function buildingDrawable(s, cam) {
     draw: (ctx, sprites) => {
       const bx = s.cx - s.w / 2 - cam.x
       const by = s.cy - cam.y
-      sprites.draw(ctx, s.type === 'castle' ? 'castle' : 'house', bx, by, s.w, s.h)
-      drawBuildingLabel(ctx, s, bx, by)
+      sprites.draw(ctx, s.building, bx, by, s.w, s.h)
+      if (s.co) drawBuildingLabel(ctx, s, bx, by)
     },
   }
 }
@@ -207,7 +207,8 @@ function buildingDrawable(s, cam) {
 // ground-contact baseY) so things nearer the bottom of the screen correctly occlude things
 // behind them, instead of buildings/avatar always drawing on top of decor regardless of depth.
 function depthSortedDrawables(state, cam, t) {
-  const buildings = activeSites(state).map(s => buildingDrawable(s, cam))
+  const structures = activeSites(state).concat(state.world.farmBuilding ? [state.world.farmBuilding] : [])
+  const buildings = structures.map(s => buildingDrawable(s, cam))
   const drawOne = d => (ctx, sprites) => drawDecorItem(ctx, d, cam, sprites, t)
   const decor = (state.decor || []).map(d => ({ baseY: d.y, draw: drawOne(d) }))
   const critters = critterDrawables(state, cam, t)

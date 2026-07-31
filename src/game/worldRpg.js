@@ -27,8 +27,16 @@ const FOOTSTEP_EVERY = 14
 // this predicate is the single source of truth both sides check.
 export function canControl(state) { return state.intro.done() }
 
-function buildingSolids(sites) {
-  return sites.map(s => ({ x: s.cx - s.w / 2, y: s.cy, w: s.w, h: s.h }))
+function solidOf(s) {
+  return { x: s.cx - s.w / 2, y: s.cy, w: s.w, h: s.h }
+}
+
+// Building collision boxes: every company structure plus the farm barn (a landmark with a
+// footprint but no dialog), so the player can't walk through any of them.
+function buildingSolids(sites, farmBuilding) {
+  const solids = sites.map(solidOf)
+  if (farmBuilding) solids.push(solidOf(farmBuilding))
+  return solids
 }
 
 // Small AABB around each solid decor item's ground-contact point (trunk/base width, not the
@@ -56,7 +64,7 @@ function updateRegionMusic(state) {
 
 export function update(state, input, dtChars) {
   const frozen = state.dialog.isOpen()
-  const solids = buildingSolids(activeSites(state)).concat(decorSolids(state.decor || []))
+  const solids = buildingSolids(activeSites(state), state.world.farmBuilding).concat(decorSolids(state.decor || []))
   const r = stepMovement(state.player, { ...input, frozen }, solids, { w: state.world.worldW, h: state.world.worldH })
   state.player.x = r.x; state.player.y = r.y; state.player.dir = r.dir; state.player.moving = r.moving
   state.player.step = r.moving ? state.player.step + STEP_RATE : 0
