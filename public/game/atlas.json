@@ -1,0 +1,343 @@
+{
+  "images": {
+    "atlas": "/game/atlas.png"
+  },
+  "frames": {
+    "castle": {
+      "img": "atlas",
+      "x": 0,
+      "y": 0,
+      "w": 96,
+      "h": 128
+    },
+    "house": {
+      "img": "atlas",
+      "x": 0,
+      "y": 0,
+      "w": 96,
+      "h": 128
+    },
+    "tree": {
+      "img": "atlas",
+      "x": 96,
+      "y": 0,
+      "w": 64,
+      "h": 80
+    },
+    "carlos_down_0": {
+      "img": "atlas",
+      "x": 160,
+      "y": 0,
+      "w": 64,
+      "h": 64
+    },
+    "carlos_down_1": {
+      "img": "atlas",
+      "x": 224,
+      "y": 0,
+      "w": 64,
+      "h": 64
+    },
+    "carlos_down_2": {
+      "img": "atlas",
+      "x": 288,
+      "y": 0,
+      "w": 64,
+      "h": 64
+    },
+    "carlos_left_0": {
+      "img": "atlas",
+      "x": 352,
+      "y": 0,
+      "w": 64,
+      "h": 64
+    },
+    "carlos_right_0": {
+      "img": "atlas",
+      "x": 352,
+      "y": 0,
+      "w": 64,
+      "h": 64
+    },
+    "carlos_left_1": {
+      "img": "atlas",
+      "x": 416,
+      "y": 0,
+      "w": 64,
+      "h": 64
+    },
+    "carlos_right_1": {
+      "img": "atlas",
+      "x": 416,
+      "y": 0,
+      "w": 64,
+      "h": 64
+    },
+    "carlos_left_2": {
+      "img": "atlas",
+      "x": 0,
+      "y": 128,
+      "w": 64,
+      "h": 64
+    },
+    "carlos_right_2": {
+      "img": "atlas",
+      "x": 0,
+      "y": 128,
+      "w": 64,
+      "h": 64
+    },
+    "carlos_up_0": {
+      "img": "atlas",
+      "x": 64,
+      "y": 128,
+      "w": 64,
+      "h": 64
+    },
+    "carlos_up_1": {
+      "img": "atlas",
+      "x": 128,
+      "y": 128,
+      "w": 64,
+      "h": 64
+    },
+    "carlos_up_2": {
+      "img": "atlas",
+      "x": 192,
+      "y": 128,
+      "w": 64,
+      "h": 64
+    },
+    "tree_small": {
+      "img": "atlas",
+      "x": 256,
+      "y": 128,
+      "w": 32,
+      "h": 48
+    },
+    "chicken_0": {
+      "img": "atlas",
+      "x": 288,
+      "y": 128,
+      "w": 32,
+      "h": 32
+    },
+    "chicken_1": {
+      "img": "atlas",
+      "x": 320,
+      "y": 128,
+      "w": 32,
+      "h": 32
+    },
+    "fence": {
+      "img": "atlas",
+      "x": 352,
+      "y": 128,
+      "w": 16,
+      "h": 32
+    },
+    "bush": {
+      "img": "atlas",
+      "x": 368,
+      "y": 128,
+      "w": 16,
+      "h": 16
+    },
+    "flower": {
+      "img": "atlas",
+      "x": 384,
+      "y": 128,
+      "w": 16,
+      "h": 16
+    },
+    "ground_castillo": {
+      "img": "atlas",
+      "x": 400,
+      "y": 128,
+      "w": 16,
+      "h": 16
+    },
+    "ground_castillo_2": {
+      "img": "atlas",
+      "x": 416,
+      "y": 128,
+      "w": 16,
+      "h": 16
+    },
+    "ground_cyber": {
+      "img": "atlas",
+      "x": 432,
+      "y": 128,
+      "w": 16,
+      "h": 16
+    },
+    "ground_cyber_2": {
+      "img": "atlas",
+      "x": 448,
+      "y": 128,
+      "w": 16,
+      "h": 16
+    },
+    "ground_desierto": {
+      "img": "atlas",
+      "x": 464,
+      "y": 128,
+      "w": 16,
+      "h": 16
+    },
+    "ground_desierto_2": {
+      "img": "atlas",
+      "x": 480,
+      "y": 128,
+      "w": 16,
+      "h": 16
+    },
+    "ground_desierto_3": {
+      "img": "atlas",
+      "x": 496,
+      "y": 128,
+      "w": 16,
+      "h": 16
+    },
+    "ground_farm": {
+      "img": "atlas",
+      "x": 0,
+      "y": 192,
+      "w": 16,
+      "h": 16
+    },
+    "ground_pradera_3": {
+      "img": "atlas",
+      "x": 0,
+      "y": 192,
+      "w": 16,
+      "h": 16
+    },
+    "ground_selva_2": {
+      "img": "atlas",
+      "x": 0,
+      "y": 192,
+      "w": 16,
+      "h": 16
+    },
+    "ground_farm_2": {
+      "img": "atlas",
+      "x": 16,
+      "y": 192,
+      "w": 16,
+      "h": 16
+    },
+    "ground_pradera_2": {
+      "img": "atlas",
+      "x": 16,
+      "y": 192,
+      "w": 16,
+      "h": 16
+    },
+    "ground_selva_3": {
+      "img": "atlas",
+      "x": 16,
+      "y": 192,
+      "w": 16,
+      "h": 16
+    },
+    "ground_farm_3": {
+      "img": "atlas",
+      "x": 32,
+      "y": 192,
+      "w": 16,
+      "h": 16
+    },
+    "ground_pradera": {
+      "img": "atlas",
+      "x": 32,
+      "y": 192,
+      "w": 16,
+      "h": 16
+    },
+    "ground_selva": {
+      "img": "atlas",
+      "x": 48,
+      "y": 192,
+      "w": 16,
+      "h": 16
+    },
+    "path_center": {
+      "img": "atlas",
+      "x": 64,
+      "y": 192,
+      "w": 16,
+      "h": 16
+    },
+    "path_e": {
+      "img": "atlas",
+      "x": 80,
+      "y": 192,
+      "w": 16,
+      "h": 16
+    },
+    "path_n": {
+      "img": "atlas",
+      "x": 96,
+      "y": 192,
+      "w": 16,
+      "h": 16
+    },
+    "path_ne": {
+      "img": "atlas",
+      "x": 112,
+      "y": 192,
+      "w": 16,
+      "h": 16
+    },
+    "path_nw": {
+      "img": "atlas",
+      "x": 128,
+      "y": 192,
+      "w": 16,
+      "h": 16
+    },
+    "path_s": {
+      "img": "atlas",
+      "x": 144,
+      "y": 192,
+      "w": 16,
+      "h": 16
+    },
+    "path_se": {
+      "img": "atlas",
+      "x": 160,
+      "y": 192,
+      "w": 16,
+      "h": 16
+    },
+    "path_sw": {
+      "img": "atlas",
+      "x": 176,
+      "y": 192,
+      "w": 16,
+      "h": 16
+    },
+    "path_w": {
+      "img": "atlas",
+      "x": 192,
+      "y": 192,
+      "w": 16,
+      "h": 16
+    },
+    "rock": {
+      "img": "atlas",
+      "x": 208,
+      "y": 192,
+      "w": 16,
+      "h": 16
+    },
+    "water": {
+      "img": "atlas",
+      "x": 224,
+      "y": 192,
+      "w": 16,
+      "h": 16
+    }
+  }
+}

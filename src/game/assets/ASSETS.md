@@ -13,9 +13,33 @@ Read the full terms in `public/game/cute-fantasy/read_me.txt` before any commerc
 
 **This is a PAID/premium asset pack.** Use within this product (the built site) is covered by the
 license above. Do NOT redistribute the raw pack files (e.g. don't publish `public/game/cute-fantasy/`
-as a downloadable/browsable asset zip, don't commit it to a public template repo, etc.). A follow-up
-milestone will bake the frames actually used into a single generated atlas image and gitignore the
-raw pack directory, so the repo itself stops shipping the full unmodified asset tree.
+as a downloadable/browsable asset zip, don't commit it to a public template repo, etc.).
+
+**M4 (asset atlas pipeline):** `public/game/cute-fantasy/` (and `public/game/sprout-lands-sprites/`)
+are gitignored — the raw pack lives only on disk locally, never committed, never deployed. The repo
+and the production build instead ship a single baked atlas of only the frames the game actually
+uses:
+
+- `public/game/atlas.png` — one small generated PNG (tens of KB, not the ~6MB/718-file raw pack)
+- `src/game/assets/atlas.json` (+ a copy at `public/game/atlas.json`) — frame-rect metadata in the
+  same shape `loadSprites()` consumes: `{ images: { atlas: '/game/atlas.png' }, frames: { <name>: {
+  img: 'atlas', x, y, w, h } } }`
+
+`src/game/assets/manifest.js` is now only the **bake recipe** — it still maps every frame name to
+its rect in the raw source files, but nothing at runtime imports it anymore. `src/game/worldRpg.js`
+imports the baked `src/game/assets/atlas.json` directly and loads it with the unchanged
+`loadSprites()` API (one image now, instead of ~18).
+
+**To regenerate the atlas** after adding/moving a frame in `manifest.js`: make sure the raw pack is
+present under `public/game/cute-fantasy/` locally, then run:
+
+```
+npm run assets:pack
+```
+
+This re-extracts every referenced frame from the raw source files with `sharp`, shelf-packs them
+deterministically into `public/game/atlas.png`, and rewrites both `atlas.json` copies. Commit the
+regenerated `public/game/atlas.png` + `src/game/assets/atlas.json` — never the raw pack itself.
 
 Sprout Lands (Cup Nooble) has been fully removed — every frame now sources from this one pack, for a
 single cohesive license story.

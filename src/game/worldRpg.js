@@ -11,7 +11,7 @@ import { render2d, activeSites, regionsWithFarm } from './render/scene2d.js'
 import { nearestBiome } from './render/tiles.js'
 import { createLoop } from './engine/loop.js'
 import { loadSprites } from './assets/loader.js'
-import { MANIFEST } from './assets/manifest.js'
+import ATLAS from './assets/atlas.json'
 import { createParticles, burst } from './render/juice.js'
 import { createCritters, updateCritters } from './entities/critters.js'
 import { DAY_LEN } from './render/ambient.js'
@@ -154,7 +154,7 @@ export function createWorldRpg({
     const onPointer = () => armAudio()
     canvas.addEventListener('pointerdown', onPointer)
     detachPointer = () => canvas.removeEventListener('pointerdown', onPointer)
-    loadSprites(MANIFEST).then(sprites => { state.sprites = sprites })
+    loadSprites(ATLAS).then(sprites => { state.sprites = sprites })
     const ctx = canvas.getContext('2d')
     const step = ts => {
       if (!state.intro.done()) {

@@ -46,3 +46,11 @@ me.png
 test-results/
 playwright-report/
 lighthouse-report*
+
+# Raw paid asset packs (use-in-product license only, no redistribution) — never commit the full
+# unmodified pack. Only the baked atlas (public/game/atlas.png + atlas.json) ships; regenerate the
+# atlas with `npm run assets:pack` after editing src/game/assets/manifest.js.
+public/game/cute-fantasy/
+public/game/sprout-lands-sprites/
+!public/game/atlas.png
+!public/game/atlas.json

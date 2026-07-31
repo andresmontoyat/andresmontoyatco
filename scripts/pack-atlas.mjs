@@ -1,0 +1,110 @@
+// Bakes only the sprite frames actually referenced by src/game/assets/manifest.js into a single
+// atlas image + json, so the game ships a tiny generated atlas instead of the full raw paid pack
+// (public/game/cute-fantasy/, gitignored — see .gitignore + src/game/assets/ASSETS.md).
+//
+// Run: node scripts/pack-atlas.mjs (npm run assets:pack)
+//
+// Deterministic: frames are deduped by their exact (img,x,y,w,h) source rect, then shelf-packed
+// in a fixed order (tallest-first, name as tiebreaker) into one PNG. No Date.now/Math.random.
+
+import path from 'node:path'
+import fs from 'node:fs/promises'
+import sharp from 'sharp'
+import { MANIFEST } from '../src/game/assets/manifest.js'
+
+const ROOT = process.cwd()
+const MAX_ATLAS_WIDTH = 512
+const OUT_PNG = path.join(ROOT, 'public', 'game', 'atlas.png')
+const OUT_JSON_SRC = path.join(ROOT, 'src', 'game', 'assets', 'atlas.json')
+const OUT_JSON_PUBLIC = path.join(ROOT, 'public', 'game', 'atlas.json')
+
+function sourceFileFor(imgKey) {
+  const rel = decodeURIComponent(MANIFEST.images[imgKey])
+  return path.join(ROOT, 'public', rel)
+}
+
+function rectKey(f) {
+  return `${f.img}|${f.x}|${f.y}|${f.w}|${f.h}`
+}
+
+// Group every named frame by its unique source rect; keep the alphabetically-first name as the
+// representative used for sort order (packing order), but remember every name for the json output.
+function dedupeFrames(frames) {
+  const byRect = new Map()
+  Object.keys(frames).sort().forEach(name => {
+    const f = frames[name]
+    const key = rectKey(f)
+    if (!byRect.has(key)) byRect.set(key, { key, img: f.img, sx: f.x, sy: f.y, w: f.w, h: f.h, names: [] })
+    byRect.get(key).names.push(name)
+  })
+  return [...byRect.values()]
+}
+
+// Shelf-pack: sort tallest-first (better packing density), name as deterministic tiebreaker, then
+// lay frames left-to-right until MAX_ATLAS_WIDTH is exceeded, wrapping to a new shelf below.
+// Keeps the source rect (sx,sy = offset to extract FROM) separate from the destination rect
+// (x,y = where it lands IN the atlas) — conflating the two reads the wrong source pixels.
+function shelfPack(rects) {
+  const order = [...rects].sort((a, b) => (b.h - a.h) || a.names[0].localeCompare(b.names[0]))
+  let x = 0
+  let y = 0
+  let shelfHeight = 0
+  let atlasWidth = 0
+  const placed = order.map(r => {
+    if (x > 0 && x + r.w > MAX_ATLAS_WIDTH) {
+      y += shelfHeight
+      x = 0
+      shelfHeight = 0
+    }
+    const pos = { ...r, x, y }
+    atlasWidth = Math.max(atlasWidth, x + r.w)
+    x += r.w
+    shelfHeight = Math.max(shelfHeight, r.h)
+    return pos
+  })
+  return { placed, atlasWidth, atlasHeight: y + shelfHeight }
+}
+
+async function extractBuffer(rect) {
+  const file = sourceFileFor(rect.img)
+  return sharp(file).extract({ left: rect.sx, top: rect.sy, width: rect.w, height: rect.h }).png().toBuffer()
+}
+
+async function buildAtlas() {
+  const uniqueRects = dedupeFrames(MANIFEST.frames)
+  const { placed, atlasWidth, atlasHeight } = shelfPack(uniqueRects)
+
+  const buffers = await Promise.all(placed.map(extractBuffer))
+  const composite = placed.map((rect, i) => ({ input: buffers[i], left: rect.x, top: rect.y }))
+
+  await fs.mkdir(path.dirname(OUT_PNG), { recursive: true })
+  await sharp({
+    create: { width: atlasWidth, height: atlasHeight, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0 } },
+  }).composite(composite).png().toFile(OUT_PNG)
+
+  const outFrames = {}
+  placed.forEach(rect => {
+    rect.names.forEach(name => {
+      outFrames[name] = { img: 'atlas', x: rect.x, y: rect.y, w: rect.w, h: rect.h }
+    })
+  })
+  const atlasJson = { images: { atlas: '/game/atlas.png' }, frames: outFrames }
+  const json = `${JSON.stringify(atlasJson, null, 2)}\n`
+
+  await fs.mkdir(path.dirname(OUT_JSON_SRC), { recursive: true })
+  await fs.writeFile(OUT_JSON_SRC, json)
+  await fs.mkdir(path.dirname(OUT_JSON_PUBLIC), { recursive: true })
+  await fs.writeFile(OUT_JSON_PUBLIC, json)
+
+  const stat = await fs.stat(OUT_PNG)
+  const frameCount = Object.keys(outFrames).length
+  console.log(`atlas: ${atlasWidth}x${atlasHeight}px, ${placed.length} unique cells, ${frameCount} named frames, ${(stat.size / 1024).toFixed(1)}KB`)
+  console.log(`wrote ${path.relative(ROOT, OUT_PNG)}`)
+  console.log(`wrote ${path.relative(ROOT, OUT_JSON_SRC)}`)
+  console.log(`wrote ${path.relative(ROOT, OUT_JSON_PUBLIC)}`)
+}
+
+buildAtlas().catch(err => {
+  console.error(err)
+  process.exit(1)
+})
