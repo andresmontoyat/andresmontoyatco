@@ -99,15 +99,17 @@ export function waterTileName(n, e, s, w) {
   return edgeTileName('water', n, e, s, w)
 }
 
-// Avatar draw order, bottom → top: bare base body, then the modular Iron-plate armor layers.
-// drawAvatar (scene2d.js) draws avatarFrame(layer, dir, step) for each, stacked at the same
-// dx,dy — the layer frames share the base's rects (see manifest.js) so they composite exactly.
-export const AVATAR_LAYERS = ['carlos', 'legs', 'chest', 'helm']
+// Avatar draw order, bottom → top: bare base body, jeans, boots, shirt, hair. drawAvatar
+// (scene2d.js) stacks avatarFrame(layer, dir, moving, phase) for each at the same dx,dy — the
+// layer frames share the base's rects (see manifest.js) so they composite exactly.
+export const AVATAR_LAYERS = ['carlos', 'legs', 'feet', 'chest', 'hair']
+export const AVATAR_WALK_FRAMES = 6
+export const AVATAR_IDLE_FRAMES = 2
 
-export function avatarFrame(layer, dir, step) {
-  return `${layer}_${dir}_${Math.floor(step) % 3}`
-}
-
-export function walkFrame(dir, step) {
-  return avatarFrame('carlos', dir, step)
+// Which frame name to draw for a layer. Walking cycles all 6 stride cells by `phase`; standing
+// cycles the 2 idle cells (subtle breathing). Callers pass the appropriate phase (floor(step) for
+// walk, a slow clock index for idle). Modulo is written to stay in range for any integer phase.
+export function avatarFrame(layer, dir, moving, phase) {
+  if (moving) return `${layer}_${dir}_${((phase % AVATAR_WALK_FRAMES) + AVATAR_WALK_FRAMES) % AVATAR_WALK_FRAMES}`
+  return `${layer}_${dir}_idle${((phase % AVATAR_IDLE_FRAMES) + AVATAR_IDLE_FRAMES) % AVATAR_IDLE_FRAMES}`
 }

@@ -74,7 +74,7 @@ async function extractBuffer(rect) {
 // pack file (Player.png) that the migration removed and that the atlas pipeline no longer ships —
 // so bake a self-contained 64x64 PNG of the dressed hero (idle-down frame: base + Iron plate
 // legs/chest/helm) that DOES ship in public/game/, and repoint both index.astro imgs at it.
-const AVATAR_PREVIEW_LAYERS = ['cfPlayer', 'cfLegs', 'cfChest', 'cfHelm']
+const AVATAR_PREVIEW_LAYERS = ['cfPlayer', 'cfLegs', 'cfFeet', 'cfChest', 'cfHair']
 const OUT_AVATAR = path.join(ROOT, 'public', 'game', 'avatar-preview.png')
 
 async function buildAvatarPreview() {

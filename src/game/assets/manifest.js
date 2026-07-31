@@ -9,6 +9,36 @@
 // its own reorganized folder tree). Every frame name below is unchanged from before this re-map —
 // only img/{x,y,w,h} moved — so scene2d.js/tiles.js/ambient.js keep working untouched.
 
+// Modular avatar layers → their source image. Draw order is bottom→top (see tiles.js
+// AVATAR_LAYERS): base body, jeans, boots, shirt, hair.
+const AVATAR_LAYER_IMG = {
+  carlos: 'cfPlayer', legs: 'cfLegs', feet: 'cfFeet', chest: 'cfChest', hair: 'cfHair',
+}
+// Row y-offset of the idle vs walk block per facing direction (left mirrors right at draw time).
+const AVATAR_ROWS = {
+  down: { idle: 0, walk: 192 }, right: { idle: 64, walk: 256 }, up: { idle: 128, walk: 320 },
+}
+const AVATAR_WALK_FRAMES = 6 // full stride, cols 0-5
+const AVATAR_IDLE_COLS = [0, 3] // two near-static poses → subtle breathing loop
+
+// Every avatar frame, generated so a layer/direction/pose never drifts out of sync: for each layer
+// and direction, 6 walk cells (`<layer>_<dir>_0..5`) and 2 idle cells (`<layer>_<dir>_idle0..1`).
+// The tests regenerate these names the same way, so adding a layer changes both in one place.
+export const AVATAR_FRAMES = (() => {
+  const frames = {}
+  for (const [layer, img] of Object.entries(AVATAR_LAYER_IMG)) {
+    for (const [dir, rows] of Object.entries(AVATAR_ROWS)) {
+      for (let i = 0; i < AVATAR_WALK_FRAMES; i += 1) {
+        frames[`${layer}_${dir}_${i}`] = { img, x: i * 64, y: rows.walk, w: 64, h: 64 }
+      }
+      AVATAR_IDLE_COLS.forEach((col, i) => {
+        frames[`${layer}_${dir}_idle${i}`] = { img, x: col * 64, y: rows.idle, w: 64, h: 64 }
+      })
+    }
+  }
+  return frames
+})()
+
 export const MANIFEST = {
   images: {
     cfGrass1: '/game/cute-fantasy/Tiles/Grass/Grass_1_Middle.png',
@@ -60,13 +90,15 @@ export const MANIFEST = {
     // real frame animation (see render/anim.js), so decor flowers breathe instead of sitting frozen.
     cfFlowerWind: '/game/cute-fantasy/Outdoor%20decoration/Outdoor_Decor_Animations/Grass_Animations/Flower_Grass_1_Anim.png',
     cfPlayer: '/game/cute-fantasy/Player/Player_Base/Player_Base_animations.png',
-    // Modular armor layers — same 576x3584 grid as the base body (verified: every layer PNG in the
-    // Player/ modular system shares the base's cell layout), so a layer's walk cells sit at the
-    // exact same {x,y,w,h} as the base's carlos_* frames and composite pixel-perfect when stacked
-    // in drawAvatar. Iron palette = neutral steel grey (fits the brand's cool cyber/AI eras).
-    cfHelm: '/game/cute-fantasy/Player/Head/Plate_Helmet_1/Plate_Helmet_1_Iron.png',
-    cfChest: '/game/cute-fantasy/Player/Chest/Plate_Chest/Plate_Chest_Iron.png',
-    cfLegs: '/game/cute-fantasy/Player/Legs/Plate_Legs/Plate_Legs_Iron.png',
+    // Modular clothing layers — same 576x3584 grid as the base body (verified: every layer PNG in
+    // the Player/ modular system shares the base's cell layout), so a layer's cells sit at the exact
+    // same {x,y,w,h} as the base's frames and composite pixel-perfect when stacked in drawAvatar.
+    // Carlos = casual "lumberjack" dev: red plaid shirt (pops on grass) + black jeans + brown boots
+    // + brown hair. No helmet — hair shows, and the red reads far better than the old grey plate.
+    cfLegs: '/game/cute-fantasy/Player/Legs/OG_Pants/Pants_1_Black.png',
+    cfFeet: '/game/cute-fantasy/Player/Feet/Shoes_1_Brown.png',
+    cfChest: '/game/cute-fantasy/Player/Chest/Lumberjack_Shirt/Lumberjack_Shirt_1_Red.png',
+    cfHair: '/game/cute-fantasy/Player/Head/Hair_2/Hair_2_Brown.png',
     cfChicken: '/game/cute-fantasy/Animals/Chicken/Chicken_01.png',
     // More farm critters. Same 32px-cell modular grid as the chicken; the right-facing walk row
     // differs per species (measured by viewing each sheet): duck walks in row 1 (y32), cow in
@@ -212,64 +244,13 @@ export const MANIFEST = {
     flowerwind_6: { img: 'cfFlowerWind', x: 96, y: 0, w: 16, h: 16 },
     flowerwind_7: { img: 'cfFlowerWind', x: 112, y: 0, w: 16, h: 16 },
 
-    // Avatar walk cycle. Player_Base_animations.png (576x3584) is the new MODULAR base-body sheet
-    // (skin only — clothing/hair are separate layered PNGs the renderer doesn't composite yet).
-    // Grid: 64x64 cells, 9 cols. Content-mapped by per-cell alpha scan + zoomed visual read: every
-    // animation occupies 3 consecutive rows in the fixed order [down, right, up] (confirmed by
-    // silhouette — row0-family shows front-facing eyes, row1-family shows a single side-profile
-    // eye facing right, row2-family shows a featureless back-of-head) — there is no dedicated left
-    // row anywhere in the sheet. Rows 0-2 are "Idle" (near-static across all 6 frames — used
-    // nowhere here). Rows 3-5 are "Walk" (visible per-frame leg-cross motion) — that's what's
-    // mapped below. Columns 0/2/4 of the 6-frame walk cycle give a contact/passing/contact stride,
-    // matching the previous sheet's 3-pose approach. carlos_left reuses the right-row rects, same
-    // as before this re-map — the renderer's drawFlipped() mirrors them horizontally (in fact
-    // scene2d.js's drawAvatar already substitutes 'right' for the frame lookup whenever
-    // player.dir === 'left', so these rects are never read standalone at runtime — kept only so
-    // the manifest/tiles.js walkFrame() contract stays complete).
-    carlos_down_0: { img: 'cfPlayer', x: 0, y: 192, w: 64, h: 64 },
-    carlos_down_1: { img: 'cfPlayer', x: 128, y: 192, w: 64, h: 64 },
-    carlos_down_2: { img: 'cfPlayer', x: 256, y: 192, w: 64, h: 64 },
-    carlos_up_0: { img: 'cfPlayer', x: 0, y: 320, w: 64, h: 64 },
-    carlos_up_1: { img: 'cfPlayer', x: 128, y: 320, w: 64, h: 64 },
-    carlos_up_2: { img: 'cfPlayer', x: 256, y: 320, w: 64, h: 64 },
-    carlos_right_0: { img: 'cfPlayer', x: 0, y: 256, w: 64, h: 64 },
-    carlos_right_1: { img: 'cfPlayer', x: 128, y: 256, w: 64, h: 64 },
-    carlos_right_2: { img: 'cfPlayer', x: 256, y: 256, w: 64, h: 64 },
-    carlos_left_0: { img: 'cfPlayer', x: 0, y: 256, w: 64, h: 64 },
-    carlos_left_1: { img: 'cfPlayer', x: 128, y: 256, w: 64, h: 64 },
-    carlos_left_2: { img: 'cfPlayer', x: 256, y: 256, w: 64, h: 64 },
-
-    // Armor overlay frames — identical rects to the carlos_* base frames above, one set per layer
-    // (legs → chest → helm draw order). drawAvatar (scene2d.js) stacks base + these three at the
-    // same dx,dy so the modular parts land exactly over the body. Left reuses the right-facing rects
-    // (drawAvatar mirrors 'left' to 'right' before lookup, same as the base), so no _left set here.
-    legs_down_0: { img: 'cfLegs', x: 0, y: 192, w: 64, h: 64 },
-    legs_down_1: { img: 'cfLegs', x: 128, y: 192, w: 64, h: 64 },
-    legs_down_2: { img: 'cfLegs', x: 256, y: 192, w: 64, h: 64 },
-    legs_up_0: { img: 'cfLegs', x: 0, y: 320, w: 64, h: 64 },
-    legs_up_1: { img: 'cfLegs', x: 128, y: 320, w: 64, h: 64 },
-    legs_up_2: { img: 'cfLegs', x: 256, y: 320, w: 64, h: 64 },
-    legs_right_0: { img: 'cfLegs', x: 0, y: 256, w: 64, h: 64 },
-    legs_right_1: { img: 'cfLegs', x: 128, y: 256, w: 64, h: 64 },
-    legs_right_2: { img: 'cfLegs', x: 256, y: 256, w: 64, h: 64 },
-    chest_down_0: { img: 'cfChest', x: 0, y: 192, w: 64, h: 64 },
-    chest_down_1: { img: 'cfChest', x: 128, y: 192, w: 64, h: 64 },
-    chest_down_2: { img: 'cfChest', x: 256, y: 192, w: 64, h: 64 },
-    chest_up_0: { img: 'cfChest', x: 0, y: 320, w: 64, h: 64 },
-    chest_up_1: { img: 'cfChest', x: 128, y: 320, w: 64, h: 64 },
-    chest_up_2: { img: 'cfChest', x: 256, y: 320, w: 64, h: 64 },
-    chest_right_0: { img: 'cfChest', x: 0, y: 256, w: 64, h: 64 },
-    chest_right_1: { img: 'cfChest', x: 128, y: 256, w: 64, h: 64 },
-    chest_right_2: { img: 'cfChest', x: 256, y: 256, w: 64, h: 64 },
-    helm_down_0: { img: 'cfHelm', x: 0, y: 192, w: 64, h: 64 },
-    helm_down_1: { img: 'cfHelm', x: 128, y: 192, w: 64, h: 64 },
-    helm_down_2: { img: 'cfHelm', x: 256, y: 192, w: 64, h: 64 },
-    helm_up_0: { img: 'cfHelm', x: 0, y: 320, w: 64, h: 64 },
-    helm_up_1: { img: 'cfHelm', x: 128, y: 320, w: 64, h: 64 },
-    helm_up_2: { img: 'cfHelm', x: 256, y: 320, w: 64, h: 64 },
-    helm_right_0: { img: 'cfHelm', x: 0, y: 256, w: 64, h: 64 },
-    helm_right_1: { img: 'cfHelm', x: 128, y: 256, w: 64, h: 64 },
-    helm_right_2: { img: 'cfHelm', x: 256, y: 256, w: 64, h: 64 },
+    // Avatar frames — generated by AVATAR_FRAMES (see below), one set per modular layer
+    // (carlos base + legs/feet/chest/hair), each layer sharing the base's cell rects so they
+    // composite pixel-perfect when drawAvatar stacks them. Player_Base_animations.png (576x3584,
+    // 64x64 cells, 9 cols) lays out rows [down, right, up] for Idle (rows 0-2, y 0/64/128) then
+    // Walk (rows 3-5, y 192/256/320); there is no dedicated left row (drawAvatar mirrors right).
+    // Walk uses all 6 cols (full stride); idle uses 2 cols for a subtle breathing loop.
+    ...AVATAR_FRAMES,
 
     // Farm animal. Chicken_01.png (256x512) is a 32px-cell, 8-col x 16-row modular sheet (this
     // pack ships 18 chicken color recolors as separate files; _01 is the default white). Row 2

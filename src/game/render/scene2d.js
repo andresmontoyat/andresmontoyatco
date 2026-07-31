@@ -3,7 +3,7 @@ import {
 } from './tiles.js'
 import { BIOMES } from '../world/biomes.js'
 import { drawAmbient, swayOffset, DAY_LEN } from './ambient.js'
-import { animFrame } from './anim.js'
+import { animFrame, animIndex } from './anim.js'
 import { critterDrawables } from '../entities/critters.js'
 import { shake2D } from '../engine/camera2d.js'
 import { phaseOf, nightTint } from './lighting.js'
@@ -172,18 +172,23 @@ function drawBuildingLabel(ctx, s, bx, by) {
   if (s.seen) ctx.fillText('✓', bx + s.w - 10, by - 6)
 }
 
-// Carlos is drawn as a stack of modular sprites (bare base + Iron-plate legs/chest/helm — see
-// AVATAR_LAYERS), each layer sharing the base's frame rects so they land pixel-aligned. There's no
-// dedicated left-facing row in the sheet, so 'left' reuses the right-facing frames mirrored via
-// drawFlipped (same substitution the base used before this became layered).
+// Idle breathing cadence: state.clock advances ~96 units/sec, so ~44 units per idle frame gives a
+// gentle ~0.9s two-frame loop while standing.
+const IDLE_TICKS = 44
+
+// Carlos is drawn as a stack of modular sprites (bare base + jeans/boots/shirt/hair — see
+// AVATAR_LAYERS), each layer sharing the base's frame rects so they land pixel-aligned. Walking
+// cycles the 6-frame stride by floor(step); standing runs the 2-frame idle off the clock. There's
+// no dedicated left row, so 'left' reuses the right frames mirrored via drawFlipped.
 function drawAvatar(ctx, state, cam, sprites) {
   const { player } = state
   const dir = player.dir === 'left' ? 'right' : player.dir
-  const step = player.moving ? player.step : 0
+  const moving = player.moving
+  const phase = moving ? Math.floor(player.step) : animIndex(state.clock || 0, IDLE_TICKS, 2)
   const dx = player.x - AVATAR_W / 2 - cam.x
   const dy = player.y - AVATAR_H / 2 - cam.y
   const paint = player.dir === 'left' ? sprites.drawFlipped : sprites.draw
-  AVATAR_LAYERS.forEach(layer => paint(ctx, avatarFrame(layer, dir, step), dx, dy, AVATAR_W, AVATAR_H))
+  AVATAR_LAYERS.forEach(layer => paint(ctx, avatarFrame(layer, dir, moving, phase), dx, dy, AVATAR_W, AVATAR_H))
 }
 
 // Ground-contact footprint (world w/h) per decor type — used both to size the sprite and to

@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import {
-  nearestBiome, tileNameFor, walkFrame, pathTileName, waterTileName, avatarFrame, AVATAR_LAYERS,
+  nearestBiome, tileNameFor, pathTileName, waterTileName, avatarFrame, AVATAR_LAYERS,
 } from './tiles.js'
 
 const regions = [{ bi: 'pradera', x: 0, y: 0 }, { bi: 'cyber', x: 1000, y: 0 }]
@@ -82,20 +82,17 @@ describe('waterTileName', () => {
   })
 })
 
-describe('walkFrame', () => {
-  it('cycles 3 frames per direction', () => {
-    expect(walkFrame('down', 0)).toBe('carlos_down_0')
-    expect(walkFrame('left', 5)).toBe(`carlos_left_${5 % 3}`)
-  })
-})
-
 describe('avatarFrame', () => {
-  it('names a frame per layer, direction and 3-step cycle', () => {
-    expect(avatarFrame('helm', 'up', 4)).toBe('helm_up_1')
-    expect(avatarFrame('carlos', 'down', 0)).toBe('carlos_down_0')
+  it('cycles all 6 stride cells while moving', () => {
+    expect(avatarFrame('chest', 'down', true, 0)).toBe('chest_down_0')
+    expect(avatarFrame('chest', 'down', true, 5)).toBe('chest_down_5')
+    expect(avatarFrame('chest', 'down', true, 6)).toBe('chest_down_0')
   })
-
-  it('layers the bare base below the three armor pieces, top piece last', () => {
-    expect(AVATAR_LAYERS).toEqual(['carlos', 'legs', 'chest', 'helm'])
+  it('runs the 2-frame idle loop while standing', () => {
+    expect(avatarFrame('carlos', 'right', false, 0)).toBe('carlos_right_idle0')
+    expect(avatarFrame('carlos', 'right', false, 3)).toBe('carlos_right_idle1')
+  })
+  it('layers base → jeans → boots → shirt → hair, hair on top', () => {
+    expect(AVATAR_LAYERS).toEqual(['carlos', 'legs', 'feet', 'chest', 'hair'])
   })
 })
