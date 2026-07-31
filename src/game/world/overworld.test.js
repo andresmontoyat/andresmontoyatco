@@ -71,6 +71,18 @@ describe('buildOverworld', () => {
     expect(w.farmBuilding.building).toBe('barn')
     expect(w.farmBuilding.w).toBeGreaterThan(0)
   })
+  it('exposes ponds inside world bounds, clear of every building footprint', () => {
+    expect(w.ponds.length).toBeGreaterThan(0)
+    w.ponds.forEach(p => {
+      expect(p.x - p.r).toBeGreaterThan(0)
+      expect(p.x + p.r).toBeLessThan(w.worldW)
+      expect(p.y - p.r).toBeGreaterThan(0)
+      expect(p.y + p.r).toBeLessThan(w.worldH)
+      w.sites.forEach(s => {
+        expect(Math.hypot(p.x - s.cx, p.y - s.cy)).toBeGreaterThan(p.r + Math.max(s.w, s.h) / 2)
+      })
+    })
+  })
   it('places an animated windmill at the farm, clear of the spawn column', () => {
     expect(w.farmWindmill.w).toBeGreaterThan(0)
     expect(w.farmWindmill.h).toBeGreaterThan(0)

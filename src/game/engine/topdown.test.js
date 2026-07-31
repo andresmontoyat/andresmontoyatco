@@ -9,6 +9,17 @@ describe('aabb', () => {
   it('detects separation', () => { expect(aabb(0, 0, 10, 10, 50, 50, 10, 10)).toBe(false) })
 })
 
+describe('hits with circle solids (ponds)', () => {
+  const pond = { cx: 200, cy: 200, r: 40 }
+  it('blocks when the player box reaches the pond radius', () => {
+    expect(hits(200, 200, 12, [pond])).toBe(true)
+    expect(hits(230, 200, 12, [pond])).toBe(true) // box edge (218) inside r
+  })
+  it('does not block clearly outside the radius', () => {
+    expect(hits(260, 200, 12, [pond])).toBe(false)
+  })
+})
+
 describe('stepMovement', () => {
   it('moves right and sets dir', () => {
     const r = stepMovement(P, { R: 1 }, [], bounds, { speed: 3 })

@@ -444,255 +444,493 @@
       "w": 16,
       "h": 32
     },
-    "bush": {
+    "kapybara_0": {
       "img": "atlas",
       "x": 176,
       "y": 784,
-      "w": 16,
-      "h": 16
+      "w": 32,
+      "h": 32
     },
-    "flowerwind_0": {
-      "img": "atlas",
-      "x": 192,
-      "y": 784,
-      "w": 16,
-      "h": 16
-    },
-    "flowerwind_1": {
+    "kapybara_1": {
       "img": "atlas",
       "x": 208,
       "y": 784,
-      "w": 16,
-      "h": 16
+      "w": 32,
+      "h": 32
     },
-    "flowerwind_2": {
-      "img": "atlas",
-      "x": 224,
-      "y": 784,
-      "w": 16,
-      "h": 16
-    },
-    "flowerwind_3": {
+    "kapybara_2": {
       "img": "atlas",
       "x": 240,
       "y": 784,
-      "w": 16,
-      "h": 16
+      "w": 32,
+      "h": 32
     },
-    "flowerwind_4": {
-      "img": "atlas",
-      "x": 256,
-      "y": 784,
-      "w": 16,
-      "h": 16
-    },
-    "flowerwind_5": {
+    "kapybara_3": {
       "img": "atlas",
       "x": 272,
       "y": 784,
-      "w": 16,
-      "h": 16
+      "w": 32,
+      "h": 32
     },
-    "flowerwind_6": {
-      "img": "atlas",
-      "x": 288,
-      "y": 784,
-      "w": 16,
-      "h": 16
-    },
-    "flowerwind_7": {
+    "kapybara_4": {
       "img": "atlas",
       "x": 304,
       "y": 784,
-      "w": 16,
-      "h": 16
+      "w": 32,
+      "h": 32
     },
-    "ground_castillo": {
-      "img": "atlas",
-      "x": 320,
-      "y": 784,
-      "w": 16,
-      "h": 16
-    },
-    "ground_castillo_2": {
+    "kapybara_5": {
       "img": "atlas",
       "x": 336,
       "y": 784,
-      "w": 16,
-      "h": 16
+      "w": 32,
+      "h": 32
     },
-    "ground_cyber": {
-      "img": "atlas",
-      "x": 352,
-      "y": 784,
-      "w": 16,
-      "h": 16
-    },
-    "ground_cyber_2": {
+    "kapybara_6": {
       "img": "atlas",
       "x": 368,
       "y": 784,
-      "w": 16,
-      "h": 16
+      "w": 32,
+      "h": 32
     },
-    "ground_desierto": {
-      "img": "atlas",
-      "x": 384,
-      "y": 784,
-      "w": 16,
-      "h": 16
-    },
-    "ground_desierto_2": {
+    "kapybara_7": {
       "img": "atlas",
       "x": 400,
       "y": 784,
-      "w": 16,
-      "h": 16
+      "w": 32,
+      "h": 32
     },
-    "ground_desierto_3": {
-      "img": "atlas",
-      "x": 416,
-      "y": 784,
-      "w": 16,
-      "h": 16
-    },
-    "ground_farm": {
+    "kapybara_8": {
       "img": "atlas",
       "x": 432,
       "y": 784,
-      "w": 16,
-      "h": 16
+      "w": 32,
+      "h": 32
     },
-    "ground_pradera_3": {
-      "img": "atlas",
-      "x": 432,
-      "y": 784,
-      "w": 16,
-      "h": 16
-    },
-    "ground_selva_2": {
-      "img": "atlas",
-      "x": 432,
-      "y": 784,
-      "w": 16,
-      "h": 16
-    },
-    "ground_farm_2": {
-      "img": "atlas",
-      "x": 448,
-      "y": 784,
-      "w": 16,
-      "h": 16
-    },
-    "ground_pradera_2": {
-      "img": "atlas",
-      "x": 448,
-      "y": 784,
-      "w": 16,
-      "h": 16
-    },
-    "ground_selva_3": {
-      "img": "atlas",
-      "x": 448,
-      "y": 784,
-      "w": 16,
-      "h": 16
-    },
-    "ground_farm_3": {
+    "bush": {
       "img": "atlas",
       "x": 464,
       "y": 784,
       "w": 16,
       "h": 16
     },
-    "ground_pradera": {
-      "img": "atlas",
-      "x": 464,
-      "y": 784,
-      "w": 16,
-      "h": 16
-    },
-    "ground_selva": {
+    "cattail_0": {
       "img": "atlas",
       "x": 480,
       "y": 784,
       "w": 16,
       "h": 16
     },
-    "path_center": {
+    "cattail_1": {
       "img": "atlas",
       "x": 496,
       "y": 784,
       "w": 16,
       "h": 16
     },
-    "path_e": {
+    "cattail_2": {
       "img": "atlas",
       "x": 0,
       "y": 816,
       "w": 16,
       "h": 16
     },
-    "path_n": {
+    "cattail_3": {
       "img": "atlas",
       "x": 16,
       "y": 816,
       "w": 16,
       "h": 16
     },
-    "path_ne": {
+    "cattail_4": {
       "img": "atlas",
       "x": 32,
       "y": 816,
       "w": 16,
       "h": 16
     },
-    "path_nw": {
+    "cattail_5": {
       "img": "atlas",
       "x": 48,
       "y": 816,
       "w": 16,
       "h": 16
     },
-    "path_s": {
+    "cattail_6": {
       "img": "atlas",
       "x": 64,
       "y": 816,
       "w": 16,
       "h": 16
     },
-    "path_se": {
+    "cattail_7": {
       "img": "atlas",
       "x": 80,
       "y": 816,
       "w": 16,
       "h": 16
     },
-    "path_sw": {
+    "flowerwind_0": {
       "img": "atlas",
       "x": 96,
       "y": 816,
       "w": 16,
       "h": 16
     },
-    "path_w": {
+    "flowerwind_1": {
       "img": "atlas",
       "x": 112,
       "y": 816,
       "w": 16,
       "h": 16
     },
-    "rock": {
+    "flowerwind_2": {
       "img": "atlas",
       "x": 128,
       "y": 816,
       "w": 16,
       "h": 16
     },
-    "water": {
+    "flowerwind_3": {
       "img": "atlas",
       "x": 144,
       "y": 816,
+      "w": 16,
+      "h": 16
+    },
+    "flowerwind_4": {
+      "img": "atlas",
+      "x": 160,
+      "y": 816,
+      "w": 16,
+      "h": 16
+    },
+    "flowerwind_5": {
+      "img": "atlas",
+      "x": 176,
+      "y": 816,
+      "w": 16,
+      "h": 16
+    },
+    "flowerwind_6": {
+      "img": "atlas",
+      "x": 192,
+      "y": 816,
+      "w": 16,
+      "h": 16
+    },
+    "flowerwind_7": {
+      "img": "atlas",
+      "x": 208,
+      "y": 816,
+      "w": 16,
+      "h": 16
+    },
+    "ground_castillo": {
+      "img": "atlas",
+      "x": 224,
+      "y": 816,
+      "w": 16,
+      "h": 16
+    },
+    "ground_castillo_2": {
+      "img": "atlas",
+      "x": 240,
+      "y": 816,
+      "w": 16,
+      "h": 16
+    },
+    "ground_cyber": {
+      "img": "atlas",
+      "x": 256,
+      "y": 816,
+      "w": 16,
+      "h": 16
+    },
+    "ground_cyber_2": {
+      "img": "atlas",
+      "x": 272,
+      "y": 816,
+      "w": 16,
+      "h": 16
+    },
+    "ground_desierto": {
+      "img": "atlas",
+      "x": 288,
+      "y": 816,
+      "w": 16,
+      "h": 16
+    },
+    "ground_desierto_2": {
+      "img": "atlas",
+      "x": 304,
+      "y": 816,
+      "w": 16,
+      "h": 16
+    },
+    "ground_desierto_3": {
+      "img": "atlas",
+      "x": 320,
+      "y": 816,
+      "w": 16,
+      "h": 16
+    },
+    "ground_farm": {
+      "img": "atlas",
+      "x": 336,
+      "y": 816,
+      "w": 16,
+      "h": 16
+    },
+    "ground_pradera_3": {
+      "img": "atlas",
+      "x": 336,
+      "y": 816,
+      "w": 16,
+      "h": 16
+    },
+    "ground_selva_2": {
+      "img": "atlas",
+      "x": 336,
+      "y": 816,
+      "w": 16,
+      "h": 16
+    },
+    "ground_farm_2": {
+      "img": "atlas",
+      "x": 352,
+      "y": 816,
+      "w": 16,
+      "h": 16
+    },
+    "ground_pradera_2": {
+      "img": "atlas",
+      "x": 352,
+      "y": 816,
+      "w": 16,
+      "h": 16
+    },
+    "ground_selva_3": {
+      "img": "atlas",
+      "x": 352,
+      "y": 816,
+      "w": 16,
+      "h": 16
+    },
+    "ground_farm_3": {
+      "img": "atlas",
+      "x": 368,
+      "y": 816,
+      "w": 16,
+      "h": 16
+    },
+    "ground_pradera": {
+      "img": "atlas",
+      "x": 368,
+      "y": 816,
+      "w": 16,
+      "h": 16
+    },
+    "ground_selva": {
+      "img": "atlas",
+      "x": 384,
+      "y": 816,
+      "w": 16,
+      "h": 16
+    },
+    "lilypad_0": {
+      "img": "atlas",
+      "x": 400,
+      "y": 816,
+      "w": 16,
+      "h": 16
+    },
+    "lilypad_1": {
+      "img": "atlas",
+      "x": 416,
+      "y": 816,
+      "w": 16,
+      "h": 16
+    },
+    "lilypad_2": {
+      "img": "atlas",
+      "x": 432,
+      "y": 816,
+      "w": 16,
+      "h": 16
+    },
+    "lilypad_3": {
+      "img": "atlas",
+      "x": 448,
+      "y": 816,
+      "w": 16,
+      "h": 16
+    },
+    "lilypad_4": {
+      "img": "atlas",
+      "x": 464,
+      "y": 816,
+      "w": 16,
+      "h": 16
+    },
+    "lilypad_5": {
+      "img": "atlas",
+      "x": 480,
+      "y": 816,
+      "w": 16,
+      "h": 16
+    },
+    "lilypad_6": {
+      "img": "atlas",
+      "x": 496,
+      "y": 816,
+      "w": 16,
+      "h": 16
+    },
+    "lilypad_7": {
+      "img": "atlas",
+      "x": 0,
+      "y": 832,
+      "w": 16,
+      "h": 16
+    },
+    "path_center": {
+      "img": "atlas",
+      "x": 16,
+      "y": 832,
+      "w": 16,
+      "h": 16
+    },
+    "path_e": {
+      "img": "atlas",
+      "x": 32,
+      "y": 832,
+      "w": 16,
+      "h": 16
+    },
+    "path_n": {
+      "img": "atlas",
+      "x": 48,
+      "y": 832,
+      "w": 16,
+      "h": 16
+    },
+    "path_ne": {
+      "img": "atlas",
+      "x": 64,
+      "y": 832,
+      "w": 16,
+      "h": 16
+    },
+    "path_nw": {
+      "img": "atlas",
+      "x": 80,
+      "y": 832,
+      "w": 16,
+      "h": 16
+    },
+    "path_s": {
+      "img": "atlas",
+      "x": 96,
+      "y": 832,
+      "w": 16,
+      "h": 16
+    },
+    "path_se": {
+      "img": "atlas",
+      "x": 112,
+      "y": 832,
+      "w": 16,
+      "h": 16
+    },
+    "path_sw": {
+      "img": "atlas",
+      "x": 128,
+      "y": 832,
+      "w": 16,
+      "h": 16
+    },
+    "path_w": {
+      "img": "atlas",
+      "x": 144,
+      "y": 832,
+      "w": 16,
+      "h": 16
+    },
+    "rock": {
+      "img": "atlas",
+      "x": 160,
+      "y": 832,
+      "w": 16,
+      "h": 16
+    },
+    "water": {
+      "img": "atlas",
+      "x": 176,
+      "y": 832,
+      "w": 16,
+      "h": 16
+    },
+    "water_center": {
+      "img": "atlas",
+      "x": 192,
+      "y": 832,
+      "w": 16,
+      "h": 16
+    },
+    "water_e": {
+      "img": "atlas",
+      "x": 208,
+      "y": 832,
+      "w": 16,
+      "h": 16
+    },
+    "water_n": {
+      "img": "atlas",
+      "x": 224,
+      "y": 832,
+      "w": 16,
+      "h": 16
+    },
+    "water_ne": {
+      "img": "atlas",
+      "x": 240,
+      "y": 832,
+      "w": 16,
+      "h": 16
+    },
+    "water_nw": {
+      "img": "atlas",
+      "x": 256,
+      "y": 832,
+      "w": 16,
+      "h": 16
+    },
+    "water_s": {
+      "img": "atlas",
+      "x": 272,
+      "y": 832,
+      "w": 16,
+      "h": 16
+    },
+    "water_se": {
+      "img": "atlas",
+      "x": 288,
+      "y": 832,
+      "w": 16,
+      "h": 16
+    },
+    "water_sw": {
+      "img": "atlas",
+      "x": 304,
+      "y": 832,
+      "w": 16,
+      "h": 16
+    },
+    "water_w": {
+      "img": "atlas",
+      "x": 320,
+      "y": 832,
       "w": 16,
       "h": 16
     }

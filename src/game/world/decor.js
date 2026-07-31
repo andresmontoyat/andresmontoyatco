@@ -47,6 +47,25 @@ function placeOne(rand, world, rects, circles) {
   return { x, y, type, solid: SOLID_TYPES.has(type) }
 }
 
+// Aquatic decor per pond: a few floating lilypads + cattails plus one bathing kapybara — all
+// non-solid, sitting on water the player can't reach anyway. Deterministic (same seeded PRNG). The
+// Kapybara_Idle sprite has an opaque water background (it's a capybara IN the water), so it's kept
+// well inside the pond (<=0.3r) where that background blends with the water tiles rather than
+// showing as a square on the grass bank. Lilypads/cattails are transparent and float within 0.68r.
+function buildPondLife(ponds, rand) {
+  return (ponds || []).flatMap(p => {
+    const life = []
+    for (let i = 0; i < 4; i += 1) {
+      const a = rand() * Math.PI * 2
+      const r = Math.sqrt(rand()) * p.r * 0.68
+      life.push({ x: p.x + Math.cos(a) * r, y: p.y + Math.sin(a) * r, type: rand() < 0.6 ? 'lilypad' : 'cattail', solid: false })
+    }
+    const ka = rand() * Math.PI * 2
+    life.push({ x: p.x + Math.cos(ka) * p.r * 0.3, y: p.y + Math.sin(ka) * p.r * 0.3, type: 'kapybara', solid: false })
+    return life
+  })
+}
+
 export function buildDecor(world, seed = 1) {
   const rand = mulberry32(seed)
   const rects = buildingRects(world)
@@ -57,7 +76,7 @@ export function buildDecor(world, seed = 1) {
     const d = placeOne(rand, world, rects, circles)
     if (d) decor.push(d)
   }
-  return decor
+  return decor.concat(buildPondLife(world.ponds, rand))
 }
 
 export default buildDecor

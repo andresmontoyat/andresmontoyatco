@@ -73,18 +73,30 @@ export function tileNameFor(bi, wx, wy, nearPathDist) {
 // isolated one-tile-wide sliver), has no single matching cell in a 9-frame set; falling back to
 // the solid center reads as "still road" rather than a mismatched edge, which is the safer
 // choice for an approximation this simple.
-export function pathTileName(n, e, s, w) {
+// Rounded-island 9-cell autotile picker shared by the cobble road and the pond water — both use
+// the same 3x3 cell geometry (center / 4 straight edges / 4 corners). `n/e/s/w` are whether that
+// neighbor is also part of the same body (on-road or on-water); the returned suffix names which
+// cell blends the grass border on the OPEN sides. `prefix` selects the frame family.
+export function edgeTileName(prefix, n, e, s, w) {
   const offN = !n; const offE = !e; const offS = !s; const offW = !w
-  if (!offN && !offE && !offS && !offW) return 'path_center'
-  if (offN && offW && !offE && !offS) return 'path_nw'
-  if (offN && offE && !offW && !offS) return 'path_ne'
-  if (offS && offW && !offE && !offN) return 'path_sw'
-  if (offS && offE && !offW && !offN) return 'path_se'
-  if (offN && !offE && !offS && !offW) return 'path_n'
-  if (offS && !offE && !offN && !offW) return 'path_s'
-  if (offW && !offN && !offE && !offS) return 'path_w'
-  if (offE && !offN && !offS && !offW) return 'path_e'
-  return 'path_center'
+  if (!offN && !offE && !offS && !offW) return `${prefix}_center`
+  if (offN && offW && !offE && !offS) return `${prefix}_nw`
+  if (offN && offE && !offW && !offS) return `${prefix}_ne`
+  if (offS && offW && !offE && !offN) return `${prefix}_sw`
+  if (offS && offE && !offW && !offN) return `${prefix}_se`
+  if (offN && !offE && !offS && !offW) return `${prefix}_n`
+  if (offS && !offE && !offN && !offW) return `${prefix}_s`
+  if (offW && !offN && !offE && !offS) return `${prefix}_w`
+  if (offE && !offN && !offS && !offW) return `${prefix}_e`
+  return `${prefix}_center`
+}
+
+export function pathTileName(n, e, s, w) {
+  return edgeTileName('path', n, e, s, w)
+}
+
+export function waterTileName(n, e, s, w) {
+  return edgeTileName('water', n, e, s, w)
 }
 
 // Avatar draw order, bottom → top: bare base body, then the modular Iron-plate armor layers.

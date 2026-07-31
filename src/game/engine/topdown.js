@@ -2,9 +2,19 @@ export function aabb(ax, ay, aw, ah, bx, by, bw, bh) {
   return ax < bx + bw && ax + aw > bx && ay < by + bh && ay + ah > by
 }
 
+// A solid is either an AABB ({x,y,w,h}) or a circle ({cx,cy,r} — used for ponds). For a circle we
+// test the closest point on the player's AABB to the circle centre against the radius.
+function hitsCircle(cx, cy, half, s) {
+  const nx = Math.max(cx - half, Math.min(s.cx, cx + half))
+  const ny = Math.max(cy - half, Math.min(s.cy, cy + half))
+  return (nx - s.cx) ** 2 + (ny - s.cy) ** 2 < s.r * s.r
+}
+
 export function hits(cx, cy, half, solids) {
   for (const s of solids) {
-    if (aabb(cx - half, cy - half, half * 2, half * 2, s.x, s.y, s.w, s.h)) return true
+    if (s.r != null) {
+      if (hitsCircle(cx, cy, half, s)) return true
+    } else if (aabb(cx - half, cy - half, half * 2, half * 2, s.x, s.y, s.w, s.h)) return true
   }
   return false
 }

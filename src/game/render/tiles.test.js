@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import {
-  nearestBiome, tileNameFor, walkFrame, pathTileName, avatarFrame, AVATAR_LAYERS,
+  nearestBiome, tileNameFor, walkFrame, pathTileName, waterTileName, avatarFrame, AVATAR_LAYERS,
 } from './tiles.js'
 
 const regions = [{ bi: 'pradera', x: 0, y: 0 }, { bi: 'cyber', x: 1000, y: 0 }]
@@ -70,6 +70,15 @@ describe('pathTileName', () => {
     // 3+ sides off path (a lone tip) — same fallback.
     expect(pathTileName(false, false, false, true)).toBe('path_center')
     expect(pathTileName(false, false, false, false)).toBe('path_center')
+  })
+})
+
+describe('waterTileName', () => {
+  it('shares the road autotiler but emits the water frame family', () => {
+    expect(waterTileName(true, true, true, true)).toBe('water_center')
+    expect(waterTileName(false, true, true, true)).toBe('water_n')
+    expect(waterTileName(false, true, true, false)).toBe('water_nw')
+    expect(waterTileName(true, false, false, true)).toBe('water_se')
   })
 })
 

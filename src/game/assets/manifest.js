@@ -21,6 +21,14 @@ export const MANIFEST = {
     cfStoneCliff3: '/game/cute-fantasy/Tiles/Cliff/Stone_Cliff_3_Tile.png',
     cfCobbleRoad: '/game/cute-fantasy/Tiles/Cobble_Road/Cobble_Road_1.png',
     cfWater: '/game/cute-fantasy/Tiles/Water/Water_Middle.png',
+    // Pond water autotile — Water_Tile_1.png (48x80) is the same rounded-island 9-cell set as the
+    // cobble road: water centre with a dirt-bank shore blending to grass. Its top-left 48x48 is the
+    // 3x3 of 16px cells mapped below (identical coordinates to path_*).
+    cfWaterTile: '/game/cute-fantasy/Tiles/Water/Water_Tile_1.png',
+    // Animated aquatic decor (8/8/9-frame strips) that floats on / rests by the pond.
+    cfLilypad: '/game/cute-fantasy/Outdoor%20decoration/Outdoor_Decor_Animations/Water_Decor_Animations/Water_Plants/Lillypad_Green_1_Anim.png',
+    cfCattail: '/game/cute-fantasy/Outdoor%20decoration/Outdoor_Decor_Animations/Water_Decor_Animations/Water_Plants/Cattail_1_Anim.png',
+    cfKapybara: '/game/cute-fantasy/Animals/Kapybara/Static/Kapybara_Idle.png',
     cfHouse: '/game/cute-fantasy/Buildings/Buildings/Houses/Wood/House_1_Wood_Base_Blue.png',
     // Regular-company house variants — all House_1_* are the same 96x128 single-building footprint
     // across three wall materials × two roof colors, so they're drop-in distinct sprites for the
@@ -120,6 +128,43 @@ export const MANIFEST = {
     path_sw: { img: 'cfCobbleRoad', x: 0, y: 32, w: 16, h: 16 },
     path_se: { img: 'cfCobbleRoad', x: 32, y: 32, w: 16, h: 16 },
     water: { img: 'cfWater', x: 0, y: 0, w: 16, h: 16 },
+    // Pond water 9-cell autotile (top-left 48x48 of cfWaterTile), same cell layout as path_*.
+    water_center: { img: 'cfWaterTile', x: 16, y: 16, w: 16, h: 16 },
+    water_n: { img: 'cfWaterTile', x: 16, y: 0, w: 16, h: 16 },
+    water_s: { img: 'cfWaterTile', x: 16, y: 32, w: 16, h: 16 },
+    water_w: { img: 'cfWaterTile', x: 0, y: 16, w: 16, h: 16 },
+    water_e: { img: 'cfWaterTile', x: 32, y: 16, w: 16, h: 16 },
+    water_nw: { img: 'cfWaterTile', x: 0, y: 0, w: 16, h: 16 },
+    water_ne: { img: 'cfWaterTile', x: 32, y: 0, w: 16, h: 16 },
+    water_sw: { img: 'cfWaterTile', x: 0, y: 32, w: 16, h: 16 },
+    water_se: { img: 'cfWaterTile', x: 32, y: 32, w: 16, h: 16 },
+    // Aquatic decor animations. Lilypad + cattail are 8-frame 16x16 strips; kapybara is a 9-frame
+    // 32x32 idle. animFrame('lilypad'|'cattail'|'kapybara', clock, …) picks the live frame.
+    lilypad_0: { img: 'cfLilypad', x: 0, y: 0, w: 16, h: 16 },
+    lilypad_1: { img: 'cfLilypad', x: 16, y: 0, w: 16, h: 16 },
+    lilypad_2: { img: 'cfLilypad', x: 32, y: 0, w: 16, h: 16 },
+    lilypad_3: { img: 'cfLilypad', x: 48, y: 0, w: 16, h: 16 },
+    lilypad_4: { img: 'cfLilypad', x: 64, y: 0, w: 16, h: 16 },
+    lilypad_5: { img: 'cfLilypad', x: 80, y: 0, w: 16, h: 16 },
+    lilypad_6: { img: 'cfLilypad', x: 96, y: 0, w: 16, h: 16 },
+    lilypad_7: { img: 'cfLilypad', x: 112, y: 0, w: 16, h: 16 },
+    cattail_0: { img: 'cfCattail', x: 0, y: 0, w: 16, h: 16 },
+    cattail_1: { img: 'cfCattail', x: 16, y: 0, w: 16, h: 16 },
+    cattail_2: { img: 'cfCattail', x: 32, y: 0, w: 16, h: 16 },
+    cattail_3: { img: 'cfCattail', x: 48, y: 0, w: 16, h: 16 },
+    cattail_4: { img: 'cfCattail', x: 64, y: 0, w: 16, h: 16 },
+    cattail_5: { img: 'cfCattail', x: 80, y: 0, w: 16, h: 16 },
+    cattail_6: { img: 'cfCattail', x: 96, y: 0, w: 16, h: 16 },
+    cattail_7: { img: 'cfCattail', x: 112, y: 0, w: 16, h: 16 },
+    kapybara_0: { img: 'cfKapybara', x: 0, y: 0, w: 32, h: 32 },
+    kapybara_1: { img: 'cfKapybara', x: 32, y: 0, w: 32, h: 32 },
+    kapybara_2: { img: 'cfKapybara', x: 64, y: 0, w: 32, h: 32 },
+    kapybara_3: { img: 'cfKapybara', x: 96, y: 0, w: 32, h: 32 },
+    kapybara_4: { img: 'cfKapybara', x: 128, y: 0, w: 32, h: 32 },
+    kapybara_5: { img: 'cfKapybara', x: 160, y: 0, w: 32, h: 32 },
+    kapybara_6: { img: 'cfKapybara', x: 192, y: 0, w: 32, h: 32 },
+    kapybara_7: { img: 'cfKapybara', x: 224, y: 0, w: 32, h: 32 },
+    kapybara_8: { img: 'cfKapybara', x: 256, y: 0, w: 32, h: 32 },
 
     // Buildings. Every regular company draws one of these six single-house sprites (whole PNG is
     // one 96x128 building); every featured company draws a landmark (church frame 0 / inn /

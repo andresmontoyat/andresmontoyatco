@@ -9,6 +9,10 @@ const ANCHORS = {
   castillo: { x: 1820, y: 760 },
 }
 const HIDDEN_POS = [{ x: 1620, y: 1180 }, { x: 1830, y: 1200 }]
+// Two ponds sited in the green biomes (farm/pradera edge and selva), in open gaps clear of the
+// road spine and the site rings. `r` is the visual water radius; collision uses a slightly smaller
+// radius (see worldRpg) so the player can stand on the shore bank but not on the water.
+const PONDS = [{ x: 240, y: 920, r: 66 }, { x: 1180, y: 760, r: 60 }]
 export const WORLD_W = 2140
 export const WORLD_H = 1360
 
@@ -159,6 +163,7 @@ export function buildOverworld(json, biomeForYear, sideProjects = []) {
     cx: ANCHORS.farm.x + 130, cy: ANCHORS.farm.y - 70, w: 112, h: 98,
   }
   return {
-    farm: ANCHORS.farm, regions, sites, hiddenSites, farmBuilding, farmWindmill, worldW: WORLD_W, worldH: WORLD_H, path, roads,
+    farm: ANCHORS.farm, regions, sites, hiddenSites, farmBuilding, farmWindmill,
+    ponds: PONDS, worldW: WORLD_W, worldH: WORLD_H, path, roads,
   }
 }

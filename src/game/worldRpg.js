@@ -50,6 +50,13 @@ function decorSolids(decor) {
   return decor.filter(d => d.solid).map(d => ({ x: d.x - 10, y: d.y - 14, w: 20, h: 14 }))
 }
 
+// Pond collision as circle solids (see engine/topdown.js hits). The radius is pulled in to ~0.82
+// of the visual water radius so the player can walk right up to and along the shore bank without
+// being blocked a whole tile early, but can't stand on open water.
+function pondSolids(ponds) {
+  return (ponds || []).map(p => ({ cx: p.x, cy: p.y, r: p.r * 0.82 }))
+}
+
 // Throttled footstep SFX while walking — a beep every FOOTSTEP_EVERY frames of movement,
 // silent (and counter reset) the instant the player stops.
 function updateFootsteps(state, moving) {
@@ -70,7 +77,7 @@ function updateRegionMusic(state) {
 export function update(state, input, dtChars) {
   const frozen = state.dialog.isOpen()
   const solids = buildingSolids(activeSites(state), state.world.farmBuilding, state.world.farmWindmill)
-    .concat(decorSolids(state.decor || []))
+    .concat(decorSolids(state.decor || []), pondSolids(state.world.ponds))
   const r = stepMovement(state.player, { ...input, frozen }, solids, { w: state.world.worldW, h: state.world.worldH })
   state.player.x = r.x; state.player.y = r.y; state.player.dir = r.dir; state.player.moving = r.moving
   state.player.step = r.moving ? state.player.step + STEP_RATE : 0

@@ -1,5 +1,5 @@
 import {
-  nearestBiome, tileNameFor, avatarFrame, hashTile, pathTileName, PATH_THRESHOLD, AVATAR_LAYERS,
+  nearestBiome, tileNameFor, avatarFrame, hashTile, pathTileName, waterTileName, PATH_THRESHOLD, AVATAR_LAYERS,
 } from './tiles.js'
 import { BIOMES } from '../world/biomes.js'
 import { drawAmbient, swayOffset, DAY_LEN } from './ambient.js'
@@ -109,6 +109,28 @@ function resolvePathFrame(world, tx, ty, revealed) {
   return pathTileName(onPath(tx, ty - 1), onPath(tx + 1, ty), onPath(tx, ty + 1), onPath(tx - 1, ty))
 }
 
+// Is a world point inside any pond's water? Used both to pick water tiles (below) and, via the
+// same radius, to keep the era-tint wash off the pond.
+export function pondAt(ponds, wx, wy) {
+  for (let i = 0; i < (ponds || []).length; i += 1) {
+    const p = ponds[i]
+    if ((wx - p.x) ** 2 + (wy - p.y) ** 2 <= p.r * p.r) return true
+  }
+  return false
+}
+
+// A pond tile's water frame, chosen by which of its 4 grid-neighbors are also water — the same
+// rounded-island autotiling the cobble road uses, so the grass/dirt shore is picked automatically.
+// Returns null for a tile with fewer than 2 water neighbors: the 9-cell set has no cell for a
+// 3-sides-open "tip", and falling back to a flat centre cell there produces blocky protrusions off
+// a small pond — trimming those tips to grass keeps the silhouette rounded.
+function resolveWaterFrame(ponds, tx, ty) {
+  const on = (nx, ny) => pondAt(ponds, nx * TILE + TILE / 2, ny * TILE + TILE / 2)
+  const n = on(tx, ty - 1); const e = on(tx + 1, ty); const s = on(tx, ty + 1); const w = on(tx - 1, ty)
+  if (n + e + s + w < 2) return null
+  return waterTileName(n, e, s, w)
+}
+
 function drawGround(ctx, state, cam, sprites) {
   const { world } = state
   const anchors = regionsWithFarm(world)
@@ -119,13 +141,19 @@ function drawGround(ctx, state, cam, sprites) {
       const wx = tx * TILE + TILE / 2
       const wy = ty * TILE + TILE / 2
       const bi = nearestBiome(anchors, wx, wy)
-      const dist = nearestRoadDist(world.roads, wx, wy, state.revealed)
-      let name = tileNameFor(bi, wx, wy, dist)
-      if (name === 'path') name = resolvePathFrame(world, tx, ty, state.revealed)
+      const water = pondAt(world.ponds, wx, wy) ? resolveWaterFrame(world.ponds, tx, ty) : null
+      let name
+      if (water) {
+        name = water
+      } else {
+        const dist = nearestRoadDist(world.roads, wx, wy, state.revealed)
+        name = tileNameFor(bi, wx, wy, dist)
+        if (name === 'path') name = resolvePathFrame(world, tx, ty, state.revealed)
+      }
       const sx = tx * TILE - cam.x
       const sy = ty * TILE - cam.y
       sprites.draw(ctx, name, sx, sy, TILE, TILE)
-      const tints = ERA_TINTS[bi]
+      const tints = water ? null : ERA_TINTS[bi]
       if (tints) {
         ctx.save()
         ctx.globalAlpha = ERA_TINT_ALPHA
@@ -167,6 +195,9 @@ const DECOR_DIMS = {
   rock: { w: 16, h: 16 },
   flower: { w: 16, h: 16 },
   fence: { w: 16, h: 32 },
+  lilypad: { w: 16, h: 16 },
+  cattail: { w: 16, h: 16 },
+  kapybara: { w: 28, h: 28 },
 }
 
 // Base-pivoted skew, not a translate: swayOffset(d,t) is now a small horizontal shear factor
@@ -179,7 +210,12 @@ const DECOR_DIMS = {
 // Frame-animated decor: type → its baked wind strip. The per-item clock offset (a stable hash of
 // world position) desyncs neighboring flowers so they don't sway in lockstep. Static types (trees,
 // rocks, …) fall through to their single frame name.
-const ANIM_DECOR = { flower: { base: 'flowerwind', count: 8, ticks: 14 } }
+const ANIM_DECOR = {
+  flower: { base: 'flowerwind', count: 8, ticks: 14 },
+  lilypad: { base: 'lilypad', count: 8, ticks: 16 },
+  cattail: { base: 'cattail', count: 8, ticks: 18 },
+  kapybara: { base: 'kapybara', count: 9, ticks: 22 },
+}
 
 function decorFrameName(d, t) {
   const a = ANIM_DECOR[d.type]
