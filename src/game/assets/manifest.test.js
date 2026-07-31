@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { MANIFEST, AVATAR_FRAMES } from './manifest.js'
+import { MANIFEST, AVATAR_FRAMES, NPC_FRAMES } from './manifest.js'
 
 const REQUIRED_FRAMES = [
   'ground_farm', 'ground_farm_2', 'ground_farm_3',
@@ -25,6 +25,8 @@ const REQUIRED_FRAMES = [
   ...Object.keys(AVATAR_FRAMES),
   'chicken_0', 'chicken_1',
   'duck_0', 'duck_1', 'cow_0', 'cow_1',
+  // Ambient NPC frames (npc_<type>_0/1) generated in manifest.js — same source of truth.
+  ...Object.keys(NPC_FRAMES),
 ]
 
 // Real pixel dimensions of each source PNG, captured with
@@ -70,6 +72,12 @@ const REAL_IMAGE_SIZE = {
   cfChicken: { w: 256, h: 512 },
   cfDuck: { w: 256, h: 640 },
   cfCow: { w: 256, h: 480 },
+  cfNpcFarmer: { w: 384, h: 832 },
+  cfNpcMiner: { w: 384, h: 640 },
+  cfNpcChef: { w: 384, h: 448 },
+  cfNpcKaty: { w: 384, h: 448 },
+  cfNpcFin: { w: 576, h: 832 },
+  cfNpcJack: { w: 384, h: 640 },
 }
 
 describe('MANIFEST integrity', () => {

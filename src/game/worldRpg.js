@@ -14,6 +14,7 @@ import { loadSprites } from './assets/loader.js'
 import ATLAS from './assets/atlas.json'
 import { createParticles, burst } from './render/juice.js'
 import { createCritters, updateCritters } from './entities/critters.js'
+import { createNpcs, updateNpcs } from './entities/npcs.js'
 import { DAY_LEN } from './render/ambient.js'
 import { createIntro } from './intro.js'
 import { createMusic } from './audio/music.js'
@@ -88,6 +89,7 @@ export function update(state, input, dtChars) {
   state.particles.update(1)
   state.shake *= 0.9
   state.critters = updateCritters(state.critters, dtChars, state.clock)
+  state.npcs = updateNpcs(state.npcs, state.clock)
 }
 
 export function createWorldRpg({
@@ -109,6 +111,7 @@ export function createWorldRpg({
     particles: createParticles(),
     shake: 0,
     critters: createCritters(world),
+    npcs: createNpcs(world),
     // 3s cold-open cutscene: camera descends from the sky to the farm while a title card fades
     // in/out (see scene2d.js's introCamera/drawIntroTitle).
     intro: createIntro(3),

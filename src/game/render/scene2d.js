@@ -5,6 +5,7 @@ import { BIOMES } from '../world/biomes.js'
 import { drawAmbient, swayOffset, DAY_LEN } from './ambient.js'
 import { animFrame, animIndex } from './anim.js'
 import { critterDrawables } from '../entities/critters.js'
+import { npcDrawables } from '../entities/npcs.js'
 import { shake2D } from '../engine/camera2d.js'
 import { phaseOf, nightTint } from './lighting.js'
 
@@ -291,10 +292,11 @@ function depthSortedDrawables(state, cam, t) {
   const drawOne = d => (ctx, sprites) => drawDecorItem(ctx, d, cam, sprites, t)
   const decor = (state.decor || []).map(d => ({ baseY: d.y, draw: drawOne(d) }))
   const critters = critterDrawables(state, cam, t)
+  const npcs = npcDrawables(state, cam, t)
   const windmill = state.world.farmWindmill ? [windmillDrawable(state.world.farmWindmill, cam, t)] : []
   const { player } = state
   const avatar = { baseY: player.y + player.h / 2, draw: (ctx, sprites) => drawAvatar(ctx, state, cam, sprites) }
-  return buildings.concat(decor, critters, windmill, [avatar]).sort((a, b) => a.baseY - b.baseY)
+  return buildings.concat(decor, critters, npcs, windmill, [avatar]).sort((a, b) => a.baseY - b.baseY)
 }
 
 function drawPlaceholderScene(ctx, state, cam) {
