@@ -4,17 +4,18 @@
 // player walks through them, they never open a dialog. Each is a single premade sprite (not the
 // modular avatar stack), drawn front-facing with a 2-frame walk from its sheet's row 0.
 import { animIndex } from '../render/anim.js'
+import { CONFIG } from '../config.js'
 
 // The premade NPC roster (see manifest npc_<type>_0/1). A stable hash of the site id picks one per
 // building so a company always has the same townsperson, whatever the site order.
 const NPC_TYPES = ['farmer', 'miner', 'chef', 'katy', 'fin', 'jack']
-const NPC_W = 38
-const NPC_H = 40
+const NPC_W = CONFIG.npc.width
+const NPC_H = CONFIG.npc.height
 const NPC_TICKS = 16 // ~6fps shuffle
-const WANDER_SPEED = 0.16 // rad per clock-unit (a slow amble, slower than the darting critters)
-const AMP_X = 30
-const AMP_Y = 15
-const FRONT_OFFSET = 20 // spawn this far below the building's base, on the approach side
+const WANDER_SPEED = CONFIG.npc.wanderSpeed
+const AMP_X = CONFIG.npc.ampX
+const AMP_Y = CONFIG.npc.ampY
+const FRONT_OFFSET = CONFIG.npc.frontOffset // spawn this far below the building's base
 
 function hashStr(s) {
   let h = 0

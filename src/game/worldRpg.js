@@ -15,12 +15,13 @@ import ATLAS from './assets/atlas.json'
 import { createParticles, burst } from './render/juice.js'
 import { createCritters, updateCritters } from './entities/critters.js'
 import { createNpcs, updateNpcs } from './entities/npcs.js'
+import { CONFIG } from './config.js'
 import { DAY_LEN } from './render/ambient.js'
 import { createIntro } from './intro.js'
 import { createMusic } from './audio/music.js'
 import { createAudio, initAudio, setMuted, sfx } from './audio/sfx.js'
 
-const STEP_RATE = 0.15
+const STEP_RATE = CONFIG.avatar.stepRate
 const FOOTSTEP_EVERY = 14
 
 // Loop-step/input-wiring gate (not baked into the pure `update()`): while the intro plays,
@@ -55,7 +56,7 @@ function decorSolids(decor) {
 // of the visual water radius so the player can walk right up to and along the shore bank without
 // being blocked a whole tile early, but can't stand on open water.
 function pondSolids(ponds) {
-  return (ponds || []).map(p => ({ cx: p.x, cy: p.y, r: p.r * 0.82 }))
+  return (ponds || []).map(p => ({ cx: p.x, cy: p.y, r: p.r * CONFIG.pond.collisionFactor }))
 }
 
 // Throttled footstep SFX while walking — a beep every FOOTSTEP_EVERY frames of movement,

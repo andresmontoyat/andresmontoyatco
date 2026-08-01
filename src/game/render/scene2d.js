@@ -4,14 +4,15 @@ import {
 import { BIOMES } from '../world/biomes.js'
 import { drawAmbient, swayOffset, DAY_LEN } from './ambient.js'
 import { animFrame, animIndex } from './anim.js'
+import { CONFIG } from '../config.js'
 import { critterDrawables } from '../entities/critters.js'
 import { npcDrawables } from '../entities/npcs.js'
 import { shake2D } from '../engine/camera2d.js'
 import { phaseOf, nightTint } from './lighting.js'
 
 const TILE = 32
-const AVATAR_W = 40
-const AVATAR_H = 44
+const AVATAR_W = CONFIG.avatar.width
+const AVATAR_H = CONFIG.avatar.height
 // cyber/castillo share the same Hills.png "cliff" ground texture (see manifest.js) — there is no
 // dedicated stone/paved tile in either free asset pack (Cute Fantasy / Sprout Lands); a Tiny
 // Swords-style tileset would be the real fix for a true rocky/paved read. Until then the two
@@ -20,7 +21,7 @@ const AVATAR_H = 44
 // ground_castillo_2 point at a plain grass cell nearly indistinguishable from every other grass
 // biome — so the wash is bumped much stronger, and scattered across 3 shades per biome (same
 // hashTile() used for frame-variant selection) so it isn't one flat color block either.
-const ERA_TINT_ALPHA = 0.34
+const ERA_TINT_ALPHA = CONFIG.tint.eraAlpha
 const ERA_TINTS = {
   // Cool cyan-blue family, keyed off the site's --color-accent token (not BIOMES.cyber.c, which
   // stays reserved for building-marker/company-list color elsewhere — see companies.js, sprites.js).
@@ -175,7 +176,7 @@ function drawBuildingLabel(ctx, s, bx, by) {
 
 // Idle breathing cadence: state.clock advances ~96 units/sec, so ~44 units per idle frame gives a
 // gentle ~0.9s two-frame loop while standing.
-const IDLE_TICKS = 44
+const IDLE_TICKS = CONFIG.avatar.idleTicks
 
 // Carlos is drawn as a stack of modular sprites (bare base + jeans/boots/shirt/hair — see
 // AVATAR_LAYERS), each layer sharing the base's frame rects so they land pixel-aligned. Walking
@@ -270,9 +271,9 @@ function buildingDrawable(s, cam) {
 // the arms spread across the face (not detached beside it). The sails cycle 4 frames off the clock
 // (ticks 22 ≈ a lazy ~1s rotation); frame 0 is the tower's original static pose, so the loop wraps
 // seamlessly, and the sail-free tower crop means no static "+" ever peeks behind the rotation.
-const WINDMILL_SAIL = { base: 'windmillsail', count: 4, ticks: 22 }
-const SAIL_DX = 34
-const SAIL_DY = -6
+const WINDMILL_SAIL = { base: 'windmillsail', count: 4, ticks: CONFIG.windmill.sailTicks }
+const SAIL_DX = CONFIG.windmill.sailDx
+const SAIL_DY = CONFIG.windmill.sailDy
 
 function windmillDrawable(wm, cam, t) {
   const k = wm.w / 128

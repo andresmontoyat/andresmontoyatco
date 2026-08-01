@@ -1,4 +1,5 @@
 import { doorPoint } from '../entities/site.js'
+import { CONFIG } from '../config.js'
 
 const ANCHORS = {
   farm: { x: 360, y: 1120 },
@@ -9,10 +10,8 @@ const ANCHORS = {
   castillo: { x: 1820, y: 760 },
 }
 const HIDDEN_POS = [{ x: 1620, y: 1180 }, { x: 1830, y: 1200 }]
-// Two ponds sited in the green biomes (farm/pradera edge and selva), in open gaps clear of the
-// road spine and the site rings. `r` is the visual water radius; collision uses a slightly smaller
-// radius (see worldRpg) so the player can stand on the shore bank but not on the water.
-const PONDS = [{ x: 240, y: 920, r: 66 }, { x: 1180, y: 760, r: 60 }]
+// Ponds are tuned in src/game/config.js (CONFIG.pond.ponds) — position + water radius.
+const PONDS = CONFIG.pond.ponds
 export const WORLD_W = 2140
 export const WORLD_H = 1360
 

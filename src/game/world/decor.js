@@ -1,10 +1,11 @@
 // Deterministic decoration scatter (trees/bushes/rocks/flowers/fences) for the RPG overworld.
 // Pure — no canvas, no Math.random. Seeded with a small mulberry32 PRNG so the same
 // (world, seed) pair always yields the same layout.
+import { CONFIG } from '../config.js'
 
 const TYPES = ['tree', 'tree_small', 'tree_birch', 'tree_spruce', 'tree_fruit', 'bush', 'rock', 'flower', 'fence']
 const SOLID_TYPES = new Set(['tree', 'tree_small', 'tree_birch', 'tree_spruce', 'tree_fruit', 'rock', 'fence'])
-const DENSITY = 1 / 20000 // ~1 decor item per 20000 sq px of world area
+const DENSITY = CONFIG.decor.density // decor items per sq px of world area (config.js)
 const FARM_CLEAR_RADIUS = 110
 const BUILDING_PAD = 24
 

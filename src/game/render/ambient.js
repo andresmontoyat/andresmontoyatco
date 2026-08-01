@@ -4,6 +4,7 @@
 // paints the same frame (deterministic, screenshot/testable in principle, though we deliberately
 // don't assert on pixels — see ambient.test.js absence note in the task report).
 import { phaseOf, daylight } from './lighting.js'
+import { CONFIG } from '../config.js'
 
 // Full day/night lap, in state.clock units. `update()` advances the clock by the same per-call
 // `dtChars` it feeds the dialog typewriter (~1.6/frame at the rAF ~60fps cadence), i.e. ~96
@@ -27,8 +28,8 @@ const SWAY_SPEED = 0.012
 // amplitude a ~80px-tall tree's canopy top drifts at most amplitude*80 ≈ 4px either way — a
 // gentle lean, not a wiggle. Bushes (only 16px tall) use a smaller amplitude on top of their
 // own height already limiting the visible drift, per the task's "even subtler" ask.
-const SWAY_SKEW = 0.05
-const SWAY_SKEW_BUSH = 0.02
+const SWAY_SKEW = CONFIG.decor.swaySkew
+const SWAY_SKEW_BUSH = CONFIG.decor.swaySkewBush
 
 // Deterministic per-element phase seeded from its world position — same tree always sways the
 // same way, neighboring trees don't sway in lockstep.
@@ -55,13 +56,13 @@ function activeSitesOf(state) {
 // way pending real pond regions) — this stays inert today, but the mechanism is ready and
 // exercised by ambient.test.js via a fixture world.
 
-const WAVE_RINGS = 3
-const WAVE_SPEED = 1.1
-const WAVE_AMPLITUDE = 3
+const WAVE_RINGS = CONFIG.pond.wave.rings
+const WAVE_SPEED = CONFIG.pond.wave.speed
+const WAVE_AMPLITUDE = CONFIG.pond.wave.amplitude
 
 function drawPondWaves(ctx, pond, cam, t) {
   ctx.save()
-  ctx.strokeStyle = 'rgba(255,255,255,0.35)'
+  ctx.strokeStyle = CONFIG.pond.wave.color
   ctx.lineWidth = 1.5
   for (let ring = 0; ring < WAVE_RINGS; ring += 1) {
     const baseR = pond.r * (0.35 + ring * 0.28)
