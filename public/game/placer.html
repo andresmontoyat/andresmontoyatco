@@ -7,16 +7,22 @@
 <style>
   :root { --bg:#0b1020; --panel:#131a30; --line:#2a3350; --accent:#00e5a8; --text:#dfeaff; --muted:#7f8db0; }
   * { box-sizing:border-box; }
-  body { margin:0; font:13px/1.4 ui-monospace,Menlo,monospace; background:var(--bg); color:var(--text); height:100vh; display:grid; grid-template-columns:260px 1fr; grid-template-rows:1fr auto; grid-template-areas:"palette map" "palette out"; }
+  body { margin:0; font:13px/1.4 ui-monospace,Menlo,monospace; background:var(--bg); color:var(--text); height:100vh; display:grid; grid-template-columns:300px 1fr; grid-template-rows:1fr auto; grid-template-areas:"palette map" "palette out"; }
   h2 { font-size:12px; letter-spacing:1px; text-transform:uppercase; color:var(--accent); margin:0 0 8px; }
   #palette { grid-area:palette; background:var(--panel); border-right:1px solid var(--line); padding:10px; overflow-y:auto; }
-  #search { width:100%; padding:6px 8px; background:#0b1020; border:1px solid var(--line); color:var(--text); border-radius:6px; margin-bottom:8px; }
-  #frames { display:grid; grid-template-columns:repeat(4,1fr); gap:4px; }
-  .cell { background:#0b1020; border:1px solid var(--line); border-radius:5px; padding:3px; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:2px; }
+  #search, #cat { width:100%; padding:6px 8px; background:#0b1020; border:1px solid var(--line); color:var(--text); border-radius:6px; margin-bottom:6px; }
+  #sizerow { display:flex; align-items:center; gap:8px; color:var(--muted); font-size:11px; margin-bottom:8px; }
+  #sizerow input { flex:1; }
+  #preview { background:#0b1020; border:1px solid var(--line); border-radius:6px; padding:8px; margin-bottom:8px; display:flex; flex-direction:column; align-items:center; gap:6px; }
+  #pcanvas { image-rendering:pixelated; width:120px; height:120px; background:conic-gradient(#141a30 25%,#0b1020 0 50%,#141a30 0 75%,#0b1020 0); background-size:16px 16px; border-radius:4px; }
+  #pinfo { font-size:10px; color:var(--muted); text-align:center; word-break:break-all; }
+  .cathead { font-size:10px; letter-spacing:1px; text-transform:uppercase; color:var(--accent); margin:10px 0 4px; opacity:.85; }
+  #frames { display:flex; flex-direction:column; gap:2px; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill,var(--cell,46px)); gap:4px; }
+  .cell { background:#0b1020; border:1px solid var(--line); border-radius:5px; padding:2px; cursor:pointer; }
   .cell:hover { border-color:var(--accent); }
   .cell.sel { border-color:var(--accent); box-shadow:0 0 0 1px var(--accent); }
-  .cell canvas { image-rendering:pixelated; width:38px; height:38px; }
-  .cell span { font-size:8px; color:var(--muted); text-align:center; word-break:break-all; line-height:1; }
+  .cell canvas { image-rendering:pixelated; width:100%; display:block; aspect-ratio:1; }
   #map { grid-area:map; display:block; width:100%; height:100%; background:#3f6a3a; cursor:crosshair; }
   #out { grid-area:out; background:var(--panel); border-top:1px solid var(--line); padding:8px 10px; display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
   button { background:var(--accent); color:#04121a; border:0; padding:6px 12px; border-radius:6px; font-weight:700; cursor:pointer; }
@@ -29,7 +35,10 @@
 <body>
   <div id="palette">
     <h2>Assets (atlas)</h2>
-    <input id="search" placeholder="buscar frame… (tree, house, pig)" />
+    <input id="search" placeholder="buscar… (tree, house, pig)" />
+    <select id="cat"></select>
+    <div id="sizerow"><span>zoom</span><input id="size" type="range" min="32" max="96" value="46" /></div>
+    <div id="preview"><canvas id="pcanvas"></canvas><div id="pinfo">pasa el mouse por un asset</div></div>
     <div id="frames"></div>
   </div>
   <canvas id="map"></canvas>
@@ -53,31 +62,66 @@ async function boot() {
   S.meta = meta; S.world = world;
   S.atlas = new Image(); S.atlas.src = meta.images.atlas;
   await S.atlas.decode();
-  buildPalette();
+  fillCats(); buildPalette();
   fit(); draw();
   $('#status').textContent = Object.keys(meta.frames).length + ' frames · ' + world.sites.length + ' sitios';
 }
 
-// ---- palette ------------------------------------------------------------------
-function thumb(f) {
-  const c = document.createElement('canvas'); c.width=38; c.height=38;
+// ---- categories + palette -----------------------------------------------------
+const CAT_ORDER = ['Suelo','Camino','Agua','Edificios','Árboles','Decor','Animales','NPCs','Hero','Otros'];
+const CATS = [
+  ['Suelo', n=>/^ground_/.test(n)],
+  ['Camino', n=>/^path_/.test(n)],
+  ['Agua', n=>/^(water|lilypad|cattail)/.test(n)],
+  ['Edificios', n=>/^(house|church|inn|blacksmith|barn|windmill)/.test(n)],
+  ['Árboles', n=>/^tree/.test(n)],
+  ['Decor', n=>/^(bush|rock|flower|fence)/.test(n)],
+  ['Animales', n=>/^(chicken|duck|cow|pig|sheep|frog|kapybara)/.test(n)],
+  ['NPCs', n=>/^npc_/.test(n)],
+  ['Hero', n=>/^(carlos|legs|feet|chest|hair)_/.test(n)],
+];
+const catOf = name => (CATS.find(([,t])=>t(name)) || ['Otros'])[0];
+
+function thumb(f, px) {
+  const c = document.createElement('canvas'); c.width=px; c.height=px;
   const g = c.getContext('2d'); g.imageSmoothingEnabled=false;
-  const s = Math.min(38/f.w, 38/f.h); const dw=f.w*s, dh=f.h*s;
-  g.drawImage(S.atlas, f.x, f.y, f.w, f.h, (38-dw)/2, (38-dh)/2, dw, dh);
+  const s = Math.min(px/f.w, px/f.h); const dw=f.w*s, dh=f.h*s;
+  g.drawImage(S.atlas, f.x, f.y, f.w, f.h, (px-dw)/2, (px-dh)/2, dw, dh);
   return c;
 }
-function buildPalette(filter='') {
+function showPreview(name) {
+  const f = S.meta.frames[name]; const c = $('#pcanvas'); c.width=120; c.height=120;
+  const g = c.getContext('2d'); g.imageSmoothingEnabled=false; g.clearRect(0,0,120,120);
+  const s = Math.min(120/f.w, 120/f.h); const dw=f.w*s, dh=f.h*s;
+  g.drawImage(S.atlas, f.x, f.y, f.w, f.h, (120-dw)/2, (120-dh)/2, dw, dh);
+  $('#pinfo').textContent = `${name} · ${f.w}×${f.h} @ (${f.x},${f.y})`;
+}
+function fillCats() {
+  const sel = $('#cat'); sel.innerHTML = '<option value="__all">Todas las categorías</option>';
+  const present = new Set(Object.keys(S.meta.frames).map(catOf));
+  CAT_ORDER.filter(c=>present.has(c)).forEach(c=>{ const o=document.createElement('option'); o.value=c; o.textContent=c; sel.appendChild(o); });
+}
+function buildPalette() {
+  const filter = $('#search').value.trim().toLowerCase(), catSel = $('#cat').value, px = +$('#size').value;
   const host = $('#frames'); host.innerHTML='';
-  Object.keys(S.meta.frames).filter(n=>n.includes(filter)).sort().forEach(name=>{
-    const f = S.meta.frames[name];
-    const cell = document.createElement('div'); cell.className='cell'; cell.dataset.name=name;
-    cell.appendChild(thumb(f));
-    const lbl = document.createElement('span'); lbl.textContent=name; cell.appendChild(lbl);
-    cell.onclick = ()=>{ S.selFrame=name; document.querySelectorAll('.cell').forEach(c=>c.classList.toggle('sel', c.dataset.name===name)); };
-    host.appendChild(cell);
+  const byCat = {};
+  Object.keys(S.meta.frames).filter(n=>n.includes(filter)).sort().forEach(n=>{
+    const c = catOf(n); if(catSel!=='__all' && c!==catSel) return; (byCat[c]=byCat[c]||[]).push(n);
+  });
+  CAT_ORDER.filter(c=>byCat[c]).forEach(cat=>{
+    const h = document.createElement('div'); h.className='cathead'; h.textContent=`${cat} (${byCat[cat].length})`; host.appendChild(h);
+    const grid = document.createElement('div'); grid.className='grid'; grid.style.setProperty('--cell', px+'px');
+    byCat[cat].forEach(name=>{
+      const cell = document.createElement('div'); cell.className='cell'+(name===S.selFrame?' sel':''); cell.dataset.name=name; cell.title=name;
+      cell.appendChild(thumb(S.meta.frames[name], px-6));
+      cell.onmouseenter = ()=>showPreview(name);
+      cell.onclick = ()=>{ S.selFrame=name; document.querySelectorAll('.cell').forEach(c=>c.classList.toggle('sel', c.dataset.name===name)); showPreview(name); };
+      grid.appendChild(cell);
+    });
+    host.appendChild(grid);
   });
 }
-$('#search').oninput = e => buildPalette(e.target.value.trim().toLowerCase());
+$('#search').oninput = buildPalette; $('#cat').onchange = buildPalette; $('#size').oninput = buildPalette;
 
 // ---- map ----------------------------------------------------------------------
 function fit() {
