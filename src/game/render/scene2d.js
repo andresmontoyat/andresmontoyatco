@@ -299,10 +299,18 @@ function depthSortedDrawables(state, cam, t) {
   const decor = (state.decor || []).map(d => ({ baseY: d.y, draw: drawOne(d) }))
   const critters = critterDrawables(state, cam, t)
   const npcs = npcDrawables(state, cam, t)
+  // Hand-placed assets (Asset Placer) — drawn at native frame size, bottom-anchored at (x,y).
+  const placements = (state.world.placements || []).map(pl => ({
+    baseY: pl.y,
+    draw: (ctx, sprites) => {
+      const f = sprites.frame(pl.frame)
+      sprites.draw(ctx, pl.frame, pl.x - f.w / 2 - cam.x, pl.y - f.h - cam.y, f.w, f.h)
+    },
+  }))
   const windmill = state.world.farmWindmill ? [windmillDrawable(state.world.farmWindmill, cam, t)] : []
   const { player } = state
   const avatar = { baseY: player.y + player.h / 2, draw: (ctx, sprites) => drawAvatar(ctx, state, cam, sprites) }
-  return buildings.concat(decor, critters, npcs, windmill, [avatar]).sort((a, b) => a.baseY - b.baseY)
+  return buildings.concat(decor, critters, npcs, placements, windmill, [avatar]).sort((a, b) => a.baseY - b.baseY)
 }
 
 function drawPlaceholderScene(ctx, state, cam) {

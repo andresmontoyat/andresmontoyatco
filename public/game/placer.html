@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Asset Placer — World RPG</title>
+<style>
+  :root { --bg:#0b1020; --panel:#131a30; --line:#2a3350; --accent:#00e5a8; --text:#dfeaff; --muted:#7f8db0; }
+  * { box-sizing:border-box; }
+  body { margin:0; font:13px/1.4 ui-monospace,Menlo,monospace; background:var(--bg); color:var(--text); height:100vh; display:grid; grid-template-columns:260px 1fr; grid-template-rows:1fr auto; grid-template-areas:"palette map" "palette out"; }
+  h2 { font-size:12px; letter-spacing:1px; text-transform:uppercase; color:var(--accent); margin:0 0 8px; }
+  #palette { grid-area:palette; background:var(--panel); border-right:1px solid var(--line); padding:10px; overflow-y:auto; }
+  #search { width:100%; padding:6px 8px; background:#0b1020; border:1px solid var(--line); color:var(--text); border-radius:6px; margin-bottom:8px; }
+  #frames { display:grid; grid-template-columns:repeat(4,1fr); gap:4px; }
+  .cell { background:#0b1020; border:1px solid var(--line); border-radius:5px; padding:3px; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:2px; }
+  .cell:hover { border-color:var(--accent); }
+  .cell.sel { border-color:var(--accent); box-shadow:0 0 0 1px var(--accent); }
+  .cell canvas { image-rendering:pixelated; width:38px; height:38px; }
+  .cell span { font-size:8px; color:var(--muted); text-align:center; word-break:break-all; line-height:1; }
+  #map { grid-area:map; display:block; width:100%; height:100%; background:#3f6a3a; cursor:crosshair; }
+  #out { grid-area:out; background:var(--panel); border-top:1px solid var(--line); padding:8px 10px; display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+  button { background:var(--accent); color:#04121a; border:0; padding:6px 12px; border-radius:6px; font-weight:700; cursor:pointer; }
+  button.ghost { background:transparent; color:var(--text); border:1px solid var(--line); }
+  #status { color:var(--muted); }
+  #json { flex:1 1 100%; min-height:60px; background:#0b1020; border:1px solid var(--line); color:var(--text); border-radius:6px; padding:6px; font:11px/1.3 ui-monospace,monospace; display:none; }
+  .hint { color:var(--muted); font-size:11px; }
+</style>
+</head>
+<body>
+  <div id="palette">
+    <h2>Assets (atlas)</h2>
+    <input id="search" placeholder="buscar frame… (tree, house, pig)" />
+    <div id="frames"></div>
+  </div>
+  <canvas id="map"></canvas>
+  <div id="out">
+    <span id="status">cargando…</span>
+    <span class="hint">click asset → click mapa = colocar · arrastra = mover · Supr = borrar</span>
+    <span style="flex:1"></span>
+    <button id="export">Export JSON</button>
+    <button id="clear" class="ghost">Limpiar</button>
+    <textarea id="json" readonly></textarea>
+  </div>
+<script>
+const S = { atlas:null, meta:null, world:null, scale:1, ox:0, oy:0, selFrame:null, placed:[], selPlaced:-1, drag:false };
+const $ = s => document.querySelector(s);
+
+async function boot() {
+  const [meta, world] = await Promise.all([
+    fetch('/game/atlas.json').then(r=>r.json()),
+    fetch('/game/world-snapshot.json').then(r=>r.json()),
+  ]);
+  S.meta = meta; S.world = world;
+  S.atlas = new Image(); S.atlas.src = meta.images.atlas;
+  await S.atlas.decode();
+  buildPalette();
+  fit(); draw();
+  $('#status').textContent = Object.keys(meta.frames).length + ' frames · ' + world.sites.length + ' sitios';
+}
+
+// ---- palette ------------------------------------------------------------------
+function thumb(f) {
+  const c = document.createElement('canvas'); c.width=38; c.height=38;
+  const g = c.getContext('2d'); g.imageSmoothingEnabled=false;
+  const s = Math.min(38/f.w, 38/f.h); const dw=f.w*s, dh=f.h*s;
+  g.drawImage(S.atlas, f.x, f.y, f.w, f.h, (38-dw)/2, (38-dh)/2, dw, dh);
+  return c;
+}
+function buildPalette(filter='') {
+  const host = $('#frames'); host.innerHTML='';
+  Object.keys(S.meta.frames).filter(n=>n.includes(filter)).sort().forEach(name=>{
+    const f = S.meta.frames[name];
+    const cell = document.createElement('div'); cell.className='cell'; cell.dataset.name=name;
+    cell.appendChild(thumb(f));
+    const lbl = document.createElement('span'); lbl.textContent=name; cell.appendChild(lbl);
+    cell.onclick = ()=>{ S.selFrame=name; document.querySelectorAll('.cell').forEach(c=>c.classList.toggle('sel', c.dataset.name===name)); };
+    host.appendChild(cell);
+  });
+}
+$('#search').oninput = e => buildPalette(e.target.value.trim().toLowerCase());
+
+// ---- map ----------------------------------------------------------------------
+function fit() {
+  const map = $('#map'); const r = map.getBoundingClientRect();
+  map.width = r.width; map.height = r.height;
+  S.scale = Math.min(map.width/S.world.worldW, map.height/S.world.worldH) * 0.96;
+  S.ox = (map.width - S.world.worldW*S.scale)/2;
+  S.oy = (map.height - S.world.worldH*S.scale)/2;
+}
+const wx2sx = x => x*S.scale + S.ox, wy2sy = y => y*S.scale + S.oy;
+const sx2wx = x => (x-S.ox)/S.scale, sy2wy = y => (y-S.oy)/S.scale;
+
+function draw() {
+  const g = $('#map').getContext('2d'); g.imageSmoothingEnabled=false;
+  const W = S.world;
+  g.fillStyle='#3f6a3a'; g.fillRect(0,0,$('#map').width,$('#map').height);
+  // world bounds
+  g.strokeStyle='#2a3350'; g.strokeRect(wx2sx(0),wy2sy(0),W.worldW*S.scale,W.worldH*S.scale);
+  // roads
+  g.strokeStyle='#8a8f7a'; g.lineWidth=Math.max(2,6*S.scale);
+  W.roads.forEach(r=>{ g.beginPath(); g.moveTo(wx2sx(r.a.x),wy2sy(r.a.y)); g.lineTo(wx2sx(r.b.x),wy2sy(r.b.y)); g.stroke(); });
+  // ponds
+  W.ponds.forEach(p=>{ g.fillStyle='rgba(60,150,220,0.7)'; g.beginPath(); g.arc(wx2sx(p.x),wy2sy(p.y),p.r*S.scale,0,7); g.fill(); });
+  // farm
+  g.fillStyle='#caa15a'; g.fillRect(wx2sx(W.farm.x)-4,wy2sy(W.farm.y)-4,8,8);
+  // sites
+  g.font='10px monospace'; g.textAlign='center';
+  W.sites.forEach(s=>{ const x=wx2sx(s.cx-s.w/2), y=wy2sy(s.cy);
+    g.fillStyle='rgba(155,111,208,0.5)'; g.fillRect(x,y,s.w*S.scale,s.h*S.scale);
+    g.fillStyle='#dfeaff'; g.fillText(s.co, wx2sx(s.cx), y-3);
+  });
+  // placed assets (real sprites, world-scaled, bottom-anchored)
+  S.placed.forEach((it,i)=>{ const f=S.meta.frames[it.frame]; if(!f) return;
+    const dw=f.w*S.scale, dh=f.h*S.scale;
+    g.drawImage(S.atlas, f.x,f.y,f.w,f.h, wx2sx(it.x)-dw/2, wy2sy(it.y)-dh, dw, dh);
+    if(i===S.selPlaced){ g.strokeStyle='#00e5a8'; g.lineWidth=1.5; g.strokeRect(wx2sx(it.x)-dw/2,wy2sy(it.y)-dh,dw,dh); }
+  });
+}
+
+function hitPlaced(mx,my){
+  for(let i=S.placed.length-1;i>=0;i--){ const it=S.placed[i], f=S.meta.frames[it.frame]; if(!f) continue;
+    const dw=f.w*S.scale, dh=f.h*S.scale, x=wx2sx(it.x)-dw/2, y=wy2sy(it.y)-dh;
+    if(mx>=x&&mx<=x+dw&&my>=y&&my<=y+dh) return i;
+  }
+  return -1;
+}
+const map = $('#map');
+map.onmousedown = e=>{ const b=map.getBoundingClientRect(), mx=e.clientX-b.left, my=e.clientY-b.top;
+  const hit=hitPlaced(mx,my);
+  if(hit>=0){ S.selPlaced=hit; S.drag=true; }
+  else if(S.selFrame){ S.placed.push({frame:S.selFrame,x:Math.round(sx2wx(mx)),y:Math.round(sy2wy(my))}); S.selPlaced=S.placed.length-1; }
+  else S.selPlaced=-1;
+  draw();
+};
+map.onmousemove = e=>{ if(!S.drag||S.selPlaced<0) return; const b=map.getBoundingClientRect();
+  S.placed[S.selPlaced].x=Math.round(sx2wx(e.clientX-b.left)); S.placed[S.selPlaced].y=Math.round(sy2wy(e.clientY-b.top)); draw();
+};
+window.onmouseup = ()=>{ S.drag=false; };
+window.onkeydown = e=>{ if((e.key==='Delete'||e.key==='Backspace')&&S.selPlaced>=0){ S.placed.splice(S.selPlaced,1); S.selPlaced=-1; draw(); } };
+window.onresize = ()=>{ fit(); draw(); };
+
+$('#export').onclick = ()=>{ const j=JSON.stringify(S.placed,null,2); const t=$('#json'); t.style.display='block'; t.value=j; t.select();
+  navigator.clipboard?.writeText(j); $('#status').textContent='copiado al portapapeles ('+S.placed.length+' items)'; };
+$('#clear').onclick = ()=>{ S.placed=[]; S.selPlaced=-1; $('#json').style.display='none'; draw(); };
+
+boot().catch(e=>{ $('#status').textContent='error: '+e.message; console.error(e); });
+</script>
+</body>
+</html>

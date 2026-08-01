@@ -94,9 +94,12 @@ export function update(state, input, dtChars) {
 }
 
 export function createWorldRpg({
-  canvas, experience, sideProjects = [], lang = 'es', onLangChange,
+  canvas, experience, sideProjects = [], lang = 'es', onLangChange, placements = [],
 }) {
   const world = buildOverworld(experience, biomeForYear, sideProjects)
+  // Assets hand-placed with the Asset Placer (public/game/placer.html → src/data/placements.json):
+  // a flat list of { frame, x, y } drawn as non-solid decor, bottom-anchored at (x,y).
+  world.placements = placements
   const state = {
     world,
     decor: buildDecor(world),
