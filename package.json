@@ -30,6 +30,7 @@
     "og:gen": "node scripts/generate-og-image.js",
     "assets:pack": "node scripts/pack-atlas.mjs",
     "world:dump": "node scripts/dump-world.mjs",
+    "pack:index": "node scripts/dump-pack.mjs",
     "hero:process": "node scripts/process-hero-photo.js",
     "cv:gen": "node scripts/generate-cv.mjs"
   },

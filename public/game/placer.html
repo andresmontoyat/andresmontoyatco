@@ -10,7 +10,8 @@
   body { margin:0; font:13px/1.4 ui-monospace,Menlo,monospace; background:var(--bg); color:var(--text); height:100vh; display:grid; grid-template-columns:300px 1fr; grid-template-rows:1fr auto; grid-template-areas:"palette map" "palette out"; }
   h2 { font-size:12px; letter-spacing:1px; text-transform:uppercase; color:var(--accent); margin:0 0 8px; }
   #palette { grid-area:palette; background:var(--panel); border-right:1px solid var(--line); padding:10px; overflow-y:auto; }
-  #search, #cat { width:100%; padding:6px 8px; background:#0b1020; border:1px solid var(--line); color:var(--text); border-radius:6px; margin-bottom:6px; }
+  #search, #cat, #src { width:100%; padding:6px 8px; background:#0b1020; border:1px solid var(--line); color:var(--text); border-radius:6px; margin-bottom:6px; }
+  #src { border-color:var(--accent); }
   #sizerow { display:flex; align-items:center; gap:8px; color:var(--muted); font-size:11px; margin-bottom:8px; }
   #sizerow input { flex:1; }
   #preview { background:#0b1020; border:1px solid var(--line); border-radius:6px; padding:8px; margin-bottom:8px; display:flex; flex-direction:column; align-items:center; gap:6px; }
@@ -35,7 +36,8 @@
 <body>
   <div id="palette">
     <h2>Assets (atlas)</h2>
-    <input id="search" placeholder="buscar… (tree, house, pig)" />
+    <input id="search" placeholder="buscar… (tree, house, bee)" />
+    <select id="src"><option value="atlas">Atlas (en el juego · 235)</option><option value="pack">Pack completo (717)</option></select>
     <select id="cat"></select>
     <div id="sizerow"><span>zoom</span><input id="size" type="range" min="32" max="96" value="46" /></div>
     <div id="preview"><canvas id="pcanvas"></canvas><div id="pinfo">pasa el mouse por un asset</div></div>
@@ -51,7 +53,7 @@
     <textarea id="json" readonly></textarea>
   </div>
 <script>
-const S = { atlas:null, meta:null, world:null, scale:1, ox:0, oy:0, selFrame:null, placed:[], selPlaced:-1, drag:false };
+const S = { atlas:null, meta:null, world:null, pack:null, srcMode:'atlas', scale:1, ox:0, oy:0, sel:null, placed:[], selPlaced:-1, drag:false };
 const $ = s => document.querySelector(s);
 
 async function boot() {
@@ -62,6 +64,7 @@ async function boot() {
   S.meta = meta; S.world = world;
   S.atlas = new Image(); S.atlas.src = meta.images.atlas;
   await S.atlas.decode();
+  imgCache[meta.images.atlas] = S.atlas;
   fillCats(); buildPalette();
   fit(); draw();
   $('#status').textContent = Object.keys(meta.frames).length + ' frames · ' + world.sites.length + ' sitios';
@@ -82,46 +85,44 @@ const CATS = [
 ];
 const catOf = name => (CATS.find(([,t])=>t(name)) || ['Otros'])[0];
 
-function thumb(f, px) {
-  const c = document.createElement('canvas'); c.width=px; c.height=px;
-  const g = c.getContext('2d'); g.imageSmoothingEnabled=false;
-  const s = Math.min(px/f.w, px/f.h); const dw=f.w*s, dh=f.h*s;
-  g.drawImage(S.atlas, f.x, f.y, f.w, f.h, (px-dw)/2, (px-dh)/2, dw, dh);
-  return c;
-}
-function showPreview(name) {
-  const f = S.meta.frames[name]; const c = $('#pcanvas'); c.width=120; c.height=120;
-  const g = c.getContext('2d'); g.imageSmoothingEnabled=false; g.clearRect(0,0,120,120);
-  const s = Math.min(120/f.w, 120/f.h); const dw=f.w*s, dh=f.h*s;
-  g.drawImage(S.atlas, f.x, f.y, f.w, f.h, (120-dw)/2, (120-dh)/2, dw, dh);
-  $('#pinfo').textContent = `${name} · ${f.w}×${f.h} @ (${f.x},${f.y})`;
-}
-function fillCats() {
-  const sel = $('#cat'); sel.innerHTML = '<option value="__all">Todas las categorías</option>';
-  const present = new Set(Object.keys(S.meta.frames).map(catOf));
-  CAT_ORDER.filter(c=>present.has(c)).forEach(c=>{ const o=document.createElement('option'); o.value=c; o.textContent=c; sel.appendChild(o); });
-}
-function buildPalette() {
-  const filter = $('#search').value.trim().toLowerCase(), catSel = $('#cat').value, px = +$('#size').value;
-  const host = $('#frames'); host.innerHTML='';
-  const byCat = {};
-  Object.keys(S.meta.frames).filter(n=>n.includes(filter)).sort().forEach(n=>{
-    const c = catOf(n); if(catSel!=='__all' && c!==catSel) return; (byCat[c]=byCat[c]||[]).push(n);
-  });
-  CAT_ORDER.filter(c=>byCat[c]).forEach(cat=>{
-    const h = document.createElement('div'); h.className='cathead'; h.textContent=`${cat} (${byCat[cat].length})`; host.appendChild(h);
-    const grid = document.createElement('div'); grid.className='grid'; grid.style.setProperty('--cell', px+'px');
-    byCat[cat].forEach(name=>{
-      const cell = document.createElement('div'); cell.className='cell'+(name===S.selFrame?' sel':''); cell.dataset.name=name; cell.title=name;
-      cell.appendChild(thumb(S.meta.frames[name], px-6));
-      cell.onmouseenter = ()=>showPreview(name);
-      cell.onclick = ()=>{ S.selFrame=name; document.querySelectorAll('.cell').forEach(c=>c.classList.toggle('sel', c.dataset.name===name)); showPreview(name); };
+// image cache (atlas pre-seeded); pack images load lazily and trigger a rebuild on load
+const imgCache = {};
+function getImg(src){ if(imgCache[src]) return imgCache[src]; const im=new Image(); im.src=src; imgCache[src]=im; im.onload=()=>buildPalette(); return im; }
+// A palette entry = descriptor {name, cat, src, sx, sy, sw, sh}
+function atlasEntries(){ return Object.keys(S.meta.frames).map(name=>{ const f=S.meta.frames[name]; return {name, cat:catOf(name), src:S.meta.images.atlas, sx:f.x, sy:f.y, sw:f.w, sh:f.h}; }); }
+function packEntries(){ return S.pack.map(it=>({name:it.name, cat:it.folder, src:it.src, sx:0, sy:0, sw:it.w, sh:it.h})); }
+function entries(){ return S.srcMode==='pack' ? packEntries() : atlasEntries(); }
+function drawDesc(g, d, size){ const im=getImg(d.src); if(!im.complete||!im.naturalWidth) return; const s=Math.min(size/d.sw, size/d.sh); g.drawImage(im, d.sx,d.sy,d.sw,d.sh, (size-d.sw*s)/2, (size-d.sh*s)/2, d.sw*s, d.sh*s); }
+function thumb(d, px){ const c=document.createElement('canvas'); c.width=px; c.height=px; const g=c.getContext('2d'); g.imageSmoothingEnabled=false; drawDesc(g,d,px); return c; }
+function showPreview(d){ S.sel=d; const c=$('#pcanvas'); c.width=120; c.height=120; const g=c.getContext('2d'); g.imageSmoothingEnabled=false; g.clearRect(0,0,120,120); drawDesc(g,d,120); $('#pinfo').textContent = `${d.name} · ${d.sw}×${d.sh}`; }
+function catsPresent(){ return [...new Set(entries().map(e=>e.cat))]; }
+function fillCats(){ const sel=$('#cat'); sel.innerHTML='<option value="__all">Todas las categorías</option>'; const present=catsPresent(); const order = S.srcMode==='pack' ? present.sort() : CAT_ORDER.filter(c=>present.includes(c)); order.forEach(c=>{ const o=document.createElement('option'); o.value=c; o.textContent=c; sel.appendChild(o); }); }
+function buildPalette(){
+  const filter=$('#search').value.trim().toLowerCase(), catSel=$('#cat').value, px=+$('#size').value;
+  const host=$('#frames'); host.innerHTML='';
+  if(S.srcMode==='pack' && catSel==='__all' && !filter){ host.innerHTML='<div class="cathead">elige una carpeta o busca… (717 imágenes)</div>'; return; }
+  const list = entries().filter(e=>e.name.toLowerCase().includes(filter) && (catSel==='__all'||e.cat===catSel)).sort((a,b)=>a.name.localeCompare(b.name));
+  const byCat={}; list.forEach(e=>{ (byCat[e.cat]=byCat[e.cat]||[]).push(e); });
+  const order = S.srcMode==='pack' ? Object.keys(byCat).sort() : CAT_ORDER.filter(c=>byCat[c]);
+  order.forEach(cat=>{
+    const h=document.createElement('div'); h.className='cathead'; h.textContent=`${cat} (${byCat[cat].length})`; host.appendChild(h);
+    const grid=document.createElement('div'); grid.className='grid'; grid.style.setProperty('--cell', px+'px');
+    byCat[cat].forEach(d=>{
+      const cell=document.createElement('div'); cell.className='cell'+(S.sel&&S.sel.src===d.src&&S.sel.sx===d.sx&&S.sel.name===d.name?' sel':''); cell.title=d.name;
+      cell.appendChild(thumb(d, px-6));
+      cell.onmouseenter=()=>showPreview(d);
+      cell.onclick=()=>{ showPreview(d); document.querySelectorAll('.cell').forEach(c=>c.classList.remove('sel')); cell.classList.add('sel'); };
       grid.appendChild(cell);
     });
     host.appendChild(grid);
   });
 }
-$('#search').oninput = buildPalette; $('#cat').onchange = buildPalette; $('#size').oninput = buildPalette;
+$('#search').oninput=buildPalette; $('#cat').onchange=buildPalette; $('#size').oninput=buildPalette;
+$('#src').onchange = async e => { S.srcMode=e.target.value;
+  if(S.srcMode==='pack' && !S.pack){ $('#status').textContent='cargando pack…'; S.pack=await fetch('/game/pack-index.json').then(r=>r.json()); }
+  $('#cat').value='__all'; fillCats(); buildPalette();
+  $('#status').textContent = S.srcMode==='pack' ? S.pack.length+' imágenes del pack' : Object.keys(S.meta.frames).length+' frames del atlas';
+};
 
 // ---- map ----------------------------------------------------------------------
 function fit() {
@@ -154,16 +155,16 @@ function draw() {
     g.fillStyle='#dfeaff'; g.fillText(s.co, wx2sx(s.cx), y-3);
   });
   // placed assets (real sprites, world-scaled, bottom-anchored)
-  S.placed.forEach((it,i)=>{ const f=S.meta.frames[it.frame]; if(!f) return;
-    const dw=f.w*S.scale, dh=f.h*S.scale;
-    g.drawImage(S.atlas, f.x,f.y,f.w,f.h, wx2sx(it.x)-dw/2, wy2sy(it.y)-dh, dw, dh);
+  S.placed.forEach((it,i)=>{ const d=it.d; const im=getImg(d.src); if(!im.complete||!im.naturalWidth) return;
+    const dw=d.sw*S.scale, dh=d.sh*S.scale;
+    g.drawImage(im, d.sx,d.sy,d.sw,d.sh, wx2sx(it.x)-dw/2, wy2sy(it.y)-dh, dw, dh);
     if(i===S.selPlaced){ g.strokeStyle='#00e5a8'; g.lineWidth=1.5; g.strokeRect(wx2sx(it.x)-dw/2,wy2sy(it.y)-dh,dw,dh); }
   });
 }
 
 function hitPlaced(mx,my){
-  for(let i=S.placed.length-1;i>=0;i--){ const it=S.placed[i], f=S.meta.frames[it.frame]; if(!f) continue;
-    const dw=f.w*S.scale, dh=f.h*S.scale, x=wx2sx(it.x)-dw/2, y=wy2sy(it.y)-dh;
+  for(let i=S.placed.length-1;i>=0;i--){ const it=S.placed[i], d=it.d;
+    const dw=d.sw*S.scale, dh=d.sh*S.scale, x=wx2sx(it.x)-dw/2, y=wy2sy(it.y)-dh;
     if(mx>=x&&mx<=x+dw&&my>=y&&my<=y+dh) return i;
   }
   return -1;
@@ -172,7 +173,7 @@ const map = $('#map');
 map.onmousedown = e=>{ const b=map.getBoundingClientRect(), mx=e.clientX-b.left, my=e.clientY-b.top;
   const hit=hitPlaced(mx,my);
   if(hit>=0){ S.selPlaced=hit; S.drag=true; }
-  else if(S.selFrame){ S.placed.push({frame:S.selFrame,x:Math.round(sx2wx(mx)),y:Math.round(sy2wy(my))}); S.selPlaced=S.placed.length-1; }
+  else if(S.sel){ S.placed.push({d:S.sel, x:Math.round(sx2wx(mx)), y:Math.round(sy2wy(my))}); S.selPlaced=S.placed.length-1; }
   else S.selPlaced=-1;
   draw();
 };
@@ -183,7 +184,7 @@ window.onmouseup = ()=>{ S.drag=false; };
 window.onkeydown = e=>{ if((e.key==='Delete'||e.key==='Backspace')&&S.selPlaced>=0){ S.placed.splice(S.selPlaced,1); S.selPlaced=-1; draw(); } };
 window.onresize = ()=>{ fit(); draw(); };
 
-$('#export').onclick = ()=>{ const j=JSON.stringify(S.placed,null,2); const t=$('#json'); t.style.display='block'; t.value=j; t.select();
+$('#export').onclick = ()=>{ const out = S.placed.map(it=>{ const d=it.d; const base = d.src===S.meta.images.atlas ? {frame:d.name} : {src:d.src, w:d.sw, h:d.sh}; return {...base, x:it.x, y:it.y}; }); const j=JSON.stringify(out,null,2); const t=$('#json'); t.style.display='block'; t.value=j; t.select();
   navigator.clipboard?.writeText(j); $('#status').textContent='copiado al portapapeles ('+S.placed.length+' items)'; };
 $('#clear').onclick = ()=>{ S.placed=[]; S.selPlaced=-1; $('#json').style.display='none'; draw(); };
 
