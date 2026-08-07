@@ -187,6 +187,19 @@ describe('framesFrom', () => {
     expect(framesFrom(SAMPLE, dimsOf).frames.am_Trees_T_0_0)
       .toEqual({ img: 'am_Trees_T', x: 0, y: 0, w: 32, h: 32 })
   })
+  it('keeps anchor-marker frames out of the manifest — they are never drawn', () => {
+    const withOwnMarker = {
+      ...SAMPLE,
+      layers: [
+        ...SAMPLE.layers.filter(l => !l.name.startsWith('anchor:')),
+        { name: 'anchor:farm', type: 'objects', objects: [{ frame: 'Cute_Fantasy/Icons/Marker.png#0,0', x: 8, y: 9 }] },
+      ],
+    }
+    const { frames, images } = framesFrom(withOwnMarker, p => (DIMS[p] || { w: 64, h: 64 }))
+    expect(frames.am_Icons_Marker_0_0).toBeUndefined()
+    expect(images.am_Icons_Marker).toBeUndefined()
+    expect(anchorsFrom(withOwnMarker.layers)).toEqual({ farm: { x: 8, y: 9 } })
+  })
 })
 
 describe('convertMap', () => {

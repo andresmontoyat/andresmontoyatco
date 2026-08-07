@@ -92,9 +92,11 @@ export function placementsFrom(layers) {
 const TILE_LAYERS = m => m.layers.filter(l => classifyLayer(l).kind === 'tiles')
 
 // Every ref the map uses anywhere (tiles + objects), deduped, in a stable order.
+// Skips anchor layers — their marker frames are never drawn by the game.
 function allRefs(map) {
   const refs = new Set()
   for (const l of map.layers) {
+    if (classifyLayer(l).kind === 'anchor') continue
     if (l.type === 'objects') for (const o of l.objects || []) refs.add(o.frame)
     else for (const c of l.cells || []) refs.add(c.frame)
   }
