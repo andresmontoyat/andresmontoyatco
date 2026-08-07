@@ -38,3 +38,53 @@ export function frameNameFor(ref) {
 export function publicUrlFor(path) {
   return PUBLIC_BASE + stripRoot(path).split('/').map(encodeURIComponent).join('/')
 }
+
+// The six biome ids buildOverworld knows (ANCHORS in src/game/world/overworld.js).
+export const BIOMES = ['farm', 'pradera', 'desierto', 'selva', 'cyber', 'castillo']
+
+const ANCHOR_PREFIX = 'anchor:'
+
+// The editor has no per-object properties, so layer NAMES carry the semantics. This is the
+// only convention the adapter invents, and it uses something the editor already gives away
+// for free: free-form layer names.
+export function classifyLayer(layer) {
+  if (layer.type === 'tiles') return { kind: 'tiles' }
+  if (!layer.name.startsWith(ANCHOR_PREFIX)) return { kind: 'objects' }
+  const biome = layer.name.slice(ANCHOR_PREFIX.length)
+  if (!BIOMES.includes(biome)) {
+    throw new Error(`layer "${layer.name}": unknown biome "${biome}" (expected one of ${BIOMES.join(', ')})`)
+  }
+  return { kind: 'anchor', biome }
+}
+
+export function anchorsFrom(layers) {
+  const out = {}
+  for (const layer of layers) {
+    const c = classifyLayer(layer)
+    if (c.kind !== 'anchor') continue
+    const items = layer.objects || []
+    if (items.length !== 1) {
+      throw new Error(`layer "${layer.name}": an anchor layer needs exactly one object, got ${items.length}`)
+    }
+    out[c.biome] = { x: items[0].x, y: items[0].y }
+  }
+  return out
+}
+
+// Transform fields are copied only when present, so an untransformed object serializes to
+// exactly { frame, x, y } — byte-identical to what the Asset Placer wrote, which is what
+// makes the render path's identity case verifiable.
+function toPlacement(o) {
+  const p = { frame: frameNameFor(o.frame), x: o.x, y: o.y }
+  if (o.flipX) p.flipX = true
+  if (o.flipY) p.flipY = true
+  if (o.rot) p.rot = o.rot
+  if (o.scale && o.scale !== 1) p.scale = o.scale
+  return p
+}
+
+export function placementsFrom(layers) {
+  return layers
+    .filter(l => classifyLayer(l).kind === 'objects')
+    .flatMap(l => (l.objects || []).map(toPlacement))
+}
