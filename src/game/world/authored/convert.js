@@ -88,3 +88,64 @@ export function placementsFrom(layers) {
     .filter(l => classifyLayer(l).kind === 'objects')
     .flatMap(l => (l.objects || []).map(toPlacement))
 }
+
+const TILE_LAYERS = m => m.layers.filter(l => classifyLayer(l).kind === 'tiles')
+
+// Every ref the map uses anywhere (tiles + objects), deduped, in a stable order.
+function allRefs(map) {
+  const refs = new Set()
+  for (const l of map.layers) {
+    if (l.type === 'objects') for (const o of l.objects || []) refs.add(o.frame)
+    else for (const c of l.cells || []) refs.add(c.frame)
+  }
+  return [...refs].sort()
+}
+
+// Palette + triples, not { x, y, frame } objects: covering the 2140x1360 world is 67x43 = 2881
+// cells, which is ~144 kB as objects and ~35 kB this way. The file ships to the client inside
+// the lazily-imported game chunk, and the site is under a hard Lighthouse mobile gate.
+export function tilesFrom(map) {
+  const names = [...new Set(TILE_LAYERS(map).flatMap(l => (l.cells || []).map(c => frameNameFor(c.frame))))].sort()
+  const index = new Map(names.map((n, i) => [n, i]))
+  return {
+    version: 1,
+    tileSize: map.tileSize,
+    cols: map.cols,
+    rows: map.rows,
+    frames: names,
+    layers: TILE_LAYERS(map).map(l => ({
+      name: l.name,
+      cells: (l.cells || []).map(c => [c.x, c.y, index.get(frameNameFor(c.frame))]),
+    })),
+    anchors: anchorsFrom(map.layers),
+  }
+}
+
+// Manifest entries for every referenced cell. pack-atlas.mjs bakes exactly what MANIFEST
+// references and dedupes by source rect, so authored frames that land on pixels already in the
+// atlas cost nothing extra.
+export function framesFrom(map, dimsOf) {
+  const images = {}
+  const frames = {}
+  for (const ref of allRefs(map)) {
+    const { path, col, row } = splitRef(ref)
+    const key = slugFor(path)
+    const { w, h } = dimsOf(path)
+    const x = col * map.tileSize
+    const y = row * map.tileSize
+    if (x + map.tileSize > w || y + map.tileSize > h) {
+      throw new Error(`ref ${ref}: cell is outside the source image (${w}x${h})`)
+    }
+    images[key] = publicUrlFor(path)
+    frames[frameNameFor(ref)] = { img: key, x, y, w: map.tileSize, h: map.tileSize }
+  }
+  return { images, frames }
+}
+
+export function convertMap(map, { dimsOf }) {
+  return {
+    manifest: framesFrom(map, dimsOf),
+    tiles: tilesFrom(map),
+    placements: placementsFrom(map.layers),
+  }
+}

@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest'
 import {
   splitRef, slugFor, frameNameFor, publicUrlFor,
   classifyLayer, anchorsFrom, placementsFrom,
+  tilesFrom, framesFrom, convertMap,
 } from './convert.js'
 
 describe('splitRef', () => {
@@ -118,5 +119,86 @@ describe('placementsFrom', () => {
       { name: 'props', type: 'objects', objects: [{ frame: 'c/d.png#0,0', x: 3, y: 4 }] },
     ]
     expect(placementsFrom(layers)).toEqual([{ frame: 'am_c_d_0_0', x: 3, y: 4 }])
+  })
+})
+
+const SAMPLE = {
+  version: 1,
+  tileSize: 32,
+  cols: 4,
+  rows: 3,
+  world: { w: 128, h: 96 },
+  layers: [
+    {
+      name: 'suelo',
+      type: 'tiles',
+      cells: [
+        { x: 0, y: 0, frame: 'Cute_Fantasy/Tiles/Grass/G.png#0,0' },
+        { x: 1, y: 0, frame: 'Cute_Fantasy/Tiles/Grass/G.png#0,0' },
+        { x: 2, y: 1, frame: 'Cute_Fantasy/Tiles/Path/P.png#1,1' },
+      ],
+    },
+    { name: 'props', type: 'objects', objects: [{ frame: 'Cute_Fantasy/Trees/T.png#0,0', x: 50, y: 60 }] },
+    { name: 'anchor:farm', type: 'objects', objects: [{ frame: 'Cute_Fantasy/Trees/T.png#0,0', x: 8, y: 9 }] },
+  ],
+}
+
+const DIMS = {
+  'Cute_Fantasy/Tiles/Grass/G.png': { w: 64, h: 64 },
+  'Cute_Fantasy/Tiles/Path/P.png': { w: 96, h: 96 },
+  'Cute_Fantasy/Trees/T.png': { w: 32, h: 32 },
+}
+const dimsOf = p => DIMS[p]
+
+describe('tilesFrom', () => {
+  it('dedupes frames into a palette and encodes cells as [x, y, paletteIndex]', () => {
+    const t = tilesFrom(SAMPLE)
+    expect(t.frames).toEqual(['am_Tiles_Grass_G_0_0', 'am_Tiles_Path_P_1_1'])
+    expect(t.layers).toEqual([{ name: 'suelo', cells: [[0, 0, 0], [1, 0, 0], [2, 1, 1]] }])
+  })
+  it('sorts the palette by name so indices are stable across re-imports', () => {
+    const reversed = { ...SAMPLE, layers: [{ ...SAMPLE.layers[0], cells: [...SAMPLE.layers[0].cells].reverse() }] }
+    expect(tilesFrom(reversed).frames).toEqual(tilesFrom(SAMPLE).frames)
+  })
+  it('carries dimensions and anchors', () => {
+    const t = tilesFrom(SAMPLE)
+    expect(t).toMatchObject({ version: 1, tileSize: 32, cols: 4, rows: 3 })
+    expect(t.anchors).toEqual({ farm: { x: 8, y: 9 } })
+  })
+  it('keeps object layers out of the tile output', () => {
+    expect(tilesFrom(SAMPLE).layers).toHaveLength(1)
+  })
+})
+
+describe('framesFrom', () => {
+  it('emits one image entry per distinct source path', () => {
+    const { images } = framesFrom(SAMPLE, dimsOf)
+    expect(images).toEqual({
+      am_Tiles_Grass_G: '/game/cute-fantasy/Tiles/Grass/G.png',
+      am_Tiles_Path_P: '/game/cute-fantasy/Tiles/Path/P.png',
+      am_Trees_T: '/game/cute-fantasy/Trees/T.png',
+    })
+  })
+  it('turns each cell into a manifest rect at tileSize granularity', () => {
+    const { frames } = framesFrom(SAMPLE, dimsOf)
+    expect(frames.am_Tiles_Path_P_1_1).toEqual({ img: 'am_Tiles_Path_P', x: 32, y: 32, w: 32, h: 32 })
+  })
+  it('includes frames referenced only by objects', () => {
+    expect(framesFrom(SAMPLE, dimsOf).frames.am_Trees_T_0_0)
+      .toEqual({ img: 'am_Trees_T', x: 0, y: 0, w: 32, h: 32 })
+  })
+})
+
+describe('convertMap', () => {
+  it('returns the three artifacts together', () => {
+    const out = convertMap(SAMPLE, { dimsOf })
+    expect(Object.keys(out).sort()).toEqual(['manifest', 'placements', 'tiles'])
+    expect(out.placements).toEqual([{ frame: 'am_Trees_T_0_0', x: 50, y: 60 }])
+    expect(out.tiles.anchors.farm).toEqual({ x: 8, y: 9 })
+    expect(out.manifest.frames.am_Tiles_Grass_G_0_0).toBeDefined()
+  })
+  it('is deterministic — same input, identical json', () => {
+    expect(JSON.stringify(convertMap(SAMPLE, { dimsOf })))
+      .toBe(JSON.stringify(convertMap(SAMPLE, { dimsOf })))
   })
 })
