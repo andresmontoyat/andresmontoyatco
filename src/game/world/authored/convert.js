@@ -144,7 +144,28 @@ export function framesFrom(map, dimsOf) {
   return { images, frames }
 }
 
-export function convertMap(map, { dimsOf }) {
+// TILE in src/game/render/scene2d.js is hardcoded; a map at any other tile size would render
+// at the wrong scale everywhere rather than fail visibly, so it is rejected outright.
+const RENDER_TILE = 32
+
+export function validateMap(map, { dimsOf, exists }) {
+  if (map.tileSize !== RENDER_TILE) {
+    throw new Error(`map tileSize ${map.tileSize} — the renderer requires ${RENDER_TILE}`)
+  }
+  map.layers.forEach(classifyLayer)
+  anchorsFrom(map.layers)
+  for (const ref of allRefs(map)) {
+    const { path, col, row } = splitRef(ref)
+    if (!exists(path)) throw new Error(`ref ${ref}: ${path} not found in the pack`)
+    const { w, h } = dimsOf(path)
+    if (col * map.tileSize + map.tileSize > w || row * map.tileSize + map.tileSize > h) {
+      throw new Error(`ref ${ref}: cell is outside the source image (${w}x${h})`)
+    }
+  }
+}
+
+export function convertMap(map, { dimsOf, exists = () => true }) {
+  validateMap(map, { dimsOf, exists })
   return {
     manifest: framesFrom(map, dimsOf),
     tiles: tilesFrom(map),

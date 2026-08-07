@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest'
 import {
   splitRef, slugFor, frameNameFor, publicUrlFor,
   classifyLayer, anchorsFrom, placementsFrom,
-  tilesFrom, framesFrom, convertMap,
+  tilesFrom, framesFrom, convertMap, validateMap,
 } from './convert.js'
 
 describe('splitRef', () => {
@@ -213,5 +213,37 @@ describe('convertMap', () => {
   it('is deterministic — same input, identical json', () => {
     expect(JSON.stringify(convertMap(SAMPLE, { dimsOf })))
       .toBe(JSON.stringify(convertMap(SAMPLE, { dimsOf })))
+  })
+})
+
+const exists = () => true
+
+describe('validateMap', () => {
+  it('accepts the sample map', () => {
+    expect(() => validateMap(SAMPLE, { dimsOf, exists })).not.toThrow()
+  })
+  it('rejects a tile size the renderer cannot draw', () => {
+    expect(() => validateMap({ ...SAMPLE, tileSize: 16 }, { dimsOf, exists }))
+      .toThrow(/tileSize 16.*renderer requires 32/)
+  })
+  it('rejects a ref whose png is missing from the pack', () => {
+    expect(() => validateMap(SAMPLE, { dimsOf, exists: p => !p.includes('Path') }))
+      .toThrow(/Tiles\/Path\/P\.png.*not found/)
+  })
+  it('rejects a cell outside the source image bounds', () => {
+    const tiny = { ...DIMS, 'Cute_Fantasy/Tiles/Path/P.png': { w: 32, h: 32 } }
+    expect(() => validateMap(SAMPLE, { dimsOf: p => tiny[p], exists }))
+      .toThrow(/outside the source image/)
+  })
+  it('rejects an unknown biome via classifyLayer', () => {
+    const bad = { ...SAMPLE, layers: [...SAMPLE.layers, { name: 'anchor:atlantis', type: 'objects', objects: [] }] }
+    expect(() => validateMap(bad, { dimsOf, exists })).toThrow(/unknown biome/)
+  })
+})
+
+describe('convertMap validation', () => {
+  it('validates before converting', () => {
+    expect(() => convertMap({ ...SAMPLE, tileSize: 16 }, { dimsOf, exists }))
+      .toThrow(/tileSize 16/)
   })
 })
