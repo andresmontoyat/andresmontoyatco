@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest'
 import {
   splitRef, slugFor, frameNameFor, publicUrlFor,
   classifyLayer, anchorsFrom, placementsFrom,
-  tilesFrom, framesFrom, convertMap, validateMap,
+  tilesFrom, framesFrom, convertMap, validateMap, gridOf,
 } from './convert.js'
 
 describe('splitRef', () => {
@@ -222,10 +222,6 @@ describe('validateMap', () => {
   it('accepts the sample map', () => {
     expect(() => validateMap(SAMPLE, { dimsOf, exists })).not.toThrow()
   })
-  it('rejects a tile size the renderer cannot draw', () => {
-    expect(() => validateMap({ ...SAMPLE, tileSize: 16 }, { dimsOf, exists }))
-      .toThrow(/tileSize 16.*renderer requires 32/)
-  })
   it('rejects a ref whose png is missing from the pack', () => {
     expect(() => validateMap(SAMPLE, { dimsOf, exists: p => !p.includes('Path') }))
       .toThrow(/Tiles\/Path\/P\.png.*not found/)
@@ -243,7 +239,52 @@ describe('validateMap', () => {
 
 describe('convertMap validation', () => {
   it('validates before converting', () => {
-    expect(() => convertMap({ ...SAMPLE, tileSize: 16 }, { dimsOf, exists }))
-      .toThrow(/tileSize 16/)
+    expect(() => convertMap({ ...SAMPLE, tileSize: 0 }, { dimsOf, exists }))
+      .toThrow(/tileSize/)
+  })
+})
+
+const REAL = {
+  version: 1,
+  tileSize: 16,
+  world: { w: 960, h: 720 },
+  bundles: [{ id: 'Cute_Fantasy' }],
+  terrains: [],
+  animations: {},
+  layers: [
+    { name: 'Capa 1', type: 'tiles', cells: [{ x: 6, y: 12, frame: 'Cute_Fantasy/Tiles/Grass/G.png#0,0' }] },
+  ],
+}
+const REAL_DIMS = { 'Cute_Fantasy/Tiles/Grass/G.png': { w: 64, h: 64 } }
+
+describe('gridOf', () => {
+  it('derives cols and rows from world size and tile size', () => {
+    expect(gridOf(REAL)).toEqual({ cols: 60, rows: 45 })
+  })
+  it('does not read cols/rows off the map — the editor never emits them', () => {
+    expect(gridOf({ ...REAL, cols: 999, rows: 999 })).toEqual({ cols: 60, rows: 45 })
+  })
+})
+
+describe('tilesFrom with a real export', () => {
+  it('emits derived cols/rows, never undefined', () => {
+    const t = tilesFrom(REAL)
+    expect(t.cols).toBe(60)
+    expect(t.rows).toBe(45)
+    expect(t.tileSize).toBe(16)
+  })
+})
+
+describe('validateMap tile-size model', () => {
+  it('accepts a 16px source map — the pack granularity, not the world tile size', () => {
+    expect(() => validateMap(REAL, { dimsOf: p => REAL_DIMS[p], exists })).not.toThrow()
+  })
+  it('rejects a missing or non-positive tileSize', () => {
+    expect(() => validateMap({ ...REAL, tileSize: 0 }, { dimsOf: p => REAL_DIMS[p], exists }))
+      .toThrow(/tileSize/)
+  })
+  it('rejects a world size that is not a whole number of tiles', () => {
+    expect(() => validateMap({ ...REAL, world: { w: 950, h: 720 } }, { dimsOf: p => REAL_DIMS[p], exists }))
+      .toThrow(/world 950x720 is not a whole number of 16px tiles/)
   })
 })

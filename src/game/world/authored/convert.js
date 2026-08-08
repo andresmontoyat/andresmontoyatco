@@ -103,17 +103,25 @@ function allRefs(map) {
   return [...refs].sort()
 }
 
+// The editor's exportMap emits world size, never cols/rows — deriving them is the only
+// correct source. map.tileSize is the PACK's source granularity (16 for cute-fantasy); the
+// renderer's TILE (32 world px) is a separate magnitude and deliberately not referenced here.
+export function gridOf(map) {
+  return { cols: map.world.w / map.tileSize, rows: map.world.h / map.tileSize }
+}
+
 // Palette + triples, not { x, y, frame } objects: covering the 2140x1360 world is 67x43 = 2881
 // cells, which is ~144 kB as objects and ~35 kB this way. The file ships to the client inside
 // the lazily-imported game chunk, and the site is under a hard Lighthouse mobile gate.
 export function tilesFrom(map) {
   const names = [...new Set(TILE_LAYERS(map).flatMap(l => (l.cells || []).map(c => frameNameFor(c.frame))))].sort()
   const index = new Map(names.map((n, i) => [n, i]))
+  const { cols, rows } = gridOf(map)
   return {
     version: 1,
     tileSize: map.tileSize,
-    cols: map.cols,
-    rows: map.rows,
+    cols,
+    rows,
     frames: names,
     layers: TILE_LAYERS(map).map(l => ({
       name: l.name,
@@ -144,13 +152,13 @@ export function framesFrom(map, dimsOf) {
   return { images, frames }
 }
 
-// TILE in src/game/render/scene2d.js is hardcoded; a map at any other tile size would render
-// at the wrong scale everywhere rather than fail visibly, so it is rejected outright.
-const RENDER_TILE = 32
-
 export function validateMap(map, { dimsOf, exists }) {
-  if (map.tileSize !== RENDER_TILE) {
-    throw new Error(`map tileSize ${map.tileSize} — the renderer requires ${RENDER_TILE}`)
+  if (!Number.isInteger(map.tileSize) || map.tileSize < 1) {
+    throw new Error(`map tileSize ${map.tileSize} — expected a positive integer (the pack's source granularity)`)
+  }
+  if (!map.world || map.world.w % map.tileSize || map.world.h % map.tileSize) {
+    const { w, h } = map.world || {}
+    throw new Error(`map world ${w}x${h} is not a whole number of ${map.tileSize}px tiles`)
   }
   map.layers.forEach(classifyLayer)
   anchorsFrom(map.layers)
