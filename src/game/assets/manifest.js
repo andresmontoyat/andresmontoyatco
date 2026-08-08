@@ -9,6 +9,8 @@
 // its own reorganized folder tree). Every frame name below is unchanged from before this re-map —
 // only img/{x,y,w,h} moved — so scene2d.js/tiles.js/ambient.js keep working untouched.
 
+import { AUTHORED_IMAGES, AUTHORED_FRAMES } from './manifest.authored.js'
+
 // Modular avatar layers → their source image. Draw order is bottom→top (see tiles.js
 // AVATAR_LAYERS): base body, jeans, boots, shirt, hair.
 const AVATAR_LAYER_IMG = {
@@ -137,6 +139,7 @@ export const MANIFEST = {
     cfNpcKaty: '/game/cute-fantasy/NPCs%20(Premade)/Bartender_Katy.png',
     cfNpcFin: '/game/cute-fantasy/NPCs%20(Premade)/Fisherman_Fin.png',
     cfNpcJack: '/game/cute-fantasy/NPCs%20(Premade)/Lumberjack_Jack.png',
+    ...AUTHORED_IMAGES,
   },
   frames: {
     // Ground per biome. Grass_1..4_Middle.png are each a single fully-opaque 16x16 tile (no
@@ -311,6 +314,7 @@ export const MANIFEST = {
     // Frog — front-facing sitting frog (row 0, cols 0/1), a 2-frame idle for the pond bank.
     frog_0: { img: 'cfFrog', x: 0, y: 0, w: 32, h: 32 },
     frog_1: { img: 'cfFrog', x: 32, y: 0, w: 32, h: 32 },
+    ...AUTHORED_FRAMES,
   },
 }
 

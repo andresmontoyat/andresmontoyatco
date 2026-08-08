@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { MANIFEST, AVATAR_FRAMES, NPC_FRAMES } from './manifest.js'
+import { AUTHORED_IMAGES, AUTHORED_FRAMES } from './manifest.authored.js'
 
 const REQUIRED_FRAMES = [
   'ground_farm', 'ground_farm_2', 'ground_farm_3',
@@ -27,6 +28,9 @@ const REQUIRED_FRAMES = [
   'duck_0', 'duck_1', 'cow_0', 'cow_1', 'pig_0', 'pig_1', 'sheep_0', 'sheep_1', 'frog_0', 'frog_1',
   // Ambient NPC frames (npc_<type>_0/1) generated in manifest.js — same source of truth.
   ...Object.keys(NPC_FRAMES),
+  // Authored frames sliced from the world-editor export (scripts/import-map.mjs) — regenerated
+  // from the same source of truth so a re-import never drifts out of sync with this list.
+  ...Object.keys(AUTHORED_FRAMES),
 ]
 
 // Real pixel dimensions of each source PNG, captured with
@@ -119,14 +123,20 @@ describe('MANIFEST integrity', () => {
     })
   })
 
-  it('has a known real size recorded for every image key', () => {
+  // Authored images/frames (AUTHORED_IMAGES/AUTHORED_FRAMES) are excluded from the two checks
+  // below: scripts/import-map.mjs already measures every source PNG with sharp and convert.js's
+  // validateMap rejects any ref whose cell falls outside those real dimensions, so a hand-kept
+  // REAL_IMAGE_SIZE entry here would just duplicate a check the import pipeline already enforces.
+  it('has a known real size recorded for every hand-curated image key', () => {
     Object.keys(MANIFEST.images).forEach(key => {
+      if (key in AUTHORED_IMAGES) return
       expect(REAL_IMAGE_SIZE[key], `no REAL_IMAGE_SIZE entry for "${key}"`).toBeDefined()
     })
   })
 
-  it('keeps every frame rect within its image real pixel bounds', () => {
+  it('keeps every hand-curated frame rect within its image real pixel bounds', () => {
     Object.entries(MANIFEST.frames).forEach(([name, frame]) => {
+      if (name in AUTHORED_FRAMES) return
       const size = REAL_IMAGE_SIZE[frame.img]
       expect(frame.x + frame.w, `frame "${name}" exceeds width of "${frame.img}"`).toBeLessThanOrEqual(size.w)
       expect(frame.y + frame.h, `frame "${name}" exceeds height of "${frame.img}"`).toBeLessThanOrEqual(size.h)
