@@ -3,7 +3,7 @@ import {
   splitRef, slugFor, frameNameFor, publicUrlFor,
   classifyLayer, anchorsFrom, placementsFrom,
   tilesFrom, framesFrom, convertMap, validateMap, gridOf,
-  worldScaleOf, WORLD_TILE,
+  worldScaleOf, WORLD_TILE, rectFor,
 } from './convert.js'
 
 describe('splitRef', () => {
@@ -142,6 +142,11 @@ const SAMPLE = {
     { name: 'props', type: 'objects', objects: [{ frame: 'Cute_Fantasy/Trees/T.png#0,0', x: 50, y: 60 }] },
     { name: 'anchor:farm', type: 'objects', objects: [{ frame: 'Cute_Fantasy/Trees/T.png#0,0', x: 8, y: 9 }] },
   ],
+  slices: {
+    'Cute_Fantasy/Tiles/Grass/G.png': { type: 'sheet', fw: 32, fh: 32, cols: 2, rows: 2 },
+    'Cute_Fantasy/Tiles/Path/P.png': { type: 'sheet', fw: 32, fh: 32, cols: 3, rows: 3 },
+    'Cute_Fantasy/Trees/T.png': { type: 'sheet', fw: 32, fh: 32, cols: 1, rows: 1 },
+  },
 }
 
 const DIMS = {
@@ -255,6 +260,7 @@ const REAL = {
   layers: [
     { name: 'Capa 1', type: 'tiles', cells: [{ x: 6, y: 12, frame: 'Cute_Fantasy/Tiles/Grass/G.png#0,0' }] },
   ],
+  slices: { 'Cute_Fantasy/Tiles/Grass/G.png': { type: 'sheet', fw: 16, fh: 16, cols: 4, rows: 4 } },
 }
 const REAL_DIMS = { 'Cute_Fantasy/Tiles/Grass/G.png': { w: 64, h: 64 } }
 
@@ -316,8 +322,8 @@ describe('coordinate scaling', () => {
     { name: 'anchor:farm', type: 'objects', objects: [{ frame: 'a/b.png#0,0', x: 100, y: 200 }] },
   ]
 
-  it('scales placement positions into game world pixels', () => {
-    expect(placementsFrom(layers, 2)).toEqual([{ frame: 'am_a_b_0_0', x: 318, y: 320 }])
+  it('scales placement positions into game world pixels, folding the world scale into size too', () => {
+    expect(placementsFrom(layers, 2)).toEqual([{ frame: 'am_a_b_0_0', x: 318, y: 320, scale: 2 }])
   })
   it('scales anchor positions into game world pixels', () => {
     expect(anchorsFrom(layers, 2)).toEqual({ farm: { x: 200, y: 400 } })
@@ -326,9 +332,9 @@ describe('coordinate scaling', () => {
     expect(placementsFrom(layers)[0]).toMatchObject({ x: 159, y: 160 })
     expect(anchorsFrom(layers)).toEqual({ farm: { x: 100, y: 200 } })
   })
-  it('leaves transform fields untouched while scaling position', () => {
+  it('multiplies an authored scale by the world scale while leaving other transforms untouched', () => {
     const withRot = [{ name: 'p', type: 'objects', objects: [{ frame: 'a/b.png#0,0', x: 10, y: 20, rot: 90, scale: 2 }] }]
-    expect(placementsFrom(withRot, 2)).toEqual([{ frame: 'am_a_b_0_0', x: 20, y: 40, rot: 90, scale: 2 }])
+    expect(placementsFrom(withRot, 2)).toEqual([{ frame: 'am_a_b_0_0', x: 20, y: 40, rot: 90, scale: 4 }])
   })
 })
 
@@ -337,5 +343,59 @@ describe('convertMap applies the world scale', () => {
     const out = convertMap(REAL_WITH_OBJECTS, { dimsOf: p => REAL_DIMS[p], exists })
     expect(out.placements[0]).toMatchObject({ x: 200, y: 300 })
     expect(out.tiles.anchors.farm).toEqual({ x: 400, y: 500 })
+  })
+})
+
+describe('rectFor', () => {
+  it('gives a sheet cell its col,row offset at frame size', () => {
+    expect(rectFor({ type: 'sheet', fw: 16, fh: 16, cols: 4, rows: 4 }, 2, 3))
+      .toEqual({ x: 32, y: 48, w: 16, h: 16 })
+  })
+  it('gives a single sprite the whole image, ignoring col,row filler', () => {
+    expect(rectFor({ type: 'single', w: 192, h: 80 }, 0, 0)).toEqual({ x: 0, y: 0, w: 192, h: 80 })
+    expect(rectFor({ type: 'single', w: 192, h: 80 }, 5, 7)).toEqual({ x: 0, y: 0, w: 192, h: 80 })
+  })
+})
+
+describe('framesFrom with slice geometry', () => {
+  const map = {
+    tileSize: 16,
+    world: { w: 64, h: 64 },
+    layers: [{ name: 'p', type: 'objects', objects: [{ frame: 'Cute_Fantasy/Trees/Oak.png#0,0', x: 1, y: 1 }] }],
+    slices: { 'Cute_Fantasy/Trees/Oak.png': { type: 'single', w: 192, h: 80 } },
+  }
+  const dims = { 'Cute_Fantasy/Trees/Oak.png': { w: 192, h: 80 } }
+
+  it('emits the whole image for a single sprite, not a tileSize corner', () => {
+    expect(framesFrom(map, p => dims[p]).frames.am_Trees_Oak_0_0)
+      .toEqual({ img: 'am_Trees_Oak', x: 0, y: 0, w: 192, h: 80 })
+  })
+})
+
+describe('validateMap requires slice geometry', () => {
+  it('rejects a map with no slices block — it was exported before the editor emitted one', () => {
+    const stale = { ...REAL, slices: undefined }
+    expect(() => validateMap(stale, { dimsOf: p => REAL_DIMS[p], exists }))
+      .toThrow(/no slices block.*re-export/)
+  })
+  it('rejects a referenced image missing from slices', () => {
+    const gap = { ...REAL, slices: {} }
+    expect(() => validateMap(gap, { dimsOf: p => REAL_DIMS[p], exists }))
+      .toThrow(/G\.png.*missing from the map's slices/)
+  })
+})
+
+describe('object sprites scale with the world', () => {
+  it('folds the world scale into the placement scale so sprites match the terrain', () => {
+    const layers = [{ name: 'p', type: 'objects', objects: [{ frame: 'a/b.png#0,0', x: 10, y: 20 }] }]
+    expect(placementsFrom(layers, 2)[0]).toEqual({ frame: 'am_a_b_0_0', x: 20, y: 40, scale: 2 })
+  })
+  it('multiplies an authored scale by the world scale', () => {
+    const layers = [{ name: 'p', type: 'objects', objects: [{ frame: 'a/b.png#0,0', x: 0, y: 0, scale: 3 }] }]
+    expect(placementsFrom(layers, 2)[0].scale).toBe(6)
+  })
+  it('emits no scale at all when the world scale is 1 and the object has none', () => {
+    const layers = [{ name: 'p', type: 'objects', objects: [{ frame: 'a/b.png#0,0', x: 0, y: 0 }] }]
+    expect(Object.keys(placementsFrom(layers, 1)[0])).toEqual(['frame', 'x', 'y'])
   })
 })

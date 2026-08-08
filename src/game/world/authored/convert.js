@@ -90,7 +90,8 @@ function toPlacement(o, scale) {
   if (o.flipX) p.flipX = true
   if (o.flipY) p.flipY = true
   if (o.rot) p.rot = o.rot
-  if (o.scale && o.scale !== 1) p.scale = o.scale
+  const s = scale * (o.scale || 1)
+  if (s !== 1) p.scale = s
   return p
 }
 
@@ -142,6 +143,14 @@ export function tilesFrom(map, scale = 1) {
   }
 }
 
+// rectFor: the source rect a `path#col,row` ref denotes, given how the editor cut that image.
+// A 'single' image is one whole sprite and its col,row are filler — slicing it at tileSize
+// yields transparent margin, which is exactly the bug this replaces.
+export function rectFor(slice, col, row) {
+  if (slice.type === 'single') return { x: 0, y: 0, w: slice.w, h: slice.h }
+  return { x: col * slice.fw, y: row * slice.fh, w: slice.fw, h: slice.fh }
+}
+
 // Manifest entries for every referenced cell. pack-atlas.mjs bakes exactly what MANIFEST
 // references and dedupes by source rect, so authored frames that land on pixels already in the
 // atlas cost nothing extra.
@@ -152,13 +161,12 @@ export function framesFrom(map, dimsOf) {
     const { path, col, row } = splitRef(ref)
     const key = slugFor(path)
     const { w, h } = dimsOf(path)
-    const x = col * map.tileSize
-    const y = row * map.tileSize
-    if (x + map.tileSize > w || y + map.tileSize > h) {
-      throw new Error(`ref ${ref}: cell is outside the source image (${w}x${h})`)
+    const r = rectFor(map.slices[path], col, row)
+    if (r.x + r.w > w || r.y + r.h > h) {
+      throw new Error(`ref ${ref}: rect ${r.w}x${r.h} at ${r.x},${r.y} is outside the source image (${w}x${h})`)
     }
     images[key] = publicUrlFor(path)
-    frames[frameNameFor(ref)] = { img: key, x, y, w: map.tileSize, h: map.tileSize }
+    frames[frameNameFor(ref)] = { img: key, ...r }
   }
   return { images, frames }
 }
@@ -173,12 +181,18 @@ export function validateMap(map, { dimsOf, exists }) {
   }
   map.layers.forEach(classifyLayer)
   anchorsFrom(map.layers)
+  if (!map.slices) {
+    throw new Error('map has no slices block — re-export it from a world-editor with slice geometry')
+  }
   for (const ref of allRefs(map)) {
     const { path, col, row } = splitRef(ref)
     if (!exists(path)) throw new Error(`ref ${ref}: ${path} not found in the pack`)
+    const slice = map.slices[path]
+    if (!slice) throw new Error(`ref ${ref}: ${path} is missing from the map's slices block`)
     const { w, h } = dimsOf(path)
-    if (col * map.tileSize + map.tileSize > w || row * map.tileSize + map.tileSize > h) {
-      throw new Error(`ref ${ref}: cell is outside the source image (${w}x${h})`)
+    const r = rectFor(slice, col, row)
+    if (r.x + r.w > w || r.y + r.h > h) {
+      throw new Error(`ref ${ref}: rect ${r.w}x${r.h} at ${r.x},${r.y} is outside the source image (${w}x${h})`)
     }
   }
 }
