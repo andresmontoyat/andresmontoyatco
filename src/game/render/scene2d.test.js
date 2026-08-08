@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import {
-  nearestPathDist, nearestRoadDist, visibleTileRange, eraLabel, drawAuthoredTiles,
+  nearestPathDist, nearestRoadDist, visibleTileRange, eraLabel, drawAuthoredTiles, drawTransformed,
 } from './scene2d.js'
 
 const path = [{ x: 0, y: 0 }, { x: 100, y: 0 }]
@@ -109,5 +109,53 @@ describe('drawAuthoredTiles', () => {
     const world = { regions: [{ bi: 'cyber', x: 0, y: 0 }], farm: { x: 0, y: 0 } }
     drawAuthoredTiles(ctx, { authored, world }, { x: 0, y: 0 }, fakeSprites([]))
     expect(fills.filter(([x, y]) => x === 0 && y === 0)).toHaveLength(1)
+  })
+})
+
+describe('drawTransformed', () => {
+  const recorder = () => {
+    const ops = []
+    const ctx = {
+      canvas: { width: 64, height: 64 },
+      save: () => ops.push(['save']),
+      restore: () => ops.push(['restore']),
+      translate: (x, y) => ops.push(['translate', x, y]),
+      rotate: r => ops.push(['rotate', r]),
+      scale: (x, y) => ops.push(['scale', x, y]),
+    }
+    return { ctx, ops }
+  }
+  const sprites = ops => ({
+    frame: () => ({ w: 32, h: 48 }),
+    draw: (ctx, name, x, y, w, h) => ops.push(['draw', name, x, y, w, h]),
+  })
+
+  it('draws an untransformed placement with no canvas state changes', () => {
+    const { ctx, ops } = recorder()
+    drawTransformed(ctx, sprites(ops), { frame: 'f', x: 100, y: 200 }, { x: 0, y: 0 })
+    expect(ops).toEqual([['draw', 'f', 84, 152, 32, 48]])
+  })
+  it('offsets by the camera', () => {
+    const { ctx, ops } = recorder()
+    drawTransformed(ctx, sprites(ops), { frame: 'f', x: 100, y: 200 }, { x: 10, y: 20 })
+    expect(ops).toEqual([['draw', 'f', 74, 132, 32, 48]])
+  })
+  it('mirrors horizontally around the bottom-centre anchor for flipX', () => {
+    const { ctx, ops } = recorder()
+    drawTransformed(ctx, sprites(ops), { frame: 'f', x: 100, y: 200, flipX: true }, { x: 0, y: 0 })
+    expect(ops[0]).toEqual(['save'])
+    expect(ops).toContainEqual(['translate', 100, 200])
+    expect(ops).toContainEqual(['scale', -1, 1])
+    expect(ops[ops.length - 1]).toEqual(['restore'])
+  })
+  it('rotates in degrees clockwise about the anchor', () => {
+    const { ctx, ops } = recorder()
+    drawTransformed(ctx, sprites(ops), { frame: 'f', x: 0, y: 0, rot: 90 }, { x: 0, y: 0 })
+    expect(ops).toContainEqual(['rotate', Math.PI / 2])
+  })
+  it('applies uniform scale', () => {
+    const { ctx, ops } = recorder()
+    drawTransformed(ctx, sprites(ops), { frame: 'f', x: 0, y: 0, scale: 2 }, { x: 0, y: 0 })
+    expect(ops).toContainEqual(['scale', 2, 2])
   })
 })

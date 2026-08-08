@@ -327,6 +327,27 @@ function windmillDrawable(wm, cam, t) {
   }
 }
 
+// Authored objects carry optional flipX/flipY/rot/scale (world-editor M5). Anchor is the same
+// bottom-centre point the flat placements already used, so the no-transform path stays a single
+// drawImage with no canvas state changes — that identity case is what guarantees M6 does not
+// alter anything the Asset Placer produced.
+export function drawTransformed(ctx, sprites, pl, cam) {
+  const f = sprites.frame(pl.frame)
+  const scale = pl.scale || 1
+  const rot = pl.rot || 0
+  if (!pl.flipX && !pl.flipY && !rot && scale === 1) {
+    sprites.draw(ctx, pl.frame, pl.x - f.w / 2 - cam.x, pl.y - f.h - cam.y, f.w, f.h)
+    return
+  }
+  ctx.save()
+  ctx.translate(pl.x - cam.x, pl.y - cam.y)
+  if (rot) ctx.rotate((rot * Math.PI) / 180)
+  if (scale !== 1) ctx.scale(scale, scale)
+  if (pl.flipX || pl.flipY) ctx.scale(pl.flipX ? -1 : 1, pl.flipY ? -1 : 1)
+  sprites.draw(ctx, pl.frame, -f.w / 2, -f.h, f.w, f.h)
+  ctx.restore()
+}
+
 // Buildings, decor, and the avatar all draw in one y-sorted pass (sorted by each item's
 // ground-contact baseY) so things nearer the bottom of the screen correctly occlude things
 // behind them, instead of buildings/avatar always drawing on top of decor regardless of depth.
@@ -337,13 +358,10 @@ function depthSortedDrawables(state, cam, t) {
   const decor = (state.decor || []).map(d => ({ baseY: d.y, draw: drawOne(d) }))
   const critters = critterDrawables(state, cam, t)
   const npcs = npcDrawables(state, cam, t)
-  // Hand-placed assets (Asset Placer) — drawn at native frame size, bottom-anchored at (x,y).
+  // Authored/hand-placed assets — native frame size, bottom-anchored at (x,y), optional transforms.
   const placements = (state.world.placements || []).map(pl => ({
     baseY: pl.y,
-    draw: (ctx, sprites) => {
-      const f = sprites.frame(pl.frame)
-      sprites.draw(ctx, pl.frame, pl.x - f.w / 2 - cam.x, pl.y - f.h - cam.y, f.w, f.h)
-    },
+    draw: (ctx, sprites) => drawTransformed(ctx, sprites, pl, cam),
   }))
   const windmill = state.world.farmWindmill ? [windmillDrawable(state.world.farmWindmill, cam, t)] : []
   const { player } = state
