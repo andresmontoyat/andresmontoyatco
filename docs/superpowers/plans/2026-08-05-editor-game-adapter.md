@@ -78,7 +78,8 @@ This step is manual and cannot be automated — it needs the editor UI and the p
 
 1. `cd /Users/andres/Development/repositories.nosync/codehunters/tools/world-editor && npm run dev`
 2. In the browser: import `~/Downloads/Cute_Fantasy.zip` as the bundle.
-3. Create a new map, **tile size 32**, 67 cols × 43 rows.
+3. Create a new map, **tile size 16** (the pack's source granularity — the game upscales each
+   cell to 32 world px), 67 cols × 43 rows.
 4. Paint a small patch of ground — a dozen tiles is enough. Do not try to cover the world.
 5. Add an objects layer named `props`, place 2-3 decorations. Give one of them a flip and a rotation so the transform path gets exercised.
 6. Add an objects layer named **exactly** `anchor:farm`, and place **one** object anywhere near the bottom-left (the farm is at world `360,1120`).
@@ -744,6 +745,135 @@ Expected: PASS — all existing tests plus 37 in `convert.test.js`.
 ```bash
 git add src/game/world/authored/convert.js src/game/world/authored/convert.test.js
 git commit -m "feat(game): authored-map validation — tile size, missing pngs, out-of-bounds cells"
+```
+
+---
+
+### Task 5b: Correct the tile-size model and derive cols/rows
+
+A real export (Task 1) proved two defects in Tasks 4-5, both introduced by this plan:
+
+1. **`tileSize` is the pack's source granularity, not the world tile size.** The game's ground
+   frames are 16×16 source pixels (`ground_farm`, `path_center` — all `{w:16,h:16}` in
+   `atlas.json`) drawn into 32×32 world pixels. A correctly authored map for this pack exports
+   `tileSize: 16`. `validateMap`'s `tileSize !== 32` check rejects every such map.
+2. **`cols`/`rows` do not exist in the export.** `exportMap` emits
+   `version, tileSize, world, bundles, terrains, animations, layers` — nothing else.
+   `tilesFrom` copies `map.cols`/`map.rows` and would write `undefined` into the shipped JSON.
+
+**Files:**
+- Modify: `src/game/world/authored/convert.js`
+- Test: `src/game/world/authored/convert.test.js`
+
+**Interfaces:**
+- Consumes: everything from Tasks 2-5.
+- Produces: `gridOf(map) -> { cols: number, rows: number }`; `tilesFrom` output keeps the same
+  shape, with `cols`/`rows` derived rather than copied.
+
+- [ ] **Step 1: Add the failing tests**
+
+Append to `src/game/world/authored/convert.test.js` (merge `gridOf` into the existing import).
+`SAMPLE` already carries `cols: 4, rows: 3` and `world: { w: 128, h: 96 }` at `tileSize: 32`,
+which stay consistent — so add a separate fixture shaped like a real export:
+
+```js
+const REAL = {
+  version: 1,
+  tileSize: 16,
+  world: { w: 960, h: 720 },
+  bundles: [{ id: 'Cute_Fantasy' }],
+  terrains: [],
+  animations: {},
+  layers: [
+    { name: 'Capa 1', type: 'tiles', cells: [{ x: 6, y: 12, frame: 'Cute_Fantasy/Tiles/Grass/G.png#0,0' }] },
+  ],
+}
+const REAL_DIMS = { 'Cute_Fantasy/Tiles/Grass/G.png': { w: 64, h: 64 } }
+
+describe('gridOf', () => {
+  it('derives cols and rows from world size and tile size', () => {
+    expect(gridOf(REAL)).toEqual({ cols: 60, rows: 45 })
+  })
+  it('does not read cols/rows off the map — the editor never emits them', () => {
+    expect(gridOf({ ...REAL, cols: 999, rows: 999 })).toEqual({ cols: 60, rows: 45 })
+  })
+})
+
+describe('tilesFrom with a real export', () => {
+  it('emits derived cols/rows, never undefined', () => {
+    const t = tilesFrom(REAL)
+    expect(t.cols).toBe(60)
+    expect(t.rows).toBe(45)
+    expect(t.tileSize).toBe(16)
+  })
+})
+
+describe('validateMap tile-size model', () => {
+  it('accepts a 16px source map — the pack granularity, not the world tile size', () => {
+    expect(() => validateMap(REAL, { dimsOf: p => REAL_DIMS[p], exists })).not.toThrow()
+  })
+  it('rejects a missing or non-positive tileSize', () => {
+    expect(() => validateMap({ ...REAL, tileSize: 0 }, { dimsOf: p => REAL_DIMS[p], exists }))
+      .toThrow(/tileSize/)
+  })
+  it('rejects a world size that is not a whole number of tiles', () => {
+    expect(() => validateMap({ ...REAL, world: { w: 950, h: 720 } }, { dimsOf: p => REAL_DIMS[p], exists }))
+      .toThrow(/world 950x720 is not a whole number of 16px tiles/)
+  })
+})
+```
+
+- [ ] **Step 2: Run tests to verify they fail**
+
+Run: `export PATH="$HOME/.nvm/versions/node/v22.23.2/bin:$PATH" && npx vitest run src/game/world/authored/convert.test.js`
+Expected: FAIL — `gridOf is not a function`, and the 16px map rejected by the old check.
+
+- [ ] **Step 3: Write the implementation**
+
+In `src/game/world/authored/convert.js`, add `gridOf` next to `tilesFrom`:
+
+```js
+// The editor's exportMap emits world size, never cols/rows — deriving them is the only
+// correct source. map.tileSize is the PACK's source granularity (16 for cute-fantasy); the
+// renderer's TILE (32 world px) is a separate magnitude and deliberately not referenced here.
+export function gridOf(map) {
+  return { cols: map.world.w / map.tileSize, rows: map.world.h / map.tileSize }
+}
+```
+
+In `tilesFrom`, replace the two copied fields:
+
+```js
+  const { cols, rows } = gridOf(map)
+```
+
+and use `cols,` / `rows,` in the returned object in place of `cols: map.cols` / `rows: map.rows`.
+
+Then replace the tile-size branch of `validateMap`:
+
+```js
+  if (!Number.isInteger(map.tileSize) || map.tileSize < 1) {
+    throw new Error(`map tileSize ${map.tileSize} — expected a positive integer (the pack's source granularity)`)
+  }
+  if (!map.world || map.world.w % map.tileSize || map.world.h % map.tileSize) {
+    const { w, h } = map.world || {}
+    throw new Error(`map world ${w}x${h} is not a whole number of ${map.tileSize}px tiles`)
+  }
+```
+
+and delete the now-unused `RENDER_TILE` constant.
+
+- [ ] **Step 4: Run the full suite**
+
+Run: `export PATH="$HOME/.nvm/versions/node/v22.23.2/bin:$PATH" && npm run test:run`
+Expected: PASS — every earlier test still green (SAMPLE stays consistent at `tileSize: 32`
+with `world: { w: 128, h: 96 }`, which derives to the same `cols: 4, rows: 3` it declared).
+
+- [ ] **Step 5: Commit**
+
+```bash
+git add src/game/world/authored/convert.js src/game/world/authored/convert.test.js
+git commit -m "fix(game): tileSize is pack granularity, and derive cols/rows from world size"
 ```
 
 ---

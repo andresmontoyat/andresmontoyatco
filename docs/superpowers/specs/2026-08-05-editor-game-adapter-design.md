@@ -139,19 +139,41 @@ They are the only convention this design invents.
 
 ```json
 {
-  "version": 1, "tileSize": 32, "cols": 67, "rows": 43,
+  "version": 1, "tileSize": 16, "cols": 67, "rows": 43,
   "frames": ["am_Tiles_Grass_Grass_1_Middle_0_0", "am_Tiles_Path_Path_Tile_1_1"],
   "layers": [{ "name": "suelo", "cells": [[12,8,0],[13,8,0],[14,8,1]] }],
   "anchors": { "pradera": { "x": 380, "y": 700 } }
 }
 ```
 
-`cols`/`rows` above are the authored map's own dimensions, not a required match to the
+### Two tile sizes, not one
+
+Source granularity and world granularity are different magnitudes, and conflating them was
+a defect in the first version of this spec:
+
+| | What it is | Value for this pack |
+|---|---|---|
+| `map.tileSize` (from the export) | how the **pack** is cut — the source rect size | **16** |
+| `TILE` in `src/game/render/scene2d.js` | **world** pixels per tile | **32** |
+
+The game's ground frames are 16×16 source pixels (`ground_farm`, `path_center` … all
+`{w:16,h:16}` in `atlas.json`) drawn into 32×32 world pixels — a 2× upscale that has been
+there since before this milestone. So `framesFrom` slices manifest rects at `map.tileSize`,
+and `drawAuthoredTiles` places each cell at `TILE` world pixels. A map authored at
+`tileSize: 16` is the correct and expected shape for this pack; rejecting it would reject
+every correctly authored map.
+
+`cols` and `rows` are **derived**, not read: `exportMap` does not emit them (its output is
+`version, tileSize, world, bundles, terrains, animations, layers`). Compute them as
+`world.w / tileSize` and `world.h / tileSize`.
+
+`cols`/`rows` are the authored map's own dimensions, not a required match to the
 game world. Cell `(x,y)` maps 1:1 onto the game's tile grid with origin at world `(0,0)`;
 cells beyond the world bounds are kept and simply never enter the visible range. Note the
-game world is 2140×1360 px, which is **not** a whole number of 32 px tiles (66.875 × 42.5) —
-the right edge and bottom row are partial. Authoring a map of 67×43 covers it with a sliver
-of overhang, which is correct and needs no special case.
+game world is 2140×1360 px, which is **not** a whole number of 32 px world tiles
+(66.875 × 42.5) — the right edge and bottom row are partial. Authoring 67×43 cells covers it
+with a sliver of overhang, which is correct and needs no special case. In the editor, at
+`tileSize: 16`, that is a map whose own `world` reads 1072×688.
 
 `frames` is ordered by frame name, ascending, so the palette indices are stable across
 re-imports.
@@ -171,7 +193,11 @@ game chunk, not the initial bundle — the bundle gate (WARN 60 / HARD 68 kB) is
 
 Failing loudly at build time is cheap; a corrupt map at runtime is a broken screen.
 
-- Map `tileSize` ≠ 32 → error. The renderer hardcodes `TILE = 32`.
+- Map `tileSize` missing, zero, negative or non-integer → error. It is the pack's source
+  granularity (16 for this pack), **not** the renderer's world tile size — see "Two tile
+  sizes, not one" above. Any positive integer is legal.
+- `world.w` / `world.h` missing, or not divisible by `tileSize` → error. `cols`/`rows` are
+  derived from them, and a fractional grid means the export is malformed.
 - A frame path that does not resolve to a real PNG under `public/game/cute-fantasy/` →
   error naming the path.
 - An `anchor:*` layer with an unknown biome, zero objects, or more than one → error.
