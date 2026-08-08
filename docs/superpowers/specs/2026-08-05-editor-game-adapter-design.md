@@ -167,6 +167,25 @@ every correctly authored map.
 `version, tileSize, world, bundles, terrains, animations, layers`). Compute them as
 `world.w / tileSize` and `world.h / tileSize`.
 
+### Object coordinates must be scaled; cell indices must not
+
+Tiles and objects arrive in **different units**, and conflating them was a second defect in
+this spec — one that no unit test could catch, because both sides were internally consistent.
+It only showed up on screen, with the props bunched into the top-left quadrant of the terrain
+they were supposed to stand on.
+
+| Export field | Unit | Conversion to game world px |
+|---|---|---|
+| tile cell `x`, `y` | cell **index** | `index * TILE` (32) — done by the renderer |
+| object `x`, `y`, and every `anchor:*` position | editor world **pixels**, at `map.tileSize` | `px * (TILE / map.tileSize)` — **must be done by the adapter** |
+
+For this pack that factor is `32 / 16 = 2`. A 60×45 map spans 960×720 px in the editor and
+1920×1440 px in the game; an object exported at `(159, 160)` belongs at `(318, 320)`.
+
+The scaling lives in the adapter, not the renderer: `placements.json` and the `anchors` block
+are consumed by code (`scene2d.js`'s placement pass, `buildOverworld`) that already works in
+game world pixels and must not learn about the editor's units.
+
 `cols`/`rows` are the authored map's own dimensions, not a required match to the
 game world. Cell `(x,y)` maps 1:1 onto the game's tile grid with origin at world `(0,0)`;
 cells beyond the world bounds are kept and simply never enter the visible range. Note the

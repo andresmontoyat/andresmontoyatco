@@ -1536,6 +1536,174 @@ git commit -m "feat(game): authored anchors + wire the authored map into the isl
 
 ---
 
+### Task 10: Scale object and anchor coordinates into game world pixels
+
+Found by looking at the running game, which is the only place it was visible: the authored
+terrain covered the world correctly, but every prop and the farm anchor sat in the top-left
+quadrant at half scale. Tile cells are **indices** (multiplied by `TILE` = 32 by the renderer);
+object and anchor coordinates are editor world **pixels** at `map.tileSize` (16). The adapter
+copied the latter through unscaled. Both sides were internally consistent, so no unit test
+could catch it.
+
+**Files:**
+- Modify: `src/game/world/authored/convert.js`
+- Test: `src/game/world/authored/convert.test.js`
+- Regenerate: `src/data/placements.json`, `src/game/world/authored/career.tiles.json`
+
+**Interfaces:**
+- Consumes: everything from Tasks 2-5b.
+- Produces: `WORLD_TILE` (32) and `worldScaleOf(map) -> number`; `placementsFrom(layers, scale)`
+  and `anchorsFrom(layers, scale)` gain a scale factor defaulting to 1.
+
+- [ ] **Step 1: Add the failing tests**
+
+Append to `src/game/world/authored/convert.test.js` (merge `worldScaleOf` and `WORLD_TILE` into
+the existing import):
+
+```js
+describe('worldScaleOf', () => {
+  it('is the ratio between the game world tile and the pack source tile', () => {
+    expect(worldScaleOf({ tileSize: 16 })).toBe(2)
+    expect(worldScaleOf({ tileSize: 32 })).toBe(1)
+    expect(worldScaleOf({ tileSize: 8 })).toBe(4)
+  })
+  it('exposes the game world tile size it is derived from', () => {
+    expect(WORLD_TILE).toBe(32)
+  })
+})
+
+describe('coordinate scaling', () => {
+  const layers = [
+    { name: 'props', type: 'objects', objects: [{ frame: 'a/b.png#0,0', x: 159, y: 160 }] },
+    { name: 'anchor:farm', type: 'objects', objects: [{ frame: 'a/b.png#0,0', x: 100, y: 200 }] },
+  ]
+
+  it('scales placement positions into game world pixels', () => {
+    expect(placementsFrom(layers, 2)).toEqual([{ frame: 'am_a_b_0_0', x: 318, y: 320 }])
+  })
+  it('scales anchor positions into game world pixels', () => {
+    expect(anchorsFrom(layers, 2)).toEqual({ farm: { x: 200, y: 400 } })
+  })
+  it('defaults to a scale of 1 so existing callers are unaffected', () => {
+    expect(placementsFrom(layers)[0]).toMatchObject({ x: 159, y: 160 })
+    expect(anchorsFrom(layers)).toEqual({ farm: { x: 100, y: 200 } })
+  })
+  it('leaves transform fields untouched while scaling position', () => {
+    const withRot = [{ name: 'p', type: 'objects', objects: [{ frame: 'a/b.png#0,0', x: 10, y: 20, rot: 90, scale: 2 }] }]
+    expect(placementsFrom(withRot, 2)).toEqual([{ frame: 'am_a_b_0_0', x: 20, y: 40, rot: 90, scale: 2 }])
+  })
+})
+
+describe('convertMap applies the world scale', () => {
+  it('emits placements and anchors already in game world pixels', () => {
+    const out = convertMap(REAL_WITH_OBJECTS, { dimsOf: p => REAL_DIMS[p], exists })
+    expect(out.placements[0]).toMatchObject({ x: 200, y: 300 })
+    expect(out.tiles.anchors.farm).toEqual({ x: 400, y: 500 })
+  })
+})
+```
+
+Add this fixture next to `REAL` (it reuses `REAL`'s shape, with objects added):
+
+```js
+const REAL_WITH_OBJECTS = {
+  ...REAL,
+  layers: [
+    ...REAL.layers,
+    { name: 'props', type: 'objects', objects: [{ frame: 'Cute_Fantasy/Tiles/Grass/G.png#0,0', x: 100, y: 150 }] },
+    { name: 'anchor:farm', type: 'objects', objects: [{ frame: 'Cute_Fantasy/Tiles/Grass/G.png#0,0', x: 200, y: 250 }] },
+  ],
+}
+```
+
+- [ ] **Step 2: Run tests to verify they fail**
+
+Run: `export PATH="$HOME/.nvm/versions/node/v22.23.2/bin:$PATH" && npx vitest run src/game/world/authored/convert.test.js`
+Expected: FAIL — `worldScaleOf is not a function`, and the scaled expectations get unscaled values.
+
+- [ ] **Step 3: Write the implementation**
+
+In `src/game/world/authored/convert.js`, add near the top:
+
+```js
+// The game renderer places every authored cell at 32 world pixels (TILE in scene2d.js), while
+// the export measures object positions in editor pixels at the pack's own tileSize. Tiles carry
+// indices and scale implicitly; objects carry pixels and must be scaled here, in the adapter —
+// scene2d's placement pass and buildOverworld both already work in game world pixels and must
+// not learn about the editor's units.
+export const WORLD_TILE = 32
+
+export function worldScaleOf(map) {
+  return WORLD_TILE / map.tileSize
+}
+```
+
+Give `toPlacement` the scale, and thread it through both consumers:
+
+```js
+function toPlacement(o, scale) {
+  const p = { frame: frameNameFor(o.frame), x: o.x * scale, y: o.y * scale }
+  if (o.flipX) p.flipX = true
+  if (o.flipY) p.flipY = true
+  if (o.rot) p.rot = o.rot
+  if (o.scale && o.scale !== 1) p.scale = o.scale
+  return p
+}
+
+export function placementsFrom(layers, scale = 1) {
+  return layers
+    .filter(l => classifyLayer(l).kind === 'objects')
+    .flatMap(l => (l.objects || []).map(o => toPlacement(o, scale)))
+}
+```
+
+and in `anchorsFrom`, take `scale = 1` as a second parameter and emit
+`out[c.biome] = { x: items[0].x * scale, y: items[0].y * scale }`.
+
+Finally, in `convertMap`, compute the scale once and pass it to both. Note `tilesFrom` calls
+`anchorsFrom` internally, so give `tilesFrom` the scale too and forward it:
+
+```js
+export function convertMap(map, { dimsOf, exists = () => true }) {
+  validateMap(map, { dimsOf, exists })
+  const scale = worldScaleOf(map)
+  return {
+    manifest: framesFrom(map, dimsOf),
+    tiles: tilesFrom(map, scale),
+    placements: placementsFrom(map.layers, scale),
+  }
+}
+```
+
+with `tilesFrom(map, scale = 1)` passing `scale` into its `anchorsFrom(map.layers, scale)` call.
+
+- [ ] **Step 4: Run the full suite**
+
+Run: `export PATH="$HOME/.nvm/versions/node/v22.23.2/bin:$PATH" && npm run test:run`
+Expected: PASS. The suite was 394 before this task.
+
+- [ ] **Step 5: Regenerate the artifacts and confirm the shift**
+
+```bash
+export PATH="$HOME/.nvm/versions/node/v22.23.2/bin:$PATH"
+npm run map:import
+node -e "const p=require('./src/data/placements.json');const t=require('./src/game/world/authored/career.tiles.json');console.log('x',Math.min(...p.map(o=>o.x)),'-',Math.max(...p.map(o=>o.x)));console.log('anchor',JSON.stringify(t.anchors.farm))"
+```
+
+Expected: placement x now spans `0 - 246` (was `0 - 123`) and the farm anchor reads
+`{"x":318,"y":320}` (was `{"x":159,"y":160}`). The atlas does not change — no frame data moved,
+so do NOT re-run `assets:pack`; if `git status` shows atlas churn, stop and report it.
+
+- [ ] **Step 6: Commit**
+
+```bash
+git add src/game/world/authored/convert.js src/game/world/authored/convert.test.js \
+        src/data/placements.json src/game/world/authored/career.tiles.json
+git commit -m "fix(game): scale authored object and anchor coords into game world pixels"
+```
+
+---
+
 ## Deferred (not this milestone)
 
 Recorded so they are not silently lost:
