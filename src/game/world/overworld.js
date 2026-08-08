@@ -1,7 +1,7 @@
 import { doorPoint } from '../entities/site.js'
 import { CONFIG } from '../config.js'
 
-const ANCHORS = {
+const BUILT_IN_ANCHORS = {
   farm: { x: 360, y: 1120 },
   pradera: { x: 380, y: 700 },
   desierto: { x: 820, y: 400 },
@@ -132,7 +132,12 @@ function buildRoads(path, sites, hiddenSites) {
   return spine.concat(spurs, loops)
 }
 
-export function buildOverworld(json, biomeForYear, sideProjects = []) {
+export function buildOverworld(json, biomeForYear, sideProjects = [], authoredAnchors = null) {
+  // Authored anchors (painted as `anchor:<biome>` layers in the world-editor) override the
+  // built-in positions per biome; anything not painted keeps its constant. Everything downstream
+  // — ringPos, nearestBiome, buildRoads — reads from here, so moving one marker moves that town,
+  // its roads and its biome boundary together.
+  const ANCHORS = { ...BUILT_IN_ANCHORS, ...(authoredAnchors || {}) }
   const visible = json.entries.filter(e => e.visible !== false)
     .map(e => ({ e, y: startYear(e) })).sort((a, b) => a.y - b.y)
   const byBiome = {}

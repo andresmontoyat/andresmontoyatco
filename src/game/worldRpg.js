@@ -1,4 +1,5 @@
 import { buildOverworld } from './world/overworld.js'
+import { buildAuthoredIndex } from './world/authored/index.js'
 import { biomeForYear } from './world/biomes.js'
 import { buildDecor } from './world/decor.js'
 import { stepMovement } from './engine/topdown.js'
@@ -94,15 +95,17 @@ export function update(state, input, dtChars) {
 }
 
 export function createWorldRpg({
-  canvas, experience, sideProjects = [], lang = 'es', onLangChange, placements = [],
+  canvas, experience, sideProjects = [], lang = 'es', onLangChange, placements = [], authoredTiles = null,
 }) {
-  const world = buildOverworld(experience, biomeForYear, sideProjects)
-  // Assets hand-placed with the Asset Placer (public/game/placer.html → src/data/placements.json):
-  // a flat list of { frame, x, y } drawn as non-solid decor, bottom-anchored at (x,y).
+  const world = buildOverworld(experience, biomeForYear, sideProjects, authoredTiles && authoredTiles.anchors)
+  // Assets placed in the world-editor (src/game/world/authored/career.map.json → npm run
+  // map:import → src/data/placements.json): a flat list of { frame, x, y } plus optional
+  // transforms, drawn as non-solid decor, bottom-anchored at (x,y).
   world.placements = placements
   const state = {
     world,
     decor: buildDecor(world),
+    authored: buildAuthoredIndex(authoredTiles),
     player: { x: world.farm.x, y: world.farm.y + 70, w: 24, h: 28, dir: 'down', moving: false, step: 0 },
     cam: { x: 0, y: 0 },
     dialog: createDialog(),

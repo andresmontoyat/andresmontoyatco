@@ -140,10 +140,12 @@ export default function WorldRpg({ locale }) {
     let detachResize = null
 
     async function mount() {
-      const [{ createWorldRpg, canControl }, { default: experience }, { default: placements }] = await Promise.all([
+      const [{ createWorldRpg, canControl }, { default: experience }, { default: placements },
+        { default: authoredTiles }] = await Promise.all([
         import('../../game/worldRpg.js'),
         import('../../data/experience.json'),
         import('../../data/placements.json'),
+        import('../../game/world/authored/career.tiles.json'),
       ])
       if (cancelled || !canvasRef.current) return
       // Must run before game.start() sizes anything off the buffer (the camera's first frame
@@ -158,6 +160,7 @@ export default function WorldRpg({ locale }) {
         experience,
         sideProjects: SIDE_PROJECTS,
         placements,
+        authoredTiles,
         lang,
         onLangChange: setUiLang,
       })

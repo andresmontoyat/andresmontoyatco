@@ -143,6 +143,30 @@ describe('roads', () => {
   })
 })
 
+describe('buildOverworld with authored anchors', () => {
+  const json = { entries: [{ id: 'a', company: 'A', date: { en: '2020' }, visible: true }] }
+  const biomeForYear = () => 'pradera'
+
+  it('keeps the built-in anchors when none are supplied', () => {
+    const w = buildOverworld(json, biomeForYear, [])
+    expect(w.farm).toEqual({ x: 360, y: 1120 })
+  })
+  it('overrides only the biomes present in the authored anchors', () => {
+    const w = buildOverworld(json, biomeForYear, [], { farm: { x: 500, y: 900 } })
+    expect(w.farm).toEqual({ x: 500, y: 900 })
+    expect(w.regions.find(r => r.bi === 'cyber')).toMatchObject({ x: 1360, y: 1040 })
+  })
+  it('moves the site ring with its authored anchor', () => {
+    const base = buildOverworld(json, biomeForYear, [])
+    const moved = buildOverworld(json, biomeForYear, [], { pradera: { x: 1000, y: 1000 } })
+    expect(moved.sites[0].cx).not.toBeCloseTo(base.sites[0].cx)
+  })
+  it('re-routes the road spine through the authored anchor', () => {
+    const moved = buildOverworld(json, biomeForYear, [], { pradera: { x: 1000, y: 1000 } })
+    expect(moved.path).toContainEqual({ x: 1000, y: 1000 })
+  })
+})
+
 describe('projectOntoSpine', () => {
   const spine = [{ x: 0, y: 0 }, { x: 100, y: 0 }, { x: 100, y: 100 }]
 
