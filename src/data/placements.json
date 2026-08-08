@@ -1,62 +1,62 @@
 [
   {
     "frame": "am_Trees_Spruce_Needle_Particle_0_0",
-    "x": 61,
-    "y": 83
+    "x": 122,
+    "y": 166
   },
   {
     "frame": "am_Trees_Spruce_Needle_Particle_0_0",
-    "x": 51,
-    "y": 97
+    "x": 102,
+    "y": 194
   },
   {
     "frame": "am_Trees_Spruce_Needle_Particle_0_0",
-    "x": 56,
-    "y": 74
+    "x": 112,
+    "y": 148
   },
   {
     "frame": "am_Trees_Spruce_Needle_Particle_0_0",
-    "x": 32,
-    "y": 75
+    "x": 64,
+    "y": 150
   },
   {
     "frame": "am_Trees_Spruce_Needle_Particle_0_0",
-    "x": 43,
-    "y": 92
-  },
-  {
-    "frame": "am_Trees_Spruce_Needle_Particle_0_0",
-    "x": 0,
-    "y": 83
-  },
-  {
-    "frame": "am_Trees_Spruce_Needle_Particle_0_0",
-    "x": 61,
-    "y": 85
+    "x": 86,
+    "y": 184
   },
   {
     "frame": "am_Trees_Spruce_Needle_Particle_0_0",
     "x": 0,
-    "y": 77
+    "y": 166
+  },
+  {
+    "frame": "am_Trees_Spruce_Needle_Particle_0_0",
+    "x": 122,
+    "y": 170
   },
   {
     "frame": "am_Trees_Spruce_Needle_Particle_0_0",
     "x": 0,
-    "y": 78
+    "y": 154
   },
   {
     "frame": "am_Trees_Spruce_Needle_Particle_0_0",
-    "x": 53,
-    "y": 82
+    "x": 0,
+    "y": 156
+  },
+  {
+    "frame": "am_Trees_Spruce_Needle_Particle_0_0",
+    "x": 106,
+    "y": 164
   },
   {
     "frame": "am_Trees_Big_Birch_Tree_0_0",
-    "x": 123,
-    "y": 125
+    "x": 246,
+    "y": 250
   },
   {
     "frame": "am_Trees_Big_Oak_Tree_0_0",
-    "x": 52,
-    "y": 135
+    "x": 104,
+    "y": 270
   }
 ]

@@ -6,6 +6,17 @@ const PACK_ROOT = 'Cute_Fantasy/'
 const PUBLIC_BASE = '/game/cute-fantasy/'
 const FRAME_PREFIX = 'am_'
 
+// The game renderer places every authored cell at 32 world pixels (TILE in scene2d.js), while
+// the export measures object positions in editor pixels at the pack's own tileSize. Tiles carry
+// indices and scale implicitly; objects carry pixels and must be scaled here, in the adapter —
+// scene2d's placement pass and buildOverworld both already work in game world pixels and must
+// not learn about the editor's units.
+export const WORLD_TILE = 32
+
+export function worldScaleOf(map) {
+  return WORLD_TILE / map.tileSize
+}
+
 // "path/to/img.png#3,2" -> { path, col, row }. The editor always writes this shape
 // (see exportMap/frameStr in the editor's src/persist/export.js).
 export function splitRef(ref) {
@@ -57,7 +68,7 @@ export function classifyLayer(layer) {
   return { kind: 'anchor', biome }
 }
 
-export function anchorsFrom(layers) {
+export function anchorsFrom(layers, scale = 1) {
   const out = {}
   for (const layer of layers) {
     const c = classifyLayer(layer)
@@ -66,7 +77,7 @@ export function anchorsFrom(layers) {
     if (items.length !== 1) {
       throw new Error(`layer "${layer.name}": an anchor layer needs exactly one object, got ${items.length}`)
     }
-    out[c.biome] = { x: items[0].x, y: items[0].y }
+    out[c.biome] = { x: items[0].x * scale, y: items[0].y * scale }
   }
   return out
 }
@@ -74,8 +85,8 @@ export function anchorsFrom(layers) {
 // Transform fields are copied only when present, so an untransformed object serializes to
 // exactly { frame, x, y } — byte-identical to what the Asset Placer wrote, which is what
 // makes the render path's identity case verifiable.
-function toPlacement(o) {
-  const p = { frame: frameNameFor(o.frame), x: o.x, y: o.y }
+function toPlacement(o, scale) {
+  const p = { frame: frameNameFor(o.frame), x: o.x * scale, y: o.y * scale }
   if (o.flipX) p.flipX = true
   if (o.flipY) p.flipY = true
   if (o.rot) p.rot = o.rot
@@ -83,10 +94,10 @@ function toPlacement(o) {
   return p
 }
 
-export function placementsFrom(layers) {
+export function placementsFrom(layers, scale = 1) {
   return layers
     .filter(l => classifyLayer(l).kind === 'objects')
-    .flatMap(l => (l.objects || []).map(toPlacement))
+    .flatMap(l => (l.objects || []).map(o => toPlacement(o, scale)))
 }
 
 const TILE_LAYERS = m => m.layers.filter(l => classifyLayer(l).kind === 'tiles')
@@ -113,7 +124,7 @@ export function gridOf(map) {
 // Palette + triples, not { x, y, frame } objects: covering the 2140x1360 world is 67x43 = 2881
 // cells, which is ~144 kB as objects and ~35 kB this way. The file ships to the client inside
 // the lazily-imported game chunk, and the site is under a hard Lighthouse mobile gate.
-export function tilesFrom(map) {
+export function tilesFrom(map, scale = 1) {
   const names = [...new Set(TILE_LAYERS(map).flatMap(l => (l.cells || []).map(c => frameNameFor(c.frame))))].sort()
   const index = new Map(names.map((n, i) => [n, i]))
   const { cols, rows } = gridOf(map)
@@ -127,7 +138,7 @@ export function tilesFrom(map) {
       name: l.name,
       cells: (l.cells || []).map(c => [c.x, c.y, index.get(frameNameFor(c.frame))]),
     })),
-    anchors: anchorsFrom(map.layers),
+    anchors: anchorsFrom(map.layers, scale),
   }
 }
 
@@ -174,9 +185,10 @@ export function validateMap(map, { dimsOf, exists }) {
 
 export function convertMap(map, { dimsOf, exists = () => true }) {
   validateMap(map, { dimsOf, exists })
+  const scale = worldScaleOf(map)
   return {
     manifest: framesFrom(map, dimsOf),
-    tiles: tilesFrom(map),
-    placements: placementsFrom(map.layers),
+    tiles: tilesFrom(map, scale),
+    placements: placementsFrom(map.layers, scale),
   }
 }

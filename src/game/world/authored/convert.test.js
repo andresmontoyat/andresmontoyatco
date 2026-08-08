@@ -3,6 +3,7 @@ import {
   splitRef, slugFor, frameNameFor, publicUrlFor,
   classifyLayer, anchorsFrom, placementsFrom,
   tilesFrom, framesFrom, convertMap, validateMap, gridOf,
+  worldScaleOf, WORLD_TILE,
 } from './convert.js'
 
 describe('splitRef', () => {
@@ -286,5 +287,55 @@ describe('validateMap tile-size model', () => {
   it('rejects a world size that is not a whole number of tiles', () => {
     expect(() => validateMap({ ...REAL, world: { w: 950, h: 720 } }, { dimsOf: p => REAL_DIMS[p], exists }))
       .toThrow(/world 950x720 is not a whole number of 16px tiles/)
+  })
+})
+
+const REAL_WITH_OBJECTS = {
+  ...REAL,
+  layers: [
+    ...REAL.layers,
+    { name: 'props', type: 'objects', objects: [{ frame: 'Cute_Fantasy/Tiles/Grass/G.png#0,0', x: 100, y: 150 }] },
+    { name: 'anchor:farm', type: 'objects', objects: [{ frame: 'Cute_Fantasy/Tiles/Grass/G.png#0,0', x: 200, y: 250 }] },
+  ],
+}
+
+describe('worldScaleOf', () => {
+  it('is the ratio between the game world tile and the pack source tile', () => {
+    expect(worldScaleOf({ tileSize: 16 })).toBe(2)
+    expect(worldScaleOf({ tileSize: 32 })).toBe(1)
+    expect(worldScaleOf({ tileSize: 8 })).toBe(4)
+  })
+  it('exposes the game world tile size it is derived from', () => {
+    expect(WORLD_TILE).toBe(32)
+  })
+})
+
+describe('coordinate scaling', () => {
+  const layers = [
+    { name: 'props', type: 'objects', objects: [{ frame: 'a/b.png#0,0', x: 159, y: 160 }] },
+    { name: 'anchor:farm', type: 'objects', objects: [{ frame: 'a/b.png#0,0', x: 100, y: 200 }] },
+  ]
+
+  it('scales placement positions into game world pixels', () => {
+    expect(placementsFrom(layers, 2)).toEqual([{ frame: 'am_a_b_0_0', x: 318, y: 320 }])
+  })
+  it('scales anchor positions into game world pixels', () => {
+    expect(anchorsFrom(layers, 2)).toEqual({ farm: { x: 200, y: 400 } })
+  })
+  it('defaults to a scale of 1 so existing callers are unaffected', () => {
+    expect(placementsFrom(layers)[0]).toMatchObject({ x: 159, y: 160 })
+    expect(anchorsFrom(layers)).toEqual({ farm: { x: 100, y: 200 } })
+  })
+  it('leaves transform fields untouched while scaling position', () => {
+    const withRot = [{ name: 'p', type: 'objects', objects: [{ frame: 'a/b.png#0,0', x: 10, y: 20, rot: 90, scale: 2 }] }]
+    expect(placementsFrom(withRot, 2)).toEqual([{ frame: 'am_a_b_0_0', x: 20, y: 40, rot: 90, scale: 2 }])
+  })
+})
+
+describe('convertMap applies the world scale', () => {
+  it('emits placements and anchors already in game world pixels', () => {
+    const out = convertMap(REAL_WITH_OBJECTS, { dimsOf: p => REAL_DIMS[p], exists })
+    expect(out.placements[0]).toMatchObject({ x: 200, y: 300 })
+    expect(out.tiles.anchors.farm).toEqual({ x: 400, y: 500 })
   })
 })
