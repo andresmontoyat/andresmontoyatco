@@ -27170,5 +27170,34 @@
         }
       ]
     }
-  ]
+  ],
+  "slices": {
+    "Cute_Fantasy/Tiles/Grass/Grass_1_Middle.png": {
+      "type": "sheet",
+      "fw": 16,
+      "fh": 16,
+      "cols": 1,
+      "rows": 1
+    },
+    "Cute_Fantasy/Trees/Big_Birch_Tree.png": {
+      "type": "single",
+      "w": 96,
+      "h": 80
+    },
+    "Cute_Fantasy/Trees/Big_Fruit_Tree.png": {
+      "type": "single",
+      "w": 96,
+      "h": 64
+    },
+    "Cute_Fantasy/Trees/Big_Oak_Tree.png": {
+      "type": "single",
+      "w": 192,
+      "h": 80
+    },
+    "Cute_Fantasy/Trees/Spruce_Needle_Particle.png": {
+      "type": "single",
+      "w": 16,
+      "h": 16
+    }
+  }
 }

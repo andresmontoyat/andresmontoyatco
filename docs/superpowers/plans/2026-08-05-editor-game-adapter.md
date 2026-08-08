@@ -1704,6 +1704,221 @@ git commit -m "fix(game): scale authored object and anchor coords into game worl
 
 ---
 
+### Task 11: Read the export's slice geometry, and scale object sprites
+
+The final whole-branch review found the third unit conflation, confirmed by measuring the
+shipped atlas: three of the five authored frames are **100% transparent**.
+
+`framesFrom` emitted `{x: col*tileSize, y: row*tileSize, w: tileSize, h: tileSize}` for every
+ref. The editor does not cut every image that way — `buildManifest` classifies `Trees/`,
+`Buildings/` and `Outdoor decoration/` as whole **single** sprites (where `col,row` is filler),
+characters at 32px, and only the rest at the bundle tileBase. A 192×80 oak got a 16×16 corner
+of transparent margin.
+
+The editor now emits a `slices` block (commit `9b45a5d` in the world-editor repo), and
+`career.map.json` has been backfilled with it. The adapter must read it instead of guessing.
+
+Second defect, same review: object **positions** are scaled by `worldScaleOf` but object
+**sizes** are not, so a 16×16 prop draws at half a tile.
+
+**Files:**
+- Modify: `src/game/world/authored/convert.js`
+- Test: `src/game/world/authored/convert.test.js`
+- Regenerate: `src/data/placements.json`, `src/game/world/authored/career.tiles.json`,
+  `src/game/assets/manifest.authored.js`, `src/game/assets/atlas.json`, `public/game/atlas.*`
+
+**Interfaces:**
+- Produces: `rectFor(slice, col, row) -> { x, y, w, h }`; `framesFrom(map, dimsOf)` reads
+  `map.slices`; `validateMap` requires a slice per referenced path.
+
+- [ ] **Step 1: Add the failing tests**
+
+Append to `src/game/world/authored/convert.test.js` (merge `rectFor` into the existing import).
+Note the existing `SAMPLE` and `REAL` fixtures have no `slices`, so give them one — add
+`slices` to BOTH, matching the paths they already reference, e.g. for `SAMPLE`:
+
+```js
+// add to SAMPLE:
+  slices: {
+    'Cute_Fantasy/Tiles/Grass/G.png': { type: 'sheet', fw: 32, fh: 32, cols: 2, rows: 2 },
+    'Cute_Fantasy/Tiles/Path/P.png': { type: 'sheet', fw: 32, fh: 32, cols: 3, rows: 3 },
+    'Cute_Fantasy/Trees/T.png': { type: 'sheet', fw: 32, fh: 32, cols: 1, rows: 1 },
+  },
+// add to REAL:
+  slices: { 'Cute_Fantasy/Tiles/Grass/G.png': { type: 'sheet', fw: 16, fh: 16, cols: 4, rows: 4 } },
+```
+
+Then the new tests:
+
+```js
+describe('rectFor', () => {
+  it('gives a sheet cell its col,row offset at frame size', () => {
+    expect(rectFor({ type: 'sheet', fw: 16, fh: 16, cols: 4, rows: 4 }, 2, 3))
+      .toEqual({ x: 32, y: 48, w: 16, h: 16 })
+  })
+  it('gives a single sprite the whole image, ignoring col,row filler', () => {
+    expect(rectFor({ type: 'single', w: 192, h: 80 }, 0, 0)).toEqual({ x: 0, y: 0, w: 192, h: 80 })
+    expect(rectFor({ type: 'single', w: 192, h: 80 }, 5, 7)).toEqual({ x: 0, y: 0, w: 192, h: 80 })
+  })
+})
+
+describe('framesFrom with slice geometry', () => {
+  const map = {
+    tileSize: 16,
+    world: { w: 64, h: 64 },
+    layers: [{ name: 'p', type: 'objects', objects: [{ frame: 'Cute_Fantasy/Trees/Oak.png#0,0', x: 1, y: 1 }] }],
+    slices: { 'Cute_Fantasy/Trees/Oak.png': { type: 'single', w: 192, h: 80 } },
+  }
+  const dims = { 'Cute_Fantasy/Trees/Oak.png': { w: 192, h: 80 } }
+
+  it('emits the whole image for a single sprite, not a tileSize corner', () => {
+    expect(framesFrom(map, p => dims[p]).frames.am_Trees_Oak_0_0)
+      .toEqual({ img: 'am_Trees_Oak', x: 0, y: 0, w: 192, h: 80 })
+  })
+})
+
+describe('validateMap requires slice geometry', () => {
+  it('rejects a map with no slices block — it was exported before the editor emitted one', () => {
+    const stale = { ...REAL, slices: undefined }
+    expect(() => validateMap(stale, { dimsOf: p => REAL_DIMS[p], exists }))
+      .toThrow(/no slices block.*re-export/)
+  })
+  it('rejects a referenced image missing from slices', () => {
+    const gap = { ...REAL, slices: {} }
+    expect(() => validateMap(gap, { dimsOf: p => REAL_DIMS[p], exists }))
+      .toThrow(/G\.png.*missing from the map's slices/)
+  })
+})
+
+describe('object sprites scale with the world', () => {
+  it('folds the world scale into the placement scale so sprites match the terrain', () => {
+    const layers = [{ name: 'p', type: 'objects', objects: [{ frame: 'a/b.png#0,0', x: 10, y: 20 }] }]
+    expect(placementsFrom(layers, 2)[0]).toEqual({ frame: 'am_a_b_0_0', x: 20, y: 40, scale: 2 })
+  })
+  it('multiplies an authored scale by the world scale', () => {
+    const layers = [{ name: 'p', type: 'objects', objects: [{ frame: 'a/b.png#0,0', x: 0, y: 0, scale: 3 }] }]
+    expect(placementsFrom(layers, 2)[0].scale).toBe(6)
+  })
+  it('emits no scale at all when the world scale is 1 and the object has none', () => {
+    const layers = [{ name: 'p', type: 'objects', objects: [{ frame: 'a/b.png#0,0', x: 0, y: 0 }] }]
+    expect(Object.keys(placementsFrom(layers, 1)[0])).toEqual(['frame', 'x', 'y'])
+  })
+})
+```
+
+- [ ] **Step 2: Run tests to verify they fail**
+
+Run: `export PATH="$HOME/.nvm/versions/node/v22.23.2/bin:$PATH" && npx vitest run src/game/world/authored/convert.test.js`
+
+- [ ] **Step 3: Write the implementation**
+
+Add to `convert.js`:
+
+```js
+// rectFor: the source rect a `path#col,row` ref denotes, given how the editor cut that image.
+// A 'single' image is one whole sprite and its col,row are filler — slicing it at tileSize
+// yields transparent margin, which is exactly the bug this replaces.
+export function rectFor(slice, col, row) {
+  if (slice.type === 'single') return { x: 0, y: 0, w: slice.w, h: slice.h }
+  return { x: col * slice.fw, y: row * slice.fh, w: slice.fw, h: slice.fh }
+}
+```
+
+Rewrite `framesFrom`'s body to use it:
+
+```js
+export function framesFrom(map, dimsOf) {
+  const images = {}
+  const frames = {}
+  for (const ref of allRefs(map)) {
+    const { path, col, row } = splitRef(ref)
+    const key = slugFor(path)
+    const { w, h } = dimsOf(path)
+    const r = rectFor(map.slices[path], col, row)
+    if (r.x + r.w > w || r.y + r.h > h) {
+      throw new Error(`ref ${ref}: rect ${r.w}x${r.h} at ${r.x},${r.y} is outside the source image (${w}x${h})`)
+    }
+    images[key] = publicUrlFor(path)
+    frames[frameNameFor(ref)] = { img: key, ...r }
+  }
+  return { images, frames }
+}
+```
+
+In `validateMap`, replace the per-ref bounds block with one that checks slices first:
+
+```js
+  if (!map.slices) {
+    throw new Error('map has no slices block — re-export it from a world-editor with slice geometry')
+  }
+  for (const ref of allRefs(map)) {
+    const { path, col, row } = splitRef(ref)
+    if (!exists(path)) throw new Error(`ref ${ref}: ${path} not found in the pack`)
+    const slice = map.slices[path]
+    if (!slice) throw new Error(`ref ${ref}: ${path} is missing from the map's slices block`)
+    const { w, h } = dimsOf(path)
+    const r = rectFor(slice, col, row)
+    if (r.x + r.w > w || r.y + r.h > h) {
+      throw new Error(`ref ${ref}: rect ${r.w}x${r.h} at ${r.x},${r.y} is outside the source image (${w}x${h})`)
+    }
+  }
+```
+
+And fold the world scale into the placement's own scale, so sprites grow with the terrain:
+
+```js
+function toPlacement(o, scale) {
+  const p = { frame: frameNameFor(o.frame), x: o.x * scale, y: o.y * scale }
+  if (o.flipX) p.flipX = true
+  if (o.flipY) p.flipY = true
+  if (o.rot) p.rot = o.rot
+  const s = scale * (o.scale || 1)
+  if (s !== 1) p.scale = s
+  return p
+}
+```
+
+- [ ] **Step 4: Run the full suite**
+
+Run: `export PATH="$HOME/.nvm/versions/node/v22.23.2/bin:$PATH" && npm run test:run`
+Expected: PASS. It was 401 before this task.
+
+- [ ] **Step 5: Regenerate and prove the frames are no longer empty**
+
+```bash
+export PATH="$HOME/.nvm/versions/node/v22.23.2/bin:$PATH"
+npm run map:import && npm run assets:pack
+```
+
+Then verify every authored frame has opaque pixels:
+
+```bash
+node -e "
+const sharp = require('sharp')
+const atlas = require('./src/game/assets/atlas.json')
+;(async () => {
+  for (const n of Object.keys(atlas.frames).filter(k => k.startsWith('am_'))) {
+    const f = atlas.frames[n]
+    const b = await sharp('public/game/atlas.png').extract({ left: f.x, top: f.y, width: f.w, height: f.h }).raw().ensureAlpha().toBuffer()
+    let o = 0; for (let i = 3; i < b.length; i += 4) if (b[i]) o++
+    console.log(n.padEnd(36), f.w + 'x' + f.h, 'opaque', o + '/' + b.length / 4)
+  }
+})()
+"
+```
+
+Expected: every `am_` frame reports a non-zero opaque count, and the tree frames now report
+their real sizes (192×80, 96×80, 96×64) rather than 16×16.
+
+- [ ] **Step 6: Commit**
+
+```bash
+git add src/game/world/authored/ src/data/placements.json src/game/assets/ public/game/atlas.json public/game/atlas.png
+git commit -m "fix(game): read the export's slice geometry, and scale object sprites"
+```
+
+---
+
 ## Deferred (not this milestone)
 
 Recorded so they are not silently lost:
