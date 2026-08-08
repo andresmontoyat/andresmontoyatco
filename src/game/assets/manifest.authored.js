@@ -46,3 +46,29 @@ export const AUTHORED_FRAMES = {
     "h": 16
   }
 }
+
+// Real pixel dimensions of each source PNG (sharp-measured at import time), keyed the same way
+// as AUTHORED_IMAGES — merge into manifest.test.js's REAL_IMAGE_SIZE to keep the bounds check
+// enforced for the authored namespace without hand-maintaining it.
+export const AUTHORED_IMAGE_SIZE = {
+  "am_Tiles_Grass_Grass_1_Middle": {
+    "w": 16,
+    "h": 16
+  },
+  "am_Trees_Big_Birch_Tree": {
+    "w": 96,
+    "h": 80
+  },
+  "am_Trees_Big_Fruit_Tree": {
+    "w": 96,
+    "h": 64
+  },
+  "am_Trees_Big_Oak_Tree": {
+    "w": 192,
+    "h": 80
+  },
+  "am_Trees_Spruce_Needle_Particle": {
+    "w": 16,
+    "h": 16
+  }
+}
