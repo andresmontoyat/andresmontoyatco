@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import {
-  nearestPathDist, nearestRoadDist, visibleTileRange, eraLabel,
+  nearestPathDist, nearestRoadDist, visibleTileRange, eraLabel, drawAuthoredTiles,
 } from './scene2d.js'
 
 const path = [{ x: 0, y: 0 }, { x: 100, y: 0 }]
@@ -64,5 +64,50 @@ describe('eraLabel', () => {
   it('never throws for an unknown biome id', () => {
     expect(() => eraLabel('nonexistent', 'en')).not.toThrow()
     expect(eraLabel('nonexistent', 'en')).toBe('nonexistent')
+  })
+})
+
+describe('drawAuthoredTiles', () => {
+  const fakeCtx = () => ({ canvas: { width: 64, height: 64 } })
+  const fakeSprites = calls => ({
+    draw: (ctx, name, x, y, w, h) => calls.push({ name, x, y, w, h }),
+  })
+  const authored = [
+    { name: 'suelo', cells: new Map([['0,0', 'am_grass_0_0'], ['50,50', 'am_far_0_0']]) },
+    { name: 'detalle', cells: new Map([['0,0', 'am_flower_0_0']]) },
+  ]
+
+  it('draws only cells inside the visible tile range', () => {
+    const calls = []
+    drawAuthoredTiles(fakeCtx(), { authored }, { x: 0, y: 0 }, fakeSprites(calls))
+    expect(calls.map(c => c.name)).not.toContain('am_far_0_0')
+  })
+  it('draws layers in order so later layers land on top', () => {
+    const calls = []
+    drawAuthoredTiles(fakeCtx(), { authored }, { x: 0, y: 0 }, fakeSprites(calls))
+    expect(calls.map(c => c.name)).toEqual(['am_grass_0_0', 'am_flower_0_0'])
+  })
+  it('positions a cell at tile coords minus the camera', () => {
+    const calls = []
+    drawAuthoredTiles(fakeCtx(), { authored }, { x: 10, y: 4 }, fakeSprites(calls))
+    expect(calls[0]).toMatchObject({ x: -10, y: -4, w: 32, h: 32 })
+  })
+  it('does nothing when there is no authored map', () => {
+    const calls = []
+    drawAuthoredTiles(fakeCtx(), {}, { x: 0, y: 0 }, fakeSprites(calls))
+    expect(calls).toEqual([])
+  })
+  it('washes a painted cell once with the era tint, not once per layer', () => {
+    const fills = []
+    const ctx = {
+      canvas: { width: 64, height: 64 },
+      save: () => {}, restore: () => {},
+      fillRect: (x, y) => fills.push([x, y]),
+      set fillStyle(v) { this._f = v },
+      set globalAlpha(v) { this._a = v },
+    }
+    const world = { regions: [{ bi: 'cyber', x: 0, y: 0 }], farm: { x: 0, y: 0 } }
+    drawAuthoredTiles(ctx, { authored, world }, { x: 0, y: 0 }, fakeSprites([]))
+    expect(fills.filter(([x, y]) => x === 0 && y === 0)).toHaveLength(1)
   })
 })

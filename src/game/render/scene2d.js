@@ -167,6 +167,44 @@ function drawGround(ctx, state, cam, sprites) {
   }
 }
 
+// Authored terrain drawn on top of the procedural ground. Same viewport culling drawGround uses,
+// so cost tracks the screen, not how much of the world has been painted. Layers draw in order;
+// a later layer overdraws an earlier one at the same cell.
+//
+// The era tint is applied to authored cells too, once per cell (not once per layer). Exempting
+// them would turn the painted/generated seam into a visible colour border in cyber/castillo —
+// exactly what the hybrid composition has to hide. The cost is that WYSIWYG breaks in those two
+// biomes: the editor shows a clean tile, the game shows a washed one.
+export function drawAuthoredTiles(ctx, state, cam, sprites) {
+  const layers = state.authored
+  if (!layers || !layers.length) return
+  const { w: vw, h: vh } = viewportOf(ctx)
+  const { x0, y0, x1, y1 } = visibleTileRange(cam, vw, vh, TILE)
+  const anchors = state.world ? regionsWithFarm(state.world) : null
+  for (let ty = y0; ty < y1; ty += 1) {
+    for (let tx = x0; tx < x1; tx += 1) {
+      const key = `${tx},${ty}`
+      const sx = tx * TILE - cam.x
+      const sy = ty * TILE - cam.y
+      let painted = false
+      for (const layer of layers) {
+        const name = layer.cells.get(key)
+        if (!name) continue
+        sprites.draw(ctx, name, sx, sy, TILE, TILE)
+        painted = true
+      }
+      if (!painted || !anchors) continue
+      const tints = ERA_TINTS[nearestBiome(anchors, tx * TILE + TILE / 2, ty * TILE + TILE / 2)]
+      if (!tints) continue
+      ctx.save()
+      ctx.globalAlpha = ERA_TINT_ALPHA
+      ctx.fillStyle = tints[hashTile(tx, ty) % tints.length]
+      ctx.fillRect(sx, sy, TILE, TILE)
+      ctx.restore()
+    }
+  }
+}
+
 function drawBuildingLabel(ctx, s, bx, by) {
   ctx.fillStyle = '#eafff6'
   ctx.font = '11px monospace'
@@ -467,6 +505,7 @@ export function render2d(ctx, state, cam) {
   } else {
     const t = state.clock || 0
     drawGround(ctx, state, drawCam, sprites)
+    drawAuthoredTiles(ctx, state, drawCam, sprites)
     depthSortedDrawables(state, drawCam, t).forEach(item => item.draw(ctx, sprites))
     drawAmbient(ctx, state, drawCam, t)
     drawParticles(ctx, state, drawCam)
