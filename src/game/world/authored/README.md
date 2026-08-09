@@ -30,3 +30,14 @@ would have thrown half the building ring off the map.
 
 Note also that none of the 12 objects in `props` carries a transform, so this seed does not
 exercise flip/rotate/scale visually. The transform code paths are covered by unit tests.
+
+Two further edits, both recorded rather than silently applied:
+
+- **`slices` was backfilled.** The map was exported before the editor emitted slice geometry
+  (world-editor commit `9b45a5d`). The block was generated once by running the editor's own
+  `buildManifest` over the referenced paths — not by reimplementing its heuristic here. The
+  next export carries the block natively, and `validateMap` now refuses a map without one.
+- **`Capa 2` was dropped.** It flood-filled `Big_Oak_Tree` across all 2700 cells — a bucket fill
+  with a tree selected on a tiles layer. It was invisible while frames were sliced wrongly;
+  once they were fixed it wallpapered the world with oaks. The editor now warns about exactly
+  this in its status line (`click = rellenar región · los tiles no se seleccionan ni rotan`).
