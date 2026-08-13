@@ -234,6 +234,29 @@ describe('framesFrom', () => {
     expect(images.am_Icons_Marker).toBeUndefined()
     expect(anchorsFrom(withOwnMarker.layers)).toEqual({ farm: { x: 8, y: 9 } })
   })
+  it('still emits one image entry when the same path is referenced by several cells', () => {
+    expect(Object.keys(framesFrom(SAMPLE, dimsOf).images)).toHaveLength(3)
+  })
+  it('rejects two paths that collapse to one manifest key', () => {
+    const map = {
+      tileSize: 16,
+      world: { w: 64, h: 64 },
+      layers: [{
+        name: 'p',
+        type: 'objects',
+        objects: [
+          { frame: 'Cute_Fantasy/x/a-b.png#0,0', x: 1, y: 1 },
+          { frame: 'Cute_Fantasy/x/a_b.png#0,0', x: 2, y: 2 },
+        ],
+      }],
+      slices: {
+        'Cute_Fantasy/x/a-b.png': { type: 'single', w: 16, h: 16 },
+        'Cute_Fantasy/x/a_b.png': { type: 'single', w: 16, h: 16 },
+      },
+    }
+    expect(() => framesFrom(map, () => ({ w: 16, h: 16 })))
+      .toThrow(/am_x_a_b.*collapse to the same key/)
+  })
 })
 
 describe('convertMap', () => {

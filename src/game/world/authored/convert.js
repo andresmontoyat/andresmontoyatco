@@ -39,7 +39,9 @@ function stripRoot(path) {
 
 // A manifest image key: pack-relative path, extension dropped, every non-alphanumeric run
 // collapsed to one underscore. The am_ prefix keeps the authored namespace disjoint from the
-// 235 hand-curated frame names in manifest.js — collision is impossible by construction.
+// 235 hand-curated frame names in manifest.js — collision with that namespace is impossible by
+// construction. It says nothing about two different authored paths collapsing onto each other
+// (e.g. 'a/b-c.png' and 'a/b_c.png' both yield 'am_a_b_c') — framesFrom guards that case.
 export function slugFor(path) {
   const rel = stripRoot(path).replace(/\.[^./]+$/, '')
   return FRAME_PREFIX + rel.replace(/[^a-zA-Z0-9]+/g, '_').replace(/^_|_$/g, '')
@@ -170,9 +172,15 @@ export function rectFor(slice, col, row) {
 export function framesFrom(map, dimsOf) {
   const images = {}
   const frames = {}
+  const sources = new Map()
   for (const ref of allRefs(map)) {
     const { path, col, row } = splitRef(ref)
     const key = slugFor(path)
+    const prev = sources.get(key)
+    if (prev !== undefined && prev !== path) {
+      throw new Error(`manifest image key "${key}": ${prev} and ${path} collapse to the same key — rename one`)
+    }
+    sources.set(key, path)
     const { w, h } = dimsOf(path)
     const r = rectFor(map.slices[path], col, row)
     if (r.x + r.w > w || r.y + r.h > h) {
