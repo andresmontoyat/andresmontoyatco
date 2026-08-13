@@ -54,3 +54,11 @@ public/game/cute-fantasy/
 public/game/sprout-lands-sprites/
 !public/game/atlas.png
 !public/game/atlas.json
+
+# Personal job-search material — this repo is public. Keeps screening answers,
+# interview prep and profile diagnostics off GitHub while leaving them on disk.
+/Prep_Entrevista_*
+/Respuestas_Screening_*
+/Diagnostico_LinkedIn_*
+/cv-coderio-*.pdf
+/panel-nuevo.png
