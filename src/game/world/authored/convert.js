@@ -190,6 +190,7 @@ export function framesFrom(map, dimsOf) {
   const images = {}
   const frames = {}
   const sources = new Map()
+  const names = new Map()
   for (const ref of allRefs(map)) {
     const parsed = splitRef(ref)
     const { path } = parsed
@@ -204,8 +205,19 @@ export function framesFrom(map, dimsOf) {
     if (r.x + r.w > w || r.y + r.h > h) {
       throw new Error(`ref ${ref}: rect ${r.w}x${r.h} at ${r.x},${r.y} is outside the source image (${w}x${h})`)
     }
+    // The image-key guard above cannot see this one: the frame name appends the cell to the slug,
+    // so two refs whose SLUGS differ can still land on one name. 'a/b 7.png#2' and 'a/b.png#7,2'
+    // both give am_a_b_7_2 while their keys (am_a_b_7, am_a_b) differ, and the second frame used
+    // to silently overwrite the first — one placement drawing another's pixels, with nothing
+    // anywhere saying so. Same remedy as the key collision: refuse and name both refs.
+    const name = frameNameFor(ref)
+    const clash = names.get(name)
+    if (clash !== undefined && clash !== ref) {
+      throw new Error(`frame name "${name}": ${clash} and ${ref} collapse to the same name — rename one`)
+    }
+    names.set(name, ref)
     images[key] = publicUrlFor(path)
-    frames[frameNameFor(ref)] = { img: key, ...r }
+    frames[name] = { img: key, ...r }
   }
   return { images, frames }
 }

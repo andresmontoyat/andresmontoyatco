@@ -257,6 +257,51 @@ describe('framesFrom', () => {
     expect(() => framesFrom(map, () => ({ w: 16, h: 16 })))
       .toThrow(/am_x_a_b.*collapse to the same key/)
   })
+
+  // The key guard keys on the image slug, and these two differ (am_x_a_b_7 vs am_x_a_b), so it
+  // never fired: an atlas index appended to a slug ending in a number reads exactly like a col,row
+  // appended to the shorter one. The second frame silently overwrote the first.
+  it('rejects two paths whose frame NAMES collide though their image keys differ', () => {
+    const map = {
+      tileSize: 16,
+      world: { w: 64, h: 64 },
+      layers: [{
+        name: 'p',
+        type: 'objects',
+        objects: [
+          { frame: 'Cute_Fantasy/x/a b 7.png#2', x: 1, y: 1 },
+          { frame: 'Cute_Fantasy/x/a b.png#7,2', x: 2, y: 2 },
+        ],
+      }],
+      slices: {
+        'Cute_Fantasy/x/a b 7.png': { type: 'atlas', frames: [{ x: 0, y: 0, w: 8, h: 8 }, { x: 8, y: 0, w: 8, h: 8 }, { x: 0, y: 8, w: 8, h: 8 }] },
+        'Cute_Fantasy/x/a b.png': { type: 'sheet', fw: 16, fh: 16 },
+      },
+    }
+    expect(() => framesFrom(map, () => ({ w: 128, h: 64 })))
+      .toThrow(/am_x_a_b_7_2.*collapse to the same name/)
+  })
+
+  it('keeps both frames when the names stay distinct', () => {
+    const map = {
+      tileSize: 16,
+      world: { w: 64, h: 64 },
+      layers: [{
+        name: 'p',
+        type: 'objects',
+        objects: [
+          { frame: 'Cute_Fantasy/x/a b 7.png#2', x: 1, y: 1 },
+          { frame: 'Cute_Fantasy/x/a b.png#7,3', x: 2, y: 2 },
+        ],
+      }],
+      slices: {
+        'Cute_Fantasy/x/a b 7.png': { type: 'atlas', frames: [{ x: 0, y: 0, w: 8, h: 8 }, { x: 8, y: 0, w: 8, h: 8 }, { x: 0, y: 8, w: 8, h: 8 }] },
+        'Cute_Fantasy/x/a b.png': { type: 'sheet', fw: 16, fh: 16 },
+      },
+    }
+    const { frames } = framesFrom(map, () => ({ w: 128, h: 64 }))
+    expect(Object.keys(frames).sort()).toEqual(['am_x_a_b_7_2', 'am_x_a_b_7_3'])
+  })
 })
 
 describe('convertMap', () => {
