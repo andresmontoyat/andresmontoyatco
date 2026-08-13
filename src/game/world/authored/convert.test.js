@@ -14,6 +14,15 @@ describe('splitRef', () => {
   it('throws on a ref with no cell part', () => {
     expect(() => splitRef('Cute_Fantasy/Tiles/Grass.png')).toThrow(/malformed ref/)
   })
+  it('parses a zero cell and a multi-digit cell', () => {
+    expect(splitRef('a/b.png#0,12')).toEqual({ path: 'a/b.png', col: 0, row: 12 })
+  })
+  it('rejects a non-numeric cell', () => {
+    expect(() => splitRef('a/b.png#abc,2')).toThrow(/non-negative integers/)
+  })
+  it('rejects a negative cell', () => {
+    expect(() => splitRef('a/b.png#-1,2')).toThrow(/non-negative integers/)
+  })
 })
 
 describe('slugFor', () => {

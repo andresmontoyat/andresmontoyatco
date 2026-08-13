@@ -5,6 +5,7 @@
 const PACK_ROOT = 'Cute_Fantasy/'
 const PUBLIC_BASE = '/game/cute-fantasy/'
 const FRAME_PREFIX = 'am_'
+const CELL = /^\d+$/
 
 // The game renderer places every authored cell at 32 world pixels (TILE in scene2d.js), while
 // the export measures object positions in editor pixels at the pack's own tileSize. Tiles carry
@@ -24,6 +25,11 @@ export function splitRef(ref) {
   if (hash < 0) throw new Error(`malformed ref (no cell): ${ref}`)
   const [col, row] = ref.slice(hash + 1).split(',')
   if (col === undefined || row === undefined) throw new Error(`malformed ref (no cell): ${ref}`)
+  // Validate the raw tokens, not Number(col)/Number(row) — Number('') is 0, which would
+  // otherwise let 'a.png#3,' silently parse to a plausible-looking cell 0.
+  if (!CELL.test(col) || !CELL.test(row)) {
+    throw new Error(`malformed ref (cell must be two non-negative integers): ${ref}`)
+  }
   return { path: ref.slice(0, hash), col: Number(col), row: Number(row) }
 }
 
