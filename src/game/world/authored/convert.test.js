@@ -91,6 +91,25 @@ describe('anchorsFrom', () => {
   })
 })
 
+describe('anchor bounds', () => {
+  const anchorLayer = (biome, x, y) => ({
+    name: `anchor:${biome}`, type: 'objects', objects: [{ frame: 'x.png#0,0', x, y }],
+  })
+
+  it('accepts an anchor inside the world when a world is given', () => {
+    expect(anchorsFrom([anchorLayer('farm', 100, 200)], 1, { w: 960, h: 720 }))
+      .toEqual({ farm: { x: 100, y: 200 } })
+  })
+  it('rejects an anchor past the right edge', () => {
+    expect(() => anchorsFrom([anchorLayer('farm', 1000, 200)], 1, { w: 960, h: 720 }))
+      .toThrow(/anchor:farm.*outside the map/)
+  })
+  it('rejects a negative anchor coordinate', () => {
+    expect(() => anchorsFrom([anchorLayer('farm', -5, 200)], 1, { w: 960, h: 720 }))
+      .toThrow(/anchor:farm.*outside the map/)
+  })
+})
+
 describe('placementsFrom', () => {
   it('converts object refs to frame names and keeps the anchor position', () => {
     const layers = [{
@@ -304,6 +323,19 @@ const REAL_WITH_OBJECTS = {
     { name: 'anchor:farm', type: 'objects', objects: [{ frame: 'Cute_Fantasy/Tiles/Grass/G.png#0,0', x: 200, y: 250 }] },
   ],
 }
+
+describe('validateMap rejects an off-world anchor', () => {
+  it('fails a map whose anchor is off the world', () => {
+    const offWorld = {
+      ...REAL_WITH_OBJECTS,
+      layers: REAL_WITH_OBJECTS.layers.map(l => (l.name === 'anchor:farm'
+        ? { ...l, objects: [{ ...l.objects[0], x: 5000, y: 5000 }] }
+        : l)),
+    }
+    expect(() => validateMap(offWorld, { dimsOf: p => REAL_DIMS[p], exists }))
+      .toThrow(/outside the map/)
+  })
+})
 
 describe('worldScaleOf', () => {
   it('is the ratio between the game world tile and the pack source tile', () => {

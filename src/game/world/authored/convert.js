@@ -68,7 +68,7 @@ export function classifyLayer(layer) {
   return { kind: 'anchor', biome }
 }
 
-export function anchorsFrom(layers, scale = 1) {
+export function anchorsFrom(layers, scale = 1, world = null) {
   const out = {}
   for (const layer of layers) {
     const c = classifyLayer(layer)
@@ -77,7 +77,14 @@ export function anchorsFrom(layers, scale = 1) {
     if (items.length !== 1) {
       throw new Error(`layer "${layer.name}": an anchor layer needs exactly one object, got ${items.length}`)
     }
-    out[c.biome] = { x: items[0].x * scale, y: items[0].y * scale }
+    const { x, y } = items[0]
+    // Anchors and map.world are both editor pixels — check before the `* scale` below. An
+    // anchor exactly on the far edge is a legitimate authored position, so the upper bound is
+    // strictly greater-than, not >=.
+    if (world && (x < 0 || y < 0 || x > world.w || y > world.h)) {
+      throw new Error(`layer "${layer.name}": anchor at ${x},${y} is outside the map (${world.w}x${world.h})`)
+    }
+    out[c.biome] = { x: x * scale, y: y * scale }
   }
   return out
 }
@@ -139,7 +146,7 @@ export function tilesFrom(map, scale = 1) {
       name: l.name,
       cells: (l.cells || []).map(c => [c.x, c.y, index.get(frameNameFor(c.frame))]),
     })),
-    anchors: anchorsFrom(map.layers, scale),
+    anchors: anchorsFrom(map.layers, scale, map.world),
   }
 }
 
@@ -180,7 +187,7 @@ export function validateMap(map, { dimsOf, exists }) {
     throw new Error(`map world ${w}x${h} is not a whole number of ${map.tileSize}px tiles`)
   }
   map.layers.forEach(classifyLayer)
-  anchorsFrom(map.layers)
+  anchorsFrom(map.layers, 1, map.world)
   if (!map.slices) {
     throw new Error('map has no slices block — re-export it from a world-editor with slice geometry')
   }
