@@ -18,19 +18,27 @@ export function worldScaleOf(map) {
   return WORLD_TILE / map.tileSize
 }
 
-// "path/to/img.png#3,2" -> { path, col, row }. The editor always writes this shape
-// (see exportMap/frameStr in the editor's src/persist/export.js).
+// "path/to/img.png#3,2" -> { path, col, row }  (a cell in a uniform grid)
+// "path/to/img.png#7"   -> { path, i }         (a frame in an atlas descriptor's frames[])
+// The editor writes both shapes; see frameStr in its src/persist/ref.js. They are told apart by
+// the comma, and the split is on the LAST '#' so a path may contain one.
 export function splitRef(ref) {
   const hash = ref.lastIndexOf('#')
   if (hash < 0) throw new Error(`malformed ref (no cell): ${ref}`)
-  const [col, row] = ref.slice(hash + 1).split(',')
+  const path = ref.slice(0, hash)
+  const tail = ref.slice(hash + 1)
+  if (!tail.includes(',')) {
+    // Validate the raw token, not Number(tail) — Number('') is 0, which would let 'a.png#'
+    // silently parse to a plausible-looking frame 0.
+    if (!CELL.test(tail)) throw new Error(`malformed ref (atlas index must be a non-negative integer): ${ref}`)
+    return { path, i: Number(tail) }
+  }
+  const [col, row] = tail.split(',')
   if (col === undefined || row === undefined) throw new Error(`malformed ref (no cell): ${ref}`)
-  // Validate the raw tokens, not Number(col)/Number(row) — Number('') is 0, which would
-  // otherwise let 'a.png#3,' silently parse to a plausible-looking cell 0.
   if (!CELL.test(col) || !CELL.test(row)) {
     throw new Error(`malformed ref (cell must be two non-negative integers): ${ref}`)
   }
-  return { path: ref.slice(0, hash), col: Number(col), row: Number(row) }
+  return { path, col: Number(col), row: Number(row) }
 }
 
 function stripRoot(path) {
@@ -48,8 +56,8 @@ export function slugFor(path) {
 }
 
 export function frameNameFor(ref) {
-  const { path, col, row } = splitRef(ref)
-  return `${slugFor(path)}_${col}_${row}`
+  const r = splitRef(ref)
+  return r.i === undefined ? `${slugFor(r.path)}_${r.col}_${r.row}` : `${slugFor(r.path)}_${r.i}`
 }
 
 // manifest.images values are URL-encoded (pack folders contain spaces and parentheses) and
@@ -158,12 +166,21 @@ export function tilesFrom(map, scale = 1) {
   }
 }
 
-// rectFor: the source rect a `path#col,row` ref denotes, given how the editor cut that image.
+// rectFor: the source rect a ref denotes, given how the editor cut that image.
 // A 'single' image is one whole sprite and its col,row are filler — slicing it at tileSize
-// yields transparent margin, which is exactly the bug this replaces.
-export function rectFor(slice, col, row) {
+// yields transparent margin, which is exactly the bug this replaces. An 'atlas' image has an
+// explicit frame list and the ref carries an index into it.
+export function rectFor(slice, ref) {
+  const byIndex = ref.i !== undefined
+  if (slice.type === 'atlas') {
+    if (!byIndex) throw new Error(`ref ${ref.path}#${ref.col},${ref.row}: that image is cut as an atlas — re-export the map`)
+    const f = (slice.frames || [])[ref.i]
+    if (!f) throw new Error(`ref ${ref.path}#${ref.i}: frame ${ref.i} does not exist (${(slice.frames || []).length} frames)`)
+    return { x: f.x, y: f.y, w: f.w, h: f.h }
+  }
+  if (byIndex) throw new Error(`ref ${ref.path}#${ref.i}: that image is not cut as an atlas — re-export the map`)
   if (slice.type === 'single') return { x: 0, y: 0, w: slice.w, h: slice.h }
-  return { x: col * slice.fw, y: row * slice.fh, w: slice.fw, h: slice.fh }
+  return { x: ref.col * slice.fw, y: ref.row * slice.fh, w: slice.fw, h: slice.fh }
 }
 
 // Manifest entries for every referenced cell. pack-atlas.mjs bakes exactly what MANIFEST
@@ -174,7 +191,8 @@ export function framesFrom(map, dimsOf) {
   const frames = {}
   const sources = new Map()
   for (const ref of allRefs(map)) {
-    const { path, col, row } = splitRef(ref)
+    const parsed = splitRef(ref)
+    const { path } = parsed
     const key = slugFor(path)
     const prev = sources.get(key)
     if (prev !== undefined && prev !== path) {
@@ -182,7 +200,7 @@ export function framesFrom(map, dimsOf) {
     }
     sources.set(key, path)
     const { w, h } = dimsOf(path)
-    const r = rectFor(map.slices[path], col, row)
+    const r = rectFor(map.slices[path], parsed)
     if (r.x + r.w > w || r.y + r.h > h) {
       throw new Error(`ref ${ref}: rect ${r.w}x${r.h} at ${r.x},${r.y} is outside the source image (${w}x${h})`)
     }
@@ -206,12 +224,13 @@ export function validateMap(map, { dimsOf, exists }) {
     throw new Error('map has no slices block — re-export it from a world-editor with slice geometry')
   }
   for (const ref of allRefs(map)) {
-    const { path, col, row } = splitRef(ref)
+    const parsed = splitRef(ref)
+    const { path } = parsed
     if (!exists(path)) throw new Error(`ref ${ref}: ${path} not found in the pack`)
     const slice = map.slices[path]
     if (!slice) throw new Error(`ref ${ref}: ${path} is missing from the map's slices block`)
     const { w, h } = dimsOf(path)
-    const r = rectFor(slice, col, row)
+    const r = rectFor(slice, parsed)
     if (r.x + r.w > w || r.y + r.h > h) {
       throw new Error(`ref ${ref}: rect ${r.w}x${r.h} at ${r.x},${r.y} is outside the source image (${w}x${h})`)
     }

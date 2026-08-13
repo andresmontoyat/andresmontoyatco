@@ -412,12 +412,14 @@ describe('convertMap applies the world scale', () => {
 
 describe('rectFor', () => {
   it('gives a sheet cell its col,row offset at frame size', () => {
-    expect(rectFor({ type: 'sheet', fw: 16, fh: 16, cols: 4, rows: 4 }, 2, 3))
+    expect(rectFor({ type: 'sheet', fw: 16, fh: 16, cols: 4, rows: 4 }, { path: 'x.png', col: 2, row: 3 }))
       .toEqual({ x: 32, y: 48, w: 16, h: 16 })
   })
   it('gives a single sprite the whole image, ignoring col,row filler', () => {
-    expect(rectFor({ type: 'single', w: 192, h: 80 }, 0, 0)).toEqual({ x: 0, y: 0, w: 192, h: 80 })
-    expect(rectFor({ type: 'single', w: 192, h: 80 }, 5, 7)).toEqual({ x: 0, y: 0, w: 192, h: 80 })
+    expect(rectFor({ type: 'single', w: 192, h: 80 }, { path: 'x.png', col: 0, row: 0 }))
+      .toEqual({ x: 0, y: 0, w: 192, h: 80 })
+    expect(rectFor({ type: 'single', w: 192, h: 80 }, { path: 'x.png', col: 5, row: 7 }))
+      .toEqual({ x: 0, y: 0, w: 192, h: 80 })
   })
 })
 
@@ -461,5 +463,62 @@ describe('object sprites scale with the world', () => {
   it('emits no scale at all when the world scale is 1 and the object has none', () => {
     const layers = [{ name: 'p', type: 'objects', objects: [{ frame: 'a/b.png#0,0', x: 0, y: 0 }] }]
     expect(Object.keys(placementsFrom(layers, 1)[0])).toEqual(['frame', 'x', 'y'])
+  })
+})
+
+describe('atlas refs', () => {
+  const frames = [{ x: 0, y: 0, w: 6, h: 64 }, { x: 6, y: 0, w: 38, h: 64 }]
+  const atlasSlice = { type: 'atlas', frames }
+
+  it('parses an index ref', () => {
+    expect(splitRef('Outdoor decoration/Fences.png#1')).toEqual({ path: 'Outdoor decoration/Fences.png', i: 1 })
+  })
+
+  it('still parses a col,row ref', () => {
+    expect(splitRef('Tiles/Grass.png#3,1')).toEqual({ path: 'Tiles/Grass.png', col: 3, row: 1 })
+  })
+
+  it('rejects an index that is not a non-negative integer', () => {
+    expect(() => splitRef('a.png#-1')).toThrow(/malformed ref/)
+    expect(() => splitRef('a.png#1.5')).toThrow(/malformed ref/)
+    expect(() => splitRef('a.png#')).toThrow(/malformed ref/)
+    expect(() => splitRef('a.png#x')).toThrow(/malformed ref/)
+  })
+
+  it('names an atlas frame by index and a grid frame by cell', () => {
+    expect(frameNameFor('a/b.png#7')).toBe('am_a_b_7')
+    expect(frameNameFor('a/b.png#7,2')).toBe('am_a_b_7_2')
+  })
+
+  it('resolves the frame rect by index', () => {
+    expect(rectFor(atlasSlice, { path: 'F.png', i: 1 })).toEqual({ x: 6, y: 0, w: 38, h: 64 })
+  })
+
+  it('throws, naming the ref, when the index is past the end', () => {
+    expect(() => rectFor(atlasSlice, { path: 'F.png', i: 9 })).toThrow(/F\.png#9/)
+  })
+
+  it('throws when the ref and the slice disagree on addressing', () => {
+    expect(() => rectFor(atlasSlice, { path: 'F.png', col: 0, row: 0 })).toThrow(/atlas/)
+    expect(() => rectFor({ type: 'sheet', fw: 16, fh: 16 }, { path: 'F.png', i: 0 })).toThrow(/atlas/)
+  })
+
+  it('converts a map that mixes both forms', () => {
+    const map = {
+      tileSize: 16,
+      world: { w: 32, h: 16 },
+      slices: {
+        'F.png': atlasSlice,
+        'G.png': { type: 'sheet', fw: 16, fh: 16, cols: 2, rows: 1 },
+      },
+      layers: [
+        { name: 'suelo', type: 'tiles', cells: [{ x: 0, y: 0, frame: 'G.png#1,0' }] },
+        { name: 'props', type: 'objects', objects: [{ frame: 'F.png#1', x: 8, y: 16 }] },
+      ],
+    }
+    const dimsOf = p => (p === 'F.png' ? { w: 64, h: 64 } : { w: 32, h: 16 })
+    const out = convertMap(map, { dimsOf })
+    expect(out.manifest.frames.am_F_1).toEqual({ img: 'am_F', x: 6, y: 0, w: 38, h: 64 })
+    expect(out.manifest.frames.am_G_1_0).toEqual({ img: 'am_G', x: 16, y: 0, w: 16, h: 16 })
   })
 })
