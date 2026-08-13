@@ -59,13 +59,33 @@
       "tech": ["Java", "Spring Boot", "Hexagonal Architecture", "DDD", "Microservices", "ArchUnit", "GitHub Actions", "KrakenD", "GraalVM", "Structurizr"]
     },
     {
+      "id": "coderio-2026",
+      "visible": false,
+      "cvOnly": true,
+      "date": { "en": "Jan 2026 — Apr 2026", "es": "Ene 2026 — Abr 2026" },
+      "title": { "en": "Backend Developer", "es": "Backend Developer" },
+      "company": "CODERIO",
+      "location": { "en": "Remote", "es": "Remoto" },
+      "bullets": {
+        "en": [
+          "Developed backend REST APIs for ITTI, a Paraguayan bank, on Java, Kotlin and Spring Boot behind a Kong API gateway.",
+          "Improved the performance of the core Personas (customers) API — cut response times and raised throughput, profiled and monitored with New Relic."
+        ],
+        "es": [
+          "Desarrollé APIs REST de backend para ITTI, banco paraguayo, en Java, Kotlin y Spring Boot detrás de un API gateway Kong.",
+          "Mejoré el rendimiento de la API core de Personas — reduje los tiempos de respuesta y aumenté el throughput, con profiling y monitoreo en New Relic."
+        ]
+      },
+      "tech": ["Java", "Kotlin", "Spring Boot", "Kong", "New Relic", "REST APIs", "Microservices"]
+    },
+    {
       "id": "f2x-2024",
       "visible": true,
       "featured": true,
       "metric": {
         "label": { "en": "Commissions & billing · microservices", "es": "Comisiones y cobro · microservicios" }
       },
-      "date": { "en": "Sep 2024 — Apr 2026", "es": "Sep 2024 — Abr 2026" },
+      "date": { "en": "Sep 2024 — Jan 2026", "es": "Sep 2024 — Ene 2026" },
       "title": { "en": "Backend Developer", "es": "Backend Developer" },
       "company": "F2X - Flypass",
       "location": { "en": "Medellín, Colombia", "es": "Medellín, Colombia" },

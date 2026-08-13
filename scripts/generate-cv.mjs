@@ -50,7 +50,7 @@ export function buildHtml(lang) {
   const highlights = exp.filter.chips.map(esc).join(' &nbsp;·&nbsp; ')
 
   const roles = exp.entries
-    .filter((e) => e.visible !== false)
+    .filter((e) => e.visible !== false || e.cvOnly)
     .map((e) => {
       const bullets = pick(e.bullets, lang).map((b) => `<li>${esc(b)}</li>`).join('')
       const tech = (e.tech || []).map(esc).join(' · ')
