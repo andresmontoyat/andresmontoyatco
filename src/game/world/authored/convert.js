@@ -1,5 +1,6 @@
-// Converts the world-editor's engine-neutral map export into the three artifacts the game
-// consumes: atlas manifest entries, a palette-encoded tile JSON, and placements.
+// Converts the world-editor's engine-neutral map export into the four artifacts the game
+// consumes: atlas manifest entries, a palette-encoded tile JSON, placements, and the clip table
+// those placements play.
 // Pure — no fs, no network. The import script injects everything environmental.
 
 const PACK_ROOT = 'Cute_Fantasy/'
@@ -115,6 +116,7 @@ function toPlacement(o, scale) {
   if (o.rot) p.rot = o.rot
   const s = scale * (o.scale || 1)
   if (s !== 1) p.scale = s
+  if (o.clip) p.clip = o.clip
   return p
 }
 
@@ -135,7 +137,22 @@ function allRefs(map) {
     if (l.type === 'objects') for (const o of l.objects || []) refs.add(o.frame)
     else for (const c of l.cells || []) refs.add(c.frame)
   }
+  // A clip's frames are placed by whichever object plays it — the object only names frame 0, so
+  // without this the rest of the cycle never reaches the atlas and the runtime draws blanks.
+  for (const c of map.clips || []) for (const f of c.frames || []) refs.add(f)
   return [...refs].sort()
+}
+
+// clipsFrom: the clip table the runtime plays, keyed by the id the placements carry. Frame NAMES,
+// not a base + count: the adapter already names every ref deterministically and pack-atlas.mjs
+// dedupes by source rect, so renaming a clip's frames into a contiguous base_0..n would duplicate
+// pixels in the shipped atlas and buy nothing.
+export function clipsFrom(map) {
+  const out = {}
+  for (const c of map.clips || []) {
+    out[c.id] = { frames: (c.frames || []).map(frameNameFor), fps: c.fps }
+  }
+  return out
 }
 
 // The editor's exportMap emits world size, never cols/rows — deriving them is the only
@@ -247,6 +264,21 @@ export function validateMap(map, { dimsOf, exists }) {
       throw new Error(`ref ${ref}: rect ${r.w}x${r.h} at ${r.x},${r.y} is outside the source image (${w}x${h})`)
     }
   }
+  // The per-frame rect and slice checks above come for free: allRefs now walks clip frames too.
+  // What is left is the pair of shapes only the clip table can be wrong about — an empty cycle,
+  // and a placement pointing at a clip nobody defined.
+  for (const c of map.clips || []) {
+    if (!(c.frames || []).length) throw new Error(`clip "${c.id}": has no frames`)
+  }
+  const clipIds = new Set((map.clips || []).map(c => c.id))
+  for (const l of map.layers) {
+    if (l.type !== 'objects') continue
+    for (const o of l.objects || []) {
+      if (o.clip && !clipIds.has(o.clip)) {
+        throw new Error(`layer "${l.name}": an object names clip "${o.clip}", which the map does not define`)
+      }
+    }
+  }
 }
 
 export function convertMap(map, { dimsOf, exists = () => true }) {
@@ -256,5 +288,6 @@ export function convertMap(map, { dimsOf, exists = () => true }) {
     manifest: framesFrom(map, dimsOf),
     tiles: tilesFrom(map, scale),
     placements: placementsFrom(map.layers, scale),
+    clips: clipsFrom(map),
   }
 }

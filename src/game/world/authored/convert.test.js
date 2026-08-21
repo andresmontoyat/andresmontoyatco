@@ -305,9 +305,9 @@ describe('framesFrom', () => {
 })
 
 describe('convertMap', () => {
-  it('returns the three artifacts together', () => {
+  it('returns the four artifacts together', () => {
     const out = convertMap(SAMPLE, { dimsOf })
-    expect(Object.keys(out).sort()).toEqual(['manifest', 'placements', 'tiles'])
+    expect(Object.keys(out).sort()).toEqual(['clips', 'manifest', 'placements', 'tiles'])
     expect(out.placements).toEqual([{ frame: 'am_Trees_T_0_0', x: 50, y: 60 }])
     expect(out.tiles.anchors.farm).toEqual({ x: 8, y: 9 })
     expect(out.manifest.frames.am_Tiles_Grass_G_0_0).toBeDefined()
@@ -565,5 +565,65 @@ describe('atlas refs', () => {
     const out = convertMap(map, { dimsOf })
     expect(out.manifest.frames.am_F_1).toEqual({ img: 'am_F', x: 6, y: 0, w: 38, h: 64 })
     expect(out.manifest.frames.am_G_1_0).toEqual({ img: 'am_G', x: 16, y: 0, w: 16, h: 16 })
+  })
+})
+
+describe('clips', () => {
+  const mapWithClip = () => ({
+    version: 1,
+    tileSize: 16,
+    world: { w: 64, h: 64 },
+    slices: { 'Cow.png': { type: 'sheet', fw: 32, fh: 32, cols: 8, rows: 15 } },
+    clips: [{ id: 'C1', name: 'vaca', fps: 6, frames: ['Cow.png#0,3', 'Cow.png#1,3'] }],
+    layers: [{ name: 'props', type: 'objects', objects: [{ frame: 'Cow.png#0,3', x: 16, y: 32, clip: 'C1' }] }],
+  })
+  const dimsOf = () => ({ w: 256, h: 480 })
+
+  it('bakes every frame of a clip, not just the object frame', () => {
+    const { manifest } = convertMap(mapWithClip(), { dimsOf })
+    expect(Object.keys(manifest.frames).sort()).toEqual(['am_Cow_0_3', 'am_Cow_1_3'])
+  })
+
+  it('emits a clip table keyed by clip id, with frame names', () => {
+    const { clips } = convertMap(mapWithClip(), { dimsOf })
+    expect(clips).toEqual({ C1: { frames: ['am_Cow_0_3', 'am_Cow_1_3'], fps: 6 } })
+  })
+
+  it('carries the clip id onto the placement', () => {
+    const { placements } = convertMap(mapWithClip(), { dimsOf })
+    expect(placements[0].clip).toBe('C1')
+  })
+
+  it('leaves a placement without a clip byte-identical to before', () => {
+    const map = mapWithClip()
+    delete map.layers[0].objects[0].clip
+    map.clips = []
+    expect(convertMap(map, { dimsOf }).placements[0]).toEqual({ frame: 'am_Cow_0_3', x: 32, y: 64, scale: 2 })
+  })
+
+  it('refuses a placement naming a clip the map does not define', () => {
+    const map = mapWithClip()
+    map.clips = []
+    expect(() => convertMap(map, { dimsOf })).toThrow(/clip "C1"/)
+  })
+
+  it('refuses a clip with no frames', () => {
+    const map = mapWithClip()
+    map.clips[0].frames = []
+    expect(() => convertMap(map, { dimsOf })).toThrow(/clip "C1"/)
+  })
+
+  it('refuses a clip frame whose rect falls outside the image', () => {
+    const map = mapWithClip()
+    map.clips[0].frames = ['Cow.png#0,3', 'Cow.png#0,99']
+    map.layers[0].objects[0].frame = 'Cow.png#0,3'
+    expect(() => convertMap(map, { dimsOf })).toThrow(/outside the source image/)
+  })
+
+  it('reads a map exported before clips existed', () => {
+    const map = mapWithClip()
+    delete map.clips
+    delete map.layers[0].objects[0].clip
+    expect(convertMap(map, { dimsOf }).clips).toEqual({})
   })
 })
