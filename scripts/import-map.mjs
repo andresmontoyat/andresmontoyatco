@@ -1,4 +1,4 @@
-// Converts the world-editor export (src/game/world/authored/career.map.json) into the three
+// Converts the world-editor export (src/game/world/authored/career.map.json) into the four
 // artifacts the game consumes. Requires the paid Cute Fantasy pack unpacked at
 // public/game/cute-fantasy/ (gitignored) — this cannot run in CI.
 //
@@ -17,6 +17,7 @@ const IN_MAP = path.join(ROOT, 'src', 'game', 'world', 'authored', 'career.map.j
 const OUT_MANIFEST = path.join(ROOT, 'src', 'game', 'assets', 'manifest.authored.js')
 const OUT_TILES = path.join(ROOT, 'src', 'game', 'world', 'authored', 'career.tiles.json')
 const OUT_PLACEMENTS = path.join(ROOT, 'src', 'data', 'placements.json')
+const OUT_CLIPS = path.join(ROOT, 'src', 'data', 'clips.json')
 const PACK = path.join(ROOT, 'public', 'game', 'cute-fantasy')
 
 const PACK_ROOT = 'Cute_Fantasy/'
@@ -27,6 +28,11 @@ async function dimsCache(map) {
   for (const l of map.layers) {
     if (l.type === 'objects') for (const o of l.objects || []) paths.add(o.frame.slice(0, o.frame.lastIndexOf('#')))
     else for (const c of l.cells || []) paths.add(c.frame.slice(0, c.frame.lastIndexOf('#')))
+  }
+  // Clip frames too: a sheet reached ONLY through a clip's later frames would measure 0x0 here
+  // and convert.js would refuse a perfectly good map on the bounds check.
+  for (const c of map.clips || []) {
+    for (const f of c.frames || []) paths.add(f.slice(0, f.lastIndexOf('#')))
   }
   const dims = {}
   for (const p of [...paths].sort()) {
@@ -76,9 +82,11 @@ async function main() {
   await fs.writeFile(OUT_MANIFEST, manifestModule(out.manifest, imageSize))
   await fs.writeFile(OUT_TILES, `${JSON.stringify(out.tiles, null, 2)}\n`)
   await fs.writeFile(OUT_PLACEMENTS, `${JSON.stringify(out.placements, null, 2)}\n`)
+  await fs.writeFile(OUT_CLIPS, `${JSON.stringify(out.clips, null, 2)}\n`)
   const cells = out.tiles.layers.reduce((n, l) => n + l.cells.length, 0)
   console.log(`imported: ${Object.keys(out.manifest.frames).length} frames, ${cells} cells, `
-    + `${out.placements.length} placements, ${Object.keys(out.tiles.anchors).length} anchors`)
+    + `${out.placements.length} placements, ${Object.keys(out.clips).length} clips, `
+    + `${Object.keys(out.tiles.anchors).length} anchors`)
 }
 
 main().catch(e => { console.error(e.message); process.exit(1) })

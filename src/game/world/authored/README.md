@@ -6,7 +6,7 @@
 ## Re-import after editing the map
 
 1. Export the map from the editor, overwrite `career.map.json`.
-2. `npm run map:import`  — regenerates manifest.authored.js, career.tiles.json, placements.json
+2. `npm run map:import`  — regenerates manifest.authored.js, career.tiles.json, placements.json, clips.json
 3. `npm run assets:pack` — rebakes atlas.png / atlas.json
 4. `npm test`
 5. Commit all generated files together.
