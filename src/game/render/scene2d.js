@@ -3,7 +3,7 @@ import {
 } from './tiles.js'
 import { BIOMES } from '../world/biomes.js'
 import { drawAmbient, swayOffset, DAY_LEN } from './ambient.js'
-import { animFrame, animIndex } from './anim.js'
+import { animFrame, animIndex, clipFrame, hashPhase } from './anim.js'
 import { CONFIG } from '../config.js'
 import { critterDrawables } from '../entities/critters.js'
 import { npcDrawables } from '../entities/npcs.js'
@@ -331,12 +331,17 @@ function windmillDrawable(wm, cam, t) {
 // bottom-centre point the flat placements already used, so the no-transform path stays a single
 // drawImage with no canvas state changes — that identity case is what guarantees M6 does not
 // alter anything the Asset Placer produced.
-export function drawTransformed(ctx, sprites, pl, cam) {
-  const f = sprites.frame(pl.frame)
+export function drawTransformed(ctx, sprites, pl, cam, clips = null, t = 0) {
+  // A placement that plays a clip draws the clip's frame for this tick; everything else draws the
+  // frame the editor placed. Falling back to pl.frame also covers a clip id the table lost, which
+  // keeps a stale placements.json rendering a static object rather than throwing mid-frame.
+  const clip = pl.clip && clips ? clips[pl.clip] : null
+  const name = (clip && clipFrame(clip, t, hashPhase(pl.x, pl.y))) || pl.frame
+  const f = sprites.frame(name)
   const scale = pl.scale || 1
   const rot = pl.rot || 0
   if (!pl.flipX && !pl.flipY && !rot && scale === 1) {
-    sprites.draw(ctx, pl.frame, pl.x - f.w / 2 - cam.x, pl.y - f.h - cam.y, f.w, f.h)
+    sprites.draw(ctx, name, pl.x - f.w / 2 - cam.x, pl.y - f.h - cam.y, f.w, f.h)
     return
   }
   ctx.save()
@@ -344,7 +349,7 @@ export function drawTransformed(ctx, sprites, pl, cam) {
   if (rot) ctx.rotate((rot * Math.PI) / 180)
   if (scale !== 1) ctx.scale(scale, scale)
   if (pl.flipX || pl.flipY) ctx.scale(pl.flipX ? -1 : 1, pl.flipY ? -1 : 1)
-  sprites.draw(ctx, pl.frame, -f.w / 2, -f.h, f.w, f.h)
+  sprites.draw(ctx, name, -f.w / 2, -f.h, f.w, f.h)
   ctx.restore()
 }
 
@@ -361,7 +366,7 @@ function depthSortedDrawables(state, cam, t) {
   // Authored/hand-placed assets — native frame size, bottom-anchored at (x,y), optional transforms.
   const placements = (state.world.placements || []).map(pl => ({
     baseY: pl.y,
-    draw: (ctx, sprites) => drawTransformed(ctx, sprites, pl, cam),
+    draw: (ctx, sprites) => drawTransformed(ctx, sprites, pl, cam, state.world.clips, t),
   }))
   const windmill = state.world.farmWindmill ? [windmillDrawable(state.world.farmWindmill, cam, t)] : []
   const { player } = state

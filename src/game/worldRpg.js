@@ -95,13 +95,17 @@ export function update(state, input, dtChars) {
 }
 
 export function createWorldRpg({
-  canvas, experience, sideProjects = [], lang = 'es', onLangChange, placements = [], authoredTiles = null,
+  canvas, experience, sideProjects = [], lang = 'es', onLangChange, placements = [], clips = {},
+  authoredTiles = null,
 }) {
   const world = buildOverworld(experience, biomeForYear, sideProjects, authoredTiles && authoredTiles.anchors)
   // Assets placed in the world-editor (src/game/world/authored/career.map.json → npm run
   // map:import → src/data/placements.json): a flat list of { frame, x, y } plus optional
   // transforms, drawn as non-solid decor, bottom-anchored at (x,y).
   world.placements = placements
+  // The clip table those placements play (src/data/clips.json), keyed by the clip id a placement
+  // carries. Frame names, already baked into the atlas by the same import.
+  world.clips = clips
   const state = {
     world,
     decor: buildDecor(world),

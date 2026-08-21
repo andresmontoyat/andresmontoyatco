@@ -141,10 +141,11 @@ export default function WorldRpg({ locale }) {
 
     async function mount() {
       const [{ createWorldRpg, canControl }, { default: experience }, { default: placements },
-        { default: authoredTiles }] = await Promise.all([
+        { default: clips }, { default: authoredTiles }] = await Promise.all([
         import('../../game/worldRpg.js'),
         import('../../data/experience.json'),
         import('../../data/placements.json'),
+        import('../../data/clips.json'),
         import('../../game/world/authored/career.tiles.json'),
       ])
       if (cancelled || !canvasRef.current) return
@@ -160,6 +161,7 @@ export default function WorldRpg({ locale }) {
         experience,
         sideProjects: SIDE_PROJECTS,
         placements,
+        clips,
         authoredTiles,
         lang,
         onLangChange: setUiLang,
