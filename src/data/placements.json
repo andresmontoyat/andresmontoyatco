@@ -70,5 +70,12 @@
     "x": 104,
     "y": 270,
     "scale": 2
+  },
+  {
+    "frame": "am_Animals_Cow_Cow_01_0_3",
+    "x": 400,
+    "y": 400,
+    "scale": 2,
+    "clip": "C1"
   }
 ]

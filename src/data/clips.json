@@ -1,1 +1,11 @@
-{}
+{
+  "C1": {
+    "frames": [
+      "am_Animals_Cow_Cow_01_0_3",
+      "am_Animals_Cow_Cow_01_1_3",
+      "am_Animals_Cow_Cow_01_2_3",
+      "am_Animals_Cow_Cow_01_3_3"
+    ],
+    "fps": 6
+  }
+}

@@ -2,6 +2,7 @@
 // Frames sliced out of the authored map (src/game/world/authored/career.map.json).
 
 export const AUTHORED_IMAGES = {
+  "am_Animals_Cow_Cow_01": "/game/cute-fantasy/Animals/Cow/Cow_01.png",
   "am_Tiles_Grass_Grass_1_Middle": "/game/cute-fantasy/Tiles/Grass/Grass_1_Middle.png",
   "am_Trees_Big_Birch_Tree": "/game/cute-fantasy/Trees/Big_Birch_Tree.png",
   "am_Trees_Big_Fruit_Tree": "/game/cute-fantasy/Trees/Big_Fruit_Tree.png",
@@ -10,6 +11,34 @@ export const AUTHORED_IMAGES = {
 }
 
 export const AUTHORED_FRAMES = {
+  "am_Animals_Cow_Cow_01_0_3": {
+    "img": "am_Animals_Cow_Cow_01",
+    "x": 0,
+    "y": 96,
+    "w": 32,
+    "h": 32
+  },
+  "am_Animals_Cow_Cow_01_1_3": {
+    "img": "am_Animals_Cow_Cow_01",
+    "x": 32,
+    "y": 96,
+    "w": 32,
+    "h": 32
+  },
+  "am_Animals_Cow_Cow_01_2_3": {
+    "img": "am_Animals_Cow_Cow_01",
+    "x": 64,
+    "y": 96,
+    "w": 32,
+    "h": 32
+  },
+  "am_Animals_Cow_Cow_01_3_3": {
+    "img": "am_Animals_Cow_Cow_01",
+    "x": 96,
+    "y": 96,
+    "w": 32,
+    "h": 32
+  },
   "am_Tiles_Grass_Grass_1_Middle_0_0": {
     "img": "am_Tiles_Grass_Grass_1_Middle",
     "x": 0,
@@ -51,6 +80,10 @@ export const AUTHORED_FRAMES = {
 // as AUTHORED_IMAGES — merge into manifest.test.js's REAL_IMAGE_SIZE to keep the bounds check
 // enforced for the authored namespace without hand-maintaining it.
 export const AUTHORED_IMAGE_SIZE = {
+  "am_Animals_Cow_Cow_01": {
+    "w": 256,
+    "h": 480
+  },
   "am_Tiles_Grass_Grass_1_Middle": {
     "w": 16,
     "h": 16

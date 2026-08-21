@@ -13620,6 +13620,12 @@
           "frame": "Cute_Fantasy/Trees/Big_Oak_Tree.png#0,0",
           "x": 52,
           "y": 135
+        },
+        {
+          "frame": "Cute_Fantasy/Animals/Cow/Cow_01.png#0,3",
+          "x": 200,
+          "y": 200,
+          "clip": "C1"
         }
       ]
     },
@@ -13692,6 +13698,26 @@
       "type": "single",
       "w": 16,
       "h": 16
+    },
+    "Cute_Fantasy/Animals/Cow/Cow_01.png": {
+      "type": "sheet",
+      "fw": 32,
+      "fh": 32,
+      "cols": 8,
+      "rows": 15
     }
-  }
+  },
+  "clips": [
+    {
+      "id": "C1",
+      "name": "vaca_sur",
+      "fps": 6,
+      "frames": [
+        "Cute_Fantasy/Animals/Cow/Cow_01.png#0,3",
+        "Cute_Fantasy/Animals/Cow/Cow_01.png#1,3",
+        "Cute_Fantasy/Animals/Cow/Cow_01.png#2,3",
+        "Cute_Fantasy/Animals/Cow/Cow_01.png#3,3"
+      ]
+    }
+  ]
 }
