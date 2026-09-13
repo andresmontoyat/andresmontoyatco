@@ -228,17 +228,19 @@
       "location": { "en": "Medellín, Colombia", "es": "Medellín, Colombia" },
       "bullets": {
         "en": [
-          "Led a distributed team of 45+ developers delivering Claro Perú's transactional self-service portal to production.",
-          "Designed the Oracle Service Bus integration layer for Claro Colombia.",
-          "Built WebSphere Portlet components in Java 8 and implemented CI infrastructure and Scrum practices."
+          "Led a distributed team of 45+ developers building Claro Perú's transactional self-service portal, from design through to its production release.",
+          "Designed and built the Oracle Service Bus integration layer connecting Claro Colombia's back-office systems.",
+          "Built the portal itself on Java 8, Spring and WebSphere Portlets, front end included, against IBM WebSphere.",
+          "Stood up the continuous-integration infrastructure and introduced Scrum, giving a 45-person team a single repeatable delivery cadence."
         ],
         "es": [
-          "Lideré un equipo distribuido de más de 45 desarrolladores entregando a producción el portal transaccional de Claro Perú.",
-          "Diseñé la capa de integración sobre Oracle Service Bus para Claro Colombia.",
-          "Construí componentes WebSphere Portlets en Java 8 e implementé infraestructura de CI y prácticas Scrum."
+          "Lideré un equipo distribuido de más de 45 desarrolladores construyendo el portal transaccional de autogestión de Claro Perú, del diseño hasta su salida a producción.",
+          "Diseñé y construí la capa de integración sobre Oracle Service Bus que conectaba los sistemas de back-office de Claro Colombia.",
+          "Construí el portal sobre Java 8, Spring y WebSphere Portlets, front end incluido, contra IBM WebSphere.",
+          "Levanté la infraestructura de integración continua e introduje Scrum, dándole a un equipo de 45 personas una única cadencia de entrega repetible."
         ]
       },
-      "tech": ["Java", "Oracle Service Bus", "WebSphere", "Jenkins"]
+      "tech": ["Java", "Spring", "WebSphere Portlets", "Oracle Service Bus", "Jenkins"]
     },
     {
       "id": "path-2010",
@@ -270,34 +272,40 @@
       "location": { "en": "Medellín, Colombia", "es": "Medellín, Colombia" },
       "bullets": {
         "en": [
-          "Built loan, policy and occupational-risk systems for Suramericana (Colombian insurance leader) in Java 7 / JEE 5.",
-          "Authored Oracle SQL stored procedures and high-throughput backend components."
+          "Built the loan, policy and occupational-risk systems of Suramericana — Colombia's largest insurer — on Java / JEE 5 with Struts and JSF.",
+          "Wrote the Oracle data layer behind those flows: SQL and stored procedures carrying the policy and claims operations.",
+          "Delivered every slice full-stack — Java back end, JavaScript / HTML / CSS front end and Oracle schema — deployed on Tomcat."
         ],
         "es": [
-          "Construí sistemas de préstamos, pólizas y riesgos laborales para Suramericana (líder asegurador colombiano) en Java 7 / JEE 5.",
-          "Escribí procedimientos almacenados en Oracle SQL y componentes backend de alto throughput."
+          "Construí los sistemas de préstamos, pólizas y riesgos profesionales de Suramericana — la mayor aseguradora de Colombia — sobre Java / JEE 5 con Struts y JSF.",
+          "Escribí la capa de datos en Oracle detrás de esos flujos: SQL y procedimientos almacenados que sostenían la operación de pólizas y siniestros.",
+          "Entregué cada slice full-stack — back end en Java, front end en JavaScript / HTML / CSS y esquema Oracle — desplegado en Tomcat."
         ]
       },
-      "tech": ["Java", "JEE 5", "Oracle SQL"]
+      "tech": ["Java", "JEE 5", "Struts", "JSF", "Oracle SQL", "Tomcat"]
     },
     {
       "id": "mercurio-2007",
       "visible": true,
       "date": { "en": "Apr 2007 — Jun 2009", "es": "Abr 2007 — Jun 2009" },
       "title": { "en": "Java Web Developer", "es": "Java Web Developer" },
-      "company": "Inversiones Informáticas Mercurio",
+      "company": "Castor SAS (antes Mercurio)",
       "location": { "en": "Medellín, Colombia", "es": "Medellín, Colombia" },
       "bullets": {
         "en": [
-          "Built front-end and backend features for a Transportation Management System (TMS).",
-          "Provided application support to 25+ companies running the system."
+          "Designed and built the business components of a Transportation Management System that ran the daily operation of 25+ transport companies.",
+          "Built the integration layer that carried TMS operations into each client's accounting system, removing the manual re-keying between both worlds.",
+          "Owned support and maintenance for every company on the platform — production incidents, SQL Server / MySQL data fixes and JSP + JavaScript front-end work.",
+          "Introduced Scrum and extreme-programming practices to a team that until then delivered ad hoc."
         ],
         "es": [
-          "Construí funcionalidades de front-end y backend para un Sistema de Gestión de Transporte (TMS).",
-          "Brindé soporte de aplicación a más de 25 compañías que tenían el sistema instalado."
+          "Diseñé y construí los componentes de negocio de un Sistema de Gestión de Transporte (TMS) que sostenía la operación diaria de más de 25 empresas transportadoras.",
+          "Construí la capa de integración que llevaba la operación del TMS al sistema contable de cada cliente, eliminando la redigitación manual entre ambos mundos.",
+          "Me hice cargo del soporte y mantenimiento de todas las empresas de la plataforma — incidentes en producción, correcciones de datos en SQL Server / MySQL y trabajo de front-end en JSP y JavaScript.",
+          "Introduje Scrum y prácticas de programación extrema en un equipo que hasta entonces entregaba ad hoc."
         ]
       },
-      "tech": ["Java", "JavaScript", "JSP", "SQL Server", "MySQL"]
+      "tech": ["Java", "Servlets", "JSP", "JavaScript", "SQL Server", "MySQL", "Tomcat"]
     }
   ]
 }
