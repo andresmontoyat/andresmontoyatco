@@ -106,11 +106,92 @@ export function anchorsFrom(layers, scale = 1, world = null) {
   return out
 }
 
+// ---- the tag vocabulary ----
+//
+// The editor validates the SHAPE of a tag — a bare word or `kind:value`, lowercase kind, one colon,
+// and a `door:`/`poi:`/`spawn` naming one object — and knows nothing about what any of it means.
+// Naming the kinds is this side's job, the same line classifyLayer already draws by throwing on an
+// unknown biome.
+//
+// Every check below is this adapter's own rather than a trust of the exporter: the editor's export
+// dialog offers "Exportar igual", so a lint-dirty file can reach here.
+const IDENTITY_KINDS = ['door', 'npc', 'animal', 'object', 'poi']
+
+// A flag says how the world behaves around an object, not what the object IS, so it rides along with
+// whatever kind the object already has.
+const FLAG_TAGS = ['solid', 'spawn']
+
+// Kinds where the id names ONE object. Two npcs may share a dialog id — two villagers with the same
+// lines is a legitimate world — so this is per kind rather than blanket.
+const UNIQUE_KINDS = new Set(['door', 'poi'])
+
+function readTag(tag, where) {
+  if (FLAG_TAGS.includes(tag)) return { flag: tag }
+  const i = tag.indexOf(':')
+  const kind = i < 0 ? tag : tag.slice(0, i)
+  const id = i < 0 ? '' : tag.slice(i + 1)
+  if (!IDENTITY_KINDS.includes(kind)) {
+    throw new Error(`${where}: unknown tag kind "${kind}" (expected one of ${[...IDENTITY_KINDS, ...FLAG_TAGS].join(', ')})`)
+  }
+  if (!id) throw new Error(`${where}: tag "${tag}" needs a value, as in "${kind}:algo"`)
+  return { kind, id }
+}
+
+// interactablesFrom: one entry per TAGGED object — what the world contains that the player can do
+// something with. Untagged objects are scenery and stay in the placements list alone.
+//
+// Nothing in the game reads this yet; the interaction system is the next piece of work, and this is
+// the contract it will read.
+export function interactablesFrom(layers, scale = 1) {
+  const out = []
+  const uids = new Set()
+  const claimed = new Map()
+  let spawn = null
+  for (const layer of layers || []) {
+    for (const o of layer.objects || []) {
+      const tags = Array.isArray(o.tags) ? o.tags.filter(t => typeof t === 'string' && t) : []
+      if (!tags.length) continue
+      const where = `layer "${layer.name}", object at ${o.x},${o.y}`
+      const read = tags.map(t => readTag(t, where))
+      const identities = read.filter(r => r.kind)
+      if (identities.length > 1) {
+        throw new Error(`${where}: carries two identities at once (${identities.map(r => `${r.kind}:${r.id}`).join(', ')}) — an object is one thing`)
+      }
+      // A uid is how the game addresses the thing at all, and its absence means the map predates the
+      // editor writing them: a stale export rather than an authoring mistake.
+      if (!o.uid) throw new Error(`${where}: is tagged but has no uid — re-export the map from the world-editor`)
+      if (uids.has(o.uid)) throw new Error(`${where}: uid ${o.uid} is already taken by another object`)
+      uids.add(o.uid)
+      const identity = identities[0]
+      const flags = read.filter(r => r.flag).map(r => r.flag)
+      if (identity && UNIQUE_KINDS.has(identity.kind)) {
+        const tag = `${identity.kind}:${identity.id}`
+        if (claimed.has(tag)) throw new Error(`${where}: "${tag}" is already claimed by the object at ${claimed.get(tag)} — it names one object`)
+        claimed.set(tag, `${o.x},${o.y}`)
+      }
+      if (flags.includes('spawn')) {
+        if (spawn) throw new Error(`${where}: a second spawn point, the first is at ${spawn}`)
+        spawn = `${o.x},${o.y}`
+      }
+      const entry = { uid: o.uid, kind: identity ? identity.kind : flags[0], x: o.x * scale, y: o.y * scale }
+      if (identity) entry.id = identity.id
+      if (o.name) entry.name = o.name
+      if (o.props && Object.keys(o.props).length) entry.props = { ...o.props }
+      for (const f of flags) entry[f] = true
+      out.push(entry)
+    }
+  }
+  return out
+}
+
 // Transform fields are copied only when present, so an untransformed object serializes to
 // exactly { frame, x, y } — byte-identical to what the Asset Placer wrote, which is what
 // makes the render path's identity case verifiable.
 function toPlacement(o, scale) {
   const p = { frame: frameNameFor(o.frame), x: o.x * scale, y: o.y * scale }
+  // The draw list and the interactable list have to be joinable: a prompt floats over a sprite, so
+  // the game needs to know which placement is the thing it is talking about.
+  if (o.uid) p.uid = o.uid
   if (o.flipX) p.flipX = true
   if (o.flipY) p.flipY = true
   if (o.rot) p.rot = o.rot
@@ -239,7 +320,18 @@ export function framesFrom(map, dimsOf) {
   return { images, frames }
 }
 
+// The export version this adapter needs. v2 is where the editor started writing a per-object uid,
+// which is what every link from the game into the map hangs off. Nothing was removed between v1 and
+// v2, so this is a floor rather than an equality — a newer export stays readable.
+export const MIN_EXPORT_VERSION = 2
+
 export function validateMap(map, { dimsOf, exists }) {
+  // Until now this function never read the version at all, so a v1 map was accepted and silently
+  // carried no object identity — exactly the failure the number exists to prevent. (The `version: 1`
+  // further down belongs to the generated tiles artifact, not to the map being read.)
+  if (!(map.version >= MIN_EXPORT_VERSION)) {
+    throw new Error(`map export version ${map.version === undefined ? '(absent)' : map.version} — this adapter needs ${MIN_EXPORT_VERSION} or newer: re-export the map from the world-editor`)
+  }
   if (!Number.isInteger(map.tileSize) || map.tileSize < 1) {
     throw new Error(`map tileSize ${map.tileSize} — expected a positive integer (the pack's source granularity)`)
   }
@@ -249,6 +341,7 @@ export function validateMap(map, { dimsOf, exists }) {
   }
   map.layers.forEach(classifyLayer)
   anchorsFrom(map.layers, 1, map.world)
+  interactablesFrom(map.layers, 1)
   if (!map.slices) {
     throw new Error('map has no slices block — re-export it from a world-editor with slice geometry')
   }
@@ -289,5 +382,6 @@ export function convertMap(map, { dimsOf, exists = () => true }) {
     tiles: tilesFrom(map, scale),
     placements: placementsFrom(map.layers, scale),
     clips: clipsFrom(map),
+    interactables: interactablesFrom(map.layers, scale),
   }
 }

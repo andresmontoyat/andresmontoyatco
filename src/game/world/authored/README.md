@@ -6,13 +6,55 @@
 ## Re-import after editing the map
 
 1. Export the map from the editor, overwrite `career.map.json`.
-2. `npm run map:import`  — regenerates manifest.authored.js, career.tiles.json, placements.json, clips.json
+2. `npm run map:import`  — regenerates manifest.authored.js, career.tiles.json, placements.json, clips.json, interactables.json
 3. `npm run assets:pack` — rebakes atlas.png / atlas.json
 4. `npm test`
 5. Commit all generated files together.
 
 Requires the paid Cute Fantasy pack unpacked at `public/game/cute-fantasy/`
 (gitignored). The import cannot run in CI.
+
+> **The committed map is export v1 and the import now refuses it.** `validateMap` requires export
+> version 2 or newer, which is where the editor started writing a per-object `uid` — the handle every
+> link from the game into the map hangs off. `career.map.json` predates that, so the next
+> `npm run map:import` stops with a re-export instruction until the map is exported again from the
+> editor. Hand-bumping its `version` field would be a lie about provenance, which is the one thing
+> that number is for.
+
+## Tags: what the game reads off an object
+
+The editor writes a `uid` on every placed object and lets an author put `tags` and `props` on it (see
+`docs/SCHEMA.md` in the world-editor repo). The editor validates the SHAPE of a tag — a bare word or
+`kind:value` — and knows nothing about what any of it means. Naming the kinds is this side's job,
+enforced in `convert.js`:
+
+| Tag | Means |
+|---|---|
+| `door:<experienceId>` | this building is that job — enter it and talk |
+| `npc:<dialogId>` | a person with a conversation |
+| `animal:<kind>` | an animal that reacts |
+| `object:<dialogId>` | something examinable |
+| `poi:<poiId>` | a point of interest that is not a job |
+| `solid` | the player collides with it |
+| `spawn` | where the player starts (at most one in the map) |
+
+`door:` and `poi:` ids name ONE object each and the import refuses a duplicate. `npc:` ids may repeat
+— two villagers with the same lines is a legitimate world. An unknown kind, a tagged object with no
+uid, an object carrying two identities at once, a duplicate uid and a second spawn are all refused
+too: the editor's export dialog offers "Exportar igual", so a lint-dirty file can reach here and every
+check is this side's own.
+
+Tagged objects appear in BOTH generated files: `placements.json` draws them, `interactables.json`
+says what they are, joined by `uid`. Untagged objects are scenery and appear only in placements.
+
+Nothing in the game reads `interactables.json` yet — the interaction system, dialog trees and
+interiors are later work. This file is the contract they will read.
+
+## Anchors, the older convention
+
+`anchor:<biome>` layer names predate object tags and still work: a layer so named must hold exactly
+one object, and that point becomes the biome's centre. Tags are the general mechanism now; the anchor
+convention stays because the seed map uses it.
 
 ## Verified path shape
 

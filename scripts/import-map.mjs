@@ -1,4 +1,4 @@
-// Converts the world-editor export (src/game/world/authored/career.map.json) into the four
+// Converts the world-editor export (src/game/world/authored/career.map.json) into the five
 // artifacts the game consumes. Requires the paid Cute Fantasy pack unpacked at
 // public/game/cute-fantasy/ (gitignored) — this cannot run in CI.
 //
@@ -18,6 +18,7 @@ const OUT_MANIFEST = path.join(ROOT, 'src', 'game', 'assets', 'manifest.authored
 const OUT_TILES = path.join(ROOT, 'src', 'game', 'world', 'authored', 'career.tiles.json')
 const OUT_PLACEMENTS = path.join(ROOT, 'src', 'data', 'placements.json')
 const OUT_CLIPS = path.join(ROOT, 'src', 'data', 'clips.json')
+const OUT_INTERACTABLES = path.join(ROOT, 'src', 'data', 'interactables.json')
 const PACK = path.join(ROOT, 'public', 'game', 'cute-fantasy')
 
 const PACK_ROOT = 'Cute_Fantasy/'
@@ -83,10 +84,11 @@ async function main() {
   await fs.writeFile(OUT_TILES, `${JSON.stringify(out.tiles, null, 2)}\n`)
   await fs.writeFile(OUT_PLACEMENTS, `${JSON.stringify(out.placements, null, 2)}\n`)
   await fs.writeFile(OUT_CLIPS, `${JSON.stringify(out.clips, null, 2)}\n`)
+  await fs.writeFile(OUT_INTERACTABLES, `${JSON.stringify(out.interactables, null, 2)}\n`)
   const cells = out.tiles.layers.reduce((n, l) => n + l.cells.length, 0)
   console.log(`imported: ${Object.keys(out.manifest.frames).length} frames, ${cells} cells, `
     + `${out.placements.length} placements, ${Object.keys(out.clips).length} clips, `
-    + `${Object.keys(out.tiles.anchors).length} anchors`)
+    + `${Object.keys(out.tiles.anchors).length} anchors, ${out.interactables.length} interactables`)
 }
 
 main().catch(e => { console.error(e.message); process.exit(1) })

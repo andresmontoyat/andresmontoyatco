@@ -104,6 +104,7 @@ progress:
 | 260625-etd | Claude section: replace Track record counters with 4 AI-capability cards | 2026-06-25 | e94a377 | [260625-etd-claude-section-replace-track-record-with](./quick/260625-etd-claude-section-replace-track-record-with/) |
 | 260701-v6a | 999.6 ASEO-01: static schema.org Person JSON-LD in index.html `<head>` + vitest regression test (63/63 GREEN) | 2026-07-01 | 3480bda | [260701-v6a-aseo-jsonld-person](./quick/260701-v6a-aseo-jsonld-person/) |
 | 260812-u7m | M6 adapter hardening: anchor bounds, splitRef cell validation, colliding manifest keys (57→66 tests) | 2026-08-12 | 062b861 | [20260812-m6-adapter-hardening](./quick/20260812-m6-adapter-hardening/) |
+| 260928-kt4 | Authored-world adapter reads the editor's object tags: export-version gate, tag vocabulary, interactables.json (441→468 tests). `map:import` now refuses the v1 seed map until it is re-exported | 2026-09-28 | 2eeecec, a3c7535, b8241a8 | [260928-kt4-adaptador-del-mundo-autorado-lee-tags-de](./quick/260928-kt4-adaptador-del-mundo-autorado-lee-tags-de/) |
 
 ## Project Reference
 

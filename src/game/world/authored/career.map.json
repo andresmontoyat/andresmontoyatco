@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "tileSize": 16,
   "world": {
     "w": 960,
@@ -13548,7 +13548,8 @@
           "frame": "Cute_Fantasy/Trees/Big_Fruit_Tree.png#0,0",
           "x": 159,
           "y": 160,
-          "rot": 180
+          "rot": 180,
+          "uid": "U1"
         }
       ]
     },
@@ -13564,68 +13565,81 @@
         {
           "frame": "Cute_Fantasy/Trees/Spruce_Needle_Particle.png#0,0",
           "x": 61,
-          "y": 83
+          "y": 83,
+          "uid": "U2"
         },
         {
           "frame": "Cute_Fantasy/Trees/Spruce_Needle_Particle.png#0,0",
           "x": 51,
-          "y": 97
+          "y": 97,
+          "uid": "U3"
         },
         {
           "frame": "Cute_Fantasy/Trees/Spruce_Needle_Particle.png#0,0",
           "x": 56,
-          "y": 74
+          "y": 74,
+          "uid": "U4"
         },
         {
           "frame": "Cute_Fantasy/Trees/Spruce_Needle_Particle.png#0,0",
           "x": 32,
-          "y": 75
+          "y": 75,
+          "uid": "U5"
         },
         {
           "frame": "Cute_Fantasy/Trees/Spruce_Needle_Particle.png#0,0",
           "x": 43,
-          "y": 92
+          "y": 92,
+          "uid": "U6"
         },
         {
           "frame": "Cute_Fantasy/Trees/Spruce_Needle_Particle.png#0,0",
           "x": 0,
-          "y": 83
+          "y": 83,
+          "uid": "U7"
         },
         {
           "frame": "Cute_Fantasy/Trees/Spruce_Needle_Particle.png#0,0",
           "x": 61,
-          "y": 85
+          "y": 85,
+          "uid": "U8"
         },
         {
           "frame": "Cute_Fantasy/Trees/Spruce_Needle_Particle.png#0,0",
           "x": 0,
-          "y": 77
+          "y": 77,
+          "uid": "U9"
         },
         {
           "frame": "Cute_Fantasy/Trees/Spruce_Needle_Particle.png#0,0",
           "x": 0,
-          "y": 78
+          "y": 78,
+          "uid": "U10"
         },
         {
           "frame": "Cute_Fantasy/Trees/Spruce_Needle_Particle.png#0,0",
           "x": 53,
-          "y": 82
+          "y": 82,
+          "uid": "U11"
         },
         {
           "frame": "Cute_Fantasy/Trees/Big_Birch_Tree.png#0,0",
           "x": 123,
-          "y": 125
+          "y": 125,
+          "uid": "U12"
         },
         {
           "frame": "Cute_Fantasy/Trees/Big_Oak_Tree.png#0,0",
           "x": 52,
-          "y": 135
+          "y": 135,
+          "uid": "U13"
         },
         {
           "frame": "Cute_Fantasy/Animals/Cow/Cow_01.png#0,3",
           "x": 200,
           "y": 200,
-          "clip": "C1"
+          "clip": "C1",
+          "uid": "U14"
         }
       ]
     },
