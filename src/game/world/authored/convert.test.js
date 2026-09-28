@@ -3,7 +3,7 @@ import {
   splitRef, slugFor, frameNameFor, publicUrlFor,
   classifyLayer, anchorsFrom, placementsFrom,
   tilesFrom, framesFrom, convertMap, validateMap, gridOf,
-  worldScaleOf, WORLD_TILE, rectFor,
+  worldScaleOf, WORLD_TILE, rectFor, interactablesFrom,
 } from './convert.js'
 
 describe('splitRef', () => {
@@ -152,7 +152,7 @@ describe('placementsFrom', () => {
 })
 
 const SAMPLE = {
-  version: 1,
+  version: 2,
   tileSize: 32,
   cols: 4,
   rows: 3,
@@ -239,6 +239,7 @@ describe('framesFrom', () => {
   })
   it('rejects two paths that collapse to one manifest key', () => {
     const map = {
+      version: 2,
       tileSize: 16,
       world: { w: 64, h: 64 },
       layers: [{
@@ -263,6 +264,7 @@ describe('framesFrom', () => {
   // appended to the shorter one. The second frame silently overwrote the first.
   it('rejects two paths whose frame NAMES collide though their image keys differ', () => {
     const map = {
+      version: 2,
       tileSize: 16,
       world: { w: 64, h: 64 },
       layers: [{
@@ -284,6 +286,7 @@ describe('framesFrom', () => {
 
   it('keeps both frames when the names stay distinct', () => {
     const map = {
+      version: 2,
       tileSize: 16,
       world: { w: 64, h: 64 },
       layers: [{
@@ -305,9 +308,9 @@ describe('framesFrom', () => {
 })
 
 describe('convertMap', () => {
-  it('returns the four artifacts together', () => {
+  it('returns the five artifacts together', () => {
     const out = convertMap(SAMPLE, { dimsOf })
-    expect(Object.keys(out).sort()).toEqual(['clips', 'manifest', 'placements', 'tiles'])
+    expect(Object.keys(out).sort()).toEqual(['clips', 'interactables', 'manifest', 'placements', 'tiles'])
     expect(out.placements).toEqual([{ frame: 'am_Trees_T_0_0', x: 50, y: 60 }])
     expect(out.tiles.anchors.farm).toEqual({ x: 8, y: 9 })
     expect(out.manifest.frames.am_Tiles_Grass_G_0_0).toBeDefined()
@@ -348,6 +351,7 @@ describe('convertMap validation', () => {
 
 const REAL = {
   version: 1,
+  version: 2,
   tileSize: 16,
   world: { w: 960, h: 720 },
   bundles: [{ id: 'Cute_Fantasy' }],
@@ -470,6 +474,7 @@ describe('rectFor', () => {
 
 describe('framesFrom with slice geometry', () => {
   const map = {
+    version: 2,
     tileSize: 16,
     world: { w: 64, h: 64 },
     layers: [{ name: 'p', type: 'objects', objects: [{ frame: 'Cute_Fantasy/Trees/Oak.png#0,0', x: 1, y: 1 }] }],
@@ -550,6 +555,7 @@ describe('atlas refs', () => {
 
   it('converts a map that mixes both forms', () => {
     const map = {
+      version: 2,
       tileSize: 16,
       world: { w: 32, h: 16 },
       slices: {
@@ -571,6 +577,7 @@ describe('atlas refs', () => {
 describe('clips', () => {
   const mapWithClip = () => ({
     version: 1,
+    version: 2,
     tileSize: 16,
     world: { w: 64, h: 64 },
     slices: { 'Cow.png': { type: 'sheet', fw: 32, fh: 32, cols: 8, rows: 15 } },
@@ -625,5 +632,168 @@ describe('clips', () => {
     delete map.clips
     delete map.layers[0].objects[0].clip
     expect(convertMap(map, { dimsOf }).clips).toEqual({})
+  })
+})
+
+// The export version gate. The number exists so a consumer can refuse a file older than the
+// features it depends on — and until now this side never read it, so a v1 map was accepted and
+// silently carried no object identity at all. That is precisely the failure the number prevents.
+describe('the export version gate', () => {
+  const v2 = (over = {}) => ({
+    version: 2, tileSize: 16, world: { w: 64, h: 64 }, slices: {}, layers: [], clips: [], ...over,
+  })
+  const deps = { dimsOf: () => ({ w: 64, h: 64 }), exists: () => true }
+
+  it('accepts version 2', () => {
+    expect(() => validateMap(v2(), deps)).not.toThrow()
+  })
+
+  it('accepts a future version, since v2 fields are additive', () => {
+    expect(() => validateMap(v2({ version: 3 }), deps)).not.toThrow()
+  })
+
+  it('refuses version 1 and says how to fix it', () => {
+    expect(() => validateMap(v2({ version: 1 }), deps)).toThrow(/re-export/i)
+  })
+
+  it('refuses a map with no version at all', () => {
+    const map = v2()
+    delete map.version
+    expect(() => validateMap(map, deps)).toThrow(/version/i)
+  })
+})
+
+// Tagged objects. The editor owns the SHAPE of a tag; this side owns the vocabulary — the same line
+// classifyLayer already draws by throwing on an unknown biome. And because the editor's export
+// dialog offers "Exportar igual", a lint-dirty file can arrive here, so every check below is this
+// side's own rather than a trust of the exporter.
+describe('interactablesFrom', () => {
+  const obj = (over = {}) => ({ frame: 'Cute_Fantasy/Buildings/House.png#0,0', x: 32, y: 48, uid: 'U3', ...over })
+  const layer = (objects, name = 'Casas') => ({ name, type: 'objects', objects })
+
+  it('has nothing to say about untagged objects', () => {
+    expect(interactablesFrom([layer([obj({ uid: 'U1' }), obj({ uid: 'U2' })])])).toEqual([])
+  })
+
+  it('reads a door into a kind and an id', () => {
+    const out = interactablesFrom([layer([obj({ tags: ['door:mutual-ser'] })])])
+    expect(out).toEqual([{ uid: 'U3', kind: 'door', id: 'mutual-ser', x: 32, y: 48 }])
+  })
+
+  it('reads every kind the game knows', () => {
+    const tags = ['door:a', 'npc:b', 'animal:cow', 'object:c', 'poi:d']
+    const out = interactablesFrom([layer(tags.map((t, i) => obj({ uid: `U${i}`, tags: [t] })))])
+    expect(out.map(e => e.kind)).toEqual(['door', 'npc', 'animal', 'object', 'poi'])
+    expect(out.map(e => e.id)).toEqual(['a', 'b', 'cow', 'c', 'd'])
+  })
+
+  it('scales the world position like a placement does', () => {
+    const out = interactablesFrom([layer([obj({ tags: ['poi:x'], x: 10, y: 20 })])], 2)
+    expect(out[0]).toMatchObject({ x: 20, y: 40 })
+  })
+
+  // A flag is not an identity: `solid` says how the world behaves around the object, and it rides
+  // along with whatever kind the object already is.
+  it('carries solid as a flag beside the kind', () => {
+    const out = interactablesFrom([layer([obj({ tags: ['door:mutual-ser', 'solid'] })])])
+    expect(out[0]).toMatchObject({ kind: 'door', id: 'mutual-ser', solid: true })
+  })
+
+  it('reads a flag-only object, which has no id', () => {
+    const out = interactablesFrom([layer([obj({ tags: ['solid'] })])])
+    expect(out).toEqual([{ uid: 'U3', kind: 'solid', x: 32, y: 48, solid: true }])
+  })
+
+  it('reads the spawn point', () => {
+    const out = interactablesFrom([layer([obj({ tags: ['spawn'] })])])
+    expect(out[0]).toMatchObject({ kind: 'spawn', spawn: true })
+  })
+
+  it('passes props through untouched', () => {
+    const out = interactablesFrom([layer([obj({ tags: ['npc:katy'], props: { facing: 'south' } })])])
+    expect(out[0].props).toEqual({ facing: 'south' })
+  })
+
+  it('omits props when the object has none', () => {
+    const out = interactablesFrom([layer([obj({ tags: ['npc:katy'] })])])
+    expect('props' in out[0]).toBe(false)
+  })
+
+  it('keeps the authored name when there is one, for diagnosis', () => {
+    const out = interactablesFrom([layer([obj({ tags: ['door:a'], name: 'Casa Mutual SER' })])])
+    expect(out[0].name).toBe('Casa Mutual SER')
+  })
+
+  it('ignores tags on a tiles layer, which cannot carry objects', () => {
+    expect(interactablesFrom([{ name: 'Terreno', type: 'tiles', cells: [] }])).toEqual([])
+  })
+
+  it('reads anchor layers too, so a spawn marker can live on one', () => {
+    const out = interactablesFrom([layer([obj({ tags: ['spawn'] })], 'anchor:farm')])
+    expect(out.map(e => e.kind)).toEqual(['spawn'])
+  })
+
+  describe('refusals', () => {
+    const boom = (objects, re) => expect(() => interactablesFrom([layer(objects)])).toThrow(re)
+
+    it('refuses an unknown kind, the way an unknown biome is refused', () => {
+      boom([obj({ tags: ['puerta:mutual-ser'] })], /unknown tag kind "puerta"/)
+    })
+
+    // Without a uid the game cannot address the thing, and the absence means the map predates the
+    // editor writing them — a stale export rather than an authoring mistake.
+    it('refuses a tagged object with no uid', () => {
+      const o = obj({ tags: ['door:a'] })
+      delete o.uid
+      boom([o], /re-export/i)
+    })
+
+    it('refuses two objects claiming one door', () => {
+      boom([obj({ uid: 'U1', tags: ['door:mutual-ser'] }), obj({ uid: 'U2', tags: ['door:mutual-ser'] })],
+        /door:mutual-ser/)
+    })
+
+    it('refuses two objects claiming one poi', () => {
+      boom([obj({ uid: 'U1', tags: ['poi:x'] }), obj({ uid: 'U2', tags: ['poi:x'] })], /poi:x/)
+    })
+
+    // Two npcs may share a dialog id — two villagers with the same lines is a legitimate world —
+    // so identity uniqueness is per kind, not blanket.
+    it('allows two objects sharing an npc dialog id', () => {
+      const out = interactablesFrom([layer([obj({ uid: 'U1', tags: ['npc:katy'] }), obj({ uid: 'U2', tags: ['npc:katy'] })])])
+      expect(out).toHaveLength(2)
+    })
+
+    it('refuses a second spawn point', () => {
+      boom([obj({ uid: 'U1', tags: ['spawn'] }), obj({ uid: 'U2', tags: ['spawn'] })], /spawn/)
+    })
+
+    it('refuses an object that is two things at once', () => {
+      boom([obj({ tags: ['door:a', 'npc:b'] })], /door:a.*npc:b|npc:b.*door:a/)
+    })
+
+    it('refuses an identity kind with no value', () => {
+      boom([obj({ tags: ['door'] })], /door/)
+    })
+
+    it('refuses a duplicate uid, since the export dialog can be overridden', () => {
+      boom([obj({ uid: 'U1', tags: ['door:a'] }), obj({ uid: 'U1', tags: ['poi:b'] })], /U1/)
+    })
+  })
+})
+
+// The draw list and the behaviour list have to be joinable: a prompt floats over a sprite, so the
+// game needs to know which placement belongs to an interactable.
+describe('a placement carries its uid', () => {
+  it('copies the uid when the object has one', () => {
+    const layers = [{ name: 'Casas', type: 'objects', objects: [{ frame: 'a/b.png#0,0', x: 8, y: 8, uid: 'U3' }] }]
+    expect(placementsFrom(layers)[0]).toMatchObject({ uid: 'U3' })
+  })
+
+  // An untransformed, unidentified object still serializes to exactly { frame, x, y } — the identity
+  // case the render path's tests rely on.
+  it('stays byte-identical for an object without one', () => {
+    const layers = [{ name: 'Casas', type: 'objects', objects: [{ frame: 'a/b.png#0,0', x: 8, y: 8 }] }]
+    expect(placementsFrom(layers)[0]).toEqual({ frame: frameNameFor('a/b.png#0,0'), x: 8, y: 8 })
   })
 })
