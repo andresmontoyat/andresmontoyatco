@@ -3,78 +3,91 @@
     "frame": "am_Trees_Spruce_Needle_Particle_0_0",
     "x": 122,
     "y": 166,
+    "uid": "U2",
     "scale": 2
   },
   {
     "frame": "am_Trees_Spruce_Needle_Particle_0_0",
     "x": 102,
     "y": 194,
+    "uid": "U3",
     "scale": 2
   },
   {
     "frame": "am_Trees_Spruce_Needle_Particle_0_0",
     "x": 112,
     "y": 148,
+    "uid": "U4",
     "scale": 2
   },
   {
     "frame": "am_Trees_Spruce_Needle_Particle_0_0",
     "x": 64,
     "y": 150,
+    "uid": "U5",
     "scale": 2
   },
   {
     "frame": "am_Trees_Spruce_Needle_Particle_0_0",
     "x": 86,
     "y": 184,
+    "uid": "U6",
     "scale": 2
   },
   {
     "frame": "am_Trees_Spruce_Needle_Particle_0_0",
     "x": 0,
     "y": 166,
+    "uid": "U7",
     "scale": 2
   },
   {
     "frame": "am_Trees_Spruce_Needle_Particle_0_0",
     "x": 122,
     "y": 170,
+    "uid": "U8",
     "scale": 2
   },
   {
     "frame": "am_Trees_Spruce_Needle_Particle_0_0",
     "x": 0,
     "y": 154,
+    "uid": "U9",
     "scale": 2
   },
   {
     "frame": "am_Trees_Spruce_Needle_Particle_0_0",
     "x": 0,
     "y": 156,
+    "uid": "U10",
     "scale": 2
   },
   {
     "frame": "am_Trees_Spruce_Needle_Particle_0_0",
     "x": 106,
     "y": 164,
+    "uid": "U11",
     "scale": 2
   },
   {
     "frame": "am_Trees_Big_Birch_Tree_0_0",
     "x": 246,
     "y": 250,
+    "uid": "U12",
     "scale": 2
   },
   {
     "frame": "am_Trees_Big_Oak_Tree_0_0",
     "x": 104,
     "y": 270,
+    "uid": "U13",
     "scale": 2
   },
   {
     "frame": "am_Animals_Cow_Cow_01_0_3",
     "x": 400,
     "y": 400,
+    "uid": "U14",
     "scale": 2,
     "clip": "C1"
   }
