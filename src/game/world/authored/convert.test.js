@@ -3,7 +3,7 @@ import {
   splitRef, slugFor, frameNameFor, publicUrlFor,
   classifyLayer, anchorsFrom, placementsFrom,
   tilesFrom, framesFrom, convertMap, validateMap, gridOf,
-  worldScaleOf, WORLD_TILE, rectFor, interactablesFrom,
+  worldScaleOf, WORLD_TILE, rectFor, interactablesFrom, doorCoverage,
 } from './convert.js'
 
 describe('splitRef', () => {
@@ -835,5 +835,91 @@ describe('interactablesFrom carries the sprite footprint', () => {
     const slices = { 'a/b.png': { type: 'sheet', fw: 32, fh: 48, cols: 4, rows: 2 } }
     const out = interactablesFrom([layer([obj({ frame: 'a/b.png#2,1' })])], 1, slices)
     expect(out[0]).toMatchObject({ w: 32, h: 48 })
+  })
+})
+
+// Coverage between the map and the CV. Per docs/adr/0001 the drift is validated at import rather
+// than discovered at runtime: a door naming nothing fails loudly, while an experience nobody has
+// authored yet is a number in the report — until the procedural fallback goes, at which point it
+// becomes an error too.
+describe('doorCoverage', () => {
+  const door = id => ({ uid: `U${id}`, kind: 'door', id, x: 0, y: 0, w: 10, h: 10 })
+  const IDS = ['soldife-2026', 'blerify-2023', 'tul-2022']
+
+  it('says which experiences are authored and which are not', () => {
+    const out = doorCoverage([door('blerify-2023')], IDS)
+    expect(out.authored).toEqual(['blerify-2023'])
+    expect(out.missing).toEqual(['soldife-2026', 'tul-2022'])
+    expect(out.dead).toEqual([])
+  })
+
+  it('names a door that points at nothing', () => {
+    const out = doorCoverage([door('blerify-2023'), door('mutual-ser')], IDS)
+    expect(out.dead).toEqual(['mutual-ser'])
+    expect(out.authored).toEqual(['blerify-2023'])
+  })
+
+  it('reports full coverage when every experience has a door', () => {
+    const out = doorCoverage(IDS.map(door), IDS)
+    expect(out.missing).toEqual([])
+    expect(out.dead).toEqual([])
+    expect(out.authored).toEqual([...IDS].sort())
+  })
+
+  it('reports everything missing for an unauthored map', () => {
+    expect(doorCoverage([], IDS)).toEqual({ authored: [], missing: [...IDS].sort(), dead: [] })
+  })
+
+  it('ignores interactables that are not doors', () => {
+    const out = doorCoverage([{ uid: 'U1', kind: 'npc', id: 'katy', x: 0, y: 0 }], IDS)
+    expect(out.dead).toEqual([])
+    expect(out.authored).toEqual([])
+  })
+
+  it('takes the ids as a Set as happily as an array', () => {
+    expect(doorCoverage([door('tul-2022')], new Set(IDS)).authored).toEqual(['tul-2022'])
+  })
+
+  // Sorted, because this feeds a build report and a report that reorders itself between runs is a
+  // diff nobody can read.
+  it('sorts every list', () => {
+    const out = doorCoverage([door('tul-2022'), door('blerify-2023')], IDS)
+    expect(out.authored).toEqual(['blerify-2023', 'tul-2022'])
+  })
+})
+
+describe('validateMap checks door coverage when it is given the CV', () => {
+  const base = (objects) => ({
+    version: 2, tileSize: 16, world: { w: 64, h: 64 }, clips: [],
+    slices: { 'Cute_Fantasy/Buildings/House.png': { type: 'single', w: 32, h: 32 } },
+    layers: [{ name: 'Casas', type: 'objects', objects }],
+  })
+  const obj = (tags, over = {}) => ({
+    frame: 'Cute_Fantasy/Buildings/House.png#0,0', x: 16, y: 32, uid: 'U3', tags, ...over,
+  })
+  const deps = extra => ({ dimsOf: () => ({ w: 64, h: 64 }), exists: () => true, ...extra })
+
+  it('refuses a door naming an experience that does not exist', () => {
+    const map = base([obj(['door:no-such-job'])])
+    expect(() => validateMap(map, deps({ experienceIds: ['tul-2022'] })))
+      .toThrow(/no-such-job/)
+  })
+
+  it('accepts a door that names a real one', () => {
+    const map = base([obj(['door:tul-2022'])])
+    expect(() => validateMap(map, deps({ experienceIds: ['tul-2022'] }))).not.toThrow()
+  })
+
+  // An unauthored experience is the normal state during migration, not a failure.
+  it('says nothing about an experience with no door yet', () => {
+    const map = base([obj(['door:tul-2022'])])
+    expect(() => validateMap(map, deps({ experienceIds: ['tul-2022', 'blerify-2023'] }))).not.toThrow()
+  })
+
+  // The CV is optional: convert.test's own fixtures, and any caller that only wants the geometry
+  // checked, pass nothing and get the old behaviour.
+  it('skips the check when no CV is handed over', () => {
+    const map = base([obj(['door:no-such-job'])])
+    expect(() => validateMap(map, deps())).not.toThrow()
   })
 })

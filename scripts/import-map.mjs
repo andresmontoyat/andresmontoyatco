@@ -10,10 +10,11 @@ import path from 'node:path'
 import fs from 'node:fs/promises'
 import { existsSync } from 'node:fs'
 import sharp from 'sharp'
-import { convertMap, slugFor } from '../src/game/world/authored/convert.js'
+import { convertMap, slugFor, doorCoverage } from '../src/game/world/authored/convert.js'
 
 const ROOT = process.cwd()
 const IN_MAP = path.join(ROOT, 'src', 'game', 'world', 'authored', 'career.map.json')
+const IN_EXPERIENCE = path.join(ROOT, 'src', 'data', 'experience.json')
 const OUT_MANIFEST = path.join(ROOT, 'src', 'game', 'assets', 'manifest.authored.js')
 const OUT_TILES = path.join(ROOT, 'src', 'game', 'world', 'authored', 'career.tiles.json')
 const OUT_PLACEMENTS = path.join(ROOT, 'src', 'data', 'placements.json')
@@ -75,9 +76,16 @@ export const AUTHORED_IMAGE_SIZE = ${j(imageSize)}
 async function main() {
   const map = JSON.parse(await fs.readFile(IN_MAP, 'utf8'))
   const dims = await dimsCache(map)
+  // The visible CV entries, so a `door:` tag naming a job that does not exist fails here rather
+  // than silently never matching at runtime (docs/adr/0001).
+  const experience = JSON.parse(await fs.readFile(IN_EXPERIENCE, 'utf8'))
+  const experienceIds = (experience.entries || [])
+    .filter(e => e.visible !== false && e.id)
+    .map(e => e.id)
   const out = convertMap(map, {
     dimsOf: p => dims[p] || { w: 0, h: 0 },
     exists: p => existsSync(diskPath(p)),
+    experienceIds,
   })
   const imageSize = imageSizeOf(out.manifest, dims)
   await fs.writeFile(OUT_MANIFEST, manifestModule(out.manifest, imageSize))
@@ -89,6 +97,11 @@ async function main() {
   console.log(`imported: ${Object.keys(out.manifest.frames).length} frames, ${cells} cells, `
     + `${out.placements.length} placements, ${Object.keys(out.clips).length} clips, `
     + `${Object.keys(out.tiles.anchors).length} anchors, ${out.interactables.length} interactables`)
+  // Coverage is the migration's progress bar: how many jobs have a house placed for them. Missing
+  // ones are still generated procedurally, so this is a number to watch rather than a failure.
+  const cov = doorCoverage(out.interactables, experienceIds)
+  console.log(`authored houses: ${cov.authored.length} of ${experienceIds.length} experiences`
+    + (cov.missing.length ? ` — still generated: ${cov.missing.join(', ')}` : ' — the generator is no longer needed'))
 }
 
 main().catch(e => { console.error(e.message); process.exit(1) })

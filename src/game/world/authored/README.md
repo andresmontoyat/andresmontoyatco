@@ -38,6 +38,13 @@ enforced in `convert.js`:
 | `solid` | the player collides with it |
 | `spawn` | where the player starts (at most one in the map) |
 
+The import also cross-checks `door:` ids against the CV: a door naming a job that is not a visible
+entry in `experience.json` **fails the import**, because at runtime it would simply never match and
+the house would silently not appear. The run then reports coverage —
+`authored houses: 3 of 11 experiences` — which is the migration's progress bar. An experience with no
+house yet is still generated procedurally, so that number is one to watch, not a failure; it becomes
+one when the generator is deleted (see `docs/adr/0001-the-map-owns-the-world.md`).
+
 `door:` and `poi:` ids name ONE object each and the import refuses a duplicate. `npc:` ids may repeat
 — two villagers with the same lines is a legitimate world. An unknown kind, a tagged object with no
 uid, an object carrying two identities at once, a duplicate uid and a second spawn are all refused

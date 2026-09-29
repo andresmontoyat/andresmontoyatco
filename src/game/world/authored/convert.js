@@ -347,7 +347,31 @@ export function framesFrom(map, dimsOf) {
 // v2, so this is a floor rather than an equality — a newer export stays readable.
 export const MIN_EXPORT_VERSION = 2
 
-export function validateMap(map, { dimsOf, exists }) {
+// doorCoverage: how far the authored world has got. Per docs/adr/0001 the map owns the world and the
+// procedural generator is a fallback, so the interesting number during migration is how many
+// experiences have a house placed for them — and the interesting FAILURE is a door pointing at a job
+// that does not exist, which no runtime check would ever surface (buildOverworld just never matches
+// it, and the house silently does not appear).
+//
+// `missing` is reported, not refused: an unauthored experience is the normal state until the
+// fallback is deleted. That deletion is the ADR's exit criterion, and it is when missing becomes an
+// error too.
+//
+// Every list is sorted, because this feeds a build report and a report that reorders itself between
+// runs is a diff nobody can read.
+export function doorCoverage(interactables, experienceIds) {
+  const known = experienceIds instanceof Set ? experienceIds : new Set(experienceIds || [])
+  const doors = new Set((interactables || []).filter(e => e && e.kind === 'door' && e.id).map(e => e.id))
+  const authored = [...doors].filter(id => known.has(id)).sort()
+  const dead = [...doors].filter(id => !known.has(id)).sort()
+  const missing = [...known].filter(id => !doors.has(id)).sort()
+  return { authored, missing, dead }
+}
+
+// `experienceIds` is optional: hand over the visible CV entries and the coverage check runs, leave
+// it out and only the map's own shape is checked. The import passes them; a caller that just wants
+// geometry validated does not have to know the CV exists.
+export function validateMap(map, { dimsOf, exists, experienceIds = null }) {
   // Until now this function never read the version at all, so a v1 map was accepted and silently
   // carried no object identity — exactly the failure the number exists to prevent. (The `version: 1`
   // further down belongs to the generated tiles artifact, not to the map being read.)
@@ -363,7 +387,13 @@ export function validateMap(map, { dimsOf, exists }) {
   }
   map.layers.forEach(classifyLayer)
   anchorsFrom(map.layers, 1, map.world)
-  interactablesFrom(map.layers, 1)
+  const interactables = interactablesFrom(map.layers, 1)
+  if (experienceIds) {
+    const { dead } = doorCoverage(interactables, experienceIds)
+    if (dead.length) {
+      throw new Error(`door tag(s) naming no visible experience: ${dead.join(', ')} — fix the tag in the editor, or the entry's id in experience.json`)
+    }
+  }
   if (!map.slices) {
     throw new Error('map has no slices block — re-export it from a world-editor with slice geometry')
   }
@@ -396,8 +426,8 @@ export function validateMap(map, { dimsOf, exists }) {
   }
 }
 
-export function convertMap(map, { dimsOf, exists = () => true }) {
-  validateMap(map, { dimsOf, exists })
+export function convertMap(map, { dimsOf, exists = () => true, experienceIds = null }) {
+  validateMap(map, { dimsOf, exists, experienceIds })
   const scale = worldScaleOf(map)
   return {
     manifest: framesFrom(map, dimsOf),
