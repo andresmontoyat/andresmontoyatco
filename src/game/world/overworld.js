@@ -153,7 +153,10 @@ function buildRoads(path, sites, hiddenSites) {
   return spine.concat(spurs, loops)
 }
 
-export function buildOverworld(json, biomeForYear, sideProjects = [], authoredAnchors = null, authoredDoors = null) {
+// Options rather than five positionals: the tail of this signature had become "what the map
+// contributes", and every caller had to count commas to place a null.
+export function buildOverworld(json, biomeForYear, opts = {}) {
+  const { sideProjects = [], anchors: authoredAnchors = null, doors: authoredDoors = null } = opts
   // Authored anchors (painted as `anchor:<biome>` layers in the world-editor) override the
   // built-in positions per biome; anything not painted keeps its constant. Everything downstream
   // — ringPos, nearestBiome, buildRoads — reads from here, so moving one marker moves that town,

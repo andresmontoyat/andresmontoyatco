@@ -101,7 +101,11 @@ export function createWorldRpg({
   // interactables.json: what the authored map says the world CONTAINS, as opposed to what it looks
   // like. Today buildOverworld reads the `door:` entries from it — a house placed and tagged in the
   // editor wins over the one the generator would have hashed into place (docs/adr/0001).
-  const world = buildOverworld(experience, biomeForYear, sideProjects, authoredTiles && authoredTiles.anchors, interactables)
+  const world = buildOverworld(experience, biomeForYear, {
+    sideProjects,
+    anchors: authoredTiles && authoredTiles.anchors,
+    doors: interactables,
+  })
   // Assets placed in the world-editor (src/game/world/authored/career.map.json → npm run
   // map:import → src/data/placements.json): a flat list of { frame, x, y } plus optional
   // transforms, drawn as non-solid decor, bottom-anchored at (x,y).

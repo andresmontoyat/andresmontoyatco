@@ -91,7 +91,7 @@ describe('buildOverworld', () => {
     expect(towerRight < w.farm.x - 12 || w.farmWindmill.cx - w.farmWindmill.w / 2 > w.farm.x + 12).toBe(true)
   })
   it('flags injected side-projects as hidden', () => {
-    const w3 = buildOverworld(JSON_FIXTURE, biomeForYear, [{ co: 'Mr. Yoker', title: { en: 'Indie', es: 'Indie' }, date: { en: 'side', es: 'propio' }, tech: ['Astro'] }])
+    const w3 = buildOverworld(JSON_FIXTURE, biomeForYear, { sideProjects: [{ co: 'Mr. Yoker', title: { en: 'Indie', es: 'Indie' }, date: { en: 'side', es: 'propio' }, tech: ['Astro'] }] })
     expect(w3.hiddenSites).toHaveLength(1)
     expect(w3.hiddenSites[0].hidden).toBe(true)
   })
@@ -99,7 +99,7 @@ describe('buildOverworld', () => {
 
 describe('roads', () => {
   const SIDE_PROJECTS = [{ co: 'Mr. Yoker', title: { en: 'Indie', es: 'Indie' }, date: { en: 'side', es: 'propio' }, tech: ['Astro'] }]
-  const wr = buildOverworld(JSON_FIXTURE, biomeForYear, SIDE_PROJECTS)
+  const wr = buildOverworld(JSON_FIXTURE, biomeForYear, { sideProjects: SIDE_PROJECTS })
 
   it('exposes a non-empty roads array alongside the spine path', () => {
     expect(Array.isArray(wr.roads)).toBe(true)
@@ -138,7 +138,7 @@ describe('roads', () => {
   })
 
   it('is deterministic — rebuilding the same input yields identical road segments', () => {
-    const wr2 = buildOverworld(JSON_FIXTURE, biomeForYear, SIDE_PROJECTS)
+    const wr2 = buildOverworld(JSON_FIXTURE, biomeForYear, { sideProjects: SIDE_PROJECTS })
     expect(wr2.roads).toEqual(wr.roads)
   })
 })
@@ -148,21 +148,21 @@ describe('buildOverworld with authored anchors', () => {
   const biomeForYear = () => 'pradera'
 
   it('keeps the built-in anchors when none are supplied', () => {
-    const w = buildOverworld(json, biomeForYear, [])
+    const w = buildOverworld(json, biomeForYear)
     expect(w.farm).toEqual({ x: 360, y: 1120 })
   })
   it('overrides only the biomes present in the authored anchors', () => {
-    const w = buildOverworld(json, biomeForYear, [], { farm: { x: 500, y: 900 } })
+    const w = buildOverworld(json, biomeForYear, { anchors: { farm: { x: 500, y: 900 } } })
     expect(w.farm).toEqual({ x: 500, y: 900 })
     expect(w.regions.find(r => r.bi === 'cyber')).toMatchObject({ x: 1360, y: 1040 })
   })
   it('moves the site ring with its authored anchor', () => {
-    const base = buildOverworld(json, biomeForYear, [])
-    const moved = buildOverworld(json, biomeForYear, [], { pradera: { x: 1000, y: 1000 } })
+    const base = buildOverworld(json, biomeForYear)
+    const moved = buildOverworld(json, biomeForYear, { anchors: { pradera: { x: 1000, y: 1000 } } })
     expect(moved.sites[0].cx).not.toBeCloseTo(base.sites[0].cx)
   })
   it('re-routes the road spine through the authored anchor', () => {
-    const moved = buildOverworld(json, biomeForYear, [], { pradera: { x: 1000, y: 1000 } })
+    const moved = buildOverworld(json, biomeForYear, { anchors: { pradera: { x: 1000, y: 1000 } } })
     expect(moved.path).toContainEqual({ x: 1000, y: 1000 })
   })
 })
@@ -187,7 +187,7 @@ describe('projectOntoSpine', () => {
 describe('buildOverworld honours authored doors', () => {
   // interactables.json shape, already in game pixels with the sprite's footprint measured at import.
   const door = (over = {}) => ({ uid: 'U3', kind: 'door', id: 'a', x: 1000, y: 700, w: 120, h: 160, ...over })
-  const build = (doors) => buildOverworld(JSON_FIXTURE, biomeForYear, [], null, doors)
+  const build = (doors) => buildOverworld(JSON_FIXTURE, biomeForYear, { doors })
   const siteFor = (world, id) => world.sites.find(s => s.id === id)
 
   it('places the authored house where the map put it', () => {
@@ -231,7 +231,7 @@ describe('buildOverworld honours authored doors', () => {
       ],
     }
     const alone = buildOverworld({ entries: [many.entries[1]] }, biomeForYear)
-    const withAuthored = buildOverworld(many, biomeForYear, [], null, [door({ id: 'x' })])
+    const withAuthored = buildOverworld(many, biomeForYear, { doors: [door({ id: 'x' })] })
     const y = withAuthored.sites.find(s => s.id === 'y')
     expect({ cx: y.cx, cy: y.cy }).toEqual({ cx: alone.sites[0].cx, cy: alone.sites[0].cy })
   })
@@ -245,7 +245,7 @@ describe('buildOverworld honours authored doors', () => {
   it('behaves exactly as before when nothing is authored', () => {
     const plain = buildOverworld(JSON_FIXTURE, biomeForYear)
     for (const doors of [undefined, null, []]) {
-      expect(buildOverworld(JSON_FIXTURE, biomeForYear, [], null, doors).sites).toEqual(plain.sites)
+      expect(buildOverworld(JSON_FIXTURE, biomeForYear, { doors }).sites).toEqual(plain.sites)
     }
   })
 
