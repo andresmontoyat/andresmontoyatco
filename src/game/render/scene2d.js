@@ -291,13 +291,17 @@ function drawDecorItem(ctx, d, cam, sprites, t) {
   ctx.restore()
 }
 
-function buildingDrawable(s, cam) {
+// An authored house has no `building` to draw: its sprite is a placed object and the placements
+// pass already drew it (docs/adr/0001). Drawing one here as well would stack a hashed house on top
+// of the one the author chose. The label still belongs to the site, so it is drawn either way — and
+// the drawable still takes part in the depth sort, so an authored house occludes correctly.
+export function buildingDrawable(s, cam) {
   return {
     baseY: s.cy + s.h,
     draw: (ctx, sprites) => {
       const bx = s.cx - s.w / 2 - cam.x
       const by = s.cy - cam.y
-      sprites.draw(ctx, s.building, bx, by, s.w, s.h)
+      if (s.building) sprites.draw(ctx, s.building, bx, by, s.w, s.h)
       if (s.co) drawBuildingLabel(ctx, s, bx, by)
     },
   }

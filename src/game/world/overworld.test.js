@@ -180,3 +180,96 @@ describe('projectOntoSpine', () => {
     expect(projectOntoSpine({ x: 120, y: 50 }, spine)).toEqual({ x: 100, y: 50 })
   })
 })
+
+// Authored houses. Per docs/adr/0001, the map owns the world and this generator is the fallback:
+// an experience with a `door:<id>` object placed in the editor takes its position, its footprint and
+// its art from the map, and everything else keeps being computed exactly as before.
+describe('buildOverworld honours authored doors', () => {
+  // interactables.json shape, already in game pixels with the sprite's footprint measured at import.
+  const door = (over = {}) => ({ uid: 'U3', kind: 'door', id: 'a', x: 1000, y: 700, w: 120, h: 160, ...over })
+  const build = (doors) => buildOverworld(JSON_FIXTURE, biomeForYear, [], null, doors)
+  const siteFor = (world, id) => world.sites.find(s => s.id === id)
+
+  it('places the authored house where the map put it', () => {
+    const s = siteFor(build([door()]), 'a')
+    expect(s.cx).toBe(1000)
+    // The editor anchors an object by its BOTTOM edge; a site's cy is its top, the way the barn's is
+    // (cy = anchor.y - 110, drawn downward by its height). Converting is not optional: skip it and
+    // every authored house floats one sprite-height above its own shadow.
+    expect(s.cy).toBe(700 - 160)
+    expect({ w: s.w, h: s.h }).toEqual({ w: 120, h: 160 })
+  })
+
+  it('marks it authored, and leaves it no building sprite to draw', () => {
+    const s = siteFor(build([door()]), 'a')
+    expect(s.authored).toBe(true)
+    expect(s.building).toBeNull()
+  })
+
+  it('keeps every other field of the experience', () => {
+    const s = siteFor(build([door()]), 'a')
+    expect(s.co).toBe('Soldife')
+    expect(s.title).toEqual({ en: 'Arch', es: 'Arq' })
+    expect(s.tech).toEqual(['Java'])
+    expect(s.bi).toBe(siteFor(buildOverworld(JSON_FIXTURE, biomeForYear), 'a').bi)
+  })
+
+  it('leaves an unauthored experience exactly where the generator put it', () => {
+    const before = siteFor(buildOverworld(JSON_FIXTURE, biomeForYear), 'b')
+    const after = siteFor(build([door()]), 'b')
+    expect({ cx: after.cx, cy: after.cy, building: after.building }).toEqual({ cx: before.cx, cy: before.cy, building: before.building })
+  })
+
+  // The ring exists to space out the houses a biome has to fit. An authored house has left the ring,
+  // so it must not count toward it — otherwise it reserves a slot nobody stands in and the remaining
+  // houses spread around a gap.
+  it('does not let an authored house reserve a slot in its biome ring', () => {
+    const many = {
+      entries: [
+        { id: 'x', visible: true, date: { en: '2007' }, title: { en: 'A', es: 'A' }, company: 'X', tech: [] },
+        { id: 'y', visible: true, date: { en: '2007' }, title: { en: 'B', es: 'B' }, company: 'Y', tech: [] },
+      ],
+    }
+    const alone = buildOverworld({ entries: [many.entries[1]] }, biomeForYear)
+    const withAuthored = buildOverworld(many, biomeForYear, [], null, [door({ id: 'x' })])
+    const y = withAuthored.sites.find(s => s.id === 'y')
+    expect({ cx: y.cx, cy: y.cy }).toEqual({ cx: alone.sites[0].cx, cy: alone.sites[0].cy })
+  })
+
+  it('ignores a door naming an experience that is not visible, or not there at all', () => {
+    const world = build([door({ id: 'h' }), door({ id: 'nope', uid: 'U9' })])
+    expect(world.sites.map(s => s.id).sort()).toEqual(['a', 'b'])
+    expect(world.sites.every(s => !s.authored)).toBe(true)
+  })
+
+  it('behaves exactly as before when nothing is authored', () => {
+    const plain = buildOverworld(JSON_FIXTURE, biomeForYear)
+    for (const doors of [undefined, null, []]) {
+      expect(buildOverworld(JSON_FIXTURE, biomeForYear, [], null, doors).sites).toEqual(plain.sites)
+    }
+  })
+
+  it('ignores an interactable that is not a door', () => {
+    const world = build([{ uid: 'U1', kind: 'npc', id: 'a', x: 10, y: 10 }])
+    expect(world.sites.find(s => s.id === 'a').authored).toBeUndefined()
+  })
+
+  // A door with no measured footprint cannot define collision or a door point, so it is not enough
+  // to place a house — better the generator's known-good geometry than a zero-sized building the
+  // player walks through.
+  it('falls back to the generator when a door carries no footprint', () => {
+    const before = siteFor(buildOverworld(JSON_FIXTURE, biomeForYear), 'a')
+    const s = siteFor(build([{ uid: 'U3', kind: 'door', id: 'a', x: 1000, y: 700 }]), 'a')
+    expect({ cx: s.cx, cy: s.cy }).toEqual({ cx: before.cx, cy: before.cy })
+    expect(s.authored).toBeUndefined()
+  })
+
+  // The roads are derived, not authored: buildRoads reads site positions, so moving a house moves
+  // its spur with it and nothing else has to be told.
+  it('runs its road spur to the authored door', () => {
+    const world = build([door()])
+    const s = siteFor(world, 'a')
+    const d = doorPoint(s)
+    expect(world.roads.some(r => r.a.x === d.x && r.a.y === d.y)).toBe(true)
+  })
+})

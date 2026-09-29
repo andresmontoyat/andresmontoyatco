@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import {
   nearestPathDist, nearestRoadDist, visibleTileRange, eraLabel, drawAuthoredTiles, drawTransformed,
+  buildingDrawable,
 } from './scene2d.js'
 
 const path = [{ x: 0, y: 0 }, { x: 100, y: 0 }]
@@ -157,5 +158,41 @@ describe('drawTransformed', () => {
     const { ctx, ops } = recorder()
     drawTransformed(ctx, sprites(ops), { frame: 'f', x: 0, y: 0, scale: 2 }, { x: 0, y: 0 })
     expect(ops).toContainEqual(['scale', 2, 2])
+  })
+})
+
+// An authored house is a placed object: the placements pass draws its sprite, so the building
+// renderer must not draw a second one over it (docs/adr/0001). The label is the site's, not the
+// sprite's, so it survives either way.
+describe('buildingDrawable', () => {
+  const fakeCtx = () => ({ fillStyle: '', font: '', fillText() {} })
+  const fakeSprites = () => { const calls = []; return { calls, draw: (...a) => calls.push(a) } }
+  const site = (over = {}) => ({ cx: 100, cy: 200, w: 60, h: 80, co: 'Soldife', building: 'house', ...over })
+
+  it('draws the building sprite for a generated house', () => {
+    const sprites = fakeSprites()
+    buildingDrawable(site(), { x: 0, y: 0 }).draw(fakeCtx(), sprites)
+    expect(sprites.calls).toHaveLength(1)
+    expect(sprites.calls[0][1]).toBe('house')
+  })
+
+  it('draws no sprite for an authored one', () => {
+    const sprites = fakeSprites()
+    buildingDrawable(site({ building: null, authored: true }), { x: 0, y: 0 }).draw(fakeCtx(), sprites)
+    expect(sprites.calls).toEqual([])
+  })
+
+  it('still labels the authored one', () => {
+    const labels = []
+    const ctx = { fillStyle: '', font: '', fillText: t => labels.push(t) }
+    buildingDrawable(site({ building: null, authored: true }), { x: 0, y: 0 }).draw(ctx, fakeSprites())
+    expect(labels).toContain('Soldife')
+  })
+
+  // The depth sort is what makes a house occlude what stands behind it. An authored house takes part
+  // in it like any other, or it would draw flat against the world.
+  it('reports the same ground contact either way', () => {
+    expect(buildingDrawable(site({ building: null }), { x: 0, y: 0 }).baseY)
+      .toBe(buildingDrawable(site(), { x: 0, y: 0 }).baseY)
   })
 })

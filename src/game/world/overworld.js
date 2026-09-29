@@ -65,6 +65,27 @@ function toSite(e, bi, pos, hidden) {
   }
 }
 
+// An authored house, per docs/adr/0001: the map owns where it stands, how big it is and what it
+// looks like; everything else about the site still comes from the CV entry.
+//
+// `cy` is a site's TOP edge — the barn is placed that way and buildingDrawable draws downward from
+// it — while the editor anchors an object by its BOTTOM. Converting here is not optional: without
+// it every authored house floats one sprite-height above its own shadow, and its collision box and
+// door point go with it.
+//
+// `building: null` is the load-bearing part. The sprite is already drawn by the placements pipeline,
+// because it is a placed object like any other; drawing it again through the building renderer would
+// stack a hashed house on top of the one the author chose.
+function toAuthoredSite(e, bi, d) {
+  return {
+    id: e.id, co: e.company || e.co, title: e.title, date: e.date,
+    metric: e.metric || null, tech: e.tech || [], bi,
+    type: e.featured ? 'castle' : 'house', building: null,
+    cx: d.x, cy: d.y - d.h, w: d.w, h: d.h,
+    seen: false, hidden: false, authored: true, uid: d.uid,
+  }
+}
+
 function distSq(a, b) {
   const dx = a.x - b.x
   const dy = a.y - b.y
@@ -132,19 +153,37 @@ function buildRoads(path, sites, hiddenSites) {
   return spine.concat(spurs, loops)
 }
 
-export function buildOverworld(json, biomeForYear, sideProjects = [], authoredAnchors = null) {
+export function buildOverworld(json, biomeForYear, sideProjects = [], authoredAnchors = null, authoredDoors = null) {
   // Authored anchors (painted as `anchor:<biome>` layers in the world-editor) override the
   // built-in positions per biome; anything not painted keeps its constant. Everything downstream
   // — ringPos, nearestBiome, buildRoads — reads from here, so moving one marker moves that town,
   // its roads and its biome boundary together.
   const ANCHORS = { ...BUILT_IN_ANCHORS, ...(authoredAnchors || {}) }
+  // Houses the map authored, keyed by the experience each one names. A door with no measured
+  // footprint is ignored rather than honoured: with no w/h there is no collision box and no door
+  // point, and the generator's known-good geometry beats a zero-sized building the player walks
+  // through. A door naming an entry that is hidden or absent simply never matches.
+  const doors = new Map()
+  for (const d of authoredDoors || []) {
+    if (d && d.kind === 'door' && d.id && d.w && d.h) doors.set(d.id, d)
+  }
   const visible = json.entries.filter(e => e.visible !== false)
     .map(e => ({ e, y: startYear(e) })).sort((a, b) => a.y - b.y)
+  // The ring spaces out the houses a biome still has to fit, so it counts only the ones the
+  // generator is placing. An authored house that kept its slot would reserve a gap nobody stands in.
+  const ringCount = {}
+  for (const { e, y } of visible) {
+    if (doors.has(e.id)) continue
+    const bi = biomeForYear(y)
+    ringCount[bi] = (ringCount[bi] || 0) + 1
+  }
   const byBiome = {}
   const sites = visible.map(({ e, y }) => {
     const bi = biomeForYear(y)
+    const authored = doors.get(e.id)
+    if (authored) return toAuthoredSite(e, bi, authored)
     byBiome[bi] = (byBiome[bi] || 0)
-    const pos = ringPos(ANCHORS[bi], byBiome[bi]++, visible.filter(v => biomeForYear(v.y) === bi).length)
+    const pos = ringPos(ANCHORS[bi], byBiome[bi]++, ringCount[bi])
     return toSite(e, bi, pos, false)
   })
   const hiddenSites = sideProjects.map((sp, i) =>

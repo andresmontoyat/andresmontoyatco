@@ -96,9 +96,12 @@ export function update(state, input, dtChars) {
 
 export function createWorldRpg({
   canvas, experience, sideProjects = [], lang = 'es', onLangChange, placements = [], clips = {},
-  authoredTiles = null,
+  authoredTiles = null, interactables = [],
 }) {
-  const world = buildOverworld(experience, biomeForYear, sideProjects, authoredTiles && authoredTiles.anchors)
+  // interactables.json: what the authored map says the world CONTAINS, as opposed to what it looks
+  // like. Today buildOverworld reads the `door:` entries from it — a house placed and tagged in the
+  // editor wins over the one the generator would have hashed into place (docs/adr/0001).
+  const world = buildOverworld(experience, biomeForYear, sideProjects, authoredTiles && authoredTiles.anchors, interactables)
   // Assets placed in the world-editor (src/game/world/authored/career.map.json → npm run
   // map:import → src/data/placements.json): a flat list of { frame, x, y } plus optional
   // transforms, drawn as non-solid decor, bottom-anchored at (x,y).
@@ -106,6 +109,7 @@ export function createWorldRpg({
   // The clip table those placements play (src/data/clips.json), keyed by the clip id a placement
   // carries. Frame names, already baked into the atlas by the same import.
   world.clips = clips
+  world.interactables = interactables
   const state = {
     world,
     decor: buildDecor(world),
