@@ -24,7 +24,10 @@ async function loadWorldRpg(page, locale = 'en') {
   page.on('pageerror', (err) => errors.push(err.message))
   page.on('console', (msg) => { if (msg.type() === 'error') errors.push(msg.text()) })
 
-  await page.goto(`/${locale}/`)
+  // The world lives on its own full-screen route. It used to be embedded in the home page, and this
+  // spec kept pointing there after the move — six specs timing out on a button that is not on that
+  // page any more.
+  await page.goto(`/${locale}/game`)
   // The page hydrates client-side after load — wait for network idle so the click lands on the
   // settled DOM (same rationale as career-world.spec.mjs).
   await page.waitForLoadState('networkidle')
