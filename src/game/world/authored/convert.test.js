@@ -797,3 +797,43 @@ describe('a placement carries its uid', () => {
     expect(placementsFrom(layers)[0]).toEqual({ frame: frameNameFor('a/b.png#0,0'), x: 8, y: 8 })
   })
 })
+
+// An interactable carries its own footprint. The import knows the frame geometry — it has the
+// slices block and the object's scale — while the runtime would have to go looking for it in the
+// atlas, before the atlas has finished loading. Emitting it here is the cheaper truth.
+describe('interactablesFrom carries the sprite footprint', () => {
+  const SLICES = { 'Cute_Fantasy/Buildings/House.png': { type: 'single', w: 64, h: 80 } }
+  const layer = objects => ({ name: 'Casas', type: 'objects', objects })
+  const obj = (over = {}) => ({
+    frame: 'Cute_Fantasy/Buildings/House.png#0,0', x: 100, y: 200, uid: 'U3', tags: ['door:a'], ...over,
+  })
+
+  it('reads width and height off the slice', () => {
+    const out = interactablesFrom([layer([obj()])], 1, SLICES)
+    expect(out[0]).toMatchObject({ w: 64, h: 80 })
+  })
+
+  it('multiplies the footprint by the world scale', () => {
+    const out = interactablesFrom([layer([obj()])], 2, SLICES)
+    expect(out[0]).toMatchObject({ w: 128, h: 160, x: 200, y: 400 })
+  })
+
+  it('honours the object own scale on top of the world scale', () => {
+    const out = interactablesFrom([layer([obj({ scale: 1.5 })])], 2, SLICES)
+    expect(out[0]).toMatchObject({ w: 192, h: 240 })
+  })
+
+  // Without the slices block there is nothing to measure. The entry still exists — a spawn point
+  // needs no footprint — so this must not throw.
+  it('omits the footprint when the geometry is unavailable', () => {
+    const out = interactablesFrom([layer([obj()])], 1)
+    expect('w' in out[0]).toBe(false)
+    expect('h' in out[0]).toBe(false)
+  })
+
+  it('measures a sheet frame by its cell, not the whole image', () => {
+    const slices = { 'a/b.png': { type: 'sheet', fw: 32, fh: 48, cols: 4, rows: 2 } }
+    const out = interactablesFrom([layer([obj({ frame: 'a/b.png#2,1' })])], 1, slices)
+    expect(out[0]).toMatchObject({ w: 32, h: 48 })
+  })
+})

@@ -125,6 +125,22 @@ const FLAG_TAGS = ['solid', 'spawn']
 // lines is a legitimate world — so this is per kind rather than blanket.
 const UNIQUE_KINDS = new Set(['door', 'poi'])
 
+// footprintOf: the drawn size of the sprite this object places, in game pixels. Defensive about the
+// slices block, which a hand-written map or a partial fixture may not carry: a missing or malformed
+// entry means no footprint rather than a throw, because identity is useful on its own.
+function footprintOf(o, scale, slices) {
+  if (!slices) return null
+  let parsed
+  try { parsed = splitRef(o.frame) } catch { return null }
+  const slice = slices[parsed.path]
+  if (!slice) return null
+  let rect
+  try { rect = rectFor(slice, parsed) } catch { return null }
+  if (!rect || !rect.w || !rect.h) return null
+  const k = scale * (o.scale || 1)
+  return { w: rect.w * k, h: rect.h * k }
+}
+
 function readTag(tag, where) {
   if (FLAG_TAGS.includes(tag)) return { flag: tag }
   const i = tag.indexOf(':')
@@ -142,7 +158,11 @@ function readTag(tag, where) {
 //
 // Nothing in the game reads this yet; the interaction system is the next piece of work, and this is
 // the contract it will read.
-export function interactablesFrom(layers, scale = 1) {
+// `slices` is the map's own geometry block. With it, an entry carries the footprint of the sprite
+// that stands there — width and height in game pixels, the object's own scale included — so the
+// runtime never has to measure a frame that may not be loaded yet. Without it (a caller that only
+// wants identity, or a marker with no art worth measuring) the entry simply has no footprint.
+export function interactablesFrom(layers, scale = 1, slices = null) {
   const out = []
   const uids = new Set()
   const claimed = new Map()
@@ -177,6 +197,8 @@ export function interactablesFrom(layers, scale = 1) {
       if (identity) entry.id = identity.id
       if (o.name) entry.name = o.name
       if (o.props && Object.keys(o.props).length) entry.props = { ...o.props }
+      const size = footprintOf(o, scale, slices)
+      if (size) { entry.w = size.w; entry.h = size.h }
       for (const f of flags) entry[f] = true
       out.push(entry)
     }
@@ -382,6 +404,6 @@ export function convertMap(map, { dimsOf, exists = () => true }) {
     tiles: tilesFrom(map, scale),
     placements: placementsFrom(map.layers, scale),
     clips: clipsFrom(map),
-    interactables: interactablesFrom(map.layers, scale),
+    interactables: interactablesFrom(map.layers, scale, map.slices),
   }
 }
