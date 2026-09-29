@@ -63,6 +63,17 @@ interiors are later work. This file is the contract they will read.
 one object, and that point becomes the biome's centre. Tags are the general mechanism now; the anchor
 convention stays because the seed map uses it.
 
+## The map defines the world's size
+
+`WORLD_W`/`WORLD_H` in `overworld.js` are now the fallback for a caller with no map, not the truth.
+The world is `cols x rows` of the authored map, measured at the game's 32px tile: today 60x45 cells
+= **1920x1440**, where the constants said 2140x1360.
+
+That is what closes the old gap. The carpet used to end 220px before the world did, and those pixels
+showed procedural ground; now the world ends where the map ends, so the gap cannot exist by
+construction. The cost is that the castle town sits 40px from the right edge — to give it room, make
+the map wider in the editor and paint the new cells.
+
 ## Verified path shape
 
 Bundle refs look like: `Cute_Fantasy/Tiles/Grass/Grass_1_Middle.png#3,2`

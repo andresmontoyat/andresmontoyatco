@@ -156,7 +156,15 @@ function buildRoads(path, sites, hiddenSites) {
 // Options rather than five positionals: the tail of this signature had become "what the map
 // contributes", and every caller had to count commas to place a null.
 export function buildOverworld(json, biomeForYear, opts = {}) {
-  const { sideProjects = [], anchors: authoredAnchors = null, doors: authoredDoors = null } = opts
+  const { sideProjects = [], anchors: authoredAnchors = null, doors: authoredDoors = null, world = null } = opts
+  // The map owns the world's extent when it has one; the constants are what is left for a caller
+  // with no map — tests, and the game before an import has ever run. A half-measured world is
+  // ignored rather than honoured: shrinking the world to nothing would strand every site outside it.
+  // Both dimensions or neither: taking one from the map and the other from a constant would invent
+  // a world that no one measured, and the seam would only show as a camera that stops early.
+  const sized = world && world.w > 0 && world.h > 0 ? world : null
+  const worldW = sized ? sized.w : WORLD_W
+  const worldH = sized ? sized.h : WORLD_H
   // Authored anchors (painted as `anchor:<biome>` layers in the world-editor) override the
   // built-in positions per biome; anything not painted keeps its constant. Everything downstream
   // — ringPos, nearestBiome, buildRoads — reads from here, so moving one marker moves that town,
@@ -210,6 +218,6 @@ export function buildOverworld(json, biomeForYear, opts = {}) {
   }
   return {
     farm: ANCHORS.farm, regions, sites, hiddenSites, farmBuilding, farmWindmill,
-    ponds: PONDS, worldW: WORLD_W, worldH: WORLD_H, path, roads,
+    ponds: PONDS, worldW, worldH, path, roads,
   }
 }

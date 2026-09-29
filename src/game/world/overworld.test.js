@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { startYear, buildOverworld, projectOntoSpine, buildingFor } from './overworld.js'
+import { startYear, buildOverworld, projectOntoSpine, buildingFor, WORLD_W, WORLD_H } from './overworld.js'
 import { biomeForYear } from './biomes.js'
 import { doorPoint } from '../entities/site.js'
 
@@ -271,5 +271,25 @@ describe('buildOverworld honours authored doors', () => {
     const s = siteFor(world, 'a')
     const d = doorPoint(s)
     expect(world.roads.some(r => r.a.x === d.x && r.a.y === d.y)).toBe(true)
+  })
+})
+
+// The world's extent comes from the map when there is one (docs/adr/0001).
+describe('buildOverworld takes its size from the map', () => {
+  it('uses the authored world when given one', () => {
+    const w = buildOverworld(JSON_FIXTURE, biomeForYear, { world: { w: 1920, h: 1440 } })
+    expect({ w: w.worldW, h: w.worldH }).toEqual({ w: 1920, h: 1440 })
+  })
+
+  it('falls back to the built-in constants without one', () => {
+    const w = buildOverworld(JSON_FIXTURE, biomeForYear)
+    expect({ w: w.worldW, h: w.worldH }).toEqual({ w: WORLD_W, h: WORLD_H })
+  })
+
+  it('ignores a half-measured world rather than shrinking to nothing', () => {
+    for (const world of [{ w: 0, h: 100 }, { w: 100 }, {}]) {
+      const w = buildOverworld(JSON_FIXTURE, biomeForYear, { world })
+      expect(w.worldW).toBe(WORLD_W)
+    }
   })
 })

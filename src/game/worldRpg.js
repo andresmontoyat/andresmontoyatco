@@ -1,5 +1,5 @@
 import { buildOverworld } from './world/overworld.js'
-import { buildAuthoredIndex } from './world/authored/index.js'
+import { buildAuthoredIndex, worldSizeOf } from './world/authored/index.js'
 import { biomeForYear } from './world/biomes.js'
 import { buildDecor } from './world/decor.js'
 import { stepMovement } from './engine/topdown.js'
@@ -105,6 +105,7 @@ export function createWorldRpg({
     sideProjects,
     anchors: authoredTiles && authoredTiles.anchors,
     doors: interactables,
+    world: worldSizeOf(authoredTiles),
   })
   // Assets placed in the world-editor (src/game/world/authored/career.map.json → npm run
   // map:import → src/data/placements.json): a flat list of { frame, x, y } plus optional

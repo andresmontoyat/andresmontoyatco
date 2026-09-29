@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { buildAuthoredIndex } from './index.js'
+import { buildAuthoredIndex, worldSizeOf } from './index.js'
 
 const tiles = {
   version: 1,
@@ -28,5 +28,26 @@ describe('buildAuthoredIndex', () => {
   })
   it('returns an empty array for a null map', () => {
     expect(buildAuthoredIndex(null)).toEqual([])
+  })
+})
+
+// The map owns the world's size (docs/adr/0001). WORLD_W/WORLD_H were hand-tuned constants — 2140
+// is not even a whole number of 32px tiles — and the mismatch between them and the authored carpet
+// is why 220px of the world carried no authored tiles at all.
+describe('worldSizeOf', () => {
+  it('measures the map in game pixels', () => {
+    expect(worldSizeOf({ cols: 60, rows: 45 })).toEqual({ w: 1920, h: 1440 })
+  })
+
+  it('has no opinion without a map', () => {
+    expect(worldSizeOf(null)).toBeNull()
+    expect(worldSizeOf({})).toBeNull()
+    expect(worldSizeOf({ cols: 0, rows: 10 })).toBeNull()
+  })
+
+  // The tiles artifact stores the SOURCE granularity (16), while the game draws at WORLD_TILE (32).
+  // Measuring with the source number would halve the world.
+  it('measures in game tiles, not source tiles', () => {
+    expect(worldSizeOf({ cols: 10, rows: 10, tileSize: 16 })).toEqual({ w: 320, h: 320 })
   })
 })
