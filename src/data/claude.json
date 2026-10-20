@@ -23,8 +23,8 @@
       "id": "agentic",
       "title": { "en": "Agentic delivery", "es": "Entrega agéntica" },
       "desc": {
-        "en": "Custom agents and discuss→plan→execute→verify pipelines wired into your codebase — production-ready features in a fraction of the time, tests and ADRs included.",
-        "es": "Agentes propios y pipelines discutir→planear→ejecutar→verificar integrados en tu codebase — features production-ready en una fracción del tiempo, con tests y ADRs incluidos."
+        "en": "Custom agents and discuss → plan → execute → verify pipelines wired into your codebase — production-ready features in a fraction of the time, tests and ADRs included.",
+        "es": "Agentes propios y pipelines discutir → planear → ejecutar → verificar integrados en tu codebase — features production-ready en una fracción del tiempo, con tests y ADRs incluidos."
       }
     },
     {

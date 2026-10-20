@@ -77,4 +77,18 @@ describe('Claude.astro (Container API parity — D-06)', () => {
       expect(typeof o.desc.es).toBe('string')
     }
   })
+
+  // An offering card is 222px of text at a 320px viewport. A run with no break
+  // opportunity longer than that pushes the whole page sideways (it did, in ES:
+  // "discutir→planear→ejecutar→verificar", 35 chars, 328px of page at 320).
+  it('copy has no unbreakable run too long for a 320px card', () => {
+    const MAX_RUN = 24
+    const runs: string[] = []
+    const walk = (v: unknown): void => {
+      if (typeof v === 'string') runs.push(...v.split(/\s+/))
+      else if (v && typeof v === 'object') Object.values(v).forEach(walk)
+    }
+    walk(data)
+    expect(runs.filter((r) => r.length > MAX_RUN)).toEqual([])
+  })
 })
