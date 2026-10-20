@@ -107,6 +107,7 @@ progress:
 | 260928-kt4 | Authored-world adapter reads the editor's object tags: export-version gate, tag vocabulary, interactables.json (441→468 tests). `map:import` now refuses the v1 seed map until it is re-exported | 2026-09-28 | 2eeecec, a3c7535, b8241a8 | [260928-kt4-adaptador-del-mundo-autorado-lee-tags-de](./quick/260928-kt4-adaptador-del-mundo-autorado-lee-tags-de/) |
 | 261020-b3y | About summary leads with leadership years (18+ backend, 11+ leading teams, ~7 as architect); CV regenerated | 2026-10-20 | c238c64 | [261020-b3y-about-summary-leads-with-leadership-year](./quick/261020-b3y-about-summary-leads-with-leadership-year/) |
 | 261020-b75 | Apply the reviewed career timeline to experience.json: leadership titles/metrics, rewritten bullets EN/ES, stacks, CODERIO hidden; CV regenerated | 2026-10-20 | b82bbd7 | [261020-b75-apply-the-reviewed-career-timeline-to-ex](./quick/261020-b75-apply-the-reviewed-career-timeline-to-ex/) |
+| 261020-baq | Align hero, meta, JSON-LD, CV title and OG card with Solution Architect & Tech Lead; 15+ Companies stat → 11+ Years leading | 2026-10-20 | 1100293 | [261020-baq-align-hero-and-page-titles-with-solution](./quick/261020-baq-align-hero-and-page-titles-with-solution/) |
 
 ## Project Reference
 
@@ -121,7 +122,7 @@ See: .planning/PROJECT.md (refreshed 2026-07-19 — v5 Astro Migration milestone
 Phase: 21 of 27 (Foundation — Astro scaffold, i18n routing & layout shell)
 Plan: TBD — not yet planned
 Status: Roadmap created, ready to plan
-Last activity: 2026-10-20 - Completed quick task 261020-b75: Apply the reviewed career timeline to experience.json
+Last activity: 2026-10-20 - Completed quick task 261020-baq: Align hero and page titles with Solution Architect & Tech Lead
 
 Progress: [░░░░░░░░░░] 0%
 
