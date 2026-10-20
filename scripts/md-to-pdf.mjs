@@ -141,7 +141,7 @@ async function main() {
     headerTemplate: '<div></div>',
     footerTemplate: `<div style="width:100%;font-size:7.5pt;color:#8a92a0;
       font-family:Inter,sans-serif;padding:0 16mm;display:flex;justify-content:space-between;">
-      <span>Carlos Andrés Montoya Tobón · andresmontoyat.co</span>
+      <span>Carlos Andrés Montoya Tobón · andresmontoyat.dev</span>
       <span><span class="pageNumber"></span> / <span class="totalPages"></span></span></div>`,
   })
   await browser.close()

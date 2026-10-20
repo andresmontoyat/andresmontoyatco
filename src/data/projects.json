@@ -67,7 +67,7 @@
         "es": "Librería de pipelines CI/CD reutilizables — workflows de GitHub Actions parametrizados (build, tests por tag, cobertura JaCoCo, OWASP, ArchUnit, Spotless) compartidos entre proyectos JVM, KrakenD y NGINX."
       },
       "tech": ["GitHub Actions", "CI/CD", "Reusable Workflows", "OWASP", "ArchUnit"],
-      "liveUrl": "https://mypipelines.andresmontoyat.co/",
+      "liveUrl": "https://mypipelines.andresmontoyat.dev/",
       "githubUrl": null
     },
     {
@@ -80,7 +80,7 @@
         "es": "Mi criterio de ingeniería, codificado — los estándares de arquitectura, testing, seguridad y clean code a los que exijo cada proyecto, y los trade-offs detrás de ellos. Hexagonal + DDD para microservicios JVM, ejecutables por ingenieros y agentes de IA."
       },
       "tech": ["Hexagonal Architecture", "DDD", "Clean Code", "Testing", "Security"],
-      "liveUrl": "https://myguidelines.andresmontoyat.co/",
+      "liveUrl": "https://myguidelines.andresmontoyat.dev/",
       "githubUrl": null
     }
   ]
