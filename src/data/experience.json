@@ -31,8 +31,11 @@
       "visible": true,
       "featured": true,
       "metric": {
-        "value": "6+9",
-        "label": { "en": "microservices + SDKs", "es": "microservicios + SDKs" }
+        "value": "8",
+        "label": {
+          "en": "people managed · 3 frontend, 3 backend, 2 QA",
+          "es": "personas a cargo · 3 frontend, 3 backend, 2 QA"
+        }
       },
       "date": { "en": "May 2026 — Present", "es": "May 2026 — Presente" },
       "title": { "en": "Solution Architect & Tech Lead", "es": "Arquitecto de Soluciones & Tech Lead" },
@@ -40,28 +43,31 @@
       "location": { "en": "Remote", "es": "Remoto" },
       "bullets": {
         "en": [
-          "Set the platform's architectural standard — hexagonal + DDD across 6 microservices and 9 SDKs, dependencies always pointing to the domain, enforced by ArchUnit on every build (zero architecture drift between PRs).",
-          "Designed an ecosystem of 9 auto-configurable Spring Boot SDKs with contract governance — SemVer, backward compatibility and ADRs — published versioned to GitHub Packages.",
-          "Established cross-cutting patterns: transactional outbox, canonical event envelope, end-to-end W3C tracing and centralized identity at the gateway.",
-          "Documented architecture as code: C4 model (L1–L4) in Structurizr, ADRs and AI-oriented development guidelines.",
-          "Designed CI/CD on GitHub Actions (GitFlow + shift-left) with reusable workflows parameterized by project type (Java, KrakenD, NGINX, contracts) and mandatory quality gates: build → tag-filtered unit/Karate tests → JaCoCo coverage → OWASP scan → ArchUnit → Spotless.",
-          "Built SemVer-tagged base images on GHCR (Temurin 21, GraalVM native-image, KrakenD/Go toolchain) to cut per-job tool installs and speed pipelines; org-level governance via branch/PR rulesets and in-pipeline Slack notifications."
+          "Lead an 8-person team (3 frontend, 3 backend and 2 QA) as Tech Lead: I set the architecture, split and review the work, and coach each profile, owning the product end to end, from the Spring Boot backend to the React frontend.",
+          "Architected Mr. Yoker, a ticketing platform where every ticket is a W3C Verifiable Credential, cryptographically signed and anchored on blockchain: tickets can't be forged or duplicated, and anyone can verify one without calling the issuer.",
+          "Own platform security: credential cryptography, centralized identity at the gateway with Keycloak and mandatory OWASP scanning in every pipeline.",
+          "Set the architectural standard (hexagonal + DDD) across 6 microservices and 9 auto-configurable Spring Boot SDKs, with contract governance (SemVer, ADRs) and boundaries enforced by ArchUnit on every build: zero architecture drift between PRs.",
+          "Designed asynchronous messaging on RabbitMQ with key resilience and idempotency patterns (transactional outbox, canonical event envelope, idempotent processing), so no event is lost or processed twice.",
+          "Built the platform's observability: end-to-end W3C tracing and multiple Grafana dashboards for running the services.",
+          "Automated delivery: GitHub Actions CI/CD with reusable workflows and quality gates (tests, coverage, OWASP, ArchUnit, Spotless), plus versioned GHCR base images (Temurin 21, GraalVM) that speed up pipelines.",
+          "Wrote architecture guidelines executable by AI coding agents (Claude Code) and documented the architecture as code (C4 in Structurizr, ADRs), so the team ships faster without breaking the standard."
         ],
         "es": [
-          "Definí el estándar arquitectónico de la plataforma — hexagonal + DDD en 6 microservicios y 9 SDKs, con dependencias apuntando siempre al dominio y verificación de fronteras con ArchUnit en cada build (cero drift de arquitectura entre PRs).",
-          "Diseñé un ecosistema de 9 SDKs Spring Boot auto-configurables con gobierno de contratos — SemVer, compatibilidad hacia atrás y ADRs — publicados versionados a GitHub Packages.",
-          "Establecí patrones transversales: outbox transaccional, envelope de evento canónico, tracing W3C end-to-end e identidad centralizada en el gateway.",
-          "Documenté la arquitectura como código: modelo C4 (L1–L4) en Structurizr, ADRs y guidelines de desarrollo para IA.",
-          "Diseñé CI/CD sobre GitHub Actions (GitFlow + shift-left) con reusable workflows parametrizados por tipo de proyecto (Java, KrakenD, NGINX, contratos) y quality gates obligatorios: build → tests unit/Karate filtrados por tag → cobertura JaCoCo → OWASP dependency scan → ArchUnit → Spotless.",
-          "Construí imágenes base con tags SemVer en GHCR (Temurin 21, GraalVM native-image, toolchain KrakenD/Go) que eliminan instalaciones de herramientas por job y aceleran los pipelines; gobierno a nivel de organización con rulesets de branch/PR y notificaciones Slack in-pipeline."
+          "Lidero como Tech Lead un equipo de 8 personas (3 frontend, 3 backend y 2 QA): defino la arquitectura, reparto y reviso el trabajo y acompaño técnicamente a cada perfil, respondiendo de punta a punta por el producto, del backend en Spring Boot al frontend en React.",
+          "Arquitecté Mr. Yoker, una plataforma de venta de tickets donde cada entrada es una credencial verificable W3C, firmada criptográficamente y anclada en blockchain: el ticket no se puede falsificar ni duplicar, y cualquiera puede verificar su autenticidad sin consultar al emisor.",
+          "Responsable de la seguridad de la plataforma: criptografía de credenciales, identidad centralizada en el gateway con Keycloak y escaneo OWASP obligatorio en cada pipeline.",
+          "Definí el estándar arquitectónico (hexagonal + DDD) en 6 microservicios y 9 SDKs Spring Boot auto-configurables, con gobierno de contratos (SemVer, ADRs) y fronteras verificadas por ArchUnit en cada build: cero drift de arquitectura entre PRs.",
+          "Diseñé la mensajería asíncrona sobre RabbitMQ con patrones clave de resiliencia e idempotencia (outbox transaccional, envelope de evento canónico, procesamiento idempotente), para que ningún evento se pierda ni se procese dos veces.",
+          "Implementé la observabilidad de la plataforma: tracing W3C de punta a punta y múltiples tableros en Grafana para la operación de los servicios.",
+          "Automaticé la entrega: CI/CD en GitHub Actions con reusable workflows y quality gates (tests, cobertura, OWASP, ArchUnit, Spotless), más imágenes base versionadas en GHCR (Temurin 21, GraalVM) que aceleran los pipelines.",
+          "Escribí guías de arquitectura ejecutables por agentes de IA (Claude Code) y documenté la arquitectura como código (C4 en Structurizr, ADRs), para que el equipo entregue más rápido sin romper el estándar."
         ]
       },
-      "tech": ["Java", "Spring Boot", "Hexagonal Architecture", "DDD", "Microservices", "ArchUnit", "GitHub Actions", "KrakenD", "GraalVM", "Structurizr"]
+      "tech": ["Java", "Spring Boot", "React", "PostgreSQL", "Keycloak", "RabbitMQ", "Blockchain", "W3C Verifiable Credentials", "Cryptography", "Hexagonal Architecture", "DDD", "Microservices", "Grafana", "KrakenD", "ArchUnit", "GitHub Actions", "Claude Code"]
     },
     {
       "id": "coderio-2026",
       "visible": false,
-      "cvOnly": true,
       "date": { "en": "Jan 2026 — Apr 2026", "es": "Ene 2026 — Abr 2026" },
       "title": { "en": "Backend Developer", "es": "Backend Developer" },
       "company": "CODERIO",
@@ -83,7 +89,10 @@
       "visible": true,
       "featured": true,
       "metric": {
-        "label": { "en": "Commissions & billing · microservices", "es": "Comisiones y cobro · microservicios" }
+        "label": {
+          "en": "Bancolombia payments · zero duplicate charges",
+          "es": "Pagos con Bancolombia · cero cobros duplicados"
+        }
       },
       "date": { "en": "Sep 2024 — Jan 2026", "es": "Sep 2024 — Ene 2026" },
       "title": { "en": "Backend Developer", "es": "Backend Developer" },
@@ -91,17 +100,17 @@
       "location": { "en": "Medellín, Colombia", "es": "Medellín, Colombia" },
       "bullets": {
         "en": [
-          "Designed a commissions-calculation component for the F2X memberships product (Java · Spring Boot · hexagonal architecture on AWS · Postgres).",
-          "Designed a billing component for the F2X fuel-services product across the microservice fleet.",
-          "Owned production-incident response and operational support for backend services."
+          "Designed and built membership and commission billing for every Flypass service, and resolved critical production incidents in payment transactionality with Bancolombia by applying resilience and idempotency patterns on Kafka that eliminate duplicate charges (Java · Spring Boot · hexagonal architecture on AWS · PostgreSQL).",
+          "Designed and built the fuel payment flow, a new product inside the Flypass app, from design through production readiness.",
+          "Built multiple Grafana dashboards to monitor the billing and payment flows, and owned incident response and operational support for the backend services."
         ],
         "es": [
-          "Diseñé un componente de cálculo de comisiones para el producto de membresías de F2X (Java · Spring Boot · arquitectura hexagonal sobre AWS · Postgres).",
-          "Diseñé un componente de cobro para los servicios de combustibles de F2X sobre el conjunto de microservicios.",
-          "Asumí la respuesta a incidentes en producción y el soporte operacional de los servicios backend."
+          "Diseñé y construí el cobro de membresías y comisiones para todos los servicios de Flypass, y resolví incidentes críticos en producción de transaccionalidad con Bancolombia aplicando patrones de resiliencia e idempotencia sobre Kafka que eliminan los cobros duplicados (Java · Spring Boot · arquitectura hexagonal sobre AWS · PostgreSQL).",
+          "Diseñé y construí el flujo de pago de gasolina, un producto nuevo dentro de la app de Flypass, desde el diseño hasta su preparación para producción.",
+          "Creé múltiples tableros en Grafana para monitorear los flujos de cobro y pago, y asumí la respuesta a incidentes y el soporte operacional de los servicios backend."
         ]
       },
-      "tech": ["Java", "Spring Boot", "Microservices", "Hexagonal Architecture", "AWS", "PostgreSQL"]
+      "tech": ["Java", "Spring Boot", "Kafka", "PostgreSQL", "AWS", "Hexagonal Architecture", "Microservices", "Grafana"]
     },
     {
       "id": "blerify-2023",
@@ -112,22 +121,32 @@
       "location": { "en": "Remote", "es": "Remoto" },
       "bullets": {
         "en": [
-          "Built security components with Keycloak and implemented KrakenD as the platform's API gateway.",
-          "Developed a blockchain-based voucher/bond issuance component (Java · Vert.x · Kotlin · blockchain · Postgres on GCP/Kubernetes)."
+          "Built API security for Blerify, a digital-identity startup based on verifiable credentials operating across LATAM: multi-organization authentication and authorization with Keycloak, with roles and permissions isolated per organization.",
+          "Implemented KrakenD as the platform's API gateway: a single entry point that validates tokens at the edge before requests reach the services.",
+          "Designed and built the transactional module for memberships and service billing.",
+          "Developed the blockchain-based voucher/bond issuance component (Java · Vert.x · Kotlin · PostgreSQL on GCP/Kubernetes)."
         ],
         "es": [
-          "Construí componentes de seguridad con Keycloak e implementé KrakenD como API gateway de la plataforma.",
-          "Desarrollé un componente de emisión de bonos/vouchers sobre blockchain (Java · Vert.x · Kotlin · blockchain · Postgres sobre GCP/Kubernetes)."
+          "Construí la seguridad de las APIs de Blerify, startup de identidad digital basada en credenciales verificables con presencia en LATAM: autenticación y autorización multi-organización con Keycloak, con roles y permisos aislados por organización.",
+          "Implementé KrakenD como API gateway de la plataforma: punto único de entrada y validación de tokens en el borde antes de llegar a los servicios.",
+          "Diseñé y construí el módulo transaccional de membresías y cobro de servicios.",
+          "Desarrollé el componente de emisión de bonos/vouchers sobre blockchain (Java · Vert.x · Kotlin · PostgreSQL sobre GCP/Kubernetes)."
         ]
       },
-      "tech": ["Java", "Vert.x", "Kotlin", "Keycloak", "KrakenD", "Blockchain", "PostgreSQL", "GCP", "Kubernetes"]
+      "tech": ["Java", "Vert.x", "Kotlin", "Keycloak", "KrakenD", "Blockchain", "PostgreSQL", "GCP", "Kubernetes"],
+      "metric": {
+        "label": {
+          "en": "Digital identity · LATAM · multi-organization",
+          "es": "Identidad digital · LATAM · multi-organización"
+        }
+      }
     },
     {
       "id": "tul-2022",
       "visible": true,
       "featured": true,
       "metric": {
-        "label": { "en": "B2B marketplace · warehousing", "es": "Marketplace B2B · bodegas" }
+        "label": { "en": "B2C marketplace · warehousing & inventory", "es": "Marketplace B2C · bodegas e inventario" }
       },
       "date": { "en": "Apr 2022 — Jun 2023", "es": "Abr 2022 — Jun 2023" },
       "title": { "en": "Backend Developer", "es": "Backend Developer" },
@@ -135,84 +154,107 @@
       "location": { "en": "Medellín, Colombia", "es": "Medellín, Colombia" },
       "bullets": {
         "en": [
-          "Built warehouse-management modules for the TUL B2B marketplace microservice fleet (Java · Spring Boot · hexagonal architecture on AWS · Postgres).",
-          "Delivered Spring Security components and ran platform-wide code-quality reviews."
+          "Built the warehouse and inventory management modules for Tul's B2C marketplace (an end-user app), on Java/Spring Boot hexagonal microservices on AWS and PostgreSQL.",
+          "Integrated the services through Kafka events, applying resilience patterns to inter-service communication.",
+          "Implemented service security with Spring Security and observability with CloudWatch and Mezmo (centralized logging) for running them in production.",
+          "Ran platform-wide code-quality reviews."
         ],
         "es": [
-          "Construí módulos de gestión de bodegas para los microservicios del marketplace B2B de TUL (Java · Spring Boot · arquitectura hexagonal sobre AWS · Postgres).",
-          "Entregué componentes de seguridad con Spring Security y conduje revisiones de calidad de código a nivel de plataforma."
+          "Construí los módulos de gestión de bodegas e inventario del marketplace B2C de Tul (app para usuarios finales), sobre microservicios Java/Spring Boot con arquitectura hexagonal en AWS y PostgreSQL.",
+          "Integré los servicios mediante eventos en Kafka, aplicando patrones de resiliencia en la comunicación entre microservicios.",
+          "Implementé la seguridad de los servicios con Spring Security y su observabilidad con CloudWatch y Mezmo (logs centralizados) para la operación en producción.",
+          "Conduje revisiones de calidad de código a nivel de plataforma."
         ]
       },
-      "tech": ["Java", "Spring Boot", "Spring Security", "Microservices", "Hexagonal Architecture", "AWS", "PostgreSQL"]
+      "tech": ["Java", "Spring Boot", "Kafka", "PostgreSQL", "AWS", "Spring Security", "CloudWatch", "Mezmo", "Hexagonal Architecture", "Microservices"]
     },
     {
       "id": "klever-2020",
       "visible": true,
       "featured": true,
       "metric": {
-        "label": { "en": "PaaS Architect · health", "es": "Arquitecto PaaS · salud" }
+        "value": "8",
+        "label": {
+          "en": "people led · frontend, backend, QA and PO",
+          "es": "personas a cargo · frontend, backend, QA y PO"
+        }
       },
       "date": { "en": "Aug 2020 — Apr 2022", "es": "Ago 2020 — Abr 2022" },
-      "title": { "en": "Solutions Architect", "es": "Arquitecto de Soluciones" },
+      "title": { "en": "Solution Architect & Tech Lead", "es": "Arquitecto de Soluciones & Tech Lead" },
       "company": "k4s - Klever for Solutions",
       "location": { "en": "Medellín, Colombia", "es": "Medellín, Colombia" },
       "bullets": {
         "en": [
-          "Architected PaaS solutions on AWS for MutualSER's next-gen health-insurance products (Colombian EPS).",
-          "Designed reusable security and Keycloak/GCP integration frameworks consumed across product teams.",
-          "Mentored developers on Spring, SOLID principles and clean architecture."
+          "As Solution Architect and Tech Lead, led a cross-functional team of 8 (frontend, backend, QA and PO) through the platform transformation of MutualSER, a health insurer (EPS) based in Cartagena, from architecture to delivery.",
+          "Defined the new platform's PaaS architecture on AWS and the reusable security and Keycloak/GCP integration frameworks consumed by several product teams.",
+          "Developed the Java/Spring Boot backend and a micro-frontend front end (React + Module Federation) secured with Keycloak.",
+          "Grew the team's technical level through mentoring in Spring, SOLID principles and clean architecture."
         ],
         "es": [
-          "Diseñé arquitecturas PaaS sobre AWS para los productos de salud de próxima generación de MutualSER (EPS colombiana).",
-          "Diseñé frameworks reutilizables de seguridad e integración con Keycloak/GCP consumidos por varios equipos de producto.",
-          "Mentoricé desarrolladores en Spring, principios SOLID y arquitectura limpia."
+          "Como Arquitecto de Soluciones y Tech Lead, lideré un equipo multidisciplinario de 8 personas (frontend, backend, QA y PO) en la transformación de la plataforma de MutualSER, EPS con sede en Cartagena, desde la arquitectura hasta la entrega.",
+          "Definí la arquitectura de la nueva plataforma PaaS sobre AWS y los frameworks reutilizables de seguridad e integración con Keycloak/GCP, consumidos por varios equipos de producto.",
+          "Desarrollé backend en Java/Spring Boot y frontend con microfrontends (React + Module Federation) asegurados con Keycloak.",
+          "Impulsé el crecimiento técnico del equipo con mentoría en Spring, principios SOLID y arquitectura limpia."
         ]
       },
-      "tech": ["Java", "Spring Boot", "AWS", "Keycloak", "GCP"]
+      "tech": ["Java", "Spring Boot", "React", "Module Federation", "Keycloak", "AWS", "GCP", "Microservices", "Clean Architecture"]
     },
     {
       "id": "integral-2016",
       "visible": true,
       "date": { "en": "May 2016 — Apr 2020", "es": "May 2016 — Abr 2020" },
-      "title": { "en": "Solutions Architect", "es": "Arquitecto de Soluciones" },
+      "title": { "en": "Solution Architect & Tech Lead", "es": "Arquitecto de Soluciones & Tech Lead" },
       "company": "Integral Software SAS",
       "location": { "en": "Medellín, Colombia", "es": "Medellín, Colombia" },
       "bullets": {
         "en": [
-          "Solutions Architect designing and evolving backend architectures on the Spring ecosystem over a four-year engagement.",
-          "Designed multiple architectures and systems for the Mayor's Office of Medellín — among them Atenea and Tienda Virtual — applying hexagonal architecture, design patterns and security.",
-          "Built components to migrate legacy systems to new architectures for Universidad de Medellín.",
-          "Delivered the same legacy-to-modern architecture migration for the Colombian Air Force (FAC)."
+          "As Solution Architect and Tech Lead, led a cross-functional team of 4 (backend and frontend) building products for the City of Medellín, Universidad de Medellín, Indumil and the Colombian Air Force (FAC).",
+          "Designed architectures and systems for the City of Medellín — among them Atenea and Tienda Virtual — with hexagonal architecture, design patterns and security, including their traceability and accountability reporting layer.",
+          "Built an internal portal for Indumil (Colombia's state defense manufacturer) that generates payment receipts through SOAP integration with its systems.",
+          "Led the migration of legacy systems to Spring Boot with hexagonal architecture for Universidad de Medellín and the FAC, on PostgreSQL, Oracle and SQL Server, integrating the existing SOAP services with resilience patterns and Grafana observability.",
+          "Built React and Angular SPAs on Spring backends (Java 8/11 and Kotlin), with authentication integrated with Keycloak."
         ],
         "es": [
-          "Arquitecto de Soluciones diseñando y evolucionando arquitecturas backend sobre el ecosistema Spring durante cuatro años.",
-          "Diseñé múltiples arquitecturas y sistemas para la Alcaldía de Medellín — entre ellos Atenea y Tienda Virtual — aplicando arquitectura hexagonal, patrones de diseño y seguridad.",
-          "Construí componentes para migrar sistemas legados a nuevas arquitecturas para la Universidad de Medellín.",
-          "Realicé la misma migración de arquitecturas legadas a modernas para la Fuerza Aérea Colombiana (FAC)."
+          "Como Arquitecto de Soluciones y Tech Lead, lideré un equipo multifuncional de 4 personas (backend y frontend) que desarrolló productos para la Alcaldía de Medellín, la Universidad de Medellín, Indumil y la Fuerza Aérea Colombiana (FAC).",
+          "Diseñé arquitecturas y sistemas para la Alcaldía de Medellín — entre ellos Atenea y Tienda Virtual — con arquitectura hexagonal, patrones de diseño y seguridad, incluida su capa de reportería de trazabilidad y rendición de cuentas.",
+          "Construí para Indumil (Industria Militar de Colombia) un portal interno de generación de soportes de pago, integrado vía SOAP con sus sistemas.",
+          "Lideré la migración de sistemas legados a Spring Boot con arquitectura hexagonal para la Universidad de Medellín y la FAC, sobre PostgreSQL, Oracle y SQL Server, integrando los servicios SOAP existentes con patrones de resiliencia y observabilidad en Grafana.",
+          "Desarrollé SPAs en React y Angular sobre backends Spring (Java 8/11 y Kotlin), con autenticación integrada a Keycloak."
         ]
       },
-      "tech": ["Kotlin", "Java", "Spring Boot", "PostgreSQL", "React", "Angular", "Keycloak", "Hexagonal"]
+      "tech": ["Java", "Spring Boot", "Hexagonal Architecture", "PostgreSQL", "Oracle SQL", "SQL Server", "SOAP", "Grafana", "Keycloak", "React", "Angular", "Kotlin"],
+      "metric": {
+        "value": "4",
+        "label": {
+          "en": "institutions · government, defense & academia",
+          "es": "entidades · gobierno, defensa y academia"
+        }
+      }
     },
     {
       "id": "software-estrategico-2015",
       "visible": true,
       "date": { "en": "Sep 2015 — May 2016", "es": "Sep 2015 — May 2016" },
-      "title": { "en": "Solutions Architect", "es": "Arquitecto de Soluciones" },
+      "title": { "en": "Solution Architect & Tech Lead", "es": "Arquitecto de Soluciones & Tech Lead" },
       "company": "Software Estratégico",
       "location": { "en": "Medellín, Colombia", "es": "Medellín, Colombia" },
       "bullets": {
         "en": [
-          "Defined the new architectures for Matrix Tech's product line on Spring Boot, RabbitMQ and Cassandra.",
+          "As Solution Architect and Tech Lead, led a 6-person team modernizing Matrix Tech's product line: new architectures on Spring Boot, RabbitMQ and Cassandra, integrated with the existing Oracle databases and SOAP services.",
           "Built an SMS messaging gateway from scratch.",
-          "Led the adoption of a DevOps culture to improve communication and collaboration across IT areas, enabling faster, more efficient delivery."
+          "Led the adoption of a DevOps culture across IT areas which, together with the new Spring architecture, left teams delivering faster, more often and more reliably."
         ],
         "es": [
-          "Definí las nuevas arquitecturas de la línea de productos de Matrix Tech sobre Spring Boot, RabbitMQ y Cassandra.",
+          "Como Arquitecto de Soluciones y Tech Lead, lideré un equipo de 6 personas en la modernización de la línea de productos de Matrix Tech: nuevas arquitecturas sobre Spring Boot, RabbitMQ y Cassandra, integradas con las bases Oracle y los servicios SOAP existentes.",
           "Construí desde cero un gateway de mensajería SMS.",
-          "Lideré la adopción de una cultura DevOps para mejorar la comunicación y colaboración entre las áreas de TI, permitiendo entregas más rápidas y eficientes."
+          "Lideré la adopción de una cultura DevOps entre las áreas de TI, que junto con la nueva arquitectura en Spring dejó a los equipos entregando de forma más rápida, frecuente y confiable."
         ]
       },
-      "tech": ["Java", "Spring Boot", "RabbitMQ", "Cassandra", "DevOps"]
+      "tech": ["Java", "Spring Boot", "RabbitMQ", "Cassandra", "Oracle SQL", "SOAP", "DevOps"],
+      "metric": {
+        "value": "6",
+        "label": { "en": "people led", "es": "personas a cargo" }
+      }
     },
     {
       "id": "tcs-2013",
@@ -230,13 +272,13 @@
         "en": [
           "Led a distributed team of 45+ developers building Claro Perú's transactional self-service portal, from design through to its production release.",
           "Designed and built the Oracle Service Bus integration layer connecting Claro Colombia's back-office systems.",
-          "Built the portal itself on Java 8, Spring and WebSphere Portlets, front end included, against IBM WebSphere.",
+          "Built the portal itself on Java 7/8, Spring and WebSphere Portlets, front end included, against IBM WebSphere.",
           "Stood up the continuous-integration infrastructure and introduced Scrum, giving a 45-person team a single repeatable delivery cadence."
         ],
         "es": [
           "Lideré un equipo distribuido de más de 45 desarrolladores construyendo el portal transaccional de autogestión de Claro Perú, del diseño hasta su salida a producción.",
           "Diseñé y construí la capa de integración sobre Oracle Service Bus que conectaba los sistemas de back-office de Claro Colombia.",
-          "Construí el portal sobre Java 8, Spring y WebSphere Portlets, front end incluido, contra IBM WebSphere.",
+          "Construí el portal sobre Java 7/8, Spring y WebSphere Portlets, front end incluido, contra IBM WebSphere.",
           "Levanté la infraestructura de integración continua e introduje Scrum, dándole a un equipo de 45 personas una única cadencia de entrega repetible."
         ]
       },
@@ -246,22 +288,28 @@
       "id": "path-2010",
       "visible": true,
       "date": { "en": "Nov 2010 — Aug 2013", "es": "Nov 2010 — Ago 2013" },
-      "title": { "en": "Lead Developer", "es": "Lead Developer" },
+      "title": { "en": "Tech Lead", "es": "Tech Lead" },
       "company": "PATH S.A.",
       "location": { "en": "Medellín, Colombia", "es": "Medellín, Colombia" },
       "bullets": {
         "en": [
-          "Designed NetPlanet analysis components for the Claro network RCs and vehicle-tracking platforms.",
-          "Built Mail Bomber and SMS-delivery systems in Java; IoT pilots for the city of Medellín.",
-          "Designed AWS and on-premise infrastructure and CI/CD pipelines across the organization."
+          "As Tech Lead, designed the architectures of multiple company products: geolocation and vehicle tracking, a B2C SMS platform with business intelligence, notification systems (bulk email and SMS) and IoT pilots for the city of Medellín.",
+          "Built the reporting system on Nokia NetPlanet for analyzing Claro's network.",
+          "Designed the AWS and on-premise infrastructure and the CI/CD pipelines for the whole organization."
         ],
         "es": [
-          "Diseñé componentes de análisis NetPlanet para los RCs de la red Claro y plataformas de rastreo vehicular.",
-          "Construí sistemas Mail Bomber y de envío de SMS en Java; pilotos IoT para la ciudad de Medellín.",
-          "Diseñé infraestructura en AWS y On-Premise y pipelines de CI/CD para toda la organización."
+          "Como Tech Lead, diseñé las arquitecturas de múltiples productos de la compañía: geolocalización y rastreo vehicular, una plataforma SMS B2C con inteligencia de negocios, sistemas de notificaciones (correo masivo y SMS) y pilotos IoT para la ciudad de Medellín.",
+          "Construí el sistema de reportes sobre NetPlanet de Nokia para el análisis de la red de Claro.",
+          "Diseñé la infraestructura en AWS y on-premise y los pipelines de CI/CD de toda la organización."
         ]
       },
-      "tech": ["Java", "AWS", "IoT", "CI/CD"]
+      "tech": ["Java", "AWS", "Geolocation", "SMS", "IoT", "Business Intelligence", "CI/CD"],
+      "metric": {
+        "label": {
+          "en": "Multi-product architecture · geolocation, SMS, IoT",
+          "es": "Arquitectura de múltiples productos · geolocalización, SMS, IoT"
+        }
+      }
     },
     {
       "id": "ceiba-2009",
@@ -282,7 +330,7 @@
           "Entregué cada slice full-stack — back end en Java, front end en JavaScript / HTML / CSS y esquema Oracle — desplegado en Tomcat."
         ]
       },
-      "tech": ["Java", "JEE 5", "Struts", "JSF", "Oracle SQL", "Tomcat"]
+      "tech": ["Java", "JEE 5", "Struts", "JSF", "JSP", "SOAP", "Oracle SQL", "JavaScript", "HTML", "Tomcat"]
     },
     {
       "id": "mercurio-2007",
@@ -305,7 +353,7 @@
           "Introduje Scrum y prácticas de programación extrema en un equipo que hasta entonces entregaba ad hoc."
         ]
       },
-      "tech": ["Java", "Servlets", "JSP", "JavaScript", "SQL Server", "MySQL", "Tomcat"]
+      "tech": ["Java", "Servlets", "JSP", "SOAP", "JavaScript", "HTML", "Oracle SQL", "SQL Server", "MySQL", "Tomcat"]
     }
   ]
 }
