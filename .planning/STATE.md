@@ -109,6 +109,7 @@ progress:
 | 261020-b75 | Apply the reviewed career timeline to experience.json: leadership titles/metrics, rewritten bullets EN/ES, stacks, CODERIO hidden; CV regenerated | 2026-10-20 | b82bbd7 | [261020-b75-apply-the-reviewed-career-timeline-to-ex](./quick/261020-b75-apply-the-reviewed-career-timeline-to-ex/) |
 | 261020-baq | Align hero, meta, JSON-LD, CV title and OG card with Solution Architect & Tech Lead; 15+ Companies stat → 11+ Years leading | 2026-10-20 | 1100293 | [261020-baq-align-hero-and-page-titles-with-solution](./quick/261020-baq-align-hero-and-page-titles-with-solution/) |
 | fast | Fix ES horizontal scroll at 320px in #claude-code (unbreakable arrow chain) + regression test | 2026-10-20 | 5a1de38 | — |
+| fast | Move canonical domain andresmontoyat.co → andresmontoyat.dev (layout, OG, CV, project links) | 2026-10-20 | 5f067a4 | — |
 
 ## Project Reference
 
@@ -123,7 +124,7 @@ See: .planning/PROJECT.md (refreshed 2026-07-19 — v5 Astro Migration milestone
 Phase: 21 of 27 (Foundation — Astro scaffold, i18n routing & layout shell)
 Plan: TBD — not yet planned
 Status: Roadmap created, ready to plan
-Last activity: 2026-10-20 - Completed quick task 261020-baq: Align hero and page titles with Solution Architect & Tech Lead
+Last activity: 2026-10-20 - Moved canonical domain to andresmontoyat.dev (fast)
 
 Progress: [░░░░░░░░░░] 0%
 
