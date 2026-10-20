@@ -110,6 +110,7 @@ progress:
 | 261020-baq | Align hero, meta, JSON-LD, CV title and OG card with Solution Architect & Tech Lead; 15+ Companies stat → 11+ Years leading | 2026-10-20 | 1100293 | [261020-baq-align-hero-and-page-titles-with-solution](./quick/261020-baq-align-hero-and-page-titles-with-solution/) |
 | fast | Fix ES horizontal scroll at 320px in #claude-code (unbreakable arrow chain) + regression test | 2026-10-20 | 5a1de38 | — |
 | fast | Move canonical domain andresmontoyat.co → andresmontoyat.dev (layout, OG, CV, project links) | 2026-10-20 | 5f067a4 | — |
+| fast | Game door point below the base so tall authored houses can be entered | 2026-10-20 | 5c0c619 | — |
 
 ## Project Reference
 
@@ -124,7 +125,7 @@ See: .planning/PROJECT.md (refreshed 2026-07-19 — v5 Astro Migration milestone
 Phase: 21 of 27 (Foundation — Astro scaffold, i18n routing & layout shell)
 Plan: TBD — not yet planned
 Status: Roadmap created, ready to plan
-Last activity: 2026-10-20 - Moved canonical domain to andresmontoyat.dev (fast)
+Last activity: 2026-10-20 - Fixed game doorPoint for tall authored houses (fast)
 
 Progress: [░░░░░░░░░░] 0%
 
