@@ -105,6 +105,7 @@ progress:
 | 260701-v6a | 999.6 ASEO-01: static schema.org Person JSON-LD in index.html `<head>` + vitest regression test (63/63 GREEN) | 2026-07-01 | 3480bda | [260701-v6a-aseo-jsonld-person](./quick/260701-v6a-aseo-jsonld-person/) |
 | 260812-u7m | M6 adapter hardening: anchor bounds, splitRef cell validation, colliding manifest keys (57→66 tests) | 2026-08-12 | 062b861 | [20260812-m6-adapter-hardening](./quick/20260812-m6-adapter-hardening/) |
 | 260928-kt4 | Authored-world adapter reads the editor's object tags: export-version gate, tag vocabulary, interactables.json (441→468 tests). `map:import` now refuses the v1 seed map until it is re-exported | 2026-09-28 | 2eeecec, a3c7535, b8241a8 | [260928-kt4-adaptador-del-mundo-autorado-lee-tags-de](./quick/260928-kt4-adaptador-del-mundo-autorado-lee-tags-de/) |
+| 261020-b3y | About summary leads with leadership years (18+ backend, 11+ leading teams, ~7 as architect); CV regenerated | 2026-10-20 | c238c64 | [261020-b3y-about-summary-leads-with-leadership-year](./quick/261020-b3y-about-summary-leads-with-leadership-year/) |
 
 ## Project Reference
 
@@ -119,7 +120,7 @@ See: .planning/PROJECT.md (refreshed 2026-07-19 — v5 Astro Migration milestone
 Phase: 21 of 27 (Foundation — Astro scaffold, i18n routing & layout shell)
 Plan: TBD — not yet planned
 Status: Roadmap created, ready to plan
-Last activity: 2026-07-19 — ROADMAP.md + REQUIREMENTS.md traceability written for v5 (17/17 requirements mapped)
+Last activity: 2026-10-20 - Completed quick task 261020-b3y: About summary leads with leadership years
 
 Progress: [░░░░░░░░░░] 0%
 
