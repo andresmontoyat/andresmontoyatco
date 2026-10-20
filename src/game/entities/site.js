@@ -1,5 +1,6 @@
+// cy is the TOP edge (see toAuthoredSite in world/overworld.js), so the base is cy + h.
 export function doorPoint(site) {
-  return { x: site.cx, y: site.cy + site.h / 2 + 20 }
+  return { x: site.cx, y: site.cy + site.h + 20 }
 }
 
 export function isPlayerAtDoor(player, site, rx = 58, ry = 52) {
