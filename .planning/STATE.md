@@ -108,6 +108,7 @@ progress:
 | 261020-b3y | About summary leads with leadership years (18+ backend, 11+ leading teams, ~7 as architect); CV regenerated | 2026-10-20 | c238c64 | [261020-b3y-about-summary-leads-with-leadership-year](./quick/261020-b3y-about-summary-leads-with-leadership-year/) |
 | 261020-b75 | Apply the reviewed career timeline to experience.json: leadership titles/metrics, rewritten bullets EN/ES, stacks, CODERIO hidden; CV regenerated | 2026-10-20 | b82bbd7 | [261020-b75-apply-the-reviewed-career-timeline-to-ex](./quick/261020-b75-apply-the-reviewed-career-timeline-to-ex/) |
 | 261020-baq | Align hero, meta, JSON-LD, CV title and OG card with Solution Architect & Tech Lead; 15+ Companies stat → 11+ Years leading | 2026-10-20 | 1100293 | [261020-baq-align-hero-and-page-titles-with-solution](./quick/261020-baq-align-hero-and-page-titles-with-solution/) |
+| fast | Fix ES horizontal scroll at 320px in #claude-code (unbreakable arrow chain) + regression test | 2026-10-20 | 5a1de38 | — |
 
 ## Project Reference
 
