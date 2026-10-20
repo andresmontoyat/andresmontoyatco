@@ -3,6 +3,17 @@
 
 export const AUTHORED_IMAGES = {
   "am_Animals_Cow_Cow_01": "/game/cute-fantasy/Animals/Cow/Cow_01.png",
+  "am_Buildings_Buildings_Houses_Limestone_House_1_Limestone_Base_Blue": "/game/cute-fantasy/Buildings/Buildings/Houses/Limestone/House_1_Limestone_Base_Blue.png",
+  "am_Buildings_Buildings_Houses_Limestone_House_1_Limestone_Base_Red": "/game/cute-fantasy/Buildings/Buildings/Houses/Limestone/House_1_Limestone_Base_Red.png",
+  "am_Buildings_Buildings_Houses_Limestone_House_2_Limestone_Base_Blue": "/game/cute-fantasy/Buildings/Buildings/Houses/Limestone/House_2_Limestone_Base_Blue.png",
+  "am_Buildings_Buildings_Houses_Stone_House_1_Stone_Base_Blue": "/game/cute-fantasy/Buildings/Buildings/Houses/Stone/House_1_Stone_Base_Blue.png",
+  "am_Buildings_Buildings_Houses_Stone_House_1_Stone_Base_Red": "/game/cute-fantasy/Buildings/Buildings/Houses/Stone/House_1_Stone_Base_Red.png",
+  "am_Buildings_Buildings_Houses_Wood_House_1_Wood_Base_Red": "/game/cute-fantasy/Buildings/Buildings/Houses/Wood/House_1_Wood_Base_Red.png",
+  "am_Buildings_Buildings_Unique_Buildings_Blacksmith_House_Blacksmith_House_Blue": "/game/cute-fantasy/Buildings/Buildings/Unique_Buildings/Blacksmith_House/Blacksmith_House_Blue.png",
+  "am_Buildings_Buildings_Unique_Buildings_Church_Church_Blue": "/game/cute-fantasy/Buildings/Buildings/Unique_Buildings/Church/Church_Blue.png",
+  "am_Buildings_Buildings_Unique_Buildings_Church_Church_Red": "/game/cute-fantasy/Buildings/Buildings/Unique_Buildings/Church/Church_Red.png",
+  "am_Buildings_Buildings_Unique_Buildings_Inn_Inn_Blue": "/game/cute-fantasy/Buildings/Buildings/Unique_Buildings/Inn/Inn_Blue.png",
+  "am_Buildings_Buildings_Unique_Buildings_Inn_Inn_Red": "/game/cute-fantasy/Buildings/Buildings/Unique_Buildings/Inn/Inn_Red.png",
   "am_Tiles_Grass_Grass_1_Middle": "/game/cute-fantasy/Tiles/Grass/Grass_1_Middle.png",
   "am_Trees_Big_Birch_Tree": "/game/cute-fantasy/Trees/Big_Birch_Tree.png",
   "am_Trees_Big_Fruit_Tree": "/game/cute-fantasy/Trees/Big_Fruit_Tree.png",
@@ -38,6 +49,83 @@ export const AUTHORED_FRAMES = {
     "y": 96,
     "w": 32,
     "h": 32
+  },
+  "am_Buildings_Buildings_Houses_Limestone_House_1_Limestone_Base_Blue_0_0": {
+    "img": "am_Buildings_Buildings_Houses_Limestone_House_1_Limestone_Base_Blue",
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 128
+  },
+  "am_Buildings_Buildings_Houses_Limestone_House_1_Limestone_Base_Red_0_0": {
+    "img": "am_Buildings_Buildings_Houses_Limestone_House_1_Limestone_Base_Red",
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 128
+  },
+  "am_Buildings_Buildings_Houses_Limestone_House_2_Limestone_Base_Blue_0_0": {
+    "img": "am_Buildings_Buildings_Houses_Limestone_House_2_Limestone_Base_Blue",
+    "x": 0,
+    "y": 0,
+    "w": 144,
+    "h": 128
+  },
+  "am_Buildings_Buildings_Houses_Stone_House_1_Stone_Base_Blue_0_0": {
+    "img": "am_Buildings_Buildings_Houses_Stone_House_1_Stone_Base_Blue",
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 128
+  },
+  "am_Buildings_Buildings_Houses_Stone_House_1_Stone_Base_Red_0_0": {
+    "img": "am_Buildings_Buildings_Houses_Stone_House_1_Stone_Base_Red",
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 128
+  },
+  "am_Buildings_Buildings_Houses_Wood_House_1_Wood_Base_Red_0_0": {
+    "img": "am_Buildings_Buildings_Houses_Wood_House_1_Wood_Base_Red",
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 128
+  },
+  "am_Buildings_Buildings_Unique_Buildings_Blacksmith_House_Blacksmith_House_Blue_0_0": {
+    "img": "am_Buildings_Buildings_Unique_Buildings_Blacksmith_House_Blacksmith_House_Blue",
+    "x": 0,
+    "y": 0,
+    "w": 160,
+    "h": 128
+  },
+  "am_Buildings_Buildings_Unique_Buildings_Church_Church_Blue_0_0": {
+    "img": "am_Buildings_Buildings_Unique_Buildings_Church_Church_Blue",
+    "x": 0,
+    "y": 0,
+    "w": 112,
+    "h": 144
+  },
+  "am_Buildings_Buildings_Unique_Buildings_Church_Church_Red_0_0": {
+    "img": "am_Buildings_Buildings_Unique_Buildings_Church_Church_Red",
+    "x": 0,
+    "y": 0,
+    "w": 112,
+    "h": 144
+  },
+  "am_Buildings_Buildings_Unique_Buildings_Inn_Inn_Blue_0_0": {
+    "img": "am_Buildings_Buildings_Unique_Buildings_Inn_Inn_Blue",
+    "x": 0,
+    "y": 0,
+    "w": 240,
+    "h": 192
+  },
+  "am_Buildings_Buildings_Unique_Buildings_Inn_Inn_Red_0_0": {
+    "img": "am_Buildings_Buildings_Unique_Buildings_Inn_Inn_Red",
+    "x": 0,
+    "y": 0,
+    "w": 240,
+    "h": 192
   },
   "am_Tiles_Grass_Grass_1_Middle_0_0": {
     "img": "am_Tiles_Grass_Grass_1_Middle",
@@ -83,6 +171,50 @@ export const AUTHORED_IMAGE_SIZE = {
   "am_Animals_Cow_Cow_01": {
     "w": 256,
     "h": 480
+  },
+  "am_Buildings_Buildings_Houses_Limestone_House_1_Limestone_Base_Blue": {
+    "w": 96,
+    "h": 128
+  },
+  "am_Buildings_Buildings_Houses_Limestone_House_1_Limestone_Base_Red": {
+    "w": 96,
+    "h": 128
+  },
+  "am_Buildings_Buildings_Houses_Limestone_House_2_Limestone_Base_Blue": {
+    "w": 144,
+    "h": 128
+  },
+  "am_Buildings_Buildings_Houses_Stone_House_1_Stone_Base_Blue": {
+    "w": 96,
+    "h": 128
+  },
+  "am_Buildings_Buildings_Houses_Stone_House_1_Stone_Base_Red": {
+    "w": 96,
+    "h": 128
+  },
+  "am_Buildings_Buildings_Houses_Wood_House_1_Wood_Base_Red": {
+    "w": 96,
+    "h": 128
+  },
+  "am_Buildings_Buildings_Unique_Buildings_Blacksmith_House_Blacksmith_House_Blue": {
+    "w": 160,
+    "h": 128
+  },
+  "am_Buildings_Buildings_Unique_Buildings_Church_Church_Blue": {
+    "w": 448,
+    "h": 144
+  },
+  "am_Buildings_Buildings_Unique_Buildings_Church_Church_Red": {
+    "w": 448,
+    "h": 144
+  },
+  "am_Buildings_Buildings_Unique_Buildings_Inn_Inn_Blue": {
+    "w": 240,
+    "h": 192
+  },
+  "am_Buildings_Buildings_Unique_Buildings_Inn_Inn_Red": {
+    "w": 240,
+    "h": 192
   },
   "am_Tiles_Grass_Grass_1_Middle": {
     "w": 16,

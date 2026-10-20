@@ -90,5 +90,82 @@
     "uid": "U14",
     "scale": 2,
     "clip": "C1"
+  },
+  {
+    "frame": "am_Buildings_Buildings_Houses_Limestone_House_1_Limestone_Base_Blue_0_0",
+    "x": 256,
+    "y": 678,
+    "uid": "U22",
+    "scale": 0.68
+  },
+  {
+    "frame": "am_Buildings_Buildings_Houses_Limestone_House_2_Limestone_Base_Blue_0_0",
+    "x": 438,
+    "y": 654,
+    "uid": "U24",
+    "scale": 0.68
+  },
+  {
+    "frame": "am_Buildings_Buildings_Houses_Wood_House_1_Wood_Base_Red_0_0",
+    "x": 554,
+    "y": 750,
+    "uid": "U26",
+    "scale": 0.68
+  },
+  {
+    "frame": "am_Buildings_Buildings_Unique_Buildings_Inn_Inn_Blue_0_0",
+    "x": 694,
+    "y": 398,
+    "uid": "U28",
+    "scale": 0.62
+  },
+  {
+    "frame": "am_Buildings_Buildings_Houses_Stone_House_1_Stone_Base_Red_0_0",
+    "x": 886,
+    "y": 346,
+    "uid": "U30",
+    "scale": 0.68
+  },
+  {
+    "frame": "am_Buildings_Buildings_Houses_Stone_House_1_Stone_Base_Blue_0_0",
+    "x": 1002,
+    "y": 442,
+    "uid": "U32",
+    "scale": 0.68
+  },
+  {
+    "frame": "am_Buildings_Buildings_Unique_Buildings_Inn_Inn_Red_0_0",
+    "x": 1312,
+    "y": 644,
+    "uid": "U34",
+    "scale": 0.62
+  },
+  {
+    "frame": "am_Buildings_Buildings_Unique_Buildings_Church_Church_Blue_0_0",
+    "x": 1248,
+    "y": 1060,
+    "uid": "U36",
+    "scale": 0.88
+  },
+  {
+    "frame": "am_Buildings_Buildings_Houses_Limestone_House_1_Limestone_Base_Red_0_0",
+    "x": 1430,
+    "y": 996,
+    "uid": "U38",
+    "scale": 0.68
+  },
+  {
+    "frame": "am_Buildings_Buildings_Unique_Buildings_Church_Church_Red_0_0",
+    "x": 1546,
+    "y": 1134,
+    "uid": "U40",
+    "scale": 0.88
+  },
+  {
+    "frame": "am_Buildings_Buildings_Unique_Buildings_Blacksmith_House_Blacksmith_House_Blue_0_0",
+    "x": 1834,
+    "y": 826,
+    "uid": "U42",
+    "scale": 0.76
   }
 ]

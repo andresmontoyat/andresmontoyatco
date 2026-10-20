@@ -1,1 +1,123 @@
-[]
+[
+  {
+    "uid": "U22",
+    "kind": "door",
+    "x": 256,
+    "y": 678,
+    "id": "mercurio-2007",
+    "name": "Casa Mercurio",
+    "w": 65.28,
+    "h": 87.04,
+    "solid": true
+  },
+  {
+    "uid": "U24",
+    "kind": "door",
+    "x": 438,
+    "y": 654,
+    "id": "ceiba-2009",
+    "name": "Casa Ceiba",
+    "w": 97.92,
+    "h": 87.04,
+    "solid": true
+  },
+  {
+    "uid": "U26",
+    "kind": "door",
+    "x": 554,
+    "y": 750,
+    "id": "path-2010",
+    "name": "Casa PATH",
+    "w": 65.28,
+    "h": 87.04,
+    "solid": true
+  },
+  {
+    "uid": "U28",
+    "kind": "door",
+    "x": 694,
+    "y": 398,
+    "id": "tcs-2013",
+    "name": "Casa TCS",
+    "w": 148.8,
+    "h": 119.03999999999999,
+    "solid": true
+  },
+  {
+    "uid": "U30",
+    "kind": "door",
+    "x": 886,
+    "y": 346,
+    "id": "software-estrategico-2015",
+    "name": "Casa Software Estrategico",
+    "w": 65.28,
+    "h": 87.04,
+    "solid": true
+  },
+  {
+    "uid": "U32",
+    "kind": "door",
+    "x": 1002,
+    "y": 442,
+    "id": "integral-2016",
+    "name": "Casa Integral",
+    "w": 65.28,
+    "h": 87.04,
+    "solid": true
+  },
+  {
+    "uid": "U34",
+    "kind": "door",
+    "x": 1312,
+    "y": 644,
+    "id": "klever-2020",
+    "name": "Casa Klever",
+    "w": 148.8,
+    "h": 119.03999999999999,
+    "solid": true
+  },
+  {
+    "uid": "U36",
+    "kind": "door",
+    "x": 1248,
+    "y": 1060,
+    "id": "tul-2022",
+    "name": "Casa Tul",
+    "w": 98.56,
+    "h": 126.72,
+    "solid": true
+  },
+  {
+    "uid": "U38",
+    "kind": "door",
+    "x": 1430,
+    "y": 996,
+    "id": "blerify-2023",
+    "name": "Casa Blerify",
+    "w": 65.28,
+    "h": 87.04,
+    "solid": true
+  },
+  {
+    "uid": "U40",
+    "kind": "door",
+    "x": 1546,
+    "y": 1134,
+    "id": "f2x-2024",
+    "name": "Casa F2X",
+    "w": 98.56,
+    "h": 126.72,
+    "solid": true
+  },
+  {
+    "uid": "U42",
+    "kind": "door",
+    "x": 1834,
+    "y": 826,
+    "id": "soldife-2026",
+    "name": "Casa Soldife",
+    "w": 121.6,
+    "h": 97.28,
+    "solid": true
+  }
+]
