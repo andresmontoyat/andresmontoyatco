@@ -27,12 +27,12 @@ const heroSource = readFileSync(new URL('./Hero.astro', import.meta.url), 'utf-8
 describe('Hero.astro copy (coverage-parity port)', () => {
   it('renders role-forward H1 via aria-label (EN)', async () => {
     const result = await renderHero('en')
-    expect(result).toContain('aria-label="Senior Java Backend &amp; Solutions Architect."')
+    expect(result).toContain('aria-label="Java Solution Architect &amp; Tech Lead."')
   })
 
   it('renders role-forward H1 via aria-label (ES)', async () => {
     const result = await renderHero('es')
-    expect(result).toContain('aria-label="Senior Java Backend y Arquitecto de Soluciones."')
+    expect(result).toContain('aria-label="Arquitecto de Soluciones Java y Tech Lead."')
   })
 
   it('renders the punchy lead (EN)', async () => {
@@ -99,7 +99,7 @@ describe('Hero.astro count-up stats (D-02, new this phase)', () => {
     const result = await renderHero('en')
     expect(result).toContain('>18+<')
     expect(result).toContain('>45+<')
-    expect(result).toContain('>15+<')
+    expect(result).toContain('>11+<')
     expect(result).toContain('>8<')
   })
 })

@@ -37,7 +37,7 @@ describe('es/index.astro entry splash (Container API)', () => {
     const result = await renderIndex()
     expect(result).toContain('Carlos Montoya')
     expect(result).toContain('Elige tu camino')
-    expect(result).toContain('Senior Java Backend &amp; Solutions Architect · +18 años.')
+    expect(result).toContain('Arquitecto de Soluciones Java y Tech Lead · +18 años.')
     expect(result).toContain('Juega mi carrera')
     expect(result).toContain('Ver portafolio')
   })

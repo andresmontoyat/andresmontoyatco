@@ -26,7 +26,7 @@ function statParts(num) {
 
 const yearsStat = statParts('18+')
 const teamStat = statParts('45+')
-const companiesStat = statParts('15+')
+const leadingStat = statParts('11+')
 const industriesStat = statParts('8')
 
 const liAria = locale === 'es' ? 'Perfil de LinkedIn' : 'LinkedIn profile'
@@ -169,10 +169,10 @@ const ghAria = locale === 'es' ? 'Perfil de GitHub' : 'GitHub profile'
       <div class="group text-center cursor-default motion-safe:transition-transform motion-safe:duration-200 motion-safe:hover:-translate-y-1">
         <div
           class="text-3xl font-extrabold leading-none bg-brand-gradient bg-clip-text text-transparent transition-transform duration-200 group-hover:scale-110 motion-safe:group-hover:drop-shadow-[0_0_10px_rgba(37,99,235,0.5)]"
-          data-count-up={companiesStat.target}
-          data-count-up-template={companiesStat.template}
-        >15+</div>
-        <div class="mt-1 text-xs font-mono font-normal text-text-secondary uppercase tracking-widest transition-colors duration-200 group-hover:text-brand">{t.stats.companies}</div>
+          data-count-up={leadingStat.target}
+          data-count-up-template={leadingStat.template}
+        >11+</div>
+        <div class="mt-1 text-xs font-mono font-normal text-text-secondary uppercase tracking-widest transition-colors duration-200 group-hover:text-brand">{t.stats.leading}</div>
       </div>
       <div class="group text-center cursor-default motion-safe:transition-transform motion-safe:duration-200 motion-safe:hover:-translate-y-1">
         <div
