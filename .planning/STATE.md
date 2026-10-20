@@ -112,6 +112,7 @@ progress:
 | fast | Move canonical domain andresmontoyat.co → andresmontoyat.dev (layout, OG, CV, project links) | 2026-10-20 | 5f067a4 | — |
 | fast | Game door point below the base so tall authored houses can be entered | 2026-10-20 | 5c0c619 | — |
 | fast | Commit the authored map: 11 editor-placed houses tagged door:<id>, 11 of 11 coverage | 2026-10-20 | cc78040 | — |
+| fast | Career RPG roadmap design doc (5 phases, scope cuts, open decisions) | 2026-10-20 | d64d7eb | — |
 
 ## Project Reference
 
@@ -126,7 +127,7 @@ See: .planning/PROJECT.md (refreshed 2026-07-19 — v5 Astro Migration milestone
 Phase: 21 of 27 (Foundation — Astro scaffold, i18n routing & layout shell)
 Plan: TBD — not yet planned
 Status: Roadmap created, ready to plan
-Last activity: 2026-10-20 - Authored map with all 11 houses (fast)
+Last activity: 2026-10-20 - Career RPG roadmap doc (fast)
 
 Progress: [░░░░░░░░░░] 0%
 
