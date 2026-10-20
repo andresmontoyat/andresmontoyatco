@@ -33,8 +33,8 @@ describe('About.astro (Container API coverage-parity spot-check — D-07)', () =
     const result = await renderAbout('en')
     expect(result).toContain('About')
     expect(result).toContain('Who I am')
-    expect(result).toMatch(/Senior Java Backend Engineer and Solutions Architect/)
-    expect(result).toMatch(/Spring Boot/)
+    expect(result).toMatch(/Java Solution Architect and Tech Lead/)
+    expect(result).toMatch(/Spring ecosystem/)
     expect(result).toMatch(/wife Viky/)
   })
 
