@@ -91,19 +91,28 @@
       "animated": false
     },
     "Trees/Big_Birch_Tree.png": {
-      "type": "single",
-      "w": 96,
-      "h": 80
+      "type": "sheet",
+      "fw": 32,
+      "fh": 80,
+      "cols": 3,
+      "rows": 1,
+      "animated": false
     },
     "Trees/Big_Fruit_Tree.png": {
-      "type": "single",
-      "w": 96,
-      "h": 64
+      "type": "sheet",
+      "fw": 32,
+      "fh": 64,
+      "cols": 3,
+      "rows": 1,
+      "animated": false
     },
     "Trees/Big_Oak_Tree.png": {
-      "type": "single",
-      "w": 192,
-      "h": 80
+      "type": "sheet",
+      "fw": 64,
+      "fh": 80,
+      "cols": 3,
+      "rows": 1,
+      "animated": false
     },
     "Trees/Spruce_Needle_Particle.png": {
       "type": "single",
@@ -13657,11 +13666,12 @@
       "type": "objects",
       "objects": [
         {
-          "frame": "Trees/Big_Fruit_Tree.png#0,0",
+          "frame": "Trees/Big_Fruit_Tree.png#1,0",
           "x": 159,
           "y": 160,
           "uid": "U1",
-          "rot": 180
+          "rot": 180,
+          "scale": 0.6
         }
       ]
     },
@@ -13735,16 +13745,18 @@
           "uid": "U11"
         },
         {
-          "frame": "Trees/Big_Birch_Tree.png#0,0",
+          "frame": "Trees/Big_Birch_Tree.png#1,0",
           "x": 123,
           "y": 125,
-          "uid": "U12"
+          "uid": "U12",
+          "scale": 0.6
         },
         {
-          "frame": "Trees/Big_Oak_Tree.png#0,0",
+          "frame": "Trees/Big_Oak_Tree.png#1,0",
           "x": 52,
           "y": 135,
-          "uid": "U13"
+          "uid": "U13",
+          "scale": 0.6
         },
         {
           "frame": "Animals/Cow/Cow_01.png#0,3",

@@ -138,21 +138,35 @@ export const AUTHORED_FRAMES = {
     "img": "am_Trees_Big_Birch_Tree",
     "x": 0,
     "y": 0,
-    "w": 96,
+    "w": 32,
+    "h": 80
+  },
+  "am_Trees_Big_Birch_Tree_1_0": {
+    "img": "am_Trees_Big_Birch_Tree",
+    "x": 32,
+    "y": 0,
+    "w": 32,
     "h": 80
   },
   "am_Trees_Big_Fruit_Tree_0_0": {
     "img": "am_Trees_Big_Fruit_Tree",
     "x": 0,
     "y": 0,
-    "w": 96,
+    "w": 32,
     "h": 64
   },
   "am_Trees_Big_Oak_Tree_0_0": {
     "img": "am_Trees_Big_Oak_Tree",
     "x": 0,
     "y": 0,
-    "w": 192,
+    "w": 64,
+    "h": 80
+  },
+  "am_Trees_Big_Oak_Tree_1_0": {
+    "img": "am_Trees_Big_Oak_Tree",
+    "x": 64,
+    "y": 0,
+    "w": 64,
     "h": 80
   },
   "am_Trees_Spruce_Needle_Particle_0_0": {
