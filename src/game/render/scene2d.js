@@ -1,5 +1,5 @@
 import {
-  nearestBiome, tileNameFor, avatarFrame, hashTile, pathTileName, waterTileName, PATH_THRESHOLD, AVATAR_LAYERS,
+  nearestBiome, tileNameFor, avatarFrame, pathTileName, waterTileName, PATH_THRESHOLD, AVATAR_LAYERS,
 } from './tiles.js'
 import { BIOMES } from '../world/biomes.js'
 import { drawAmbient, swayOffset, DAY_LEN } from './ambient.js'
@@ -13,14 +13,15 @@ import { phaseOf, nightTint } from './lighting.js'
 const TILE = 32
 const AVATAR_W = CONFIG.avatar.width
 const AVATAR_H = CONFIG.avatar.height
+// How close the player stands (to a house's base) before the house shows its company name.
+const LABEL_RANGE = CONFIG.label.range
 // cyber/castillo share the same Hills.png "cliff" ground texture (see manifest.js) — there is no
 // dedicated stone/paved tile in either free asset pack (Cute Fantasy / Sprout Lands); a Tiny
 // Swords-style tileset would be the real fix for a true rocky/paved read. Until then the two
 // biomes are told apart by a per-biome color wash. A 0.12-alpha version of this read as a flat,
-// barely-tinted band (polish-pass screenshot review), especially since ground_cyber_2/
-// ground_castillo_2 point at a plain grass cell nearly indistinguishable from every other grass
-// biome — so the wash is bumped much stronger, and scattered across 3 shades per biome (same
-// hashTile() used for frame-variant selection) so it isn't one flat color block either.
+// barely-tinted band (polish-pass screenshot review). Scattering 3 shades per biome by hashTile()
+// was tried next and read as a blocky checkerboard over the grass (map review, 2026-10-22), so each
+// biome now washes with its first tone only: one region, one colour.
 const ERA_TINT_ALPHA = CONFIG.tint.eraAlpha
 const ERA_TINTS = {
   // Cool cyan-blue family, keyed off the site's --color-accent token (not BIOMES.cyber.c, which
@@ -159,12 +160,23 @@ function drawGround(ctx, state, cam, sprites) {
       if (tints) {
         ctx.save()
         ctx.globalAlpha = ERA_TINT_ALPHA
-        ctx.fillStyle = tints[hashTile(tx, ty) % tints.length]
+        ctx.fillStyle = tints[0]
         ctx.fillRect(sx, sy, TILE, TILE)
         ctx.restore()
       }
     }
   }
+}
+
+// Does the procedural ground own this cell? Roads to every door and pond water are still drawn by
+// drawGround, and the authored base layer paints grass over the whole map, so an authored cell
+// standing on either would hide it. Until the map paints its own roads and water (docs/adr/0001),
+// those cells are left to the ground.
+function groundOwnsCell(world, tx, ty, revealed) {
+  const wx = tx * TILE + TILE / 2
+  const wy = ty * TILE + TILE / 2
+  if (pondAt(world.ponds, wx, wy) && resolveWaterFrame(world.ponds, tx, ty)) return true
+  return nearestRoadDist(world.roads, wx, wy, revealed) < PATH_THRESHOLD
 }
 
 // Authored terrain drawn on top of the procedural ground. Same viewport culling drawGround uses,
@@ -180,9 +192,11 @@ export function drawAuthoredTiles(ctx, state, cam, sprites) {
   if (!layers || !layers.length) return
   const { w: vw, h: vh } = viewportOf(ctx)
   const { x0, y0, x1, y1 } = visibleTileRange(cam, vw, vh, TILE)
-  const anchors = state.world ? regionsWithFarm(state.world) : null
+  const { world } = state
+  const anchors = world && world.regions ? regionsWithFarm(world) : null
   for (let ty = y0; ty < y1; ty += 1) {
     for (let tx = x0; tx < x1; tx += 1) {
+      if (world && groundOwnsCell(world, tx, ty, state.revealed)) continue
       const key = `${tx},${ty}`
       const sx = tx * TILE - cam.x
       const sy = ty * TILE - cam.y
@@ -198,18 +212,22 @@ export function drawAuthoredTiles(ctx, state, cam, sprites) {
       if (!tints) continue
       ctx.save()
       ctx.globalAlpha = ERA_TINT_ALPHA
-      ctx.fillStyle = tints[hashTile(tx, ty) % tints.length]
+      ctx.fillStyle = tints[0]
       ctx.fillRect(sx, sy, TILE, TILE)
       ctx.restore()
     }
   }
 }
 
+// Centred on the house: a company name is often wider than a small house, and drawn from the left
+// edge it hung off one side and was clipped at the screen's edge.
 function drawBuildingLabel(ctx, s, bx, by) {
+  const label = s.seen ? `${s.co} ✓` : s.co
   ctx.fillStyle = '#eafff6'
   ctx.font = '11px monospace'
-  ctx.fillText(s.co, bx, by - 6)
-  if (s.seen) ctx.fillText('✓', bx + s.w - 10, by - 6)
+  ctx.textAlign = 'center'
+  ctx.fillText(label, bx + s.w / 2, by - 6)
+  ctx.textAlign = 'left'
 }
 
 // Idle breathing cadence: state.clock advances ~96 units/sec, so ~44 units per idle frame gives a
@@ -295,14 +313,14 @@ function drawDecorItem(ctx, d, cam, sprites, t) {
 // pass already drew it (docs/adr/0001). Drawing one here as well would stack a hashed house on top
 // of the one the author chose. The label still belongs to the site, so it is drawn either way — and
 // the drawable still takes part in the depth sort, so an authored house occludes correctly.
-export function buildingDrawable(s, cam) {
+export function buildingDrawable(s, cam, showLabel = true) {
   return {
     baseY: s.cy + s.h,
     draw: (ctx, sprites) => {
       const bx = s.cx - s.w / 2 - cam.x
       const by = s.cy - cam.y
       if (s.building) sprites.draw(ctx, s.building, bx, by, s.w, s.h)
-      if (s.co) drawBuildingLabel(ctx, s, bx, by)
+      if (s.co && showLabel) drawBuildingLabel(ctx, s, bx, by)
     },
   }
 }
@@ -361,8 +379,10 @@ export function drawTransformed(ctx, sprites, pl, cam, clips = null, t = 0) {
 // ground-contact baseY) so things nearer the bottom of the screen correctly occlude things
 // behind them, instead of buildings/avatar always drawing on top of decor regardless of depth.
 function depthSortedDrawables(state, cam, t) {
+  const { player } = state
   const structures = activeSites(state).concat(state.world.farmBuilding ? [state.world.farmBuilding] : [])
-  const buildings = structures.map(s => buildingDrawable(s, cam))
+  const near = s => Math.hypot(player.x - s.cx, player.y - (s.cy + s.h)) < LABEL_RANGE
+  const buildings = structures.map(s => buildingDrawable(s, cam, near(s)))
   const drawOne = d => (ctx, sprites) => drawDecorItem(ctx, d, cam, sprites, t)
   const decor = (state.decor || []).map(d => ({ baseY: d.y, draw: drawOne(d) }))
   const critters = critterDrawables(state, cam, t)
@@ -373,7 +393,6 @@ function depthSortedDrawables(state, cam, t) {
     draw: (ctx, sprites) => drawTransformed(ctx, sprites, pl, cam, state.world.clips, t),
   }))
   const windmill = state.world.farmWindmill ? [windmillDrawable(state.world.farmWindmill, cam, t)] : []
-  const { player } = state
   const avatar = { baseY: player.y + player.h / 2, draw: (ctx, sprites) => drawAvatar(ctx, state, cam, sprites) }
   return buildings.concat(decor, critters, npcs, placements, windmill, [avatar]).sort((a, b) => a.baseY - b.baseY)
 }

@@ -111,6 +111,34 @@ describe('drawAuthoredTiles', () => {
     drawAuthoredTiles(ctx, { authored, world }, { x: 0, y: 0 }, fakeSprites([]))
     expect(fills.filter(([x, y]) => x === 0 && y === 0)).toHaveLength(1)
   })
+
+  // The authored base layer covers the whole map with grass. Drawn over the procedural ground, it
+  // hid the roads to every door and the water of every pond, so those cells let the ground through.
+  it('leaves a road cell to the procedural ground', () => {
+    const calls = []
+    const world = { roads: [{ a: { x: 0, y: 16 }, b: { x: 64, y: 16 } }] }
+    drawAuthoredTiles(fakeCtx(), { authored, world }, { x: 0, y: 0 }, fakeSprites(calls))
+    expect(calls).toEqual([])
+  })
+  it('leaves a pond cell to the procedural ground', () => {
+    const calls = []
+    const world = { ponds: [{ x: 16, y: 16, r: 80 }] }
+    drawAuthoredTiles(fakeCtx(), { authored, world }, { x: 0, y: 0 }, fakeSprites(calls))
+    expect(calls).toEqual([])
+  })
+  it('washes every cell of an era with one tone, so the ground reads as a region and not a checkerboard', () => {
+    const styles = new Set()
+    const ctx = {
+      canvas: { width: 128, height: 128 },
+      save: () => {}, restore: () => {}, fillRect: () => {},
+      set fillStyle(v) { styles.add(v) },
+      set globalAlpha(v) {},
+    }
+    const cells = new Map([['0,0', 'g'], ['1,0', 'g'], ['2,0', 'g'], ['0,1', 'g'], ['1,1', 'g'], ['2,1', 'g']])
+    const world = { regions: [{ bi: 'cyber', x: 0, y: 0 }], farm: { x: 9000, y: 9000 } }
+    drawAuthoredTiles(ctx, { authored: [{ name: 'suelo', cells }], world }, { x: 0, y: 0 }, fakeSprites([]))
+    expect(styles.size).toBe(1)
+  })
 })
 
 describe('drawTransformed', () => {
@@ -191,6 +219,22 @@ describe('buildingDrawable', () => {
 
   // The depth sort is what makes a house occlude what stands behind it. An authored house takes part
   // in it like any other, or it would draw flat against the world.
+  // Every house labelled at once crowded the screen and clipped names at its edges. Only the house
+  // the player is near says who it is.
+  it('hides the label of a house the player is not near', () => {
+    const labels = []
+    const ctx = { fillStyle: '', font: '', textAlign: '', fillText: t => labels.push(t) }
+    buildingDrawable(site(), { x: 0, y: 0 }, false).draw(ctx, fakeSprites())
+    expect(labels).toEqual([])
+  })
+
+  it('centres the label on the house, so a long name does not hang off one side', () => {
+    const at = []
+    const ctx = { fillStyle: '', font: '', textAlign: '', fillText(t, x) { at.push([t, x, this.textAlign]) } }
+    buildingDrawable(site(), { x: 0, y: 0 }).draw(ctx, fakeSprites())
+    expect(at[0]).toEqual(['Soldife', 100, 'center'])
+  })
+
   it('reports the same ground contact either way', () => {
     expect(buildingDrawable(site({ building: null }), { x: 0, y: 0 }).baseY)
       .toBe(buildingDrawable(site(), { x: 0, y: 0 }).baseY)
