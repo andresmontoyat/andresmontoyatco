@@ -31,6 +31,7 @@
     "assets:pack": "node scripts/pack-atlas.mjs",
     "map:migrate": "node scripts/migrate-map-v2.mjs",
     "map:import": "node scripts/import-map.mjs",
+    "map:compose": "node scripts/compose-map.mjs",
     "world:dump": "node scripts/dump-world.mjs",
     "pack:index": "node scripts/dump-pack.mjs",
     "hero:process": "node scripts/process-hero-photo.js",
