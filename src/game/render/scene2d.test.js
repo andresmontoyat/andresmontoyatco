@@ -1,7 +1,8 @@
 import { describe, it, expect } from 'vitest'
+import { CONFIG } from '../config.js'
 import {
   nearestPathDist, nearestRoadDist, visibleTileRange, eraLabel, drawAuthoredTiles, drawTransformed,
-  buildingDrawable, proceduralRoads,
+  buildingDrawable, proceduralRoads, eraWash,
 } from './scene2d.js'
 
 const path = [{ x: 0, y: 0 }, { x: 100, y: 0 }]
@@ -55,6 +56,22 @@ describe('proceduralRoads', () => {
   })
   it('keeps only the hidden loops when the map has a road layer', () => {
     expect(proceduralRoads({ world, authored: [{ name: 'road', cells: new Map() }] })).toEqual([loop])
+  })
+})
+
+// The wash fades out toward the border between two regions. Cut off at the border instead, it drew
+// the Voronoi edge as a staircase of 32px tiles across the grass.
+describe('eraWash', () => {
+  const anchors = [{ bi: 'pradera', x: 0, y: 0 }, { bi: 'cyber', x: 1000, y: 0 }]
+
+  it('is full strength deep inside a tinted region', () => {
+    expect(eraWash(anchors, 1000, 0).alpha).toBeCloseTo(CONFIG.tint.eraAlpha)
+  })
+  it('fades to nothing at the border with the next region', () => {
+    expect(eraWash(anchors, 505, 0).alpha).toBeLessThan(0.01)
+  })
+  it('is null in a region that has no wash', () => {
+    expect(eraWash(anchors, 0, 0)).toBe(null)
   })
 })
 
@@ -122,7 +139,7 @@ describe('drawAuthoredTiles', () => {
       set fillStyle(v) { this._f = v },
       set globalAlpha(v) { this._a = v },
     }
-    const world = { regions: [{ bi: 'cyber', x: 0, y: 0 }], farm: { x: 0, y: 0 } }
+    const world = { regions: [{ bi: 'cyber', x: 0, y: 0 }], farm: { x: 9000, y: 9000 } }
     drawAuthoredTiles(ctx, { authored, world }, { x: 0, y: 0 }, fakeSprites([]))
     expect(fills.filter(([x, y]) => x === 0 && y === 0)).toHaveLength(1)
   })

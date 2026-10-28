@@ -58,6 +58,7 @@ export const CONFIG = {
   // ── 🎨 Tinte de era (cyber/castillo) ────────────────────────────────────────────────────────
   tint: {
     eraAlpha: 0.18, // fuerza del wash de color en biomas cyber/castillo (0 = sin tinte); un solo tono por era
+    fade: 240, // px desde el borde con la región vecina en que el tinte llega a su fuerza completa
   },
 
   // ── 🏷️ Etiquetas de casas ───────────────────────────────────────────────────────────────────

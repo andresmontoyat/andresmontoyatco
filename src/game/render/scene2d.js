@@ -23,12 +23,40 @@ const LABEL_RANGE = CONFIG.label.range
 // was tried next and read as a blocky checkerboard over the grass (map review, 2026-10-22), so each
 // biome now washes with its first tone only: one region, one colour.
 const ERA_TINT_ALPHA = CONFIG.tint.eraAlpha
+const ERA_TINT_FADE = CONFIG.tint.fade
 const ERA_TINTS = {
   // Cool cyan-blue family, keyed off the site's --color-accent token (not BIOMES.cyber.c, which
   // stays reserved for building-marker/company-list color elsewhere — see companies.js, sprites.js).
   cyber: ['#00C2FF', '#2f8fd6', '#5aa8e0'],
   // Violet family toward the AI-era castillo biome color (BIOMES.castillo.c).
   castillo: ['#a855f7', '#8b5fbf', '#c084fc'],
+}
+
+// The wash for a world point: its region's tone, at an alpha that grows with how far the point is
+// from the border with the nearest OTHER region. Cut off at the border, the wash drew the Voronoi edge
+// as a staircase of whole tiles; fading over ERA_TINT_FADE px, the step between neighbouring tiles is
+// a few hundredths of alpha and the edge reads as a gradient.
+export function eraWash(anchors, wx, wy) {
+  let near = null
+  let d1 = Infinity
+  for (const a of anchors) {
+    const d = Math.hypot(wx - a.x, wy - a.y)
+    if (d < d1) { d1 = d; near = a }
+  }
+  const tints = ERA_TINTS[near.bi]
+  if (!tints) return null
+  let d2 = Infinity
+  for (const a of anchors) if (a.bi !== near.bi) d2 = Math.min(d2, Math.hypot(wx - a.x, wy - a.y))
+  return { color: tints[0], alpha: ERA_TINT_ALPHA * Math.min(1, (d2 - d1) / ERA_TINT_FADE) }
+}
+
+function washTile(ctx, wash, sx, sy) {
+  if (!wash || wash.alpha < 0.005) return
+  ctx.save()
+  ctx.globalAlpha = wash.alpha
+  ctx.fillStyle = wash.color
+  ctx.fillRect(sx, sy, TILE, TILE)
+  ctx.restore()
 }
 
 export function activeSites(state) {
@@ -166,14 +194,7 @@ function drawGround(ctx, state, cam, sprites) {
       const sx = tx * TILE - cam.x
       const sy = ty * TILE - cam.y
       sprites.draw(ctx, name, sx, sy, TILE, TILE)
-      const tints = water ? null : ERA_TINTS[bi]
-      if (tints) {
-        ctx.save()
-        ctx.globalAlpha = ERA_TINT_ALPHA
-        ctx.fillStyle = tints[0]
-        ctx.fillRect(sx, sy, TILE, TILE)
-        ctx.restore()
-      }
+      if (!water) washTile(ctx, eraWash(anchors, wx, wy), sx, sy)
     }
   }
 }
@@ -219,13 +240,7 @@ export function drawAuthoredTiles(ctx, state, cam, sprites) {
         painted = true
       }
       if (!painted || !anchors) continue
-      const tints = ERA_TINTS[nearestBiome(anchors, tx * TILE + TILE / 2, ty * TILE + TILE / 2)]
-      if (!tints) continue
-      ctx.save()
-      ctx.globalAlpha = ERA_TINT_ALPHA
-      ctx.fillStyle = tints[0]
-      ctx.fillRect(sx, sy, TILE, TILE)
-      ctx.restore()
+      washTile(ctx, eraWash(anchors, tx * TILE + TILE / 2, ty * TILE + TILE / 2), sx, sy)
     }
   }
 }
