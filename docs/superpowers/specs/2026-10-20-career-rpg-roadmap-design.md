@@ -31,7 +31,7 @@ No busca competir como juego. Busca que la carrera se **recorra** en vez de leer
 | Datos | Todo sale de `experience.json`, la misma fuente que el sitio y el CV | `src/data/` |
 | Pipeline | Editor → export v2 → `map:import` → `assets:pack` → juego | `scripts/import-map.mjs` |
 
-El generador procedural de casas (`world/overworld.js`) ya no se usa para ningún empleo visible.
+El generador procedural de casas se borró el 2026-10-28 (fase 1): el mapa es la única fuente de casas, anclas de era, caminos y decoración ([ADR 0002](../../adr/0002-the-map-can-lay-its-own-roads.md)).
 
 ## 3. Lo que falta, por pilar
 
@@ -59,7 +59,7 @@ El generador procedural de casas (`world/overworld.js`) ya no se usa para ningú
 
 Cada fase se puede publicar sola y deja el juego mejor que antes.
 
-### Fase 1 — Retirar el generador
+### Fase 1 — Retirar el generador ✅ hecha 2026-10-28
 
 Lo exige el [ADR 0001](../../adr/0001-the-map-owns-the-world.md) una vez que todas las experiencias
 visibles tienen `door:`.

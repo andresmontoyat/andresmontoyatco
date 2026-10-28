@@ -1,6 +1,6 @@
 # 1. The authored map owns the world; procedural placement is a fallback
 
-- Status: accepted
+- Status: accepted — exit criterion met 2026-10-28; the "Roads stay derived" pin is amended by [0002](0002-the-map-can-lay-its-own-roads.md)
 - Date: 2026-09-29
 - Deciders: Carlos Andres Montoya
 
@@ -60,7 +60,7 @@ Option 3 is the mechanism; option 2 is the destination. Concretely:
 
 ### What this pins
 
-**Roads stay derived.** `buildRoads` reads site positions — a spine through each biome plus a spur to
+**Roads stay derived.** *(Amended by [0002](0002-the-map-can-lay-its-own-roads.md): a map may lay its own on a `road` layer.)* `buildRoads` reads site positions — a spine through each biome plus a spur to
 each door — so it works unchanged against authored positions. Roads are not authored, and this
 decision does not make them authorable.
 
@@ -106,3 +106,8 @@ Bad, and accepted:
 The fallback is deleted in the same commit that makes coverage complete: every visible entry in
 `experience.json` has exactly one `door:` in the map, the import reports 11 of 11, and
 `ringPos`/`buildingFor`/`BUILDING_DIMS`/`BUILT_IN_ANCHORS` leave the codebase with it.
+
+Met on 2026-10-28: the import reports 11 of 11 and refuses a visible experience without a door;
+`ringPos`, `buildingFor`, `BUILDING_DIMS` and `BUILT_IN_ANCHORS` are gone, and every town anchor
+is an `anchor:<name>` layer in the map. The barn and the hidden side-project POIs are the only
+buildings the game still draws itself.
