@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { startYear, buildOverworld, projectOntoSpine, buildingFor, WORLD_W, WORLD_H } from './overworld.js'
+import { startYear, buildOverworld, projectOntoSpine, WORLD_W, WORLD_H } from './overworld.js'
 import { biomeForYear } from './biomes.js'
 import { doorPoint } from '../entities/site.js'
 
@@ -11,6 +11,17 @@ const JSON_FIXTURE = {
   ],
 }
 
+// What the map contributes, in game pixels: an anchor per town (anchor:<name> layers) and a door per
+// visible experience (interactables.json, footprint measured at import).
+const ANCHORS = {
+  farm: { x: 360, y: 1120 }, pradera: { x: 380, y: 700 }, desierto: { x: 820, y: 400 },
+  selva: { x: 1300, y: 560 }, cyber: { x: 1360, y: 1040 }, castillo: { x: 1820, y: 760 },
+}
+const door = (over = {}) => ({ uid: 'U3', kind: 'door', id: 'a', x: 1700, y: 700, w: 120, h: 160, ...over })
+const DOORS = [door(), door({ uid: 'U4', id: 'b', x: 400, y: 600, w: 66, h: 88 })]
+const build = (json = JSON_FIXTURE, opts = {}) => buildOverworld(json, biomeForYear, { anchors: ANCHORS, doors: DOORS, ...opts })
+const siteFor = (world, id) => world.sites.find(s => s.id === id)
+
 describe('startYear', () => {
   it('extracts the first 4-digit year from the English date', () => {
     expect(startYear({ date: { en: 'Apr 2007 — Jun 2009' } })).toBe(2007)
@@ -21,66 +32,33 @@ describe('startYear', () => {
 })
 
 describe('buildOverworld', () => {
-  const w = buildOverworld(JSON_FIXTURE, biomeForYear)
+  const w = build()
 
   it('drops entries with visible === false', () => {
     expect(w.sites.find(s => s.co === 'Hidden')).toBeUndefined()
   })
   it('orders sites chronologically by start year', () => {
-    const years = w.sites.map(s => s.id)
-    expect(years).toEqual(['b', 'a'])
+    expect(w.sites.map(s => s.id)).toEqual(['b', 'a'])
   })
   it('types featured entries as castle and others as house', () => {
-    expect(w.sites.find(s => s.id === 'a').type).toBe('castle')
-    expect(w.sites.find(s => s.id === 'b').type).toBe('house')
+    expect(siteFor(w, 'a').type).toBe('castle')
+    expect(siteFor(w, 'b').type).toBe('house')
   })
   it('assigns each site a biome from its year', () => {
-    expect(w.sites.find(s => s.id === 'b').bi).toBe('pradera')
-    expect(w.sites.find(s => s.id === 'a').bi).toBe('castillo')
-  })
-  it('is deterministic — same input yields identical positions', () => {
-    const w2 = buildOverworld(JSON_FIXTURE, biomeForYear)
-    expect(w2.sites.map(s => [s.cx, s.cy])).toEqual(w.sites.map(s => [s.cx, s.cy]))
-  })
-  it('places every site inside world bounds', () => {
-    for (const s of w.sites) {
-      expect(s.cx).toBeGreaterThanOrEqual(0)
-      expect(s.cx).toBeLessThanOrEqual(w.worldW)
-      expect(s.cy).toBeGreaterThanOrEqual(0)
-      expect(s.cy).toBeLessThanOrEqual(w.worldH)
-    }
-  })
-  it('gives featured sites a landmark building and regular sites a house', () => {
-    const HOUSES = ['house', 'house_wood_red', 'house_stone_blue', 'house_stone_red', 'house_lime_blue', 'house_lime_red']
-    const LANDMARKS = ['church', 'inn', 'blacksmith']
-    expect(LANDMARKS).toContain(w.sites.find(s => s.id === 'a').building)
-    expect(HOUSES).toContain(w.sites.find(s => s.id === 'b').building)
-  })
-  it('assigns each building deterministically from the entry id', () => {
-    expect(w.sites.find(s => s.id === 'a').building).toBe(buildingFor({ id: 'a', featured: true }))
-    expect(w.sites.find(s => s.id === 'b').building).toBe(buildingFor({ id: 'b' }))
-  })
-  it('sizes each site footprint to its building', () => {
-    const inn = buildOverworld({ entries: [{ id: 'inn-co', visible: true, featured: true, date: { en: '2026' }, title: {}, company: 'X' }] }, biomeForYear)
-    const s = inn.sites[0]
-    if (s.building === 'inn') { expect(s.w).toBe(150); expect(s.h).toBe(120) }
-    expect(s.w).toBeGreaterThan(0)
-    expect(s.h).toBeGreaterThan(0)
+    expect(siteFor(w, 'b').bi).toBe('pradera')
+    expect(siteFor(w, 'a').bi).toBe('castillo')
   })
   it('places a barn landmark at the farm spawn', () => {
     expect(w.farmBuilding.building).toBe('barn')
     expect(w.farmBuilding.w).toBeGreaterThan(0)
   })
-  it('exposes ponds inside world bounds, clear of every building footprint', () => {
+  it('exposes ponds inside world bounds', () => {
     expect(w.ponds.length).toBeGreaterThan(0)
     w.ponds.forEach(p => {
       expect(p.x - p.r).toBeGreaterThan(0)
       expect(p.x + p.r).toBeLessThan(w.worldW)
       expect(p.y - p.r).toBeGreaterThan(0)
       expect(p.y + p.r).toBeLessThan(w.worldH)
-      w.sites.forEach(s => {
-        expect(Math.hypot(p.x - s.cx, p.y - s.cy)).toBeGreaterThan(p.r + Math.max(s.w, s.h) / 2)
-      })
     })
   })
   it('places an animated windmill at the farm, clear of the spawn column', () => {
@@ -90,16 +68,67 @@ describe('buildOverworld', () => {
     const towerRight = w.farmWindmill.cx - w.farmWindmill.w / 2 + w.farmWindmill.w * (69 / 128)
     expect(towerRight < w.farm.x - 12 || w.farmWindmill.cx - w.farmWindmill.w / 2 > w.farm.x + 12).toBe(true)
   })
-  it('flags injected side-projects as hidden', () => {
-    const w3 = buildOverworld(JSON_FIXTURE, biomeForYear, { sideProjects: [{ co: 'Mr. Yoker', title: { en: 'Indie', es: 'Indie' }, date: { en: 'side', es: 'propio' }, tech: ['Astro'] }] })
+  it('flags injected side-projects as hidden, with a building the game draws itself', () => {
+    const w3 = build(JSON_FIXTURE, { sideProjects: [{ co: 'Mr. Yoker', title: { en: 'Indie', es: 'Indie' }, date: { en: 'side', es: 'propio' }, tech: ['Astro'] }] })
     expect(w3.hiddenSites).toHaveLength(1)
     expect(w3.hiddenSites[0].hidden).toBe(true)
+    expect(w3.hiddenSites[0].building).toBeTruthy()
+  })
+})
+
+// Per docs/adr/0001 the map is the only source of houses: a `door:<id>` object placed in the editor
+// gives an experience its position, footprint and art; the CV entry gives everything else.
+describe('buildOverworld builds houses from the map alone', () => {
+  it('places the house where the map put it', () => {
+    const s = siteFor(build(), 'a')
+    expect(s.cx).toBe(1700)
+    // The editor anchors an object by its BOTTOM edge; a site's cy is its top, the way the barn's is
+    // (cy = anchor.y - 110, drawn downward by its height). Converting is not optional: skip it and
+    // every authored house floats one sprite-height above its own shadow.
+    expect(s.cy).toBe(700 - 160)
+    expect({ w: s.w, h: s.h }).toEqual({ w: 120, h: 160 })
+  })
+
+  it('marks it authored, and leaves it no building sprite to draw', () => {
+    const s = siteFor(build(), 'a')
+    expect(s.authored).toBe(true)
+    expect(s.building).toBeNull()
+  })
+
+  it('keeps every other field of the experience', () => {
+    const s = siteFor(build(), 'a')
+    expect(s.co).toBe('Soldife')
+    expect(s.title).toEqual({ en: 'Arch', es: 'Arq' })
+    expect(s.tech).toEqual(['Java'])
+  })
+
+  // The import refuses a visible experience without a door, so the game never meets one. If it did,
+  // there is no generator left to invent a house for it.
+  it('leaves an experience with no door out of the world', () => {
+    expect(build(JSON_FIXTURE, { doors: [door()] }).sites.map(s => s.id)).toEqual(['a'])
+  })
+
+  it('ignores a door naming an experience that is not visible, or not there at all', () => {
+    const world = build(JSON_FIXTURE, { doors: [...DOORS, door({ id: 'h', uid: 'U8' }), door({ id: 'nope', uid: 'U9' })] })
+    expect(world.sites.map(s => s.id).sort()).toEqual(['a', 'b'])
+  })
+
+  it('ignores an interactable that is not a door', () => {
+    const world = build(JSON_FIXTURE, { doors: [door(), { uid: 'U1', kind: 'npc', id: 'b', x: 10, y: 10 }] })
+    expect(siteFor(world, 'b')).toBeUndefined()
+  })
+
+  // With no footprint there is no collision box and no door point; a house the player walks through
+  // is worse than none, and the import measures every door anyway.
+  it('ignores a door that carries no footprint', () => {
+    const world = build(JSON_FIXTURE, { doors: [door(), { uid: 'U4', kind: 'door', id: 'b', x: 400, y: 600 }] })
+    expect(siteFor(world, 'b')).toBeUndefined()
   })
 })
 
 describe('roads', () => {
   const SIDE_PROJECTS = [{ co: 'Mr. Yoker', title: { en: 'Indie', es: 'Indie' }, date: { en: 'side', es: 'propio' }, tech: ['Astro'] }]
-  const wr = buildOverworld(JSON_FIXTURE, biomeForYear, { sideProjects: SIDE_PROJECTS })
+  const wr = build(JSON_FIXTURE, { sideProjects: SIDE_PROJECTS })
 
   it('exposes a non-empty roads array alongside the spine path', () => {
     expect(Array.isArray(wr.roads)).toBe(true)
@@ -117,19 +146,19 @@ describe('roads', () => {
 
   it('gives every visible site a non-hidden spur segment whose one endpoint is its doorPoint', () => {
     wr.sites.forEach(s => {
-      const door = doorPoint(s)
-      const spur = wr.roads.find(r => !r.hidden && r.a.x === door.x && r.a.y === door.y)
+      const d = doorPoint(s)
+      const spur = wr.roads.find(r => !r.hidden && r.a.x === d.x && r.a.y === d.y)
       expect(spur, `no spur found for site ${s.id}`).toBeDefined()
     })
   })
 
   it('gives every hidden POI a loop of two hidden segments that touch the spine at distinct points', () => {
     wr.hiddenSites.forEach(hs => {
-      const door = doorPoint(hs)
+      const d = doorPoint(hs)
       const legs = wr.roads.filter(r => r.hidden
-        && ((r.a.x === door.x && r.a.y === door.y) || (r.b.x === door.x && r.b.y === door.y)))
+        && ((r.a.x === d.x && r.a.y === d.y) || (r.b.x === d.x && r.b.y === d.y)))
       expect(legs).toHaveLength(2)
-      const spineTouch = leg => (leg.a.x === door.x && leg.a.y === door.y ? leg.b : leg.a)
+      const spineTouch = leg => (leg.a.x === d.x && leg.a.y === d.y ? leg.b : leg.a)
       const [t1, t2] = legs.map(spineTouch)
       expect(t1).not.toEqual(t2)
       expect(wr.path).toContainEqual(t1)
@@ -138,32 +167,27 @@ describe('roads', () => {
   })
 
   it('is deterministic — rebuilding the same input yields identical road segments', () => {
-    const wr2 = buildOverworld(JSON_FIXTURE, biomeForYear, { sideProjects: SIDE_PROJECTS })
-    expect(wr2.roads).toEqual(wr.roads)
+    expect(build(JSON_FIXTURE, { sideProjects: SIDE_PROJECTS }).roads).toEqual(wr.roads)
   })
 })
 
-describe('buildOverworld with authored anchors', () => {
-  const json = { entries: [{ id: 'a', company: 'A', date: { en: '2020' }, visible: true }] }
-  const biomeForYear = () => 'pradera'
-
-  it('keeps the built-in anchors when none are supplied', () => {
-    const w = buildOverworld(json, biomeForYear)
-    expect(w.farm).toEqual({ x: 360, y: 1120 })
+describe('buildOverworld reads its towns from the map anchors', () => {
+  it('puts the farm where the map anchors it', () => {
+    expect(build().farm).toEqual(ANCHORS.farm)
   })
-  it('overrides only the biomes present in the authored anchors', () => {
-    const w = buildOverworld(json, biomeForYear, { anchors: { farm: { x: 500, y: 900 } } })
-    expect(w.farm).toEqual({ x: 500, y: 900 })
-    expect(w.regions.find(r => r.bi === 'cyber')).toMatchObject({ x: 1360, y: 1040 })
-  })
-  it('moves the site ring with its authored anchor', () => {
-    const base = buildOverworld(json, biomeForYear)
-    const moved = buildOverworld(json, biomeForYear, { anchors: { pradera: { x: 1000, y: 1000 } } })
-    expect(moved.sites[0].cx).not.toBeCloseTo(base.sites[0].cx)
-  })
-  it('re-routes the road spine through the authored anchor', () => {
-    const moved = buildOverworld(json, biomeForYear, { anchors: { pradera: { x: 1000, y: 1000 } } })
+  it('re-routes the road spine through a moved anchor', () => {
+    const moved = build(JSON_FIXTURE, { anchors: { ...ANCHORS, pradera: { x: 1000, y: 1000 } } })
     expect(moved.path).toContainEqual({ x: 1000, y: 1000 })
+    expect(moved.regions.find(r => r.bi === 'pradera')).toMatchObject({ x: 1000, y: 1000 })
+  })
+  // No built-in positions remain to fall back on: a map missing a town would silently put that era
+  // back where the code once guessed, so it fails and says which one.
+  it('refuses a map that lays no anchor for a town, naming it', () => {
+    const { selva, ...rest } = ANCHORS
+    expect(() => build(JSON_FIXTURE, { anchors: rest })).toThrow(/selva/)
+  })
+  it('refuses a world built with no anchors at all', () => {
+    expect(() => buildOverworld(JSON_FIXTURE, biomeForYear, { doors: DOORS })).toThrow(/farm/)
   })
 })
 
@@ -181,115 +205,21 @@ describe('projectOntoSpine', () => {
   })
 })
 
-// Authored houses. Per docs/adr/0001, the map owns the world and this generator is the fallback:
-// an experience with a `door:<id>` object placed in the editor takes its position, its footprint and
-// its art from the map, and everything else keeps being computed exactly as before.
-describe('buildOverworld honours authored doors', () => {
-  // interactables.json shape, already in game pixels with the sprite's footprint measured at import.
-  const door = (over = {}) => ({ uid: 'U3', kind: 'door', id: 'a', x: 1000, y: 700, w: 120, h: 160, ...over })
-  const build = (doors) => buildOverworld(JSON_FIXTURE, biomeForYear, { doors })
-  const siteFor = (world, id) => world.sites.find(s => s.id === id)
-
-  it('places the authored house where the map put it', () => {
-    const s = siteFor(build([door()]), 'a')
-    expect(s.cx).toBe(1000)
-    // The editor anchors an object by its BOTTOM edge; a site's cy is its top, the way the barn's is
-    // (cy = anchor.y - 110, drawn downward by its height). Converting is not optional: skip it and
-    // every authored house floats one sprite-height above its own shadow.
-    expect(s.cy).toBe(700 - 160)
-    expect({ w: s.w, h: s.h }).toEqual({ w: 120, h: 160 })
-  })
-
-  it('marks it authored, and leaves it no building sprite to draw', () => {
-    const s = siteFor(build([door()]), 'a')
-    expect(s.authored).toBe(true)
-    expect(s.building).toBeNull()
-  })
-
-  it('keeps every other field of the experience', () => {
-    const s = siteFor(build([door()]), 'a')
-    expect(s.co).toBe('Soldife')
-    expect(s.title).toEqual({ en: 'Arch', es: 'Arq' })
-    expect(s.tech).toEqual(['Java'])
-    expect(s.bi).toBe(siteFor(buildOverworld(JSON_FIXTURE, biomeForYear), 'a').bi)
-  })
-
-  it('leaves an unauthored experience exactly where the generator put it', () => {
-    const before = siteFor(buildOverworld(JSON_FIXTURE, biomeForYear), 'b')
-    const after = siteFor(build([door()]), 'b')
-    expect({ cx: after.cx, cy: after.cy, building: after.building }).toEqual({ cx: before.cx, cy: before.cy, building: before.building })
-  })
-
-  // The ring exists to space out the houses a biome has to fit. An authored house has left the ring,
-  // so it must not count toward it — otherwise it reserves a slot nobody stands in and the remaining
-  // houses spread around a gap.
-  it('does not let an authored house reserve a slot in its biome ring', () => {
-    const many = {
-      entries: [
-        { id: 'x', visible: true, date: { en: '2007' }, title: { en: 'A', es: 'A' }, company: 'X', tech: [] },
-        { id: 'y', visible: true, date: { en: '2007' }, title: { en: 'B', es: 'B' }, company: 'Y', tech: [] },
-      ],
-    }
-    const alone = buildOverworld({ entries: [many.entries[1]] }, biomeForYear)
-    const withAuthored = buildOverworld(many, biomeForYear, { doors: [door({ id: 'x' })] })
-    const y = withAuthored.sites.find(s => s.id === 'y')
-    expect({ cx: y.cx, cy: y.cy }).toEqual({ cx: alone.sites[0].cx, cy: alone.sites[0].cy })
-  })
-
-  it('ignores a door naming an experience that is not visible, or not there at all', () => {
-    const world = build([door({ id: 'h' }), door({ id: 'nope', uid: 'U9' })])
-    expect(world.sites.map(s => s.id).sort()).toEqual(['a', 'b'])
-    expect(world.sites.every(s => !s.authored)).toBe(true)
-  })
-
-  it('behaves exactly as before when nothing is authored', () => {
-    const plain = buildOverworld(JSON_FIXTURE, biomeForYear)
-    for (const doors of [undefined, null, []]) {
-      expect(buildOverworld(JSON_FIXTURE, biomeForYear, { doors }).sites).toEqual(plain.sites)
-    }
-  })
-
-  it('ignores an interactable that is not a door', () => {
-    const world = build([{ uid: 'U1', kind: 'npc', id: 'a', x: 10, y: 10 }])
-    expect(world.sites.find(s => s.id === 'a').authored).toBeUndefined()
-  })
-
-  // A door with no measured footprint cannot define collision or a door point, so it is not enough
-  // to place a house — better the generator's known-good geometry than a zero-sized building the
-  // player walks through.
-  it('falls back to the generator when a door carries no footprint', () => {
-    const before = siteFor(buildOverworld(JSON_FIXTURE, biomeForYear), 'a')
-    const s = siteFor(build([{ uid: 'U3', kind: 'door', id: 'a', x: 1000, y: 700 }]), 'a')
-    expect({ cx: s.cx, cy: s.cy }).toEqual({ cx: before.cx, cy: before.cy })
-    expect(s.authored).toBeUndefined()
-  })
-
-  // The roads are derived, not authored: buildRoads reads site positions, so moving a house moves
-  // its spur with it and nothing else has to be told.
-  it('runs its road spur to the authored door', () => {
-    const world = build([door()])
-    const s = siteFor(world, 'a')
-    const d = doorPoint(s)
-    expect(world.roads.some(r => r.a.x === d.x && r.a.y === d.y)).toBe(true)
-  })
-})
-
 // The world's extent comes from the map when there is one (docs/adr/0001).
 describe('buildOverworld takes its size from the map', () => {
   it('uses the authored world when given one', () => {
-    const w = buildOverworld(JSON_FIXTURE, biomeForYear, { world: { w: 1920, h: 1440 } })
+    const w = build(JSON_FIXTURE, { world: { w: 1920, h: 1440 } })
     expect({ w: w.worldW, h: w.worldH }).toEqual({ w: 1920, h: 1440 })
   })
 
   it('falls back to the built-in constants without one', () => {
-    const w = buildOverworld(JSON_FIXTURE, biomeForYear)
+    const w = build()
     expect({ w: w.worldW, h: w.worldH }).toEqual({ w: WORLD_W, h: WORLD_H })
   })
 
   it('ignores a half-measured world rather than shrinking to nothing', () => {
     for (const world of [{ w: 0, h: 100 }, { w: 100 }, {}]) {
-      const w = buildOverworld(JSON_FIXTURE, biomeForYear, { world })
-      expect(w.worldW).toBe(WORLD_W)
+      expect(build(JSON_FIXTURE, { world }).worldW).toBe(WORLD_W)
     }
   })
 })

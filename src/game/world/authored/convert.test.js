@@ -910,10 +910,12 @@ describe('validateMap checks door coverage when it is given the CV', () => {
     expect(() => validateMap(map, deps({ experienceIds: ['tul-2022'] }))).not.toThrow()
   })
 
-  // An unauthored experience is the normal state during migration, not a failure.
-  it('says nothing about an experience with no door yet', () => {
+  // The generator is gone (docs/adr/0001): a visible experience with no door would have no house at
+  // all, so the import stops and names it instead of shipping a career with a job missing.
+  it('refuses a visible experience that has no door', () => {
     const map = base([obj(['door:tul-2022'])])
-    expect(() => validateMap(map, deps({ experienceIds: ['tul-2022', 'blerify-2023'] }))).not.toThrow()
+    expect(() => validateMap(map, deps({ experienceIds: ['tul-2022', 'blerify-2023'] })))
+      .toThrow(/blerify-2023/)
   })
 
   // The CV is optional: convert.test's own fixtures, and any caller that only wants the geometry

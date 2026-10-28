@@ -97,11 +97,9 @@ async function main() {
   console.log(`imported: ${Object.keys(out.manifest.frames).length} frames, ${cells} cells, `
     + `${out.placements.length} placements, ${Object.keys(out.clips).length} clips, `
     + `${Object.keys(out.tiles.anchors).length} anchors, ${out.interactables.length} interactables`)
-  // Coverage is the migration's progress bar: how many jobs have a house placed for them. Missing
-  // ones are still generated procedurally, so this is a number to watch rather than a failure.
+  // validateMap has already refused a missing or dead door; this line is the receipt.
   const cov = doorCoverage(out.interactables, experienceIds)
-  console.log(`authored houses: ${cov.authored.length} of ${experienceIds.length} experiences`
-    + (cov.missing.length ? ` — still generated: ${cov.missing.join(', ')}` : ' — the generator is no longer needed'))
+  console.log(`authored houses: ${cov.authored.length} of ${experienceIds.length} experiences`)
 }
 
 main().catch(e => { console.error(e.message); process.exit(1) })

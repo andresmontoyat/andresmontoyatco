@@ -1,14 +1,9 @@
 import { doorPoint } from '../entities/site.js'
 import { CONFIG } from '../config.js'
 
-const BUILT_IN_ANCHORS = {
-  farm: { x: 360, y: 1120 },
-  pradera: { x: 380, y: 700 },
-  desierto: { x: 820, y: 400 },
-  selva: { x: 1300, y: 560 },
-  cyber: { x: 1360, y: 1040 },
-  castillo: { x: 1820, y: 760 },
-}
+// Every one of these must be laid in the map as an `anchor:<name>` layer (docs/adr/0001). The
+// spine runs through them in this order; every one but the farm is an era with its own region.
+const ANCHOR_NAMES = ['farm', 'pradera', 'desierto', 'selva', 'cyber', 'castillo']
 const HIDDEN_POS = [{ x: 1620, y: 1180 }, { x: 1830, y: 1200 }]
 // Ponds are tuned in src/game/config.js (CONFIG.pond.ponds) — position + water radius.
 const PONDS = CONFIG.pond.ponds
@@ -21,47 +16,18 @@ export function startYear(entry) {
   return m ? Number(m[0]) : 0
 }
 
-function ringPos(center, i, n) {
-  if (n <= 1) return { cx: center.x, cy: center.y - 40 }
-  const ang = (-0.5 + i / (n - 0.001)) * Math.PI * 1.1 - 0.6
-  return { cx: center.x + Math.cos(ang) * 155 + (i - (n - 1) / 2) * 18, cy: center.y + Math.sin(ang) * 108 - 40 }
-}
+// The farm's barn and the hidden side-project POIs are the only buildings the game still draws
+// itself: the barn is not a company, and the POIs are a Konami secret the map does not know about.
+const BARN = { w: 104, h: 117 }
+const POI_BUILDING = { name: 'house_lime_blue', w: 66, h: 88 }
 
-// Regular companies each get one of these six single-house sprites; featured companies get a
-// landmark. The sprite is chosen by a stable hash of the entry's id (falling back to company name)
-// so the same company always reads as the same building regardless of sort order or how many
-// others share its biome — no positional index, so reordering the data never reshuffles the town.
-const HOUSES = ['house', 'house_wood_red', 'house_stone_blue', 'house_stone_red', 'house_lime_blue', 'house_lime_red']
-const LANDMARKS = ['church', 'inn', 'blacksmith']
-// Draw footprint per building frame — each is the sprite's native aspect scaled to world size, so
-// nothing stretches. Also the collision box + label anchor (buildingSolids / doorPoint read w,h).
-const BUILDING_DIMS = {
-  house: { w: 66, h: 88 }, house_wood_red: { w: 66, h: 88 }, house_stone_blue: { w: 66, h: 88 },
-  house_stone_red: { w: 66, h: 88 }, house_lime_blue: { w: 66, h: 88 }, house_lime_red: { w: 66, h: 88 },
-  church: { w: 98, h: 126 }, inn: { w: 150, h: 120 }, blacksmith: { w: 120, h: 96 }, barn: { w: 104, h: 117 },
-}
-
-function hashStr(s) {
-  let h = 0
-  for (let i = 0; i < s.length; i += 1) h = (Math.imul(h, 31) + s.charCodeAt(i)) | 0
-  return h >>> 0
-}
-
-export function buildingFor(e) {
-  const set = e.featured ? LANDMARKS : HOUSES
-  return set[hashStr(String(e.id || e.co || e.company || '')) % set.length]
-}
-
-function toSite(e, bi, pos, hidden) {
-  const featured = !!e.featured
-  const building = buildingFor(e)
-  const dim = BUILDING_DIMS[building]
+function toHiddenSite(e, pos) {
   return {
     id: e.id, co: e.company || e.co, title: e.title, date: e.date,
-    metric: e.metric || null, tech: e.tech || [], bi,
-    type: featured ? 'castle' : 'house', building,
-    cx: pos.cx, cy: pos.cy, w: dim.w, h: dim.h,
-    seen: false, hidden: !!hidden,
+    metric: e.metric || null, tech: e.tech || [], bi: 'cyber',
+    type: 'house', building: POI_BUILDING.name,
+    cx: pos.cx, cy: pos.cy, w: POI_BUILDING.w, h: POI_BUILDING.h,
+    seen: false, hidden: true,
   }
 }
 
@@ -156,7 +122,7 @@ function buildRoads(path, sites, hiddenSites) {
 // Options rather than five positionals: the tail of this signature had become "what the map
 // contributes", and every caller had to count commas to place a null.
 export function buildOverworld(json, biomeForYear, opts = {}) {
-  const { sideProjects = [], anchors: authoredAnchors = null, doors: authoredDoors = null, world = null } = opts
+  const { sideProjects = [], anchors = null, doors: authoredDoors = null, world = null } = opts
   // The map owns the world's extent when it has one; the constants are what is left for a caller
   // with no map — tests, and the game before an import has ever run. A half-measured world is
   // ignored rather than honoured: shrinking the world to nothing would strand every site outside it.
@@ -165,40 +131,25 @@ export function buildOverworld(json, biomeForYear, opts = {}) {
   const sized = world && world.w > 0 && world.h > 0 ? world : null
   const worldW = sized ? sized.w : WORLD_W
   const worldH = sized ? sized.h : WORLD_H
-  // Authored anchors (painted as `anchor:<biome>` layers in the world-editor) override the
-  // built-in positions per biome; anything not painted keeps its constant. Everything downstream
-  // — ringPos, nearestBiome, buildRoads — reads from here, so moving one marker moves that town,
-  // its roads and its biome boundary together.
-  const ANCHORS = { ...BUILT_IN_ANCHORS, ...(authoredAnchors || {}) }
-  // Houses the map authored, keyed by the experience each one names. A door with no measured
-  // footprint is ignored rather than honoured: with no w/h there is no collision box and no door
-  // point, and the generator's known-good geometry beats a zero-sized building the player walks
-  // through. A door naming an entry that is hidden or absent simply never matches.
+  // The map names where each town stands. Everything downstream — nearestBiome, buildRoads, the
+  // spine — reads from here, so moving one marker in the editor moves that town, its roads and its
+  // biome boundary together. There is no built-in fallback: a map missing one fails loudly here
+  // rather than quietly putting an era back where the code once guessed.
+  const ANCHORS = anchors || {}
+  const absent = ANCHOR_NAMES.filter(k => !ANCHORS[k])
+  if (absent.length) throw new Error(`the map lays no anchor for: ${absent.join(', ')} — add an anchor:<name> layer in the editor`)
+  // Houses come from the map alone. A door without a measured footprint cannot give a collision box
+  // or a door point, and an experience with no door has no house — the import refuses both, so here
+  // they are simply not in the world.
   const doors = new Map()
   for (const d of authoredDoors || []) {
     if (d && d.kind === 'door' && d.id && d.w && d.h) doors.set(d.id, d)
   }
-  const visible = json.entries.filter(e => e.visible !== false)
+  const sites = json.entries.filter(e => e.visible !== false && doors.has(e.id))
     .map(e => ({ e, y: startYear(e) })).sort((a, b) => a.y - b.y)
-  // The ring spaces out the houses a biome still has to fit, so it counts only the ones the
-  // generator is placing. An authored house that kept its slot would reserve a gap nobody stands in.
-  const ringCount = {}
-  for (const { e, y } of visible) {
-    if (doors.has(e.id)) continue
-    const bi = biomeForYear(y)
-    ringCount[bi] = (ringCount[bi] || 0) + 1
-  }
-  const byBiome = {}
-  const sites = visible.map(({ e, y }) => {
-    const bi = biomeForYear(y)
-    const authored = doors.get(e.id)
-    if (authored) return toAuthoredSite(e, bi, authored)
-    byBiome[bi] = (byBiome[bi] || 0)
-    const pos = ringPos(ANCHORS[bi], byBiome[bi]++, ringCount[bi])
-    return toSite(e, bi, pos, false)
-  })
+    .map(({ e, y }) => toAuthoredSite(e, biomeForYear(y), doors.get(e.id)))
   const hiddenSites = sideProjects.map((sp, i) =>
-    toSite(sp, 'cyber', { cx: HIDDEN_POS[i % HIDDEN_POS.length].x, cy: HIDDEN_POS[i % HIDDEN_POS.length].y }, true))
+    toHiddenSite(sp, { cx: HIDDEN_POS[i % HIDDEN_POS.length].x, cy: HIDDEN_POS[i % HIDDEN_POS.length].y }))
   const regions = Object.keys(ANCHORS).filter(k => k !== 'farm').map(k => ({ bi: k, ...ANCHORS[k] }))
   const path = [ANCHORS.farm, ANCHORS.pradera, ANCHORS.desierto, ANCHORS.selva, ANCHORS.cyber, ANCHORS.castillo]
   // `path` is kept as-is (the intro camera / other callers may still want the plain spine
@@ -209,7 +160,7 @@ export function buildOverworld(json, biomeForYear, opts = {}) {
   // barn's right edge (cx + w/2) stays left of the spawn column so its collision solid never traps
   // the player on frame 1.
   const farmBuilding = {
-    building: 'barn', cx: ANCHORS.farm.x - 100, cy: ANCHORS.farm.y - 110, ...BUILDING_DIMS.barn,
+    building: 'barn', cx: ANCHORS.farm.x - 100, cy: ANCHORS.farm.y - 110, ...BARN,
   }
   // Animated windmill on the other side of the spawn from the barn, footprint clear of both the
   // spawn box and the barn (drawn specially by scene2d — static tower + rotating sail overlay).

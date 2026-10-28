@@ -16482,6 +16482,66 @@
       ]
     },
     {
+      "name": "anchor:pradera",
+      "type": "objects",
+      "objects": [
+        {
+          "frame": "Outdoor decoration/Signs.png#5",
+          "x": 190,
+          "y": 350,
+          "uid": "U704"
+        }
+      ]
+    },
+    {
+      "name": "anchor:desierto",
+      "type": "objects",
+      "objects": [
+        {
+          "frame": "Outdoor decoration/Signs.png#5",
+          "x": 410,
+          "y": 200,
+          "uid": "U707"
+        }
+      ]
+    },
+    {
+      "name": "anchor:selva",
+      "type": "objects",
+      "objects": [
+        {
+          "frame": "Outdoor decoration/Signs.png#5",
+          "x": 650,
+          "y": 280,
+          "uid": "U710"
+        }
+      ]
+    },
+    {
+      "name": "anchor:cyber",
+      "type": "objects",
+      "objects": [
+        {
+          "frame": "Outdoor decoration/Signs.png#5",
+          "x": 680,
+          "y": 520,
+          "uid": "U713"
+        }
+      ]
+    },
+    {
+      "name": "anchor:castillo",
+      "type": "objects",
+      "objects": [
+        {
+          "frame": "Outdoor decoration/Signs.png#5",
+          "x": 910,
+          "y": 380,
+          "uid": "U716"
+        }
+      ]
+    },
+    {
       "name": "decor",
       "type": "objects",
       "objects": [

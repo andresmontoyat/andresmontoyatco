@@ -59,6 +59,17 @@ for (const n of ['Capa 3', 'Capa 7', 'Capa 5', 'road', 'decor']) { const l = byN
 const props = byName('props')
 for (const o of [...props.items]) if (o.ref.path.includes('Particle')) M.removeObject(map, props.id, o.id)
 
+// ── era anchors: the map names where each era's town stands (docs/adr/0001). The positions are the
+// ones the game used to hard-code, in editor pixels; once laid, they are the author's to move. A
+// marker sprite is required by the layer shape but never drawn — anchor layers are skipped by the
+// placement pipeline.
+const ERA_ANCHORS = { pradera: [190, 350], desierto: [410, 200], selva: [650, 280], cyber: [680, 520], castillo: [910, 380] }
+for (const [era, [x, y]] of Object.entries(ERA_ANCHORS)) {
+  if (byName(`anchor:${era}`)) continue
+  const l = M.addObjectLayer(map, `anchor:${era}`)
+  M.addObject(map, l.id, { path: 'Outdoor decoration/Signs.png', i: 5 }, x, y)
+}
+
 // ── seeded rng + value noise ───────────────────────────────────────────────────────────────────
 let seed = 7
 const rand = () => { seed = (seed + 0x6d2b79f5) | 0; let t = Math.imul(seed ^ (seed >>> 15), 1 | seed); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296 }

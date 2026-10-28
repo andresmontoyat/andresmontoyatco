@@ -5,12 +5,16 @@ import path from 'node:path'
 import fs from 'node:fs/promises'
 import { buildOverworld } from '../src/game/world/overworld.js'
 import { biomeForYear } from '../src/game/world/biomes.js'
+import { worldSizeOf } from '../src/game/world/authored/index.js'
 
 const ROOT = process.cwd()
 const OUT = path.join(ROOT, 'public', 'game', 'world-snapshot.json')
 
 const experience = JSON.parse(await fs.readFile(path.join(ROOT, 'src', 'data', 'experience.json'), 'utf8'))
-const w = buildOverworld(experience, biomeForYear, [])
+// The world comes from the map (docs/adr/0001): its anchors, its doors and its size.
+const tiles = JSON.parse(await fs.readFile(path.join(ROOT, 'src', 'game', 'world', 'authored', 'career.tiles.json'), 'utf8'))
+const doors = JSON.parse(await fs.readFile(path.join(ROOT, 'src', 'data', 'interactables.json'), 'utf8'))
+const w = buildOverworld(experience, biomeForYear, { anchors: tiles.anchors, doors, world: worldSizeOf(tiles) })
 
 const snapshot = {
   worldW: w.worldW,

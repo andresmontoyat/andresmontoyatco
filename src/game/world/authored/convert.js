@@ -389,9 +389,14 @@ export function validateMap(map, { dimsOf, exists, experienceIds = null }) {
   anchorsFrom(map.layers, 1, map.world)
   const interactables = interactablesFrom(map.layers, 1)
   if (experienceIds) {
-    const { dead } = doorCoverage(interactables, experienceIds)
+    const { dead, missing } = doorCoverage(interactables, experienceIds)
     if (dead.length) {
       throw new Error(`door tag(s) naming no visible experience: ${dead.join(', ')} — fix the tag in the editor, or the entry's id in experience.json`)
+    }
+    // No generator stands behind the map any more (docs/adr/0001): an experience without a door
+    // would simply have no house.
+    if (missing.length) {
+      throw new Error(`visible experience(s) with no house in the map: ${missing.join(', ')} — place one tagged door:<id> in the editor, or hide the entry in experience.json`)
     }
   }
   if (!map.slices) {
