@@ -115,6 +115,7 @@ progress:
 | fast | Career RPG roadmap design doc (5 phases, scope cuts, open decisions) | 2026-10-20 | d64d7eb | — |
 | fast | Map visual fixes: authored grass leaves roads/ponds to the ground, one-tone era wash, labels only near the player; big tree strips cut and scaled 0.6 | 2026-10-22 | d6dc110, c9e9ebe | — |
 | fast | Map composition (B): road layer owns roads+decor, era wash fades at borders, career road + villages + groves authored via editor model; editor autotile inner-block fix (world-editor 64f21bb) | 2026-10-28 | 292dc11, 6fd6c59, f1fdea5 | — |
+| fast | Version map:compose (idempotent); roadmap phase 1: house generator retired, import refuses houseless experiences, era anchors in the map, ADR 0002 (map can lay roads) | 2026-10-28 | efa2cb1, 422904e, 627bad0 | — |
 
 ## Project Reference
 
@@ -129,7 +130,7 @@ See: .planning/PROJECT.md (refreshed 2026-07-19 — v5 Astro Migration milestone
 Phase: 21 of 27 (Foundation — Astro scaffold, i18n routing & layout shell)
 Plan: TBD — not yet planned
 Status: Roadmap created, ready to plan
-Last activity: 2026-10-28 - Map composition B (fast)
+Last activity: 2026-10-28 - Roadmap phase 1: generator retired (fast)
 
 Progress: [░░░░░░░░░░] 0%
 
