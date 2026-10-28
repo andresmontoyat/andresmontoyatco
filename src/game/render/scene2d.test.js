@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import {
   nearestPathDist, nearestRoadDist, visibleTileRange, eraLabel, drawAuthoredTiles, drawTransformed,
-  buildingDrawable,
+  buildingDrawable, proceduralRoads,
 } from './scene2d.js'
 
 const path = [{ x: 0, y: 0 }, { x: 100, y: 0 }]
@@ -40,6 +40,21 @@ describe('nearestRoadDist', () => {
   })
   it('defaults to an empty segment set (Infinity distance) when roads is omitted', () => {
     expect(nearestRoadDist(undefined, 0, 0)).toBe(Infinity)
+  })
+})
+
+// The map can paint its own roads, on a tiles layer named 'road'. Then the generated roads to the
+// doors step aside; only the hidden POI loops stay, because the map does not know where those are.
+describe('proceduralRoads', () => {
+  const spur = { a: { x: 0, y: 0 }, b: { x: 10, y: 0 } }
+  const loop = { a: { x: 0, y: 0 }, b: { x: 0, y: 10 }, hidden: true }
+  const world = { roads: [spur, loop] }
+
+  it('keeps every generated road when the map paints none', () => {
+    expect(proceduralRoads({ world, authored: [{ name: 'suelo', cells: new Map() }] })).toEqual([spur, loop])
+  })
+  it('keeps only the hidden loops when the map has a road layer', () => {
+    expect(proceduralRoads({ world, authored: [{ name: 'road', cells: new Map() }] })).toEqual([loop])
   })
 })
 

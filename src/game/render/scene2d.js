@@ -105,9 +105,9 @@ export function regionsWithFarm(world) {
 // instead of the old flat rectangle. Neighbor checks only run for tiles that are actually on
 // path (the minority), so this stays cheap in the hot per-tile loop. Generalizes to every road
 // segment (spine + door spurs + POI loops) for free since it's built on nearestRoadDist.
-function resolvePathFrame(world, tx, ty, revealed) {
+function resolvePathFrame(roads, tx, ty, revealed) {
   const onPath = (nx, ny) => (
-    nearestRoadDist(world.roads, nx * TILE + TILE / 2, ny * TILE + TILE / 2, revealed) < PATH_THRESHOLD
+    nearestRoadDist(roads, nx * TILE + TILE / 2, ny * TILE + TILE / 2, revealed) < PATH_THRESHOLD
   )
   return pathTileName(onPath(tx, ty - 1), onPath(tx + 1, ty), onPath(tx, ty + 1), onPath(tx - 1, ty))
 }
@@ -134,8 +134,18 @@ function resolveWaterFrame(ponds, tx, ty) {
   return waterTileName(n, e, s, w)
 }
 
+// A map that paints its own roads (a tiles layer named 'road') owns them: the generated spurs to
+// the doors step aside so the two networks never overlap. The hidden POI loops stay, because the
+// map has no idea where those detours run until the Konami code reveals them.
+export function proceduralRoads(state) {
+  const roads = state.world.roads || []
+  const mapPaintsRoads = (state.authored || []).some(l => l.name === 'road')
+  return mapPaintsRoads ? roads.filter(r => r.hidden) : roads
+}
+
 function drawGround(ctx, state, cam, sprites) {
   const { world } = state
+  const roads = proceduralRoads(state)
   const anchors = regionsWithFarm(world)
   const { w: vw, h: vh } = viewportOf(ctx)
   const { x0, y0, x1, y1 } = visibleTileRange(cam, vw, vh, TILE)
@@ -149,9 +159,9 @@ function drawGround(ctx, state, cam, sprites) {
       if (water) {
         name = water
       } else {
-        const dist = nearestRoadDist(world.roads, wx, wy, state.revealed)
+        const dist = nearestRoadDist(roads, wx, wy, state.revealed)
         name = tileNameFor(bi, wx, wy, dist)
-        if (name === 'path') name = resolvePathFrame(world, tx, ty, state.revealed)
+        if (name === 'path') name = resolvePathFrame(roads, tx, ty, state.revealed)
       }
       const sx = tx * TILE - cam.x
       const sy = ty * TILE - cam.y
@@ -172,11 +182,11 @@ function drawGround(ctx, state, cam, sprites) {
 // drawGround, and the authored base layer paints grass over the whole map, so an authored cell
 // standing on either would hide it. Until the map paints its own roads and water (docs/adr/0001),
 // those cells are left to the ground.
-function groundOwnsCell(world, tx, ty, revealed) {
+function groundOwnsCell(world, roads, tx, ty, revealed) {
   const wx = tx * TILE + TILE / 2
   const wy = ty * TILE + TILE / 2
   if (pondAt(world.ponds, wx, wy) && resolveWaterFrame(world.ponds, tx, ty)) return true
-  return nearestRoadDist(world.roads, wx, wy, revealed) < PATH_THRESHOLD
+  return nearestRoadDist(roads, wx, wy, revealed) < PATH_THRESHOLD
 }
 
 // Authored terrain drawn on top of the procedural ground. Same viewport culling drawGround uses,
@@ -194,9 +204,10 @@ export function drawAuthoredTiles(ctx, state, cam, sprites) {
   const { x0, y0, x1, y1 } = visibleTileRange(cam, vw, vh, TILE)
   const { world } = state
   const anchors = world && world.regions ? regionsWithFarm(world) : null
+  const roads = world ? proceduralRoads(state) : []
   for (let ty = y0; ty < y1; ty += 1) {
     for (let tx = x0; tx < x1; tx += 1) {
-      if (world && groundOwnsCell(world, tx, ty, state.revealed)) continue
+      if (world && groundOwnsCell(world, roads, tx, ty, state.revealed)) continue
       const key = `${tx},${ty}`
       const sx = tx * TILE - cam.x
       const sy = ty * TILE - cam.y

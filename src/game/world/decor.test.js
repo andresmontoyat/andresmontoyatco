@@ -15,6 +15,14 @@ const AQUATIC_TYPES = ['lilypad', 'cattail', 'kapybara', 'frog']
 const ALLOWED_TYPES = [...LAND_TYPES, ...AQUATIC_TYPES]
 
 describe('buildDecor', () => {
+  // A map that lays its own roads is composed by hand; a random scatter would drop trees on those
+  // roads. The pond life stays: it belongs to the ponds, which the game still owns.
+  it('leaves only the pond life when the scatter is off', () => {
+    const decor = buildDecor(world, 3, { scatter: false })
+    expect(decor.length).toBeGreaterThan(0)
+    decor.forEach(d => expect(AQUATIC_TYPES).toContain(d.type))
+  })
+
   it('is deterministic — same seed yields identical output', () => {
     expect(buildDecor(world, 7)).toEqual(buildDecor(world, 7))
   })

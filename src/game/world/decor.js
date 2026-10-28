@@ -70,8 +70,9 @@ function buildPondLife(ponds, rand) {
   })
 }
 
-export function buildDecor(world, seed = 1) {
+export function buildDecor(world, seed = 1, { scatter = true } = {}) {
   const rand = mulberry32(seed)
+  if (!scatter) return buildPondLife(world.ponds, rand)
   const rects = buildingRects(world)
   const circles = [{ x: world.farm.x, y: world.farm.y, r: FARM_CLEAR_RADIUS }, ...(world.ponds || [])]
   const count = Math.round(world.worldW * world.worldH * DENSITY)

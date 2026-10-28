@@ -115,10 +115,14 @@ export function createWorldRpg({
   // carries. Frame names, already baked into the atlas by the same import.
   world.clips = clips
   world.interactables = interactables
+  const authored = buildAuthoredIndex(authoredTiles)
+  // A map that lays its own roads (a tiles layer named 'road') was composed by hand: the random
+  // scatter steps aside, or it would drop trees on those roads. Pond life stays either way.
+  const scatter = !authored.some(l => l.name === 'road')
   const state = {
     world,
-    decor: buildDecor(world),
-    authored: buildAuthoredIndex(authoredTiles),
+    decor: buildDecor(world, 1, { scatter }),
+    authored,
     player: { x: world.farm.x, y: world.farm.y + 70, w: 24, h: 28, dir: 'down', moving: false, step: 0 },
     cam: { x: 0, y: 0 },
     dialog: createDialog(),
