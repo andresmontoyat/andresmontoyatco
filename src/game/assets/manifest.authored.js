@@ -14,11 +14,21 @@ export const AUTHORED_IMAGES = {
   "am_Buildings_Buildings_Unique_Buildings_Church_Church_Red": "/game/cute-fantasy/Buildings/Buildings/Unique_Buildings/Church/Church_Red.png",
   "am_Buildings_Buildings_Unique_Buildings_Inn_Inn_Blue": "/game/cute-fantasy/Buildings/Buildings/Unique_Buildings/Inn/Inn_Blue.png",
   "am_Buildings_Buildings_Unique_Buildings_Inn_Inn_Red": "/game/cute-fantasy/Buildings/Buildings/Unique_Buildings/Inn/Inn_Red.png",
+  "am_Outdoor_decoration_Benches": "/game/cute-fantasy/Outdoor%20decoration/Benches.png",
+  "am_Outdoor_decoration_Flowers": "/game/cute-fantasy/Outdoor%20decoration/Flowers.png",
+  "am_Outdoor_decoration_Lanter_Posts": "/game/cute-fantasy/Outdoor%20decoration/Lanter_Posts.png",
+  "am_Outdoor_decoration_Signs": "/game/cute-fantasy/Outdoor%20decoration/Signs.png",
+  "am_Outdoor_decoration_Well": "/game/cute-fantasy/Outdoor%20decoration/Well.png",
+  "am_Outdoor_decoration_barrels": "/game/cute-fantasy/Outdoor%20decoration/barrels.png",
   "am_Tiles_Grass_Grass_1_Middle": "/game/cute-fantasy/Tiles/Grass/Grass_1_Middle.png",
+  "am_Tiles_Grass_Grass_Tiles_1": "/game/cute-fantasy/Tiles/Grass/Grass_Tiles_1.png",
   "am_Trees_Big_Birch_Tree": "/game/cute-fantasy/Trees/Big_Birch_Tree.png",
-  "am_Trees_Big_Fruit_Tree": "/game/cute-fantasy/Trees/Big_Fruit_Tree.png",
   "am_Trees_Big_Oak_Tree": "/game/cute-fantasy/Trees/Big_Oak_Tree.png",
-  "am_Trees_Spruce_Needle_Particle": "/game/cute-fantasy/Trees/Spruce_Needle_Particle.png"
+  "am_Trees_Big_Spruce_tree": "/game/cute-fantasy/Trees/Big_Spruce_tree.png",
+  "am_Trees_Medium_Birch_Tree": "/game/cute-fantasy/Trees/Medium_Birch_Tree.png",
+  "am_Trees_Medium_Fruit_Tree": "/game/cute-fantasy/Trees/Medium_Fruit_Tree.png",
+  "am_Trees_Medium_Oak_Tree": "/game/cute-fantasy/Trees/Medium_Oak_Tree.png",
+  "am_Trees_Medium_Spruce_Tree": "/game/cute-fantasy/Trees/Medium_Spruce_Tree.png"
 }
 
 export const AUTHORED_FRAMES = {
@@ -127,6 +137,118 @@ export const AUTHORED_FRAMES = {
     "w": 240,
     "h": 192
   },
+  "am_Outdoor_decoration_Benches_0": {
+    "img": "am_Outdoor_decoration_Benches",
+    "x": 2,
+    "y": 6,
+    "w": 30,
+    "h": 21
+  },
+  "am_Outdoor_decoration_Benches_1": {
+    "img": "am_Outdoor_decoration_Benches",
+    "x": 33,
+    "y": 6,
+    "w": 31,
+    "h": 21
+  },
+  "am_Outdoor_decoration_Flowers_0": {
+    "img": "am_Outdoor_decoration_Flowers",
+    "x": 4,
+    "y": 4,
+    "w": 7,
+    "h": 10
+  },
+  "am_Outdoor_decoration_Flowers_2": {
+    "img": "am_Outdoor_decoration_Flowers",
+    "x": 36,
+    "y": 4,
+    "w": 7,
+    "h": 10
+  },
+  "am_Outdoor_decoration_Flowers_22": {
+    "img": "am_Outdoor_decoration_Flowers",
+    "x": 36,
+    "y": 36,
+    "w": 7,
+    "h": 10
+  },
+  "am_Outdoor_decoration_Flowers_24": {
+    "img": "am_Outdoor_decoration_Flowers",
+    "x": 68,
+    "y": 36,
+    "w": 7,
+    "h": 10
+  },
+  "am_Outdoor_decoration_Flowers_31": {
+    "img": "am_Outdoor_decoration_Flowers",
+    "x": 20,
+    "y": 52,
+    "w": 7,
+    "h": 10
+  },
+  "am_Outdoor_decoration_Flowers_33": {
+    "img": "am_Outdoor_decoration_Flowers",
+    "x": 52,
+    "y": 52,
+    "w": 7,
+    "h": 10
+  },
+  "am_Outdoor_decoration_Flowers_4": {
+    "img": "am_Outdoor_decoration_Flowers",
+    "x": 68,
+    "y": 4,
+    "w": 7,
+    "h": 10
+  },
+  "am_Outdoor_decoration_Flowers_5": {
+    "img": "am_Outdoor_decoration_Flowers",
+    "x": 84,
+    "y": 1,
+    "w": 7,
+    "h": 14
+  },
+  "am_Outdoor_decoration_Flowers_7": {
+    "img": "am_Outdoor_decoration_Flowers",
+    "x": 116,
+    "y": 1,
+    "w": 7,
+    "h": 14
+  },
+  "am_Outdoor_decoration_Flowers_9": {
+    "img": "am_Outdoor_decoration_Flowers",
+    "x": 148,
+    "y": 1,
+    "w": 7,
+    "h": 14
+  },
+  "am_Outdoor_decoration_Lanter_Posts_0": {
+    "img": "am_Outdoor_decoration_Lanter_Posts",
+    "x": 4,
+    "y": 5,
+    "w": 10,
+    "h": 43
+  },
+  "am_Outdoor_decoration_Signs_5": {
+    "img": "am_Outdoor_decoration_Signs",
+    "x": 2,
+    "y": 152,
+    "w": 27,
+    "h": 40
+  },
+  "am_Outdoor_decoration_Well_0": {
+    "img": "am_Outdoor_decoration_Well",
+    "x": 2,
+    "y": 8,
+    "w": 27,
+    "h": 39
+  },
+  "am_Outdoor_decoration_barrels_0": {
+    "img": "am_Outdoor_decoration_barrels",
+    "x": 1,
+    "y": 11,
+    "w": 15,
+    "h": 21
+  },
   "am_Tiles_Grass_Grass_1_Middle_0_0": {
     "img": "am_Tiles_Grass_Grass_1_Middle",
     "x": 0,
@@ -134,12 +256,89 @@ export const AUTHORED_FRAMES = {
     "w": 16,
     "h": 16
   },
-  "am_Trees_Big_Birch_Tree_0_0": {
-    "img": "am_Trees_Big_Birch_Tree",
+  "am_Tiles_Grass_Grass_Tiles_1_0_5": {
+    "img": "am_Tiles_Grass_Grass_Tiles_1",
     "x": 0,
-    "y": 0,
-    "w": 32,
-    "h": 80
+    "y": 80,
+    "w": 16,
+    "h": 16
+  },
+  "am_Tiles_Grass_Grass_Tiles_1_0_6": {
+    "img": "am_Tiles_Grass_Grass_Tiles_1",
+    "x": 0,
+    "y": 96,
+    "w": 16,
+    "h": 16
+  },
+  "am_Tiles_Grass_Grass_Tiles_1_0_7": {
+    "img": "am_Tiles_Grass_Grass_Tiles_1",
+    "x": 0,
+    "y": 112,
+    "w": 16,
+    "h": 16
+  },
+  "am_Tiles_Grass_Grass_Tiles_1_0_8": {
+    "img": "am_Tiles_Grass_Grass_Tiles_1",
+    "x": 0,
+    "y": 128,
+    "w": 16,
+    "h": 16
+  },
+  "am_Tiles_Grass_Grass_Tiles_1_0_9": {
+    "img": "am_Tiles_Grass_Grass_Tiles_1",
+    "x": 0,
+    "y": 144,
+    "w": 16,
+    "h": 16
+  },
+  "am_Tiles_Grass_Grass_Tiles_1_1_5": {
+    "img": "am_Tiles_Grass_Grass_Tiles_1",
+    "x": 16,
+    "y": 80,
+    "w": 16,
+    "h": 16
+  },
+  "am_Tiles_Grass_Grass_Tiles_1_1_7": {
+    "img": "am_Tiles_Grass_Grass_Tiles_1",
+    "x": 16,
+    "y": 112,
+    "w": 16,
+    "h": 16
+  },
+  "am_Tiles_Grass_Grass_Tiles_1_1_8": {
+    "img": "am_Tiles_Grass_Grass_Tiles_1",
+    "x": 16,
+    "y": 128,
+    "w": 16,
+    "h": 16
+  },
+  "am_Tiles_Grass_Grass_Tiles_1_1_9": {
+    "img": "am_Tiles_Grass_Grass_Tiles_1",
+    "x": 16,
+    "y": 144,
+    "w": 16,
+    "h": 16
+  },
+  "am_Tiles_Grass_Grass_Tiles_1_2_5": {
+    "img": "am_Tiles_Grass_Grass_Tiles_1",
+    "x": 32,
+    "y": 80,
+    "w": 16,
+    "h": 16
+  },
+  "am_Tiles_Grass_Grass_Tiles_1_2_6": {
+    "img": "am_Tiles_Grass_Grass_Tiles_1",
+    "x": 32,
+    "y": 96,
+    "w": 16,
+    "h": 16
+  },
+  "am_Tiles_Grass_Grass_Tiles_1_2_7": {
+    "img": "am_Tiles_Grass_Grass_Tiles_1",
+    "x": 32,
+    "y": 112,
+    "w": 16,
+    "h": 16
   },
   "am_Trees_Big_Birch_Tree_1_0": {
     "img": "am_Trees_Big_Birch_Tree",
@@ -147,13 +346,6 @@ export const AUTHORED_FRAMES = {
     "y": 0,
     "w": 32,
     "h": 80
-  },
-  "am_Trees_Big_Fruit_Tree_0_0": {
-    "img": "am_Trees_Big_Fruit_Tree",
-    "x": 0,
-    "y": 0,
-    "w": 32,
-    "h": 64
   },
   "am_Trees_Big_Oak_Tree_0_0": {
     "img": "am_Trees_Big_Oak_Tree",
@@ -169,12 +361,40 @@ export const AUTHORED_FRAMES = {
     "w": 64,
     "h": 80
   },
-  "am_Trees_Spruce_Needle_Particle_0_0": {
-    "img": "am_Trees_Spruce_Needle_Particle",
-    "x": 0,
+  "am_Trees_Big_Spruce_tree_1_0": {
+    "img": "am_Trees_Big_Spruce_tree",
+    "x": 64,
     "y": 0,
-    "w": 16,
-    "h": 16
+    "w": 64,
+    "h": 80
+  },
+  "am_Trees_Medium_Birch_Tree_1_0": {
+    "img": "am_Trees_Medium_Birch_Tree",
+    "x": 32,
+    "y": 0,
+    "w": 32,
+    "h": 48
+  },
+  "am_Trees_Medium_Fruit_Tree_1_0": {
+    "img": "am_Trees_Medium_Fruit_Tree",
+    "x": 32,
+    "y": 0,
+    "w": 32,
+    "h": 64
+  },
+  "am_Trees_Medium_Oak_Tree_1_0": {
+    "img": "am_Trees_Medium_Oak_Tree",
+    "x": 32,
+    "y": 0,
+    "w": 32,
+    "h": 48
+  },
+  "am_Trees_Medium_Spruce_Tree_1_0": {
+    "img": "am_Trees_Medium_Spruce_Tree",
+    "x": 32,
+    "y": 0,
+    "w": 32,
+    "h": 48
   }
 }
 
@@ -230,24 +450,64 @@ export const AUTHORED_IMAGE_SIZE = {
     "w": 240,
     "h": 192
   },
+  "am_Outdoor_decoration_Benches": {
+    "w": 64,
+    "h": 32
+  },
+  "am_Outdoor_decoration_Flowers": {
+    "w": 160,
+    "h": 160
+  },
+  "am_Outdoor_decoration_Lanter_Posts": {
+    "w": 192,
+    "h": 576
+  },
+  "am_Outdoor_decoration_Signs": {
+    "w": 96,
+    "h": 528
+  },
+  "am_Outdoor_decoration_Well": {
+    "w": 32,
+    "h": 48
+  },
+  "am_Outdoor_decoration_barrels": {
+    "w": 96,
+    "h": 64
+  },
   "am_Tiles_Grass_Grass_1_Middle": {
     "w": 16,
     "h": 16
+  },
+  "am_Tiles_Grass_Grass_Tiles_1": {
+    "w": 256,
+    "h": 160
   },
   "am_Trees_Big_Birch_Tree": {
     "w": 96,
     "h": 80
   },
-  "am_Trees_Big_Fruit_Tree": {
-    "w": 96,
-    "h": 64
-  },
   "am_Trees_Big_Oak_Tree": {
     "w": 192,
     "h": 80
   },
-  "am_Trees_Spruce_Needle_Particle": {
-    "w": 16,
-    "h": 16
+  "am_Trees_Big_Spruce_tree": {
+    "w": 192,
+    "h": 80
+  },
+  "am_Trees_Medium_Birch_Tree": {
+    "w": 96,
+    "h": 48
+  },
+  "am_Trees_Medium_Fruit_Tree": {
+    "w": 96,
+    "h": 64
+  },
+  "am_Trees_Medium_Oak_Tree": {
+    "w": 96,
+    "h": 48
+  },
+  "am_Trees_Medium_Spruce_Tree": {
+    "w": 96,
+    "h": 48
   }
 }
