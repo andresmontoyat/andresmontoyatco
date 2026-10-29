@@ -24,11 +24,11 @@ const { title = meta?.title, description = meta?.description } = Astro.props
 const path = Astro.url.pathname.replace(/^\/(en|es)/, '') || '/'
 
 // D-06: base domain is a build-time env var, never hardcoded in this file.
-// D-05: value is https://andresmontoyat.dev (matches index.html's current domain).
+// D-05: value is https://www.andresmontoyat.dev — the apex 308-redirects there, and a canonical must not redirect.
 // Falls back to D-05's value if PUBLIC_SITE_URL isn't configured on the build
 // environment (e.g. Vercel env var not yet set) — prevents a hard build crash
 // from `new URL(path, undefined)` while env var remains the intended override.
-const siteUrl = import.meta.env.PUBLIC_SITE_URL || 'https://andresmontoyat.dev'
+const siteUrl = import.meta.env.PUBLIC_SITE_URL || 'https://www.andresmontoyat.dev'
 
 // [ASSUMED->CONFIRMED] astro@7.1.1's public `astro:i18n` GetLocaleOptions type
 // only exposes { normalizeLocale, prependWith } — no `base` override (verified
@@ -91,8 +91,8 @@ const ogImageUrl = new URL('/og-image.png', siteUrl).toString()
         "@type": "Person",
         "name": "Carlos Andrés Montoya Tobón",
         "jobTitle": "Java Solution Architect & Tech Lead",
-        "url": "https://andresmontoyat.dev/",
-        "image": "https://andresmontoyat.dev/og-image.png",
+        "url": "https://www.andresmontoyat.dev/",
+        "image": "https://www.andresmontoyat.dev/og-image.png",
         "email": "mailto:andresmontoyat@gmail.com",
         "telephone": "+573244422196",
         "address": {
