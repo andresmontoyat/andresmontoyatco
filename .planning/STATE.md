@@ -117,6 +117,7 @@ progress:
 | fast | Map composition (B): road layer owns roads+decor, era wash fades at borders, career road + villages + groves authored via editor model; editor autotile inner-block fix (world-editor 64f21bb) | 2026-10-28 | 292dc11, 6fd6c59, f1fdea5 | — |
 | fast | Version map:compose (idempotent); roadmap phase 1: house generator retired, import refuses houseless experiences, era anchors in the map, ADR 0002 (map can lay roads) | 2026-10-28 | efa2cb1, 422904e, 627bad0 | — |
 | fast | Canonical, hreflang, JSON-LD and CV link on www.andresmontoyat.dev (apex 308-redirects to www) | 2026-10-29 | cb79dea | — |
+| fast | Switch the unfinished game off (features.game=false): no splash, no nav link, no Experience platformer, /game redirects home; Lighthouse mobile 0.97/1/1/1 | 2026-10-29 | 27032d6 | — |
 
 ## Project Reference
 
