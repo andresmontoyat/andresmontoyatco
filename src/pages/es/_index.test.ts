@@ -8,9 +8,12 @@
 // Container API coverage for the entry splash markup/copy added to the /es
 // home page — Spanish counterpart of src/pages/en/_index.test.ts.
 import { experimental_AstroContainer as AstroContainer } from 'astro/container'
-import { describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import reactRenderer from '@astrojs/react/server.js'
 import IndexPage from './index.astro'
+import { features } from '../../config/features.js'
+
+const shipped = features.game
 
 async function renderIndex() {
   const container = await AstroContainer.create()
@@ -18,7 +21,28 @@ async function renderIndex() {
   return container.renderToString(IndexPage)
 }
 
+// The site is public and the game is unfinished (src/config/features.js): while it is switched
+// off, no splash and no link may lead to it.
+describe('es/index.astro with the game switched off', () => {
+  beforeEach(() => { features.game = false })
+  afterEach(() => { features.game = shipped })
+
+  it('renders no entry splash', async () => {
+    const result = await renderIndex()
+    expect(result).not.toContain('id="entry-splash"')
+    expect(result).not.toContain('cam-entry-choice')
+  })
+
+  it('links to the game nowhere', async () => {
+    const result = await renderIndex()
+    expect(result).not.toMatch(/href="\/es\/game\/?"/)
+  })
+})
+
 describe('es/index.astro entry splash (Container API)', () => {
+  beforeEach(() => { features.game = true })
+  afterEach(() => { features.game = shipped })
+
   it('renders the dialog with accessible wiring', async () => {
     const result = await renderIndex()
     expect(result).toContain('id="entry-splash"')

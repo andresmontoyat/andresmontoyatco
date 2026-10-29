@@ -3,6 +3,7 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import CareerGame from './CareerGame'
 import Experience from './Experience'
+import { features } from '../../config/features.js'
 
 // The real game module (src/game/careerGame.js) calls canvas.getContext('2d')
 // during init() → resize(), and src/test/setup.jsx globally stubs
@@ -40,7 +41,10 @@ describe('CareerGame island', () => {
 
 describe('Experience section with game entry', () => {
   it('keeps the accessible timeline as the default and offers the game', () => {
+    const shipped = features.game
+    features.game = true
     render(<Experience locale="en" />)
+    features.game = shipped
     expect(screen.getByRole('button', { name: /play/i })).toBeInTheDocument()
     // a known timeline company still present (accessible default)
     expect(screen.getByText(/Soldife/)).toBeInTheDocument()

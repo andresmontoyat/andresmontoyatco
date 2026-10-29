@@ -8,9 +8,14 @@
 import BaseLayout from '../../layouts/BaseLayout.astro'
 import WorldRpg from '../../components/react/WorldRpg.jsx'
 import { getRelativeLocaleUrl } from 'astro:i18n'
+import { features } from '../../config/features.js'
 
 const locale = Astro.currentLocale ?? 'es'
 const hrefHome = getRelativeLocaleUrl(locale, '/')
+
+// The game is unfinished and the site is public: while it is switched off this route sends the
+// visitor home rather than into it (src/config/features.js).
+if (!features.game) return Astro.redirect(hrefHome)
 const hrefEn = getRelativeLocaleUrl('en', '/game')
 const hrefEs = getRelativeLocaleUrl('es', '/game')
 

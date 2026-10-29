@@ -1,8 +1,9 @@
 import React from 'react'
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect, vi, afterEach } from 'vitest'
 import { render, screen, fireEvent, within } from '@testing-library/react'
 import data from '../../data/experience.json'
 import Experience from './Experience'
+import { features } from '../../config/features.js'
 
 // CareerGame is its own island with a dedicated suite (CareerGame.test.jsx).
 // Stub it here so these specs exercise only the timeline/filter/expand contract
@@ -37,9 +38,22 @@ describe('Experience island — timeline', () => {
     expect(screen.getByText(/Soldife/)).toBeInTheDocument()
   })
 
-  it('mounts the CareerGame entry alongside the timeline', () => {
-    renderExp('en')
-    expect(screen.getByTestId('career-game-stub')).toBeInTheDocument()
+  describe('the CareerGame entry', () => {
+    const shipped = features.game
+    afterEach(() => { features.game = shipped })
+
+    it('mounts alongside the timeline while the game is switched on', () => {
+      features.game = true
+      renderExp('en')
+      expect(screen.getByTestId('career-game-stub')).toBeInTheDocument()
+    })
+
+    // The site is public and the game is unfinished: no entry to it may ship.
+    it('is left out while the game is switched off', () => {
+      features.game = false
+      renderExp('en')
+      expect(screen.queryByTestId('career-game-stub')).toBeNull()
+    })
   })
 
   it('renders featured entries as featured and the rest as compact', () => {

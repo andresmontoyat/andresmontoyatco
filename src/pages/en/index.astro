@@ -15,15 +15,19 @@ import Contact from '../../components/astro/Contact.astro'
 import Footer from '../../components/astro/Footer.astro'
 import { getRelativeLocaleUrl } from 'astro:i18n'
 import translations from '../../i18n/translations.js'
+import { features } from '../../config/features.js'
 
 const locale = Astro.currentLocale ?? 'en'
 const path = Astro.url.pathname.replace(/^\/(en|es)/, '') || '/'
 const hrefEn = getRelativeLocaleUrl('en', path)
 const hrefEs = getRelativeLocaleUrl('es', path)
-const hrefGame = getRelativeLocaleUrl(locale, '/game')
+// While the game is switched off nothing links to it: Nav hides its link without an href.
+const hrefGame = features.game ? getRelativeLocaleUrl(locale, '/game') : undefined
 const t = translations[locale].entry
 ---
 <BaseLayout>
+  {features.game && (
+  <Fragment>
   <!-- Entry splash — "start screen" first-load choice: Play the career game or
        View the portfolio. Server-rendered HTML only (no React island), hidden
        by default via inline style so it never lays out or paints unless JS
@@ -141,6 +145,8 @@ const t = translations[locale].entry
       if (playBtn) playBtn.focus()
     })()
   </script>
+  </Fragment>
+  )}
   <Nav client:load locale={locale} hrefEn={hrefEn} hrefEs={hrefEs} hrefGame={hrefGame} />
   <SectionPager client:visible locale={locale} />
   <main>
