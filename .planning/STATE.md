@@ -118,6 +118,7 @@ progress:
 | fast | Version map:compose (idempotent); roadmap phase 1: house generator retired, import refuses houseless experiences, era anchors in the map, ADR 0002 (map can lay roads) | 2026-10-28 | efa2cb1, 422904e, 627bad0 | — |
 | fast | Canonical, hreflang, JSON-LD and CV link on www.andresmontoyat.dev (apex 308-redirects to www) | 2026-10-29 | cb79dea | — |
 | fast | Switch the unfinished game off (features.game=false): no splash, no nav link, no Experience platformer, /game redirects home; Lighthouse mobile 0.97/1/1/1 | 2026-10-29 | 27032d6 | — |
+| fast | ADR 0003 accepted: a `water` tiles layer makes the map own the ponds (bodies, collision and pond life derived from cells); amends 0002 | 2026-10-30 | 2956b8f | — |
 
 ## Project Reference
 
