@@ -1,14 +1,25 @@
 import { doorPoint } from '../entities/site.js'
 import { CONFIG } from '../config.js'
+import { waterBodies, waterSolids } from './water.js'
+import { WORLD_TILE } from './authored/convert.js'
 
 // Every one of these must be laid in the map as an `anchor:<name>` layer (docs/adr/0001). The
 // spine runs through them in this order; every one but the farm is an era with its own region.
 const ANCHOR_NAMES = ['farm', 'pradera', 'desierto', 'selva', 'cyber', 'castillo']
 const HIDDEN_POS = [{ x: 1620, y: 1180 }, { x: 1830, y: 1200 }]
-// Ponds are tuned in src/game/config.js (CONFIG.pond.ponds) — position + water radius.
+// Ponds are tuned in src/game/config.js (CONFIG.pond.ponds) — position + water radius — unless the
+// map paints its own water (docs/adr/0003), and then they come from the painted cells.
 const PONDS = CONFIG.pond.ponds
 export const WORLD_W = 2140
 export const WORLD_H = 1360
+
+// The ponds and how they block: the map's painted water when it has some, else the configured
+// circles (whose solids worldRpg derives itself, as it always has).
+function pondsOf(water) {
+  if (!water) return { ponds: PONDS, waterAuthored: false, waterSolids: null }
+  const ponds = waterBodies(water, WORLD_TILE)
+  return { ponds, waterAuthored: true, waterSolids: waterSolids(ponds, WORLD_TILE, CONFIG.pond.shoreInset) }
+}
 
 export function startYear(entry) {
   const s = (entry.date && entry.date.en) || ''
@@ -122,7 +133,7 @@ function buildRoads(path, sites, hiddenSites) {
 // Options rather than five positionals: the tail of this signature had become "what the map
 // contributes", and every caller had to count commas to place a null.
 export function buildOverworld(json, biomeForYear, opts = {}) {
-  const { sideProjects = [], anchors = null, doors: authoredDoors = null, world = null } = opts
+  const { sideProjects = [], anchors = null, doors: authoredDoors = null, world = null, water = null } = opts
   // The map owns the world's extent when it has one; the constants are what is left for a caller
   // with no map — tests, and the game before an import has ever run. A half-measured world is
   // ignored rather than honoured: shrinking the world to nothing would strand every site outside it.
@@ -169,6 +180,6 @@ export function buildOverworld(json, biomeForYear, opts = {}) {
   }
   return {
     farm: ANCHORS.farm, regions, sites, hiddenSites, farmBuilding, farmWindmill,
-    ponds: PONDS, worldW, worldH, path, roads,
+    ...pondsOf(water), worldW, worldH, path, roads,
   }
 }

@@ -9,6 +9,7 @@ import { critterDrawables } from '../entities/critters.js'
 import { npcDrawables } from '../entities/npcs.js'
 import { shake2D } from '../engine/camera2d.js'
 import { phaseOf, nightTint } from './lighting.js'
+import { WATER_LAYER } from '../world/water.js'
 
 const TILE = 32
 const AVATAR_W = CONFIG.avatar.width
@@ -162,6 +163,12 @@ function resolveWaterFrame(ponds, tx, ty) {
   return waterTileName(n, e, s, w)
 }
 
+// A map that paints its own water (a tiles layer named 'water', docs/adr/0003) owns the ponds: the
+// ground draws none, and the painted cells are left to the authored layers.
+export function proceduralPonds(world) {
+  return world.waterAuthored ? [] : (world.ponds || [])
+}
+
 // A map that paints its own roads (a tiles layer named 'road') owns them: the generated spurs to
 // the doors step aside so the two networks never overlap. The hidden POI loops stay, because the
 // map has no idea where those detours run until the Konami code reveals them.
@@ -174,6 +181,7 @@ export function proceduralRoads(state) {
 function drawGround(ctx, state, cam, sprites) {
   const { world } = state
   const roads = proceduralRoads(state)
+  const ponds = proceduralPonds(world)
   const anchors = regionsWithFarm(world)
   const { w: vw, h: vh } = viewportOf(ctx)
   const { x0, y0, x1, y1 } = visibleTileRange(cam, vw, vh, TILE)
@@ -182,7 +190,7 @@ function drawGround(ctx, state, cam, sprites) {
       const wx = tx * TILE + TILE / 2
       const wy = ty * TILE + TILE / 2
       const bi = nearestBiome(anchors, wx, wy)
-      const water = pondAt(world.ponds, wx, wy) ? resolveWaterFrame(world.ponds, tx, ty) : null
+      const water = pondAt(ponds, wx, wy) ? resolveWaterFrame(ponds, tx, ty) : null
       let name
       if (water) {
         name = water
@@ -206,7 +214,8 @@ function drawGround(ctx, state, cam, sprites) {
 function groundOwnsCell(world, roads, tx, ty, revealed) {
   const wx = tx * TILE + TILE / 2
   const wy = ty * TILE + TILE / 2
-  if (pondAt(world.ponds, wx, wy) && resolveWaterFrame(world.ponds, tx, ty)) return true
+  const ponds = proceduralPonds(world)
+  if (pondAt(ponds, wx, wy) && resolveWaterFrame(ponds, tx, ty)) return true
   return nearestRoadDist(roads, wx, wy, revealed) < PATH_THRESHOLD
 }
 
@@ -217,7 +226,8 @@ function groundOwnsCell(world, roads, tx, ty, revealed) {
 // The era tint is applied to authored cells too, once per cell (not once per layer). Exempting
 // them would turn the painted/generated seam into a visible colour border in cyber/castillo —
 // exactly what the hybrid composition has to hide. The cost is that WYSIWYG breaks in those two
-// biomes: the editor shows a clean tile, the game shows a washed one.
+// biomes: the editor shows a clean tile, the game shows a washed one. Water is the exception, as
+// the procedural water always was: a cell whose top layer is `water` is never washed.
 export function drawAuthoredTiles(ctx, state, cam, sprites) {
   const layers = state.authored
   if (!layers || !layers.length) return
@@ -233,13 +243,15 @@ export function drawAuthoredTiles(ctx, state, cam, sprites) {
       const sx = tx * TILE - cam.x
       const sy = ty * TILE - cam.y
       let painted = false
+      let wet = false
       for (const layer of layers) {
         const name = layer.cells.get(key)
         if (!name) continue
         sprites.draw(ctx, name, sx, sy, TILE, TILE)
         painted = true
+        wet = layer.name === WATER_LAYER
       }
-      if (!painted || !anchors) continue
+      if (!painted || wet || !anchors) continue
       washTile(ctx, eraWash(anchors, tx * TILE + TILE / 2, ty * TILE + TILE / 2), sx, sy)
     }
   }

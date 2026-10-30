@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest'
 import { CONFIG } from '../config.js'
 import {
   nearestPathDist, nearestRoadDist, visibleTileRange, eraLabel, drawAuthoredTiles, drawTransformed,
-  buildingDrawable, proceduralRoads, eraWash,
+  buildingDrawable, proceduralRoads, proceduralPonds, eraWash,
 } from './scene2d.js'
 
 const path = [{ x: 0, y: 0 }, { x: 100, y: 0 }]
@@ -56,6 +56,17 @@ describe('proceduralRoads', () => {
   })
   it('keeps only the hidden loops when the map has a road layer', () => {
     expect(proceduralRoads({ world, authored: [{ name: 'road', cells: new Map() }] })).toEqual([loop])
+  })
+})
+
+// docs/adr/0003: a map that paints water owns the ponds, so the ground stops drawing its own.
+describe('proceduralPonds', () => {
+  const ponds = [{ x: 16, y: 16, r: 80 }]
+  it('keeps the ponds when the water is the game\'s', () => {
+    expect(proceduralPonds({ ponds, waterAuthored: false })).toEqual(ponds)
+  })
+  it('draws none when the map paints its own water', () => {
+    expect(proceduralPonds({ ponds, waterAuthored: true })).toEqual([])
   })
 })
 
@@ -157,6 +168,26 @@ describe('drawAuthoredTiles', () => {
     const world = { ponds: [{ x: 16, y: 16, r: 80 }] }
     drawAuthoredTiles(fakeCtx(), { authored, world }, { x: 0, y: 0 }, fakeSprites(calls))
     expect(calls).toEqual([])
+  })
+  it('paints the map\'s water over a pond the map owns', () => {
+    const calls = []
+    const world = { ponds: [{ x: 16, y: 16, r: 80 }], waterAuthored: true }
+    drawAuthoredTiles(fakeCtx(), { authored, world }, { x: 0, y: 0 }, fakeSprites(calls))
+    expect(calls.map(c => c.name)).toContain('am_grass_0_0')
+  })
+  it('leaves the map\'s water out of the era wash, as the procedural water always was', () => {
+    const fills = []
+    const ctx = {
+      canvas: { width: 32, height: 32 },
+      save: () => {}, restore: () => {},
+      fillRect: (x, y) => fills.push([x, y]),
+      set fillStyle(v) { this._f = v },
+      set globalAlpha(v) { this._a = v },
+    }
+    const world = { regions: [{ bi: 'cyber', x: 0, y: 0 }], farm: { x: 9000, y: 9000 } }
+    const wet = [{ name: 'suelo', cells: new Map([['0,0', 'g']]) }, { name: 'water', cells: new Map([['0,0', 'w']]) }]
+    drawAuthoredTiles(ctx, { authored: wet, world }, { x: 0, y: 0 }, fakeSprites([]))
+    expect(fills).toEqual([])
   })
   it('washes every cell of an era with one tone, so the ground reads as a region and not a checkerboard', () => {
     const styles = new Set()

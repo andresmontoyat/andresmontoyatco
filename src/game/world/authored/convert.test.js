@@ -925,3 +925,37 @@ describe('validateMap checks door coverage when it is given the CV', () => {
     expect(() => validateMap(map, deps())).not.toThrow()
   })
 })
+
+// docs/adr/0003: the water layer is a contract, so the import checks it before the game trusts it.
+describe('validateMap water layer', () => {
+  const W = 'Cute_Fantasy/Tiles/Water/Water_Tile_1.png'
+  const deps = { dimsOf: p => ({ ...REAL_DIMS, [W]: { w: 48, h: 80 } })[p], exists }
+  const cell = (x, y, frame = `${W}#1,1`) => ({ x, y, frame })
+  const square = [cell(0, 0), cell(1, 0), cell(0, 1), cell(1, 1)]
+  const withWater = (water, extraSlices = {}) => ({
+    ...REAL,
+    layers: [...REAL.layers, water],
+    slices: { ...REAL.slices, [W]: { type: 'sheet', fw: 16, fh: 16, cols: 3, rows: 5 }, ...extraSlices },
+  })
+
+  it('accepts a body of water painted with the water sheet', () => {
+    expect(() => validateMap(withWater({ name: 'water', type: 'tiles', cells: square }), deps)).not.toThrow()
+  })
+
+  it('refuses a water layer made of objects', () => {
+    expect(() => validateMap(withWater({ name: 'water', type: 'objects', objects: [] }), deps))
+      .toThrow(/"water" must be a tiles layer/)
+  })
+
+  it('refuses a water cell painted with something that is not water', () => {
+    const grass = [...square.slice(1), cell(0, 0, 'Cute_Fantasy/Tiles/Grass/G.png#0,0')]
+    expect(() => validateMap(withWater({ name: 'water', type: 'tiles', cells: grass }), deps))
+      .toThrow(/cell 0,0 is not water/)
+  })
+
+  it('refuses a body too thin for the water tiles to draw', () => {
+    const strip = [cell(0, 0), cell(1, 0), cell(2, 0)]
+    expect(() => validateMap(withWater({ name: 'water', type: 'tiles', cells: strip }), deps))
+      .toThrow(/body at 0,0 holds no 2x2 square/)
+  })
+})

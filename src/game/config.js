@@ -15,6 +15,9 @@ export const CONFIG = {
       { x: 1180, y: 760, r: 88 },
     ],
     collisionFactor: 0.82, // qué tan adentro del agua se bloquea al jugador (× r). 1 = justo el borde
+    // Con agua pintada en el mapa (capa `water`, docs/adr/0003) los estanques de arriba se ignoran y
+    // la colisión sigue las celdas: px que se recorta cada celda por el lado que da a tierra.
+    shoreInset: 10,
     wave: {
       rings: 3, // nº de anillos de ola
       speed: 1.1, // velocidad de ondulación

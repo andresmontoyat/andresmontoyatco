@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest'
 import { startYear, buildOverworld, projectOntoSpine, WORLD_W, WORLD_H } from './overworld.js'
 import { biomeForYear } from './biomes.js'
 import { doorPoint } from '../entities/site.js'
+import { CONFIG } from '../config.js'
 
 const JSON_FIXTURE = {
   entries: [
@@ -221,5 +222,29 @@ describe('buildOverworld takes its size from the map', () => {
     for (const world of [{ w: 0, h: 100 }, { w: 100 }, {}]) {
       expect(build(JSON_FIXTURE, { world }).worldW).toBe(WORLD_W)
     }
+  })
+})
+
+// docs/adr/0003: a map that paints water owns the ponds. Their records come from the painted cells,
+// and the collision follows the cells instead of a circle.
+describe('buildOverworld takes its ponds from the water the map paints', () => {
+  const WATER = ['0,0', '1,0', '0,1', '1,1']
+
+  it('derives the ponds from the painted water, not from the config', () => {
+    const w = build(JSON_FIXTURE, { water: WATER })
+    expect(w.ponds).toHaveLength(1)
+    expect(w.ponds[0]).toMatchObject({ x: 32, y: 32, cells: WATER })
+  })
+
+  it('marks the water as the map\'s and gives it box solids', () => {
+    const w = build(JSON_FIXTURE, { water: WATER })
+    expect(w.waterAuthored).toBe(true)
+    expect(w.waterSolids.length).toBeGreaterThan(0)
+  })
+
+  it('keeps the configured ponds for a map that paints no water', () => {
+    const w = build()
+    expect(w.ponds).toEqual(CONFIG.pond.ponds)
+    expect(w.waterAuthored).toBe(false)
   })
 })

@@ -1,3 +1,5 @@
+import { WATER_LAYER, waterBodies, undersizedBodies } from '../water.js'
+
 // Converts the world-editor's engine-neutral map export into the four artifacts the game
 // consumes: atlas manifest entries, a palette-encoded tile JSON, placements, and the clip table
 // those placements play.
@@ -71,6 +73,8 @@ export function publicUrlFor(path) {
 export const BIOMES = ['farm', 'pradera', 'desierto', 'selva', 'cyber', 'castillo']
 
 const ANCHOR_PREFIX = 'anchor:'
+// Where the pack keeps its water sheets: what a `water` layer may be painted with (docs/adr/0003).
+const WATER_SHEETS = 'Tiles/Water/'
 
 // The editor has no per-object properties, so layer NAMES carry the semantics. This is the
 // only convention the adapter invents, and it uses something the editor already gives away
@@ -371,6 +375,19 @@ export function doorCoverage(interactables, experienceIds) {
 // `experienceIds` is optional: hand over the visible CV entries and the coverage check runs, leave
 // it out and only the map's own shape is checked. The import passes them; a caller that just wants
 // geometry validated does not have to know the CV exists.
+// docs/adr/0003: the layer named `water` makes the map own the ponds, so the game builds collision
+// and pond life from it without looking twice. It has to be painted, painted with water, and every
+// body has to be drawable by the 9-cell water set — which has no frame for a strip one cell wide.
+function validateWater(map) {
+  const layer = map.layers.find(l => l.name === WATER_LAYER)
+  if (!layer) return
+  if (layer.type !== 'tiles') throw new Error(`layer "${WATER_LAYER}" must be a tiles layer: paint it with the water terrain`)
+  const dry = (layer.cells || []).find(c => !splitRef(c.frame).path.includes(WATER_SHEETS))
+  if (dry) throw new Error(`layer "${WATER_LAYER}": cell ${dry.x},${dry.y} is not water (${dry.frame}) — paint it with a ${WATER_SHEETS} sheet`)
+  const [thin] = undersizedBodies(waterBodies((layer.cells || []).map(c => `${c.x},${c.y}`), 1))
+  if (thin) throw new Error(`layer "${WATER_LAYER}": the body at ${thin.cells[0]} holds no 2x2 square — widen it or erase it`)
+}
+
 export function validateMap(map, { dimsOf, exists, experienceIds = null }) {
   // Until now this function never read the version at all, so a v1 map was accepted and silently
   // carried no object identity — exactly the failure the number exists to prevent. (The `version: 1`
@@ -386,6 +403,7 @@ export function validateMap(map, { dimsOf, exists, experienceIds = null }) {
     throw new Error(`map world ${w}x${h} is not a whole number of ${map.tileSize}px tiles`)
   }
   map.layers.forEach(classifyLayer)
+  validateWater(map)
   anchorsFrom(map.layers, 1, map.world)
   const interactables = interactablesFrom(map.layers, 1)
   if (experienceIds) {

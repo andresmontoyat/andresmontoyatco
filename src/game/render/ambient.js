@@ -52,9 +52,8 @@ function activeSitesOf(state) {
 }
 
 // --- Water waves -----------------------------------------------------------
-// `world.ponds` isn't authored in the live overworld yet (decor.js already guards the same
-// way pending real pond regions) — this stays inert today, but the mechanism is ready and
-// exercised by ambient.test.js via a fixture world.
+// One set of rings per pond in `world.ponds`: the configured circles, or the bodies of water the map
+// paints (docs/adr/0003), which carry the same centre and radius.
 
 const WAVE_RINGS = CONFIG.pond.wave.rings
 const WAVE_SPEED = CONFIG.pond.wave.speed

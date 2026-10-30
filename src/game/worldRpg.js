@@ -1,5 +1,6 @@
 import { buildOverworld } from './world/overworld.js'
 import { buildAuthoredIndex, worldSizeOf } from './world/authored/index.js'
+import { waterCellsOf } from './world/water.js'
 import { biomeForYear } from './world/biomes.js'
 import { buildDecor } from './world/decor.js'
 import { stepMovement } from './engine/topdown.js'
@@ -53,11 +54,13 @@ function decorSolids(decor) {
   return decor.filter(d => d.solid).map(d => ({ x: d.x - 10, y: d.y - 14, w: 20, h: 14 }))
 }
 
-// Pond collision as circle solids (see engine/topdown.js hits). The radius is pulled in to ~0.82
-// of the visual water radius so the player can walk right up to and along the shore bank without
-// being blocked a whole tile early, but can't stand on open water.
-function pondSolids(ponds) {
-  return (ponds || []).map(p => ({ cx: p.x, cy: p.y, r: p.r * CONFIG.pond.collisionFactor }))
+// Pond collision. Water the map paints already carries its boxes (docs/adr/0003). The configured
+// ponds are circle solids (see engine/topdown.js hits), the radius pulled in to ~0.82 of the visual
+// water radius so the player can walk right up to and along the shore bank without being blocked a
+// whole tile early, but can't stand on open water.
+function pondSolids(world) {
+  if (world.waterSolids) return world.waterSolids
+  return (world.ponds || []).map(p => ({ cx: p.x, cy: p.y, r: p.r * CONFIG.pond.collisionFactor }))
 }
 
 // Throttled footstep SFX while walking — a beep every FOOTSTEP_EVERY frames of movement,
@@ -80,7 +83,7 @@ function updateRegionMusic(state) {
 export function update(state, input, dtChars) {
   const frozen = state.dialog.isOpen()
   const solids = buildingSolids(activeSites(state), state.world.farmBuilding, state.world.farmWindmill)
-    .concat(decorSolids(state.decor || []), pondSolids(state.world.ponds))
+    .concat(decorSolids(state.decor || []), pondSolids(state.world))
   const r = stepMovement(state.player, { ...input, frozen }, solids, { w: state.world.worldW, h: state.world.worldH })
   state.player.x = r.x; state.player.y = r.y; state.player.dir = r.dir; state.player.moving = r.moving
   state.player.step = r.moving ? state.player.step + STEP_RATE : 0
@@ -98,14 +101,17 @@ export function createWorldRpg({
   canvas, experience, sideProjects = [], lang = 'es', onLangChange, placements = [], clips = {},
   authoredTiles = null, interactables = [],
 }) {
+  const authored = buildAuthoredIndex(authoredTiles)
   // interactables.json: what the authored map says the world CONTAINS, as opposed to what it looks
   // like. Today buildOverworld reads the `door:` entries from it — a house placed and tagged in the
-  // editor wins over the one the generator would have hashed into place (docs/adr/0001).
+  // editor wins over the one the generator would have hashed into place (docs/adr/0001). The
+  // water layer, when the map paints one, replaces the configured ponds (docs/adr/0003).
   const world = buildOverworld(experience, biomeForYear, {
     sideProjects,
     anchors: authoredTiles && authoredTiles.anchors,
     doors: interactables,
     world: worldSizeOf(authoredTiles),
+    water: waterCellsOf(authored),
   })
   // Assets placed in the world-editor (src/game/world/authored/career.map.json → npm run
   // map:import → src/data/placements.json): a flat list of { frame, x, y } plus optional
@@ -115,7 +121,6 @@ export function createWorldRpg({
   // carries. Frame names, already baked into the atlas by the same import.
   world.clips = clips
   world.interactables = interactables
-  const authored = buildAuthoredIndex(authoredTiles)
   // A map that lays its own roads (a tiles layer named 'road') was composed by hand: the random
   // scatter steps aside, or it would drop trees on those roads. Pond life stays either way.
   const scatter = !authored.some(l => l.name === 'road')
