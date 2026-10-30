@@ -1,6 +1,6 @@
 # 2. The map can lay its own roads
 
-- Status: accepted
+- Status: accepted — the "Pond life stays" line is amended by [0003](0003-the-map-can-paint-its-own-water.md)
 - Date: 2026-10-28
 - Deciders: Carlos Andres Montoya
 - Amends: [0001](0001-the-map-owns-the-world.md) — the pin "Roads stay derived"
