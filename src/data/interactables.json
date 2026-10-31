@@ -1,6 +1,6 @@
 [
   {
-    "uid": "U22",
+    "uid": "U25",
     "kind": "door",
     "x": 256,
     "y": 678,
@@ -11,7 +11,7 @@
     "solid": true
   },
   {
-    "uid": "U24",
+    "uid": "U27",
     "kind": "door",
     "x": 438,
     "y": 654,
@@ -22,7 +22,7 @@
     "solid": true
   },
   {
-    "uid": "U26",
+    "uid": "U29",
     "kind": "door",
     "x": 554,
     "y": 750,
@@ -33,7 +33,7 @@
     "solid": true
   },
   {
-    "uid": "U28",
+    "uid": "U31",
     "kind": "door",
     "x": 694,
     "y": 398,
@@ -44,7 +44,7 @@
     "solid": true
   },
   {
-    "uid": "U30",
+    "uid": "U33",
     "kind": "door",
     "x": 886,
     "y": 346,
@@ -55,7 +55,7 @@
     "solid": true
   },
   {
-    "uid": "U32",
+    "uid": "U35",
     "kind": "door",
     "x": 1002,
     "y": 442,
@@ -66,7 +66,7 @@
     "solid": true
   },
   {
-    "uid": "U34",
+    "uid": "U37",
     "kind": "door",
     "x": 1312,
     "y": 644,
@@ -77,7 +77,7 @@
     "solid": true
   },
   {
-    "uid": "U36",
+    "uid": "U39",
     "kind": "door",
     "x": 1248,
     "y": 1060,
@@ -88,7 +88,7 @@
     "solid": true
   },
   {
-    "uid": "U38",
+    "uid": "U41",
     "kind": "door",
     "x": 1430,
     "y": 996,
@@ -99,7 +99,7 @@
     "solid": true
   },
   {
-    "uid": "U40",
+    "uid": "U43",
     "kind": "door",
     "x": 1546,
     "y": 1134,
@@ -110,7 +110,7 @@
     "solid": true
   },
   {
-    "uid": "U42",
+    "uid": "U45",
     "kind": "door",
     "x": 1834,
     "y": 826,
