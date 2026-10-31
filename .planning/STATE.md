@@ -120,6 +120,7 @@ progress:
 | fast | Switch the unfinished game off (features.game=false): no splash, no nav link, no Experience platformer, /game redirects home; Lighthouse mobile 0.97/1/1/1 | 2026-10-29 | 27032d6 | — |
 | fast | ADR 0003 accepted: a `water` tiles layer makes the map own the ponds (bodies, collision and pond life derived from cells); amends 0002 | 2026-10-30 | 2956b8f | — |
 | fast | ADR 0003 game side: `water` layer → ponds from cell bodies, box collision with shore inset, no procedural ponds, no era wash on water, import checks (tiles only, water sheets, 2x2 min); 555 tests | 2026-10-30 | 72ba577 | — |
+| fast | Adopt the hand-authored map (editor UI re-author) with a painted `water` layer: 2 ponds, shore collision checked in a playtest; 11/11 houses, 555 tests | 2026-10-31 | dd2b564 | — |
 
 ## Project Reference
 
