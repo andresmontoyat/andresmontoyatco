@@ -19424,5 +19424,79 @@
         }
       ]
     }
-  ]
+  ],
+  "hitboxes": {
+    "Outdoor decoration/Benches.png#1": {
+      "x": 9,
+      "y": 17,
+      "w": 12,
+      "h": 4
+    },
+    "Outdoor decoration/Lanter_Posts.png#0": {
+      "x": 3,
+      "y": 34,
+      "w": 4,
+      "h": 9
+    },
+    "Outdoor decoration/Signs.png#5": {
+      "x": 8,
+      "y": 32,
+      "w": 10,
+      "h": 8
+    },
+    "Outdoor decoration/Well.png#0": {
+      "x": 8,
+      "y": 31,
+      "w": 10,
+      "h": 8
+    },
+    "Outdoor decoration/barrels.png#0": {
+      "x": 4,
+      "y": 17,
+      "w": 6,
+      "h": 4
+    },
+    "Trees/Big_Birch_Tree.png#1,0": {
+      "x": 10,
+      "y": 56,
+      "w": 12,
+      "h": 14
+    },
+    "Trees/Big_Oak_Tree.png#1,0": {
+      "x": 23,
+      "y": 59,
+      "w": 16,
+      "h": 13
+    },
+    "Trees/Big_Spruce_tree.png#1,0": {
+      "x": 25,
+      "y": 58,
+      "w": 14,
+      "h": 14
+    },
+    "Trees/Medium_Birch_Tree.png#1,0": {
+      "x": 12,
+      "y": 30,
+      "w": 6,
+      "h": 7
+    },
+    "Trees/Medium_Fruit_Tree.png#1,0": {
+      "x": 9,
+      "y": 46,
+      "w": 10,
+      "h": 7
+    },
+    "Trees/Medium_Oak_Tree.png#1,0": {
+      "x": 11,
+      "y": 30,
+      "w": 10,
+      "h": 7
+    },
+    "Trees/Medium_Spruce_Tree.png#1,0": {
+      "x": 13,
+      "y": 30,
+      "w": 6,
+      "h": 7
+    }
+  }
 }
