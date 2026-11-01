@@ -3,7 +3,7 @@ import {
   splitRef, slugFor, frameNameFor, publicUrlFor,
   classifyLayer, anchorsFrom, placementsFrom,
   tilesFrom, framesFrom, convertMap, validateMap, gridOf,
-  worldScaleOf, WORLD_TILE, rectFor, interactablesFrom, doorCoverage,
+  worldScaleOf, WORLD_TILE, rectFor, interactablesFrom, doorCoverage, solidFor,
 } from './convert.js'
 
 describe('splitRef', () => {
@@ -957,5 +957,55 @@ describe('validateMap water layer', () => {
     const strip = [cell(0, 0), cell(1, 0), cell(2, 0)]
     expect(() => validateMap(withWater({ name: 'water', type: 'tiles', cells: strip }), deps))
       .toThrow(/body at 0,0 holds no 2x2 square/)
+  })
+})
+
+// A frame's hitbox is drawn in the editor in the frame's own pixels. The game needs it in world
+// pixels for each placed copy, after the same transform that draws the sprite: anchor bottom-centre,
+// rotate, scale, flip.
+describe('solidFor', () => {
+  const BOX = { x: 20, y: 50, w: 12, h: 8 }
+  const FRAME = { w: 48, h: 64 }
+
+  it('places the box under the anchor at the placement\'s scale', () => {
+    expect(solidFor(BOX, FRAME, { x: 80, y: 80, scale: 2 })).toEqual({ x: 72, y: 52, w: 24, h: 16 })
+  })
+
+  it('mirrors it with a horizontal flip', () => {
+    expect(solidFor(BOX, FRAME, { x: 80, y: 80, scale: 2, flipX: true })).toEqual({ x: 64, y: 52, w: 24, h: 16 })
+  })
+
+  it('turns it with the sprite, keeping the box that encloses it', () => {
+    expect(solidFor(BOX, FRAME, { x: 80, y: 80, scale: 2, rot: 90 })).toEqual({ x: 92, y: 72, w: 16, h: 24 })
+  })
+
+  it('works at scale 1 when the placement carries none', () => {
+    expect(solidFor(BOX, FRAME, { x: 40, y: 40 })).toEqual({ x: 36, y: 26, w: 12, h: 8 })
+  })
+})
+
+describe('convertMap hitboxes', () => {
+  const OAK = 'Cute_Fantasy/Trees/Oak.png'
+  const map = (hitboxes) => ({
+    ...REAL,
+    layers: [...REAL.layers, { name: 'decor', type: 'objects', objects: [{ frame: `${OAK}#0,0`, x: 40, y: 40 }] }],
+    slices: { ...REAL.slices, [OAK]: { type: 'single', w: 48, h: 64 } },
+    ...(hitboxes ? { hitboxes } : {}),
+  })
+  const deps = { dimsOf: p => ({ ...REAL_DIMS, [OAK]: { w: 48, h: 64 } })[p], exists }
+
+  it('gives a placement whose frame has a box a solid in world pixels', () => {
+    const [p] = convertMap(map({ [`${OAK}#0,0`]: { x: 20, y: 50, w: 12, h: 8 } }), deps).placements
+    expect(p.solid).toEqual({ x: 72, y: 52, w: 24, h: 16 })
+  })
+
+  it('leaves a placement without a box walkable', () => {
+    const [p] = convertMap(map(), deps).placements
+    expect(p.solid).toBeUndefined()
+  })
+
+  it('refuses a box that reaches outside its frame', () => {
+    expect(() => convertMap(map({ [`${OAK}#0,0`]: { x: 40, y: 50, w: 12, h: 8 } }), deps))
+      .toThrow(/hitbox .*Oak.png#0,0.* outside the 48x64 frame/)
   })
 })

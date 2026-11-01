@@ -63,6 +63,12 @@ function pondSolids(world) {
   return (world.ponds || []).map(p => ({ cx: p.x, cy: p.y, r: p.r * CONFIG.pond.collisionFactor }))
 }
 
+// Placed objects whose frame has a hitbox in the map (a trunk, a lamp post): the import already
+// turned each into a world-pixel box, so they block exactly like a house does.
+function placementSolids(placements) {
+  return (placements || []).filter(p => p.solid).map(p => p.solid)
+}
+
 // Throttled footstep SFX while walking — a beep every FOOTSTEP_EVERY frames of movement,
 // silent (and counter reset) the instant the player stops.
 function updateFootsteps(state, moving) {
@@ -83,7 +89,7 @@ function updateRegionMusic(state) {
 export function update(state, input, dtChars) {
   const frozen = state.dialog.isOpen()
   const solids = buildingSolids(activeSites(state), state.world.farmBuilding, state.world.farmWindmill)
-    .concat(decorSolids(state.decor || []), pondSolids(state.world))
+    .concat(decorSolids(state.decor || []), pondSolids(state.world), state.world.placementSolids)
   const r = stepMovement(state.player, { ...input, frozen }, solids, { w: state.world.worldW, h: state.world.worldH })
   state.player.x = r.x; state.player.y = r.y; state.player.dir = r.dir; state.player.moving = r.moving
   state.player.step = r.moving ? state.player.step + STEP_RATE : 0
@@ -117,6 +123,7 @@ export function createWorldRpg({
   // map:import → src/data/placements.json): a flat list of { frame, x, y } plus optional
   // transforms, drawn as non-solid decor, bottom-anchored at (x,y).
   world.placements = placements
+  world.placementSolids = placementSolids(placements)
   // The clip table those placements play (src/data/clips.json), keyed by the clip id a placement
   // carries. Frame names, already baked into the atlas by the same import.
   world.clips = clips

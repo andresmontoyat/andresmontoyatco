@@ -125,3 +125,16 @@ describe('worldRpg core', () => {
     })
   })
 })
+
+// docs: a placement with a hitbox (a tree trunk, a lamp post) blocks the player like a house does.
+describe('worldRpg placement collision', () => {
+  it('stops the player at a placed object\'s solid box', () => {
+    const probe = createWorldRpg({ canvas: null, experience, ...MAP, sideProjects: [], lang: 'es' })
+    const { x, y } = probe.state.player
+    const trunk = { frame: 'am_tree', x: x + 40, y: y + 10, solid: { x: x + 20, y: y - 10, w: 16, h: 20 } }
+    const g = createWorldRpg({ canvas: null, experience, ...MAP, placements: [...(MAP.placements || []), trunk], sideProjects: [], lang: 'es' })
+    for (let i = 0; i < 30; i++) { update(probe.state, { R: 1 }, 1.6); update(g.state, { R: 1 }, 1.6) }
+    expect(probe.state.player.x).toBeGreaterThan(x + 20)
+    expect(g.state.player.x).toBeLessThan(x + 20)
+  })
+})

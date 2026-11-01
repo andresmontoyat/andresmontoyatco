@@ -213,7 +213,7 @@ export function interactablesFrom(layers, scale = 1, slices = null) {
 // Transform fields are copied only when present, so an untransformed object serializes to
 // exactly { frame, x, y } — byte-identical to what the Asset Placer wrote, which is what
 // makes the render path's identity case verifiable.
-function toPlacement(o, scale) {
+function toPlacement(o, scale, solidOf) {
   const p = { frame: frameNameFor(o.frame), x: o.x * scale, y: o.y * scale }
   // The draw list and the interactable list have to be joinable: a prompt floats over a sprite, so
   // the game needs to know which placement is the thing it is talking about.
@@ -224,13 +224,48 @@ function toPlacement(o, scale) {
   const s = scale * (o.scale || 1)
   if (s !== 1) p.scale = s
   if (o.clip) p.clip = o.clip
+  const hit = solidOf && solidOf(o.frame)
+  if (hit) p.solid = solidFor(hit.box, hit.frame, p)
   return p
 }
 
-export function placementsFrom(layers, scale = 1) {
+// `solidOf(frame)` answers { box, frame: {w, h} } for a frame that blocks, or null.
+export function placementsFrom(layers, scale = 1, solidOf = null) {
   return layers
     .filter(l => classifyLayer(l).kind === 'objects')
-    .flatMap(l => (l.objects || []).map(o => toPlacement(o, scale)))
+    .flatMap(l => (l.objects || []).map(o => toPlacement(o, scale, solidOf)))
+}
+
+// solidFor: a frame's hitbox (frame pixels, from its top-left) as the world-pixel box a placed copy
+// blocks. Same transform the renderer draws with (scene2d drawTransformed): the frame hangs from
+// the bottom-centre anchor, then flips, scales and rotates about it. A rotation keeps the box that
+// encloses the turned one — collision is axis-aligned.
+export function solidFor(box, frame, pl) {
+  const s = pl.scale || 1
+  const fx = pl.flipX ? -1 : 1
+  const fy = pl.flipY ? -1 : 1
+  const a = ((pl.rot || 0) * Math.PI) / 180
+  const corners = [[box.x, box.y], [box.x + box.w, box.y], [box.x, box.y + box.h], [box.x + box.w, box.y + box.h]]
+    .map(([cx, cy]) => [(cx - frame.w / 2) * fx * s, (cy - frame.h) * fy * s])
+    .map(([lx, ly]) => [lx * Math.cos(a) - ly * Math.sin(a), lx * Math.sin(a) + ly * Math.cos(a)])
+  const xs = corners.map(c => Math.round(pl.x + c[0]))
+  const ys = corners.map(c => Math.round(pl.y + c[1]))
+  const x = Math.min(...xs)
+  const y = Math.min(...ys)
+  return { x, y, w: Math.max(...xs) - x, h: Math.max(...ys) - y }
+}
+
+// solidLookup: the `solidOf` the import hands placementsFrom — each frame's hitbox with the size of
+// the frame it was drawn on, read from the same slices the atlas is cut by.
+function solidLookup(map) {
+  const boxes = map.hitboxes || {}
+  return frame => {
+    const box = boxes[frame]
+    if (!box) return null
+    const { path } = splitRef(frame)
+    const r = rectFor(map.slices[path], splitRef(frame))
+    return { box, frame: { w: r.w, h: r.h } }
+  }
 }
 
 const TILE_LAYERS = m => m.layers.filter(l => classifyLayer(l).kind === 'tiles')
@@ -438,6 +473,7 @@ export function validateMap(map, { dimsOf, exists, experienceIds = null }) {
   for (const c of map.clips || []) {
     if (!(c.frames || []).length) throw new Error(`clip "${c.id}": has no frames`)
   }
+  validateHitboxes(map)
   const clipIds = new Set((map.clips || []).map(c => c.id))
   for (const l of map.layers) {
     if (l.type !== 'objects') continue
@@ -449,13 +485,28 @@ export function validateMap(map, { dimsOf, exists, experienceIds = null }) {
   }
 }
 
+// A hitbox has to fit the frame it was drawn on. One that does not is a stale box from before the
+// image was re-cut, and the solid it produced would block a spot nothing visibly stands on.
+function validateHitboxes(map) {
+  for (const [frame, box] of Object.entries(map.hitboxes || {})) {
+    const ref = splitRef(frame)
+    const slice = map.slices[ref.path]
+    if (!slice) throw new Error(`hitbox ${frame}: ${ref.path} is missing from the map's slices block`)
+    const r = rectFor(slice, ref)
+    const shaped = [box.x, box.y, box.w, box.h].every(Number.isFinite) && box.w > 0 && box.h > 0
+    if (!shaped || box.x < 0 || box.y < 0 || box.x + box.w > r.w || box.y + box.h > r.h) {
+      throw new Error(`hitbox ${frame}: ${JSON.stringify(box)} is outside the ${r.w}x${r.h} frame — redraw it in the editor`)
+    }
+  }
+}
+
 export function convertMap(map, { dimsOf, exists = () => true, experienceIds = null }) {
   validateMap(map, { dimsOf, exists, experienceIds })
   const scale = worldScaleOf(map)
   return {
     manifest: framesFrom(map, dimsOf),
     tiles: tilesFrom(map, scale),
-    placements: placementsFrom(map.layers, scale),
+    placements: placementsFrom(map.layers, scale, solidLookup(map)),
     clips: clipsFrom(map),
     interactables: interactablesFrom(map.layers, scale, map.slices),
   }
