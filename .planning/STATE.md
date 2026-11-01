@@ -122,6 +122,7 @@ progress:
 | fast | ADR 0003 game side: `water` layer → ponds from cell bodies, box collision with shore inset, no procedural ponds, no era wash on water, import checks (tiles only, water sheets, 2x2 min); 555 tests | 2026-10-30 | 72ba577 | — |
 | fast | Adopt the hand-authored map (editor UI re-author) with a painted `water` layer: 2 ponds, shore collision checked in a playtest; 11/11 houses, 555 tests | 2026-10-31 | dd2b564 | — |
 | fast | Map fix: spruce removed from the east pond's open water (found by the editor's new object-in-water lint) | 2026-11-01 | 3319ed6 | — |
+| fast | Per-sprite collision: editor exports `hitboxes`, import turns each into a world solid (flip/scale/rot), game blocks on them; 12 prop frames boxed, 327/360 placements solid; trunk stop checked in a playtest; 563 tests | 2026-11-01 | 7c41491, 68f1cbc | — |
 
 ## Project Reference
 
